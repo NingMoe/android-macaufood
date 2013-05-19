@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--  Main app string -->
+    <string name="app_name">食在澳門</string>
+    <string name="tablabel1">今期推介</string>
+    <string name="tablabel2">優惠發送</string>
+    <string name="tablabel3">餐廳搜尋</string>
+    <string name="tablabel4">漫游澳門</string>
+    <string name="tablabel5">我的最愛</string>
+    
+<!--  Recommmend -->
+    <string name="noInternetMsg">請連接網絡獲取資料</string>
+    <string name="retryMsg">重試</string>
+    <string name="loadingInfo">載入資訊中...</string>
+    
+<!--  Coupon  -->
+    <string name="normalCoupon">普通優惠</string>
+    <string name="creditCoupon">信用卡優惠</string>
+    <string name="vipCoupon">會員卡優惠</string>
+	
+    
+<!--  Details -->
+    <string name="addr">地址</string>
+    <string name="phone">電話</string>
+    <string name="website">網址</string>
+    <string name="cash">現金</string>
+    <string name="paymentMethod">付款方法</string>
+    <string name="businessHours">營業時間</string>
+    <string name="info">訊息</string>
+    <string name="addFavorite">加入最愛</string>
+    <string name="alreadyInFavorite">已加入最愛</string>
+    <string name="branch">分店</string>
+    <string name="branchList">分店列表</string>
+    
+<!--  Search -->
+    <string name="search">搜尋</string>
+    <string name="directSearch">直接搜尋</string>
+    <string name="advancedSearch">進階搜尋</string>
+    <string name="cancel">取消</string>
+    <string name="clear">清除</string>
+    <string name="enterName">請輸入餐廳名字</string>
+    <string name="all">全部</string>
+    <string name="region">地區</string>
+    <string name="dishes">菜式</string>
+    <string name="category">種類</string>
+    <string name="searchResults">搜尋結果</string>
+    <string name="noSearchData">未有資料顯示</string>
+    <string name="loadingAdv">載入廣告中...</string>
+
+<!--  Favorite -->
+    <string name="editList">編輯列表</string>
+    <string name="done">完成</string>
+    <string name="noFavoriteList">未有資料顯示</string>
+
+<!--  Map -->
+    <string name="searchNearby">按此顯示範圍內餐廳</string>
+    <string name="backToMacau">按此顯示澳門地圖</string>
+    <string name="restList">餐廳列表</string>
+
+<!--  About -->
+    <string name="disclaimer">免責聲明</string>
+    <string name="appVersionName">食在澳門 v1.0</string>
+    <string name="versionNo">1.0</string>
+    <string name="aboutUs">關於我們</string>
+    <string name="macauWifi">澳門 WIFI 熱點</string>
+    <string name="advertiseUs">刊登廣告和查詢</string>
+    <string name="ourWebsite">志達科技有限公司\nCYCON TECHNOLOGY LIMITED</string>
+    <string name="emailUs">電郵 : info@cycon.com.mo </string>
+    <string name="callUs1">電話 : 6203-1230</string>
+    <string name="callUs2">電話 : 6361-1387</string>
+    <string name="faxUs">傳真 : 2853-2716</string>
+    <string name="disclaimerText">1。本程式所載的內容資料均由第三者, 四者或機構所提供，僅供參考之用。用者應自行判斷內容之真實性。 \n2.本程式將盡力確保該等資料的準確，若發現本程式所載列的內容出現問題，請聯絡我們。本程式具有自行處理（刪除或保留）所有內容的權利，且將不作另行通知。\n3．由於最近通貨彭脹急劇, 部分餐單價目經常有所調整。  用家請自行查詢最新價目。\n4．本程式不會負責因資料錯誤而導致之任何損失。\n</string>
+    <string name="macauRegion">澳門區</string>
+    <string name="taipaRegion">氹仔區</string>
+    <string name="coloaneRegion">路環區</string>
+    
+    
+ <!-- Latest -->
+    <string name="latestNews"> 最新情報</string>
+ 
+	<!--  SQL Queries -->
+	<string name="initCafeTableSql">CREATE TABLE IF NOT EXISTS CAFEENTRIES(
+		id INTEGER PRIMARY KEY, name TEXT , phone TEXT , district TEXT , 
+		address TEXT , website TEXT , coordx TEXT , 
+		coordy TEXT , openhours TEXT , description TEXT , 
+		message TEXT , type0 TEXT , type1 TEXT , 
+		type2 TEXT , option_phoneorder TEXT , option_booking TEXT , 
+		option_night TEXT , option_call TEXT , option_buffet TEXT , 
+		option_banquet TEXT , menuid TEXT ,
+		introid TEXT , intropage TEXT , recommendid TEXT ,
+		recommendpage TEXT , menupage TEXT , 
+		payment TEXT , status TEXT ,
+		option_wifi TEXT , option_parking TEXT , branch TEXT , 
+		priority TEXT )
+	</string>
+	
+	<string name="insertCafeSql">INSERT INTO CAFEENTRIES(
+		id, name, phone, district, address, website, coordx, coordy, openhours,
+		description, message, type0, type1, type2, option_phoneorder, 
+		option_booking, option_night, option_call, option_buffet,
+		option_banquet, menuid, introid, intropage, recommendid, 
+		recommendpage, menupage, payment, status, option_wifi,
+		option_parking, branch, priority) VALUES(?, ?, ?, ?, ?,
+		?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?,
+		?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?)</string>
+		
+
+	<string name="getCafeEntriesSql">SELECT * FROM CAFEENTRIES 
+	</string>
+	<string name="clearCafeTableSql">DELETE FROM CAFEENTRIES</string>
+	
+	<string name="initWatchListEntriesTblSql">CREATE TABLE IF NOT EXISTS WATCHLISTENTRIES(
+		EntryId INTEGER PRIMARY KEY AUTOINCREMENT, Symbol
+		TEXT NOT NULL, TypeCode TEXT)</string>
+	<string name="insertWatchListEntrySql">INSERT INTO WATCHLISTENTRIES(
+		Symbol, TypeCode) VALUES(?,?)
+	</string>
+	<string name="getWatchListEntriesSql">SELECT EntryId, Symbol, TypeCode FROM
+		WATCHLISTENTRIES WHERE Symbol = ? ORDER BY EntryId DESC</string>
+	<string name="getDefaultWatchListEntriesSql">SELECT EntryId, Symbol, TypeCode FROM
+		 WATCHLISTENTRIES</string>
+	
+	<!-- SQL for Recent Quotes -->
+    <string name="initRecentQuotesTblSql">CREATE TABLE IF NOT EXISTS RECENT_QUOTES(
+		RecentQuoteId INTEGER PRIMARY KEY AUTOINCREMENT, Symbol TEXT NOT
+		NULL, TypeCode TEXT NOT NULL, ExchangeCode TEXT,
+		ExchangeGroup TEXT )</string>
+    
+	<string name="insertRecentQuoteSql">INSERT INTO RECENT_QUOTES(
+		Symbol, TypeCode, ExchangeCode, ExchangeGroup) VALUES(?, ?, ?, ?)
+	</string>
+	 
+	<string name="getRecentQuotesSql">SELECT RecentQuoteId, Symbol, TypeCode FROM
+		RECENT_QUOTES ORDER BY RecentQuoteId DESC</string>
+	<string name="delRecentQuoteSql">DELETE FROM RECENT_QUOTES WHERE RecentQuoteId=?</string>
+	<string name="delRecentQuoteBySymbolSql">DELETE FROM RECENT_QUOTES WHERE Symbol=?</string> 
+    <string name="delRecentQuoteOldestSql">DELETE FROM RECENT_QUOTES WHERE RecentQuoteId = ( SELECT MIN(RecentQuoteId) FROM RECENT_QUOTES)</string> 
+    <string name="delRecentQuotesSql">DELETE FROM RECENT_QUOTES </string> 
+    <string name="delWatchListEntriesBySymbolSql">DELETE FROM WATCHLISTENTRIES WHERE Symbol=?</string>
+    <string name="delAllWatchListEntriesSql">DELETE FROM WATCHLISTENTRIES </string>
+    
+    <!--  SQL for RSS Feed -->
+    <string name="initRSSFeedSourceTblSQL">CREATE TABLE IF NOT EXISTS RSS_DATASOURCE(
+		FeedId  INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT
+		NULL, Link TEXT NOT NULL, Description TEXT, SelectedFlag INTEGER)</string>
+	<string name="insertRSSFeedSourceSql">INSERT INTO RSS_DATASOURCE (Title, Link, Description, SelectedFlag) 
+				VALUES(?,?,?,?) </string>
+	<string name="getRSSFeedSourceSql">SELECT FeedId, Title, Link, Description,SelectedFlag FROM
+		RSS_DATASOURCE ORDER BY FeedId</string>		
+	<string name="delRSSFeedSrcEntrySql">Delete from RSS_DATASOURCE WHERE Title=?</string>
+	<string name="delAllRSSFeedSrcEntriesSql">Delete from RSS_DATASOURCE</string>	
+    
+</resources>

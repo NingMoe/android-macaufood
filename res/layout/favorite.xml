@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:background="#DDDDDD">
+  
+	<TextView 
+		android:id="@+id/noFavoriteList"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="center_horizontal"
+		android:textSize="18sp"
+		android:textColor="#555555"
+		android:paddingTop="10dip"
+		android:textStyle="bold"
+		android:text="@string/noFavoriteList"
+		android:visibility="visible"
+	/>
+  
+	<com.cycon.macaufood.widget.DDListView
+	    xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tlv="http://schemas.android.com/apk/res/com.cycon.macaufood"
+	
+	    android:id="@+id/list"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dip"
+	    android:layout_weight="1"
+	    android:drawSelectorOnTop="false"
+	    android:cacheColorHint="#00000000"
+	    
+	    
+	/>
+	
+	<Button
+		android:id="@+id/editBtn"
+	    android:layout_width="fill_parent"
+	    android:layout_height="35dip"
+		android:text="@string/editList"
+		android:background="@drawable/custom_button_bg"
+	  	android:textSize="15sp"
+	  	android:textColor="#FFFFFF"
+		/>
+    
+</LinearLayout>

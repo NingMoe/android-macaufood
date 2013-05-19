@@ -1,0 +1,74 @@
+10
+
+dir
+106
+file:///D:/svn/MacauFood/res
+file:///D:/svn/MacauFood
+
+
+
+2011-11-17T07:00:47.873008Z
+104
+Owner
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ebc05c65-d309-8140-aab0-e46cd9ab2468
+
+
+
+
+
+
+
+
+((conflict xml dir update edited deleted (version file:///D:/svn/MacauFood 1 1 res/xml none) (version file:///D:/svn/MacauFood 3 106 res/xml dir)))
+
+values
+dir
+
+xml
+dir
+
+
+
+delete
+
+drawable
+dir
+
+drawable-hdpi
+dir
+
+layout-ldpi
+dir
+
+anim
+dir
+
+layout-mdpi
+dir
+
+drawable-ldpi
+dir
+
+drawable-mdpi
+dir
+
+raw
+dir
+
+layout
+dir
+

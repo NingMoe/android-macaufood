@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="400dip"
+    android:layout_marginRight="20dip"
+    android:layout_marginLeft="20dip"
+    android:padding="10dip"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_bg"
+    android:layout_gravity="center" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fbName" 
+            android:textSize="18sp"
+		    android:shadowColor="#999999"
+		    android:shadowDy="1.2"
+		    android:shadowRadius="1"
+		    android:textColor="#000000"
+		    android:paddingLeft="2dip"
+		    android:paddingRight="2dip"/>
+
+        <EditText
+            android:id="@+id/nameText"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dip"
+            android:hint="@string/fbName" 
+            android:imeOptions="actionNext">
+        </EditText>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fbEmail" 
+            android:textSize="18sp"
+		    android:shadowColor="#999999"
+		    android:shadowDy="1.2"
+		    android:shadowRadius="1"
+		    android:textColor="#000000"
+		    android:paddingLeft="2dip"
+		    android:paddingRight="2dip"/>
+        
+        <EditText
+            android:id="@+id/emailText"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dip" 
+            android:hint="@string/fbEmailHint"
+            android:imeOptions="actionNext"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fbContent" 
+            android:textSize="18sp"
+		    android:shadowColor="#999999"
+		    android:shadowDy="1.2"
+		    android:shadowRadius="1"
+		    android:textColor="#000000"
+		    android:paddingLeft="2dip"
+		    android:paddingRight="2dip"/>
+        
+        <EditText
+            android:id="@+id/contentText"
+            android:textSize="16sp"
+            android:layout_width="0dip"
+            android:layout_height="100dip"
+            android:maxHeight="150dip"
+            android:layout_weight="1"
+            android:gravity="top"
+            android:layout_marginLeft="10dip" 
+            android:imeOptions="actionDone">
+        </EditText>
+
+    </LinearLayout>
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" />
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_gravity="bottom">
+        <Button
+            android:id="@+id/submitBtn"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:layout_marginRight="5dip"
+            android:text="@string/fbSubmit"/>
+        
+        <Button
+            android:id="@+id/cancelBtn"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:layout_marginLeft="5dip"
+            android:text="@string/cancel" />
+
+    </LinearLayout>
+
+</LinearLayout>

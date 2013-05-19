@@ -1,0 +1,188 @@
+package com.cycon.macaufood.utilities;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.view.Display;
+import android.view.WindowManager;
+
+import com.cycon.macaufood.R;
+import com.cycon.macaufood.bean.Cafe;
+import com.cycon.macaufood.bean.ParsedCafeHolder;
+
+public class Config {
+	
+	public static String DEVICE_ID;
+	
+	public static String cafe_version_update = "1321551084";
+	
+	public static boolean updateSuccessfully;
+
+	public List<Cafe> cafeLists = Collections.synchronizedList(new ArrayList<Cafe>(2000));
+	
+	public ArrayList<String> favoriteLists = new ArrayList<String>(20);
+	
+	public ArrayList<Cafe> nearbyLists = new ArrayList<Cafe>(50);
+	
+	public ArrayList<ParsedCafeHolder> recommendCafeList = new ArrayList<ParsedCafeHolder>(10);
+	public ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
+	public ArrayList<ParsedCafeHolder> creditCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
+	public ArrayList<ParsedCafeHolder> vipCouponCafeList = new ArrayList<ParsedCafeHolder>(20);
+	
+//	public HashMap<String, ArrayList<Cafe>> branchMap = new HashMap<String, ArrayList<Cafe>>();
+	
+	public static ArrayList<ParsedCafeHolder> tempParsedCafeList = new ArrayList<ParsedCafeHolder>();
+	
+	public static int deviceWidth;
+	
+	private static Config config;
+	
+	public List<Cafe> getCafeLists() {
+		return cafeLists;
+	}
+	public ArrayList<String> getFavoriteLists() {
+		return favoriteLists;
+	}
+	public ArrayList<Cafe> getNearbyLists() {
+		return nearbyLists;
+	}
+	public void setRecommendCafeList(ArrayList<ParsedCafeHolder> list) {
+		recommendCafeList = list;
+	}
+	public ArrayList<ParsedCafeHolder> getRecommendCafeList() {
+		return recommendCafeList;
+	}
+	public ArrayList<ParsedCafeHolder> getNormalCouponCafeList() {
+		return normalCouponCafeList;
+	}
+	public ArrayList<ParsedCafeHolder> getCreditCouponCafeList() {
+		return creditCouponCafeList;
+	}
+	public ArrayList<ParsedCafeHolder> getVipCouponCafeList() {
+		return vipCouponCafeList;
+	}
+//	public HashMap<String, ArrayList<Cafe>> getBranchMap() {
+//		return branchMap;
+//	}
+	
+	public static Config getInstance() {
+		if (config == null) {
+			config = new Config();
+		}
+		return config;
+	}
+	
+	public static void savePreferencesLong(Context context, String key, long value) {
+		SharedPreferences prefs = context.getSharedPreferences(
+				"macaufood.preferences", 0);
+		Editor prefsPrivateEditor = prefs.edit();
+		prefsPrivateEditor.putLong(key, value);
+		prefsPrivateEditor.commit();
+	}
+	
+	public static long getPreferenceValueLong(Context context, String key, long defaultValue) {
+		SharedPreferences prefs = context.getSharedPreferences(
+				"macaufood.preferences", 0);
+		return prefs.getLong(key, defaultValue);
+	}
+
+	public static void savePreferencesStr(Context context, String key, String value) {
+		SharedPreferences prefs = context.getSharedPreferences(
+				"macaufood.preferences", 0);
+		Editor prefsPrivateEditor = prefs.edit();
+		prefsPrivateEditor.putString(key, value);
+		prefsPrivateEditor.commit();
+	}
+	
+	public static String getPreferenceValueStr(Context context, String key, String defaultValue) {
+		SharedPreferences prefs = context.getSharedPreferences(
+				"macaufood.preferences", 0);
+		return prefs.getString(key, defaultValue);
+	}
+
+	public static void savePreferencesBoolean(Context context, String key, boolean value) {
+		SharedPreferences prefs = context.getSharedPreferences(
+				"macaufood.preferences", 0);
+		Editor prefsPrivateEditor = prefs.edit();
+		prefsPrivateEditor.putBoolean(key, value);
+		prefsPrivateEditor.commit();
+	}
+	
+	public static boolean getPreferenceValueBoolean(Context context, String key, boolean defaultValue) {
+		SharedPreferences prefs = context.getSharedPreferences(
+				"macaufood.preferences", 0);
+		return prefs.getBoolean(key, defaultValue);
+	}
+	
+
+	public static void initDataFromXml(Resources res, Context context) {
+		/** Handling XML */
+
+		
+		Config.getInstance().getCafeLists().clear();
+		
+			try {
+				SAXParserFactory spf = SAXParserFactory.newInstance();
+				SAXParser sp = spf.newSAXParser();
+				XMLReader xr = sp.getXMLReader();
+				CafeXMLHandler myXMLHandler = new CafeXMLHandler();
+				xr.setContentHandler(myXMLHandler);
+				xr.parse(new InputSource(res.openRawResource(R.raw.cafe_output)));
+			} catch (NotFoundException e) {
+				ETLog.e("Config", "NotFoundexception");
+				e.printStackTrace();
+			} catch (FactoryConfigurationError e) {
+				ETLog.e("Config", "factoryconfiexception");
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				ETLog.e("Config", "parseconfexception");
+				e.printStackTrace();
+			} catch (SAXException e) {
+				ETLog.e("Config", "saxexception");
+				e.printStackTrace();
+			} catch (IOException e) {
+				ETLog.e("Config", "ioexception");
+				e.printStackTrace();
+			}
+	}
+	
+	public static boolean isOnline(Context context) {
+	    ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo ni = cm.getActiveNetworkInfo();
+	    if (ni!=null && ni.isAvailable() && ni.isConnected()) {
+	        return true;
+	    } else {
+	        return false; 
+	    }
+	}
+	
+
+	public static boolean isLandscape(Activity activity) {
+		WindowManager wm = activity.getWindowManager();
+		Display d = wm.getDefaultDisplay();
+		return d.getWidth() > d.getHeight();
+	}
+	
+	
+}

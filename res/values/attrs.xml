@@ -1,0 +1,5 @@
+<resources>
+	<declare-styleable name="AdvView">
+		<attr name="small" format="boolean" />
+	</declare-styleable>
+</resources>

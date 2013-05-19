@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- A theme that has a translucent background. Here we explicitly specify 
+		that this theme is to inherit from the system's translucent theme, which 
+		sets up various attributes correctly.. -->
+	<style name="Theme.Translucent" parent="android:Theme.Holo.Light.Dialog.NoActionBar">
+	</style>
+ 
+	    <style name="ThemeHolo" parent="android:Theme.Light.NoTitleBar">
+    </style>
+</resources> 

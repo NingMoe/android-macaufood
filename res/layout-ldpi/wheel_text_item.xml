@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="19sp"
+    android:singleLine="true"
+    android:shadowColor="#999999"
+    android:shadowDy="1.2"
+    android:shadowRadius="1"
+    android:textColor="#000000"
+    android:paddingTop="5dip"
+    android:paddingBottom="5dip"
+    android:paddingLeft="2dip"
+    android:paddingRight="2dip"
+    android:ellipsize="marquee"/>

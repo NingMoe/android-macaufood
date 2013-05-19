@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="46dip"
+    android:gravity="center_vertical"
+    android:ignoreGravity="@+id/icon"
+    android:background="@drawable/favorite_item_bg">
+    
+    <ImageView android:id="@+id/delete_btn"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="8dip"
+        android:layout_width="45dip"
+        android:layout_height="45dip"
+		android:src="@drawable/delete_btn"
+		android:visibility="gone"
+		/>
+    
+    <ImageView android:id="@+id/icon"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:paddingRight="5dip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+				android:src="@drawable/grabber"
+		android:visibility="gone"
+		/>
+		<TextView android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:paddingLeft="9dip"
+        android:paddingRight="9dip"
+        android:layout_height="fill_parent"
+		android:textSize="20sp"
+		android:textColor="#000000"
+		android:shadowColor="#999999"
+		android:shadowDy="1"
+		android:shadowRadius="1"
+        android:layout_alignWithParentIfMissing="true"
+		android:layout_toLeftOf="@id/icon"
+		android:layout_toRightOf="@id/delete_btn"
+		android:gravity="center_vertical"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+		/>
+</RelativeLayout>

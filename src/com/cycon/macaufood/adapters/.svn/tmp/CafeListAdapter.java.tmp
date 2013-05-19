@@ -1,0 +1,146 @@
+package com.cycon.macaufood.adapters;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.app.ListActivity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.cycon.macaufood.R;
+import com.cycon.macaufood.utilities.Cafe;
+import com.cycon.macaufood.utilities.ImageLoader;
+import com.cycon.macaufood.utilities.ImageLoader2;
+import com.cycon.macaufood.utilities.ImageLoader3;
+
+public class CafeListAdapter extends ArrayAdapter<Cafe> {
+
+	private ListActivity activity;
+    public ImageLoader2 imageLoader; 
+	private LayoutInflater inflater;
+    private ArrayList<Cafe> cafes;
+    private Context context;
+
+    public CafeListAdapter(Context context, int textViewResourceId, ArrayList<Cafe> cafes, ListActivity a) {
+            super(context, textViewResourceId, cafes);
+            this.cafes = cafes;
+            this.context = context;
+            activity = a;
+        	inflater = LayoutInflater.from(context);
+<<<<<<< .mine
+        	imageLoader=new ImageLoader(activity.getApplicationContext(), cafes, 5);
+=======
+        	imageLoader=new ImageLoader2(activity.getApplicationContext());
+        	
+>>>>>>> .r4
+//        	for (int i = 1; i < 20; i++) {
+//        		imageLoader.loadPhoto(i + "", null);
+//			}
+        	Log.e("ZZZ", "cafe size" + cafes.size());
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+    		ViewHolder holder;
+            if (convertView == null) {
+            	convertView = inflater.inflate(R.layout.cafe_row, null);
+                
+                holder = new ViewHolder();
+                holder.name = (TextView) convertView.findViewById(R.id.name);
+                holder.addr = (TextView) convertView.findViewById(R.id.addr);
+                holder.image = (ImageView) convertView.findViewById(R.id.imageView);
+
+                convertView.setTag(holder);
+            } else {
+                // Get the ViewHolder back to get fast access to the TextView
+                // and the ImageView.
+                holder = (ViewHolder) convertView.getTag();
+            }
+            
+            Cafe cafe = cafes.get(position);
+            if (cafe != null) {
+//				 TextView name = (TextView) convertView.findViewById(R.id.name);
+//				 TextView addr = (TextView) convertView.findViewById(R.id.addr);
+//				 ImageView image = (ImageView) convertView.findViewById(R.id.imageView);
+				holder.name.setText(cafe.getName());
+				holder.addr.setText(cafe.getId());
+				
+<<<<<<< .mine
+				imageLoader.displayImage(cafe.getId(), holder.image, position);
+=======
+				imageLoader.displayImage(cafe.getId(), activity, holder.image);
+>>>>>>> .r4
+				
+//				int preLoadId = Integer.parseInt(cafe.getId()) + 6;
+//				imageLoader.loadPhoto(preLoadId + "", null);
+			}
+            return convertView;
+    }
+    
+    static class ViewHolder {
+        TextView name;
+        TextView addr;
+        ImageView image;
+    }
+    
+    private class FetchImageTask extends AsyncTask<Integer, Void, Bitmap> {
+    	
+    	private Cafe cafe;
+    	private int id;
+    	private ImageView view;
+    	
+    	public FetchImageTask(Cafe cafe, ImageView view, int id) {
+    		this.cafe = cafe;
+    		this.id = id;
+    		this.view = view;
+		}
+
+		@Override
+		protected Bitmap doInBackground(Integer... params) {
+    		String urlStr = "http://www.cycon.com.mo/appimages/cafephoto/" + params[0] + ".jpg";
+    		 try {
+				URL url = new URL(urlStr);
+			    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			    InputStream is = conn.getInputStream();
+//                BufferedInputStream bis = new BufferedInputStream(is);
+                Bitmap bmImg = BitmapFactory.decodeStream(is);
+                return bmImg;
+//                Log.e("ZZZ", "update");
+//                notifyDataSetChanged();
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+    	
+		@Override
+		protected void onPostExecute(Bitmap result) {
+//			cafes.get(id - 1).
+            view.setImageBitmap(result);
+//			cafe.setImage(result);
+//			notifyDataSetChanged();
+			
+		}
+		
+    }
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+  
+  <LinearLayout 
+  		android:id="@+id/retryLayout"
+	  android:orientation="vertical"
+	  android:layout_width="fill_parent"
+	  android:layout_height="fill_parent"
+	  android:visibility="gone">
+	  <TextView 
+		  android:layout_width="wrap_content"
+		  android:layout_height="wrap_content"
+		  android:text="@string/noInternetMsg"
+		  android:layout_gravity="center_horizontal"
+		  android:textSize="18sp"
+		  android:layout_marginTop="20dip"/>
+		  
+	  <Button
+ 			android:id="@+id/retryButton"
+			android:layout_width="100dip"
+			android:layout_height="wrap_content"
+		    android:text="@string/retryMsg"
+		  	android:layout_gravity="center_horizontal"
+		    android:layout_marginTop="20dip"
+		      />
+	  		
+		  </LinearLayout>
+  
+  <ListView
+  	  android:id="@+id/list"
+	  android:layout_width="fill_parent"
+	  android:layout_height="0dip"
+	  android:layout_weight="1"/>
+	  
+  <FrameLayout
+	    android:layout_width="fill_parent"
+		android:layout_height="50dip"
+		>
+  
+	  
+  <com.cycon.macaufood.widget.AdvView
+  		android:id="@+id/banner"
+	    android:layout_width="fill_parent"
+		android:layout_height="50dip"
+		android:scaleType="fitXY"
+		android:background="#FFFFFF"
+		mf:small="true"/>
+		
+		  <LinearLayout
+		  
+	  		android:id="@+id/loadingAdv"
+		   	android:orientation="horizontal"
+		    android:layout_width="fill_parent"
+			android:layout_height="50dip"
+			android:gravity="center"
+			>
+				<ProgressBar 
+				    android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					style="?android:attr/progressBarStyleSmall"/>
+			
+				<TextView
+				    android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/loadingInfo" 
+					android:textColor="#777777"
+					android:layout_marginLeft="10dip"/>
+			
+			</LinearLayout>
+		</FrameLayout>
+    
+</LinearLayout>

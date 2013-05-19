@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:background="@drawable/app_bg_portrait"
+  android:paddingTop="7dip"
+  android:paddingBottom="7dip"
+  android:paddingLeft="7dip"
+  android:paddingRight="7dip">
+  
+	  <TextView
+	  		android:id="@+id/name"
+		  android:layout_width="fill_parent"
+		  android:layout_height="wrap_content"
+		  android:background="@drawable/header_bar"
+		  android:textColor="#FFFFFF"
+		  android:textSize="20sp"
+		  android:textStyle="bold"
+		  android:gravity="center_horizontal"
+		  android:padding="5dip"
+		  android:text="@string/latestNews"
+		  
+	    android:shadowColor="#777777"
+	    android:shadowDy="1.5"
+	    android:shadowDx="1.5"
+	    android:shadowRadius="1"
+		  />
+	  
+   <LinearLayout 
+	  android:orientation="vertical"
+	  android:layout_width="fill_parent"
+	  android:layout_height="fill_parent"
+	  android:background="@drawable/detail_body_bg"
+	  android:paddingLeft="7dip" android:paddingRight="7dip"
+	  android:paddingBottom="7dip">
+	  
+	
+	<ListView
+		  android:id="@+id/list"
+		  android:layout_width="fill_parent"
+		  android:layout_height="0dip"
+		  android:layout_weight="1"
+			  	android:background="@drawable/list_bg"
+				android:cacheColorHint="#00000000"
+		  />
+	  
+   </LinearLayout>
+    
+</LinearLayout>
