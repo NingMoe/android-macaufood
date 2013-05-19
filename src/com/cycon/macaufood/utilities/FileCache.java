@@ -2,9 +2,9 @@ package com.cycon.macaufood.utilities;
 
 import java.io.File;
 
-import com.cycon.macaufood.bean.ImageType;
-
 import android.content.Context;
+
+import com.cycon.macaufood.bean.ImageType;
 
 public class FileCache {
 

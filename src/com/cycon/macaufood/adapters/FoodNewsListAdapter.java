@@ -12,10 +12,9 @@ import android.widget.TextView;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
-import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.bean.ParsedFoodNewsHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
-import com.cycon.macaufood.utilities.Utilities;
+import com.cycon.macaufood.utilities.MFUtil;
 
 public class FoodNewsListAdapter extends BaseAdapter {
 
@@ -53,7 +52,7 @@ public class FoodNewsListAdapter extends BaseAdapter {
 				holder.subject.setText(cafe.getSubject());
 				holder.content.setText(cafe.getContent());
 				holder.time.setText(cafe.getTimeadded());
-				convertView.setBackgroundResource(Utilities.getRowDrawable(position));
+				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
 				
 				imageLoader.displayImage(cafe.getId(), holder.image, position);
 				

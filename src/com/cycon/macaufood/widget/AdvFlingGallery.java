@@ -8,12 +8,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -31,8 +29,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.provider.Settings.Secure;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +41,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.bean.Cafe;
-import com.cycon.macaufood.utilities.Config;
-import com.cycon.macaufood.utilities.ETLog;
+import com.cycon.macaufood.utilities.MFConfig;
 
 public class AdvFlingGallery extends OneFlingGallery {
 	
@@ -85,7 +81,7 @@ public class AdvFlingGallery extends OneFlingGallery {
 
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if (linkIdList.size() != 0) {
-					String url = "http://www.cycon.com.mo/xml_advclick.php?id= " + linkIdList.get(position) + "&code=" + Config.DEVICE_ID;
+					String url = "http://www.cycon.com.mo/xml_advclick.php?id= " + linkIdList.get(position) + "&code=" + MFConfig.DEVICE_ID;
 					Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 					mContext.startActivity(myIntent);
 				}
@@ -93,7 +89,7 @@ public class AdvFlingGallery extends OneFlingGallery {
 			}
 		});
 		
-		if (Config.isOnline(mContext)) {
+		if (MFConfig.isOnline(mContext)) {
 			new FetchAdvIdTask().execute();
 		} else {
     		setVisibility(View.VISIBLE);
@@ -117,9 +113,9 @@ public class AdvFlingGallery extends OneFlingGallery {
     	protected Void doInBackground(Void... params) {
     		if (isCancelled()) return null;
 
-    		if (!Config.isOnline(mContext)) return null;
+    		if (!MFConfig.isOnline(mContext)) return null;
     		
-    		String linkIdUrl = "http://www.cycon.com.mo/xml_adv2.php?code=android-" + Config.DEVICE_ID + 
+    		String linkIdUrl = "http://www.cycon.com.mo/xml_adv2.php?code=android-" + MFConfig.DEVICE_ID + 
     				"&type=b";
 
             try {
@@ -131,11 +127,11 @@ public class AdvFlingGallery extends OneFlingGallery {
             	BufferedReader rd = new BufferedReader(new InputStreamReader(
 						response.getEntity().getContent()));
             	String advListStr = rd.readLine().trim();
-				ETLog.e(TAG, advListStr);
+				Log.e(TAG, advListStr);
             	String[] advIdList = advListStr.split(",");
             	for (String id : advIdList) {
 
-    				ETLog.e(TAG, id);
+    				Log.e(TAG, id);
             		if (!id.equals("")) {
             			Integer.parseInt(id);
             			idList.add(id);
@@ -143,15 +139,15 @@ public class AdvFlingGallery extends OneFlingGallery {
             	}
             	
 			} catch (MalformedURLException e) {
-				ETLog.e(TAG, "malformed url exception");
+				Log.e(TAG, "malformed url exception");
 				e.printStackTrace();
 				return null;
 			} catch (IOException e) {
-				ETLog.e(TAG, "io exception");
+				Log.e(TAG, "io exception");
 				e.printStackTrace();
 				return null;
 			} catch (Exception e) {
-				ETLog.e(TAG, "exception");
+				Log.e(TAG, "exception");
 				e.printStackTrace();
 				return null;
 			}
@@ -189,7 +185,7 @@ public class AdvFlingGallery extends OneFlingGallery {
    	protected Bitmap doInBackground(Void... params) {
    		if (isCancelled()) return null;
 
-   		if (!Config.isOnline(mContext)) return null;
+   		if (!MFConfig.isOnline(mContext)) return null;
 
     		String urlStr = "http://www.cycon.com.mo/appimages/adv_rotate_banner/" + id + ".jpg";
             try {
@@ -202,10 +198,10 @@ public class AdvFlingGallery extends OneFlingGallery {
 				return BitmapFactory.decodeStream(new FlushedInputStream(is));
 				
 			} catch (MalformedURLException e) {
-				ETLog.e(TAG, "malformed url exception");
+				Log.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				ETLog.e(TAG, "io exception");
+				Log.e(TAG, "io exception");
 				e.printStackTrace();
 			} 
     		
@@ -248,7 +244,7 @@ public class AdvFlingGallery extends OneFlingGallery {
         public void run() {
         	
         	if (linkIdList.size() == 0) {
-        		if (Config.isOnline(mContext)) {
+        		if (MFConfig.isOnline(mContext)) {
         			imageList.clear();
         			if (!isFetchingId)
         				new FetchAdvIdTask().execute();
@@ -301,7 +297,7 @@ public class AdvFlingGallery extends OneFlingGallery {
 	        i.setImageBitmap(bmp);
 	        i.setScaleType(ScaleType.FIT_CENTER);
 //	        int height = Config.deviceWidth * bmp.getHeight() / bmp.getWidth();
-	        i.setLayoutParams(new Gallery.LayoutParams(Config.deviceWidth, getHeight()));
+	        i.setLayoutParams(new Gallery.LayoutParams(MFConfig.deviceWidth, getHeight()));
 	        
 	    	return i;
 	    	

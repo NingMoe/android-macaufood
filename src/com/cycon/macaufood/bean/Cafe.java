@@ -1,7 +1,8 @@
 package com.cycon.macaufood.bean;
 
+import android.util.Log;
+
 import com.cycon.macaufood.utilities.CafeAttrToken;
-import com.cycon.macaufood.utilities.ETLog;
 
 
 public class Cafe implements Comparable<Cafe>{
@@ -323,7 +324,7 @@ public class Cafe implements Comparable<Cafe>{
 		else if (field.equals(CafeAttrToken.OPTION_PARKING.getValue())) option_parking = value;
 		else if (field.equals(CafeAttrToken.PRIORITY.getValue())) priority = value;
 		else if (field.equals(CafeAttrToken.BRANCH.getValue())) branch = value;
-		else {ETLog.e("Cafe", "no field" + field); throw new Exception("No such field");}
+		else {Log.e("Cafe", "no field" + field); throw new Exception("No such field");}
 	}
 	
 	public String getAnyField(String field) throws Exception {
@@ -365,7 +366,7 @@ public class Cafe implements Comparable<Cafe>{
 		else if (field.equals(CafeAttrToken.OPTION_PARKING.getValue())) return option_parking;
 		else if (field.equals(CafeAttrToken.PRIORITY.getValue())) return priority;
 		else if (field.equals(CafeAttrToken.BRANCH.getValue())) return branch;
-		else {ETLog.e("Cafe", "no field" + field); throw new Exception("No such field");}
+		else {Log.e("Cafe", "no field" + field); throw new Exception("No such field");}
 	}
 	
 	public int compareTo(Cafe another) {

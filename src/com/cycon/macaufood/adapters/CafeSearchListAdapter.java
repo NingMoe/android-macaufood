@@ -14,7 +14,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.ImageLoader;
-import com.cycon.macaufood.utilities.Utilities;
+import com.cycon.macaufood.utilities.MFUtil;
 
 public class CafeSearchListAdapter extends BaseAdapter {
 
@@ -67,7 +67,7 @@ public class CafeSearchListAdapter extends BaseAdapter {
 				if (!cafe.getOption_banquet().equals("1")) holder.banquet.getDrawable().mutate().setAlpha(50); 
 				else holder.banquet.getDrawable().mutate().setAlpha(255); 
 				
-				convertView.setBackgroundResource(Utilities.getRowDrawable(position));
+				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
 				imageLoader.displayImage(cafe.getId(), holder.image, position);
 				
 			}

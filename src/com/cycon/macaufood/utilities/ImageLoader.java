@@ -28,6 +28,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.cycon.macaufood.R;
@@ -57,7 +58,7 @@ public class ImageLoader {
     private static final int MAX_TASKS_NUMBER = 7;
     
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
-    	ETLog.e(TAG, "initImageLoader");
+    	Log.e(TAG, "initImageLoader");
     	if (imageType == ImageType.RECOMMEND) {
     		imageTypeUrl = "recommend_new";
     	} else if (imageType == ImageType.COUPON) {
@@ -156,7 +157,7 @@ public class ImageLoader {
 		                continue;
 		            }
 		        }
-				ETLog.e(TAG, "poll id " + pollId);
+				Log.e(TAG, "poll id " + pollId);
 				loadImages(pollId, null);
 			}
         }
@@ -185,7 +186,7 @@ public class ImageLoader {
         try {
 			task.execute();
 		} catch (RejectedExecutionException e) {
-			ETLog.e(TAG, "catchRejectedExecution");
+			Log.e(TAG, "catchRejectedExecution");
 			e.printStackTrace();
 		}
     }
@@ -241,7 +242,7 @@ public class ImageLoader {
         	if (p.imageView != null)
 				currentDisplayImages.remove(p.id);
         	
-            if (noConnection) {ETLog.e(TAG, "no connection");
+            if (noConnection) {Log.e(TAG, "no connection");
             	imagesToLoad.addFirst(p.id);
             	return null;
             }
@@ -303,10 +304,10 @@ public class ImageLoader {
 						p.imageView.setImageDrawable(nointernet);
 					} else {
 						if (result == null) {
-							ETLog.e(TAG, "set nophoto id = " + p.id);
+							Log.e(TAG, "set nophoto id = " + p.id);
 							p.imageView.setImageDrawable(nophoto);
 						} else {
-							ETLog.e(TAG, "set photo id = " + p.id);
+							Log.e(TAG, "set photo id = " + p.id);
 							p.imageView.setImageBitmap(result);
 						}
 					}
@@ -331,20 +332,20 @@ public class ImageLoader {
 	            	InputStream is= response.getEntity().getContent();
 		            File f=fileCache.getFile(id);
 		            OutputStream os = new FileOutputStream(f);
-		            Utilities.CopyStream(is, os);
+		            MFUtil.CopyStream(is, os);
 		            os.close();
 		            bitmap = decodeFile(f);
 
-		            if (bitmap == null) ETLog.e(TAG, "decode returns null");
+		            if (bitmap == null) Log.e(TAG, "decode returns null");
 		            return bitmap;
 		        } catch (FileNotFoundException ex){
-		        	ETLog.e(TAG, "no photo");
+		        	Log.e(TAG, "no photo");
 		           ex.printStackTrace();
 		        	   return null;
 		        } catch (Exception e) {
 		        	noConnection = true;
 		        	//socket error here
-		        	ETLog.e(TAG, "error = " + e.getMessage());
+		        	Log.e(TAG, "error = " + e.getMessage());
 		        	return null;
 		        }
 		    }

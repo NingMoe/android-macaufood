@@ -1,142 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-	  <TextView 
-	  	android:id="@+id/header"
-		android:layout_width="fill_parent"
-		android:layout_height="35dip"
-		android:textSize="18sp"
-		android:gravity="center"
-		android:paddingLeft="5dip"
-		android:paddingRight="5dip"
-		android:ellipsize="marquee"
-		android:singleLine="true"
-		android:textColor="#FFFFFF"
-		android:background="@drawable/menu_panel"
-	    android:shadowColor="#000000"
-	    android:shadowDy="1.5"
-	    android:shadowRadius="1"
-	    android:textStyle="bold"
-	    android:text="@string/appVersionName"
-		/>
-<ScrollView
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
-	
-<LinearLayout
-	android:orientation="vertical"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
-	
-	<TextView 
-		android:id="@+id/disclaimer"
-	    android:layout_height="60dip" android:layout_width="fill_parent"
-	    android:paddingLeft="15dip" android:paddingRight="15dip" android:focusable="true"
-	    android:gravity="center_vertical"
-	    android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="@string/disclaimer"
-	    android:drawableRight="@drawable/arrow3"
-    android:background="@drawable/about_item_bg"/>
-	    
-	 <View
-	    android:layout_height="1px" 
-	    android:layout_width="fill_parent"
-	    android:background="#AAAAAA"
-	    />
-	
-	<TextView 
-		android:id="@+id/macauWifi"
-	    android:layout_height="60dip" android:layout_width="fill_parent"
-	    android:paddingLeft="15dip" android:paddingRight="15dip" android:focusable="true"
-	    android:gravity="center_vertical"
-	    android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="@string/macauWifi"
-	    android:drawableRight="@drawable/arrow3" 
-    android:background="@drawable/about_item_bg"/>
-	    
-   	 <TextView
-            style="?android:attr/listSeparatorTextViewStyle"
-            android:text="@string/advertiseUs"
-            android:background="#888888"
-	    />
-	<TextView 
-		android:id="@+id/ourWebsite"
-	    android:layout_height="60dip" android:layout_width="fill_parent"
-	    android:paddingLeft="15dip" android:paddingRight="15dip" android:focusable="true"
-	    android:gravity="center_vertical"
-	    android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="@string/ourWebsite"
-	    android:drawableRight="@drawable/arrow3" 
-    android:background="@drawable/about_item_bg"/>
-	    
-	 <View
-	    android:layout_height="1px" 
-	    android:layout_width="fill_parent"
-	    android:background="#AAAAAA"
-	    />
-	<TextView 
-		android:id="@+id/emailUs"
-	    android:layout_height="60dip" android:layout_width="fill_parent"
-	    android:paddingLeft="15dip" android:paddingRight="15dip" android:focusable="true"
-	    android:gravity="center_vertical"
-	    android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="@string/emailUs"
-	    android:drawableRight="@drawable/arrow3" 
-    android:background="@drawable/about_item_bg"/>
-	    
-	 <View
-	    android:layout_height="1px" 
-	    android:layout_width="fill_parent"
-	    android:background="#AAAAAA"
-	    />
-	<TextView 
-		android:id="@+id/callUs1"
-	    android:layout_height="60dip" android:layout_width="fill_parent"
-	    android:paddingLeft="15dip" android:paddingRight="15dip" android:focusable="true"
-	    android:gravity="center_vertical"
-	    android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="@string/callUs1"
-    android:background="@drawable/about_item_bg"
-	    android:drawableRight="@drawable/arrow3" />
-	    
-	 <View
-	    android:layout_height="1px" 
-	    android:layout_width="fill_parent"
-	    android:background="#AAAAAA"
-	    />
-	<TextView 
-		android:id="@+id/callUs2"
-	    android:layout_height="60dip" android:layout_width="fill_parent"
-	    android:paddingLeft="15dip" android:paddingRight="15dip" android:focusable="true"
-	    android:gravity="center_vertical"
-	    android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="@string/callUs2"
-    android:background="@drawable/about_item_bg"
-	    android:drawableRight="@drawable/arrow3" />
-	 <View
-	    android:layout_height="1px" 
-	    android:layout_width="fill_parent"
-	    android:background="#AAAAAA"
-	    />
-	<TextView 
-		android:id="@+id/faxUs"
-	    android:layout_height="60dip" android:layout_width="fill_parent"
-	    android:paddingLeft="15dip" android:paddingRight="15dip" android:focusable="true"
-	    android:gravity="center_vertical"
-	    android:textAppearance="?android:attr/textAppearanceMedium"
-		android:text="@string/faxUs"
-    android:background="@drawable/about_item_bg" />
-	    	 <View
-	    android:layout_height="1px" 
-	    android:layout_width="fill_parent"
-	    android:background="#AAAAAA"
-	    />
-	    
-</LinearLayout>
-</ScrollView>
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="35dip"
+        android:background="@drawable/menu_panel"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:paddingLeft="5dip"
+        android:paddingRight="5dip"
+        android:shadowColor="#000000"
+        android:shadowDy="1.5"
+        android:shadowRadius="1"
+        android:singleLine="true"
+        android:text="@string/appVersionName"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:divider="@android:drawable/divider_horizontal_bright"
+            android:orientation="vertical"
+            android:showDividers="middle" >
+
+            <TextView
+                android:id="@+id/disclaimer"
+                android:layout_width="fill_parent"
+                android:layout_height="60dip"
+                android:background="@drawable/about_item_bg"
+                android:drawableRight="@drawable/arrow3"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:text="@string/disclaimer"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/macauWifi"
+                android:layout_width="fill_parent"
+                android:layout_height="60dip"
+                android:background="@drawable/about_item_bg"
+                android:drawableRight="@drawable/arrow3"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:text="@string/macauWifi"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                style="?android:attr/listSeparatorTextViewStyle"
+                android:background="#888888"
+                android:text="@string/advertiseUs" />
+
+            <TextView
+                android:id="@+id/ourWebsite"
+                android:layout_width="fill_parent"
+                android:layout_height="60dip"
+                android:background="@drawable/about_item_bg"
+                android:drawableRight="@drawable/arrow3"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:text="@string/ourWebsite"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/emailUs"
+                android:layout_width="fill_parent"
+                android:layout_height="60dip"
+                android:background="@drawable/about_item_bg"
+                android:drawableRight="@drawable/arrow3"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:text="@string/emailUs"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/callUs1"
+                android:layout_width="fill_parent"
+                android:layout_height="60dip"
+                android:background="@drawable/about_item_bg"
+                android:drawableRight="@drawable/arrow3"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:text="@string/callUs1"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/callUs2"
+                android:layout_width="fill_parent"
+                android:layout_height="60dip"
+                android:background="@drawable/about_item_bg"
+                android:drawableRight="@drawable/arrow3"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:text="@string/callUs2"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/faxUs"
+                android:layout_width="fill_parent"
+                android:layout_height="60dip"
+                android:background="@drawable/about_item_bg"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:text="@string/faxUs"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

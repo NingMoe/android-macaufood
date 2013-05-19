@@ -21,7 +21,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
-import com.cycon.macaufood.Details;
+import com.cycon.macaufood.activities.Details;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 

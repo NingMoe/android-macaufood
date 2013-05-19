@@ -21,15 +21,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.Settings.Secure;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.utilities.Config;
-import com.cycon.macaufood.utilities.ETLog;
+import com.cycon.macaufood.utilities.MFConfig;
 
 public class AdvView extends ImageView {
 	
@@ -61,7 +59,7 @@ public class AdvView extends ImageView {
 			
 			public void onClick(View v) {
 				if (linkId == null || linkId == "") return;
-				String url = "http://www.cycon.com.mo/xml_advclick.php?id= " + linkId + "&code=" + Config.DEVICE_ID;
+				String url = "http://www.cycon.com.mo/xml_advclick.php?id= " + linkId + "&code=" + MFConfig.DEVICE_ID;
 				Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 				mContext.startActivity(myIntent);
 			}
@@ -109,12 +107,12 @@ public class AdvView extends ImageView {
 				}
     		if (isCancelled()) return null;
 
-    		if (!Config.isOnline(mContext)) return null;
+    		if (!MFConfig.isOnline(mContext)) return null;
     		
-    		String linkIdUrl = "http://www.cycon.com.mo/xml_adv.php?code=android-" + Config.DEVICE_ID + 
+    		String linkIdUrl = "http://www.cycon.com.mo/xml_adv.php?code=android-" + MFConfig.DEVICE_ID + 
     				"&type=" + (isSmallAdv ? "s" : "b");
 
-			ETLog.e(TAG, "getting adv");
+			Log.e(TAG, "getting adv");
             try {
             	HttpClient client = new DefaultHttpClient();
             	HttpParams httpParams = client.getParams();
@@ -133,15 +131,15 @@ public class AdvView extends ImageView {
 				}
             	
 			} catch (MalformedURLException e) {
-				ETLog.e(TAG, "malformed url exception");
+				Log.e(TAG, "malformed url exception");
 				e.printStackTrace();
 				return null;
 			} catch (IOException e) {
-				ETLog.e(TAG, "io exception");
+				Log.e(TAG, "io exception");
 				e.printStackTrace();
 				return null;
 			} catch (Exception e) {
-				ETLog.e(TAG, "exception");
+				Log.e(TAG, "exception");
 				e.printStackTrace();
 				return null;
 			}
@@ -159,10 +157,10 @@ public class AdvView extends ImageView {
 				return BitmapFactory.decodeStream(new FlushedInputStream(is));
 				
 			} catch (MalformedURLException e) {
-				ETLog.e(TAG, "malformed url exception");
+				Log.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				ETLog.e(TAG, "io exception");
+				Log.e(TAG, "io exception");
 				e.printStackTrace();
 			} 
     		

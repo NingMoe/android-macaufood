@@ -14,7 +14,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
-import com.cycon.macaufood.utilities.Utilities;
+import com.cycon.macaufood.utilities.MFUtil;
 
 public class CafeListAdapter extends BaseAdapter {
 
@@ -50,7 +50,7 @@ public class CafeListAdapter extends BaseAdapter {
             if (cafe != null) {
 				holder.name.setText(cafe.getTitle());
 				holder.subText.setText(cafe.getContent());
-				convertView.setBackgroundResource(Utilities.getRowDrawable(position));
+				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
 				
 				imageLoader.displayImage(cafe.getId(), holder.image, position);
 				

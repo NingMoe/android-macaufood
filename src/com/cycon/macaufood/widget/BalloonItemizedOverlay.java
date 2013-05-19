@@ -19,7 +19,6 @@ package com.cycon.macaufood.widget;
 
 import java.util.List;
 
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
