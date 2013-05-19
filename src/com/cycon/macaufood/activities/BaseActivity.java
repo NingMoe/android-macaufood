@@ -37,6 +37,7 @@ import android.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.xmlhandler.UpdateXMLHandler;
 
 public abstract class BaseActivity extends Activity {
@@ -165,7 +166,7 @@ public abstract class BaseActivity extends Activity {
 				    	String str = rd.readLine().trim();
 				    	Integer.parseInt(str);
 				    	MFConfig.cafe_version_update = str;
-				    	MFConfig.savePreferencesStr(BaseActivity.this, "cafe_version_update", str);
+				    	PreferenceHelper.savePreferencesStr(BaseActivity.this, "cafe_version_update", str);
 				    	Log.e("cafe_version_update", MFConfig.cafe_version_update);
 				        
 					} catch (MalformedURLException e) {

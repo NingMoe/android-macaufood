@@ -18,6 +18,7 @@ import android.view.Window;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 
 public class SplashScreen extends Activity {
 	
@@ -27,23 +28,23 @@ public class SplashScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		String id = MFConfig.getPreferenceValueStr(SplashScreen.this, "deviceId", "");
+		String id = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "deviceId", "");
 		if (id.equals("")) {
 			MFConfig.DEVICE_ID = UUID.randomUUID().toString().replaceAll("-", "");
-			MFConfig.savePreferencesStr(SplashScreen.this, "deviceId", MFConfig.DEVICE_ID);
+			PreferenceHelper.savePreferencesStr(SplashScreen.this, "deviceId", MFConfig.DEVICE_ID);
 		} else {
 			MFConfig.DEVICE_ID = id;
 		}
 		
-		String originalVersion = MFConfig.getPreferenceValueStr(SplashScreen.this, "versionNo", "");
+		String originalVersion = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "versionNo", "");
 		if (!originalVersion.equals(getString(R.string.versionNo))) {
-			MFConfig.savePreferencesBoolean(SplashScreen.this, "disclaimerDialog", true);
-			MFConfig.savePreferencesBoolean(SplashScreen.this, "firstLaunch", true);
-			MFConfig.savePreferencesStr(SplashScreen.this, "versionNo", getString(R.string.versionNo));
-			MFConfig.savePreferencesStr(SplashScreen.this, "cafe_version_update", MFConfig.cafe_version_update);
+			PreferenceHelper.savePreferencesBoolean(SplashScreen.this, "disclaimerDialog", true);
+			PreferenceHelper.savePreferencesBoolean(SplashScreen.this, "firstLaunch", true);
+			PreferenceHelper.savePreferencesStr(SplashScreen.this, "versionNo", getString(R.string.versionNo));
+			PreferenceHelper.savePreferencesStr(SplashScreen.this, "cafe_version_update", MFConfig.cafe_version_update);
 		}
 		
-		MFConfig.cafe_version_update = MFConfig.getPreferenceValueStr(SplashScreen.this, "cafe_version_update" ,MFConfig.cafe_version_update);
+		MFConfig.cafe_version_update = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "cafe_version_update" ,MFConfig.cafe_version_update);
 		
 		setContentView(R.layout.splash_screen);
 		new ParseXmlTask().execute();
@@ -71,11 +72,11 @@ public class SplashScreen extends Activity {
 		@Override
 		protected Void doInBackground(Void... params) {
 
-			if (MFConfig.getPreferenceValueBoolean(SplashScreen.this, "firstLaunch", true)) {
+			if (PreferenceHelper.getPreferenceValueBoolean(SplashScreen.this, "firstLaunch", true)) {
 				MFConfig.initDataFromXml(getResources(), SplashScreen.this);
 				LocalDbManager.getInstance(getApplicationContext()).clearTable();
 				LocalDbManager.getInstance(getApplicationContext()).insertCafeLists();
-				MFConfig.savePreferencesBoolean(SplashScreen.this, "firstLaunch", false);
+				PreferenceHelper.savePreferencesBoolean(SplashScreen.this, "firstLaunch", false);
 			} else {
 				LocalDbManager.getInstance(getApplicationContext()).getCafeListFromDB();
 			}

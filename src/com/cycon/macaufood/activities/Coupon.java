@@ -44,6 +44,7 @@ import com.cycon.macaufood.adapters.CafeListAdapter;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 
@@ -86,9 +87,9 @@ public class Coupon extends BaseActivity {
 
         retryLayout = findViewById(R.id.retryLayout);
 
-        normalCouponDataTimeStamp = MFConfig.getPreferenceValueLong(getApplicationContext(), "normalCouponTimeStamp", 0);
-        creditCouponDataTimeStamp = MFConfig.getPreferenceValueLong(getApplicationContext(), "creditCouponTimeStamp", 0);
-        vipCouponDataTimeStamp = MFConfig.getPreferenceValueLong(getApplicationContext(), "vipCouponTimeStamp", 0);
+        normalCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), "normalCouponTimeStamp", 0);
+        creditCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), "creditCouponTimeStamp", 0);
+        vipCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), "vipCouponTimeStamp", 0);
 
         normalCouponList = (ListView) findViewById(R.id.normalCouponList);
         creditCouponList = (ListView) findViewById(R.id.creditCouponList);
@@ -397,7 +398,7 @@ public class Coupon extends BaseActivity {
 					displayRetryLayout();
 				} else {
 		            normalCouponDataTimeStamp = System.currentTimeMillis();
-		            MFConfig.savePreferencesLong(getApplicationContext(), "normalCouponTimeStamp", normalCouponDataTimeStamp);
+		            PreferenceHelper.savePreferencesLong(getApplicationContext(), "normalCouponTimeStamp", normalCouponDataTimeStamp);
 				}
 				normalCouponAdapter.imageLoader.cleanup();
 				normalCouponAdapter.imageLoader.setImagesToLoadFromParsedCafe(MFConfig.getInstance().getNormalCouponCafeList());
@@ -410,7 +411,7 @@ public class Coupon extends BaseActivity {
 					displayRetryLayout();
 				} else {
 		            creditCouponDataTimeStamp = System.currentTimeMillis();
-		            MFConfig.savePreferencesLong(getApplicationContext(), "creditCouponTimeStamp", normalCouponDataTimeStamp);
+		            PreferenceHelper.savePreferencesLong(getApplicationContext(), "creditCouponTimeStamp", normalCouponDataTimeStamp);
 					
 				}
 				creditCouponAdapter.imageLoader.cleanup();
@@ -424,7 +425,7 @@ public class Coupon extends BaseActivity {
 					displayRetryLayout();
 				} else {
 		            vipCouponDataTimeStamp = System.currentTimeMillis();
-		            MFConfig.savePreferencesLong(getApplicationContext(), "vipCouponTimeStamp", normalCouponDataTimeStamp);
+		            PreferenceHelper.savePreferencesLong(getApplicationContext(), "vipCouponTimeStamp", normalCouponDataTimeStamp);
 					
 				}
 				vipCouponAdapter.imageLoader.cleanup();

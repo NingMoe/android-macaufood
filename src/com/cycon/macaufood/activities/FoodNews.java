@@ -42,6 +42,7 @@ import com.cycon.macaufood.adapters.FoodNewsListAdapter;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.FoodNewsXMLHandler;
 
@@ -67,7 +68,7 @@ public class FoodNews extends BaseActivity {
 		addRefreshMenu = true;
     	Log.e(TAG, "onCreate");
         setContentView(R.layout.foodnews);
-        dataTimeStamp = MFConfig.getPreferenceValueLong(getApplicationContext(),"foodNewsTimeStamp", 0);
+        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(),"foodNewsTimeStamp", 0);
 
         list = (ListView) findViewById(R.id.list);
         foodListAdapter = new FoodNewsListAdapter(FoodNews.this, MFConfig.getInstance().getFoodNewsList(), ImageType.FOODNEWS);
@@ -218,7 +219,7 @@ public class FoodNews extends BaseActivity {
 				displayRetryLayout();
 			} else {
 	            dataTimeStamp = System.currentTimeMillis();
-	            MFConfig.savePreferencesLong(getApplicationContext(), "foodNewsTimeStamp", dataTimeStamp);
+	            PreferenceHelper.savePreferencesLong(getApplicationContext(), "foodNewsTimeStamp", dataTimeStamp);
 			}
 			foodListAdapter.imageLoader.cleanup();
 			foodListAdapter.imageLoader.setImagesToLoadFromParsedFoodNews(MFConfig.getInstance().getFoodNewsList());

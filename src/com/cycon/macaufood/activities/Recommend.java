@@ -47,6 +47,7 @@ import com.cycon.macaufood.adapters.CafeListAdapter;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 
@@ -75,7 +76,7 @@ public class Recommend extends BaseActivity {
     	Log.e(TAG, "onCreate");
         setContentView(R.layout.recommend);
         loadingAdv = findViewById(R.id.loadingAdv);
-        dataTimeStamp = MFConfig.getPreferenceValueLong(getApplicationContext(),"recommendTimeStamp", 0);
+        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(),"recommendTimeStamp", 0);
 
         list = (ListView) findViewById(R.id.list);
         cafeAdapter = new CafeListAdapter(Recommend.this, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
@@ -105,7 +106,7 @@ public class Recommend extends BaseActivity {
 			} 
 		}
 		
-		if (MFConfig.getPreferenceValueBoolean(this, "disclaimerDialog", true)) {
+		if (PreferenceHelper.getPreferenceValueBoolean(this, "disclaimerDialog", true)) {
 
 			TextView text = new TextView(Recommend.this);
 			text.setTextColor(Color.WHITE);
@@ -121,7 +122,7 @@ public class Recommend extends BaseActivity {
 				
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
-					MFConfig.savePreferencesBoolean(Recommend.this, "disclaimerDialog", false);
+					PreferenceHelper.savePreferencesBoolean(Recommend.this, "disclaimerDialog", false);
 					if (MFConfig.isOnline(Recommend.this) && MFConfig.getInstance().getRecommendCafeList().size() == 0) {
 						pDialog = ProgressDialog.show(Recommend.this, null,
 								"載入資料中...", false, true);
@@ -226,7 +227,7 @@ public class Recommend extends BaseActivity {
     	@Override
     	protected void onPreExecute() {
     		super.onPreExecute();
-    		if (!MFConfig.getPreferenceValueBoolean(Recommend.this, "disclaimerDialog", true)) {
+    		if (!PreferenceHelper.getPreferenceValueBoolean(Recommend.this, "disclaimerDialog", true)) {
 	    		pDialog = ProgressDialog.show(Recommend.this, null,
 						"載入資料中...", false, true);
     		}
@@ -284,7 +285,7 @@ public class Recommend extends BaseActivity {
 				displayRetryLayout();
 			} else {
 	            dataTimeStamp = System.currentTimeMillis();
-	            MFConfig.savePreferencesLong(getApplicationContext(), "recommendTimeStamp", dataTimeStamp);
+	            PreferenceHelper.savePreferencesLong(getApplicationContext(), "recommendTimeStamp", dataTimeStamp);
 			}
 			cafeAdapter.imageLoader.cleanup();
 			cafeAdapter.imageLoader.setImagesToLoadFromParsedCafe(MFConfig.getInstance().getRecommendCafeList());

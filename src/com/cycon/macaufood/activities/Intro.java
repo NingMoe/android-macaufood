@@ -43,6 +43,7 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.GalleryNavigator;
 import com.cycon.macaufood.widget.OneFlingGallery;
 
@@ -154,7 +155,7 @@ public class Intro extends BaseActivity {
 		}
 		
 		if (cacheError || imageMap.isEmpty() || textMap.isEmpty()
-				|| System.currentTimeMillis() - MFConfig.getPreferenceValueLong(getApplicationContext(), "introTimeStamp", 0) > REFRESH_TIME_PERIOD
+				|| System.currentTimeMillis() - PreferenceHelper.getPreferenceValueLong(getApplicationContext(), "introTimeStamp", 0) > REFRESH_TIME_PERIOD
 		    		) {
 			if (!MFConfig.isOnline(Intro.this)) {
 				if (imageMap.isEmpty() || textMap.isEmpty())
@@ -386,7 +387,7 @@ public class Intro extends BaseActivity {
     			
         		//load rest photos
         		if (page == 1) {
-        			MFConfig.savePreferencesLong(getApplicationContext(), "introTimeStamp", System.currentTimeMillis());
+        			PreferenceHelper.savePreferencesLong(getApplicationContext(), "introTimeStamp", System.currentTimeMillis());
         			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
         			params.topMargin = 51;
         			gallery.setLayoutParams(params);
