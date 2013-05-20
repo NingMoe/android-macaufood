@@ -26,6 +26,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
@@ -53,6 +54,7 @@ public abstract class BaseActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		if (MFConfig.getInstance().getCafeLists().size() == 0) {
 			Intent i = new Intent(this, SplashScreen.class);
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -74,8 +76,8 @@ public abstract class BaseActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {		
 	    if ((keyCode == KeyEvent.KEYCODE_BACK && isTabChild)) {	   
 	    	new AlertDialog.Builder(this)
-			.setMessage("你確定�?退出程�?嗎?      ")
-			.setPositiveButton("確定",
+			.setMessage(getString(R.string.exitProgramPrompt))
+			.setPositiveButton(getString(R.string.confirmed),
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,	int whichButton) {
 					    	Process.killProcess(Process.myPid());   
@@ -85,7 +87,7 @@ public abstract class BaseActivity extends Activity {
 							super.finalize();
 						}
 					})
-			.setNegativeButton("�?�消",
+			.setNegativeButton(getString(R.string.cancel),
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,	int whichButton) {
 							dialog.dismiss();
@@ -104,7 +106,7 @@ public abstract class BaseActivity extends Activity {
     		menu.add(Menu.NONE, 1, Menu.NONE, "�?新整�?�").setIcon(R.drawable.ic_menu_refresh);
     	}
     	menu.add(Menu.NONE, 2, Menu.NONE, getString(R.string.foodNews)).setIcon(R.drawable.ic_menu_dishes);
-    	menu.add(Menu.NONE, 3, Menu.NONE, "最新情報").setIcon(R.drawable.rss);
+//    	menu.add(Menu.NONE, 3, Menu.NONE, "最新情報").setIcon(R.drawable.rss);
     	menu.add(Menu.NONE, 4, Menu.NONE, getString(R.string.aboutUs)).setIcon(R.drawable.ic_menu_info_details);
     	return super.onCreateOptionsMenu(menu);
     }
@@ -119,10 +121,10 @@ public abstract class BaseActivity extends Activity {
 			Intent i = new Intent(this, FoodNews.class);
 			startActivity(i);
 			break;
-		case 3:
-			Intent i2 = new Intent(this, Latest.class);
-			startActivity(i2);
-			break;
+//		case 3:
+//			Intent i2 = new Intent(this, Latest.class);
+//			startActivity(i2);
+//			break;
 		case 4:
 			Intent i3 = new Intent(this, About.class);
 			startActivity(i3);

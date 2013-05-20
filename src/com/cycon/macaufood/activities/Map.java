@@ -73,7 +73,6 @@ public class Map extends MapActivity{
 			Process.killProcess(Process.myPid());
 		} 
         setContentView(R.layout.map);
-        checkLandscape();
         name = getIntent().getStringExtra("name");
         selectedCafeId = getIntent().getStringExtra("id");
         String coordx = getIntent().getStringExtra("coordx");
@@ -262,22 +261,6 @@ public class Map extends MapActivity{
         	searchNearby.setText(R.string.backToMacau);
         }
     }
-    
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-    	super.onConfigurationChanged(newConfig);
-    	checkLandscape();
-    }
-    
-	  private void checkLandscape() {
-		if (MFConfig.getInstance().isLandscape(this)) {
-			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
-		else {
-			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		}
-	}
 	  
 	@Override
 	protected void onPause() {
@@ -350,10 +333,10 @@ public class Map extends MapActivity{
 			Intent i = new Intent(this, FoodNews.class);
 			startActivity(i);
 			break;
-		case 3:
-			Intent i2 = new Intent(this, Latest.class);
-			startActivity(i2);
-			break;
+//		case 3:
+//			Intent i2 = new Intent(this, Latest.class);
+//			startActivity(i2);
+//			break;
 		case 4:
 			Intent i3 = new Intent(this, About.class);
 			startActivity(i3);

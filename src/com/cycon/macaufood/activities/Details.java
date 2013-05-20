@@ -54,7 +54,6 @@ import com.cycon.macaufood.utilities.PhoneUtils;
 public class Details extends BaseActivity {
 	
 	private static final String TAG = "Details";
-	private ImageLoader imageLoader;
 	private TextView branch;
 	private TextView name, addr, website, cash, phone, businessHours, infoText;
 	private ImageView imageView;
@@ -99,11 +98,8 @@ public class Details extends BaseActivity {
 		cash = (TextView) findViewById(R.id.cash);
 		paymentGrid = (GridView) findViewById(R.id.paymentGrid);
 		addrRow = (LinearLayout) findViewById(R.id.addrRow);
-		addrRow.setBackgroundDrawable(new ListView(this).getSelector());
 		phoneRow = (LinearLayout) findViewById(R.id.phoneRow);
-		phoneRow.setBackgroundDrawable(new ListView(this).getSelector());
 		websiteRow = (LinearLayout) findViewById(R.id.websiteRow);
-		websiteRow.setBackgroundDrawable(new ListView(this).getSelector());
 		favoriteBtn = (Button) findViewById(R.id.favoriteBtn);
 		feedbackBtn = (Button) findViewById(R.id.feedBackBtn);
 		alreadyInFavorite = (TextView) findViewById(R.id.alreadyInFavorite);
@@ -145,7 +141,6 @@ public class Details extends BaseActivity {
 		final String websiteStr = cafe.getWebsite().trim();
 		if (websiteStr.length() != 0 && !websiteStr.equals("-1")) {
 			websiteRow.setVisibility(View.VISIBLE);
-			findViewById(R.id.websiteRowSep).setVisibility(View.VISIBLE);
 			website.setText(websiteStr);
 			website.setOnClickListener(new OnClickListener() {
 				
@@ -189,7 +184,7 @@ public class Details extends BaseActivity {
 			alreadyInFavorite.setVisibility(View.GONE);
 		}
 		
-		if (!cafe.getOption_phoneorder().equals("1")) delivery.setAlpha(50); 
+		if (!cafe.getOption_phoneorder().equals("1")) delivery.setAlpha(0); 
 		if (!cafe.getOption_booking().equals("1")) booking.setAlpha(50); 
 		if (!cafe.getOption_night().equals("1")) midnight.setAlpha(50); 
 		if (!cafe.getOption_call().equals("1")) party.setAlpha(50); 

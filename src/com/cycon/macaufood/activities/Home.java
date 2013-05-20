@@ -56,37 +56,6 @@ public class Home extends TabActivity {
                 .setContent(new Intent(this, Favorite.class)));
     }
     
-    public void visibleTabs(){
-        tabHost.getTabWidget().getChildAt(0).setVisibility(View.VISIBLE);
-        tabHost.getTabWidget().getChildAt(1).setVisibility(View.VISIBLE);
-        tabHost.getTabWidget().getChildAt(2).setVisibility(View.VISIBLE);
-        tabHost.getTabWidget().getChildAt(3).setVisibility(View.VISIBLE);
-        tabHost.getTabWidget().getChildAt(4).setVisibility(View.VISIBLE);
-
-    }
-
-    public void invisibleTabs(){
-//    	Animation animation = AnimationUtils.loadAnimation(Home.this,
-//				R.anim.push_bottom_in);
-//
-//    	tabHost.getTabWidget().startAnimation(animation);
-        tabHost.getTabWidget().getChildAt(0).setVisibility(View.GONE);
-        tabHost.getTabWidget().getChildAt(1).setVisibility(View.GONE);
-        tabHost.getTabWidget().getChildAt(2).setVisibility(View.GONE);
-        tabHost.getTabWidget().getChildAt(3).setVisibility(View.GONE);
-        tabHost.getTabWidget().getChildAt(4).setVisibility(View.GONE);
-    }
-    
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//
-//		ETLog.e("ZZZ", "here1");
-//    	if (keyCode == KeyEvent.KEYCODE_BACK) {
-//    		ETLog.e("ZZZ", "here");
-//        	visibleTabs();
-//    	}
-//    	return super.onKeyDown(keyCode, event);
-//    }
     
     @Override
     protected void onStart() {
@@ -116,29 +85,7 @@ public class Home extends TabActivity {
     protected void onDestroy() {
         Log.e(TAG, "---onDestroy");
     	super.onDestroy();
-//		Intent i = new Intent(this, SplashScreen.class);
-//		startActivity(i);
-//    	Process.killProcess(Process.myPid()); 
     }
-    
-    
-//    private void checkLandscape() {
-//    	if (Config.getInstance().isLandscape(this)) {
-//    		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-//				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//    	}
-//    	else {
-//    		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//    	}
-//    }
-    
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//    	// TODO Auto-generated method stub
-//    	super.onConfigurationChanged(newConfig);
-//    	checkLandscape();
-//
-//    }
     
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,

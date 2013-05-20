@@ -72,8 +72,8 @@
 
 <!--  About -->
     <string name="disclaimer">免責聲明</string>
-    <string name="appVersionName">食在澳門 v1.2.3</string>
-    <string name="versionNo">1.2.3</string>
+    <string name="appVersionName">食在澳門 v2.0</string>
+    <string name="versionNo">2.0</string>
     <string name="aboutUs">關於我們</string>
     <string name="macauWifi">澳門 WIFI 熱點</string>
     <string name="advertiseUs">刊登廣告和查詢</string>
@@ -93,6 +93,10 @@
     
  <!-- Food News-->
     <string name="foodNews">美食追擊</string>
+    
+ <!-- Dialog -->
+ 	<string name="exitProgramPrompt">你確定要退出程式嗎?</string>
+ 	<string name="confirmed">確定</string>
  
 	<!--  SQL Queries -->
 	<string name="initCafeTableSql">CREATE TABLE IF NOT EXISTS CAFEENTRIES(

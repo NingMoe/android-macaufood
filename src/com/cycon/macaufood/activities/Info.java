@@ -206,6 +206,7 @@ public class Info extends BaseActivity {
             	BufferedReader rd = new BufferedReader(new InputStreamReader(fis
 						));
             	String pageStr = rd.readLine().trim();
+            	rd.close();
             	
             	try {
 					serverTotalPages = Integer.parseInt(pageStr);
@@ -279,7 +280,7 @@ public class Info extends BaseActivity {
                 while ((line = rd.readLine()) != null) {
                     sb.append(line + "\n");
                   }
-                
+                rd.close();
                 return sb.toString();
                 
 				} catch (MalformedURLException e) {

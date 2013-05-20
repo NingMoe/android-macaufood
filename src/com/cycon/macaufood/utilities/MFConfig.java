@@ -16,8 +16,6 @@ import org.xml.sax.XMLReader;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.net.ConnectivityManager;
@@ -40,17 +38,17 @@ public class MFConfig {
 	
 	public static boolean updateSuccessfully;
 
-	public List<Cafe> cafeLists = Collections.synchronizedList(new ArrayList<Cafe>(2000));
+	private List<Cafe> cafeLists = Collections.synchronizedList(new ArrayList<Cafe>(2000));
 	
-	public ArrayList<String> favoriteLists = new ArrayList<String>(20);
+	private ArrayList<String> favoriteLists = new ArrayList<String>(20);
 	
-	public ArrayList<Cafe> nearbyLists = new ArrayList<Cafe>(50);
+	private ArrayList<Cafe> nearbyLists = new ArrayList<Cafe>(50);
 	
-	public ArrayList<ParsedCafeHolder> recommendCafeList = new ArrayList<ParsedCafeHolder>(10);
-	public ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
-	public ArrayList<ParsedCafeHolder> creditCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
-	public ArrayList<ParsedCafeHolder> vipCouponCafeList = new ArrayList<ParsedCafeHolder>(20);
-	public ArrayList<ParsedFoodNewsHolder> foodNewsList = new ArrayList<ParsedFoodNewsHolder>(20);
+	private ArrayList<ParsedCafeHolder> recommendCafeList = new ArrayList<ParsedCafeHolder>(10);
+	private ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
+	private ArrayList<ParsedCafeHolder> creditCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
+	private ArrayList<ParsedCafeHolder> vipCouponCafeList = new ArrayList<ParsedCafeHolder>(20);
+	private ArrayList<ParsedFoodNewsHolder> foodNewsList = new ArrayList<ParsedFoodNewsHolder>(20);
 	
 	public static ArrayList<ParsedCafeHolder> tempParsedCafeList = new ArrayList<ParsedCafeHolder>();
 	
@@ -87,9 +85,6 @@ public class MFConfig {
 	public ArrayList<ParsedFoodNewsHolder> getFoodNewsList() {
 		return foodNewsList;
 	}
-//	public HashMap<String, ArrayList<Cafe>> getBranchMap() {
-//		return branchMap;
-//	}
 	
 	public synchronized static MFConfig getInstance() {
 		if (config == null) {
@@ -97,8 +92,6 @@ public class MFConfig {
 		}
 		return config;
 	}
-	
-
 	
 
 	public static void initDataFromXml(Resources res, Context context) {
@@ -140,13 +133,6 @@ public class MFConfig {
 	    } else {
 	        return false; 
 	    }
-	}
-	
-
-	public static boolean isLandscape(Activity activity) {
-		WindowManager wm = activity.getWindowManager();
-		Display d = wm.getDefaultDisplay();
-		return d.getWidth() > d.getHeight();
 	}
 	
 	

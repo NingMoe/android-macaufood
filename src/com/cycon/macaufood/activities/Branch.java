@@ -38,8 +38,6 @@ public class Branch extends BaseActivity {
         	}
         }
         
-//        branchList = Config.getInstance().getBranchMap().get(branchId);
-
         list = (ListView) findViewById(R.id.list);
         list.setOnItemClickListener(itemClickListener);
         banner = (AdvView) findViewById(R.id.banner);

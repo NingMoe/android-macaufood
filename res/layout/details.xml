@@ -186,6 +186,9 @@
 		  android:layout_width="fill_parent"
 		  android:layout_height="wrap_content"
 	  	  android:background="@drawable/round_edge_white_bg"
+	  	  
+            android:showDividers="middle"
+            android:divider="#999999"
 	  	  android:paddingBottom="3dip">
 	  	  
 	  	  <LinearLayout
@@ -195,7 +198,8 @@
 	  	  		android:layout_height="wrap_content"
 	  	  		android:gravity="center_vertical"
 	  	  		android:minHeight="50dip"
-	  	  		android:padding="3dip">
+	  	  		android:padding="3dip"
+	  	  		android:background="@android:drawable/list_selector_background">
 	  	  		
 	  	  		<TextView 
 	  	  			android:layout_width="78dip"
@@ -226,11 +230,6 @@
 	  	  
 	  	  </LinearLayout>
 	  	  
-	  	  <View 
-	  	  		android:layout_width="fill_parent"
-	  	  		android:layout_height="1px"
-	  	  		android:background="#999999" />
-	  	  
 	  	  <LinearLayout
 	  	  		android:id="@+id/phoneRow"
 	  	  		android:orientation="horizontal"
@@ -238,7 +237,8 @@
 	  	  		android:layout_height="wrap_content"
 	  	  		android:gravity="center_vertical"
 	  	  		android:minHeight="40dip"
-	  	  		android:padding="3dip">
+	  	  		android:padding="3dip"
+	  	  		android:background="@android:drawable/list_selector_background">
 	  	  		
 	  	  		<TextView 
 	  	  			android:layout_width="78dip"
@@ -266,11 +266,6 @@
 	  	  
 	  	  </LinearLayout>
 	  	  
-	  	  <View 
-	  	  		android:layout_width="fill_parent"
-	  	  		android:layout_height="1px"
-	  	  		android:background="#999999" />
-	  	  
 	  	  <LinearLayout
 	  	  		android:id="@+id/websiteRow"
 	  	  		android:orientation="horizontal"
@@ -279,7 +274,8 @@
 	  	  		android:gravity="center_vertical"
 	  	  		android:minHeight="40dip"
 	  	  		android:padding="3dip"
-	  	  		android:visibility="gone">
+	  	  		android:visibility="gone"
+	  	  		android:background="@android:drawable/list_selector_background">
 	  	  		
 	  	  		<TextView 
 	  	  			android:layout_width="78dip"
@@ -306,13 +302,6 @@
 	  	  			/>
 	  	  
 	  	  </LinearLayout>
-	  	  
-	  	  <View 
-	  	  		android:id="@+id/websiteRowSep"
-	  	  		android:layout_width="fill_parent"
-	  	  		android:layout_height="1px"
-	  	  		android:background="#999999"
-	  	  		android:visibility="gone" />
 	  	  
 	  	  <LinearLayout
 	  	  		android:orientation="horizontal"
@@ -356,11 +345,6 @@
 	  	  
 	  	  </LinearLayout>
 	  	  
-	  	  <View 
-	  	  		android:layout_width="fill_parent"
-	  	  		android:layout_height="1px"
-	  	  		android:background="#999999" />
-	  	  
 	  	  <LinearLayout
 	  	  		android:orientation="horizontal"
 	  	  		android:layout_width="fill_parent"
@@ -385,11 +369,6 @@
 	  	  			/>
 	  	  
 	  	  </LinearLayout>
-	  	  
-	  	  <View 
-	  	  		android:layout_width="fill_parent"
-	  	  		android:layout_height="1px"
-	  	  		android:background="#999999" />
 	  	  
 	  	  <LinearLayout
 	  	  		android:orientation="horizontal"

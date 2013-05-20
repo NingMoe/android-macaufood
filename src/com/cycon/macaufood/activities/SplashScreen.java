@@ -81,9 +81,6 @@ public class SplashScreen extends Activity {
 				LocalDbManager.getInstance(getApplicationContext()).getCafeListFromDB();
 			}
 			
-
-//			updateCafeData();
-//			setBranchtoMap();
 			parseFavoriteList();
 			
 			return null;
@@ -104,14 +101,14 @@ public class SplashScreen extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {		
 	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {	   
 	    	new AlertDialog.Builder(this)
-			.setMessage("你確定�?退出程�?嗎?      ")
-			.setPositiveButton("確定",
+			.setMessage(getString(R.string.exitProgramPrompt))
+			.setPositiveButton(getString(R.string.confirmed),
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,	int whichButton) {
 					    	Process.killProcess(Process.myPid());   
 						}
 					})
-			.setNegativeButton("�?�消",
+			.setNegativeButton(getString(R.string.cancel),
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,	int whichButton) {
 							dialog.dismiss();
@@ -129,38 +126,4 @@ public class SplashScreen extends Activity {
 	    Window window = getWindow();
 	    window.setFormat(PixelFormat.RGBA_8888);
 	}
-	
-//	private void updateCafeData() {
-//		FileCache fileCache=new FileCache(this, ImageType.REGULAR);
-//		File f=fileCache.getFile(BaseActivity.UPDATE_FILE_STR);
-//		try {
-//			FileInputStream is = new FileInputStream(f);
-//			parseUpdateXml(is);
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//	}
-	
-//    private void parseUpdateXml(InputStream is) {    	
-//    	try {
-//			SAXParserFactory spf = SAXParserFactory.newInstance();
-//			SAXParser sp = spf.newSAXParser();
-//			XMLReader xr = sp.getXMLReader();
-//			UpdateXMLHandler myXMLHandler = new UpdateXMLHandler();
-//			xr.setContentHandler(myXMLHandler);
-//			xr.parse(new InputSource(is));	
-//		} catch (FactoryConfigurationError e) {
-//			ETLog.e(TAG, "FactoryConfigurationError");
-//			e.printStackTrace();
-//		} catch (ParserConfigurationException e) {
-//			ETLog.e(TAG, "ParserConfigurationException");
-//			e.printStackTrace();
-//		} catch (SAXException e) {
-//			ETLog.e(TAG, "SAXException");
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			ETLog.e(TAG, "IOException");
-//			e.printStackTrace();
-//		}
-//    }
 }

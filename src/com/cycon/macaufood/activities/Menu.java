@@ -143,7 +143,7 @@ public class Menu extends BaseActivity {
 									startActivity(intent); 
 								}
 							})
-					.setNegativeButton("�?�消",
+					.setNegativeButton(getString(R.string.cancel),
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,	int whichButton) {
 									dialog.dismiss();

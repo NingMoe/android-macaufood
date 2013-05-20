@@ -1,77 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.cycon.macaufood"
-      android:versionCode="6"
-      android:versionName="@string/versionNo"
-      android:installLocation="auto"
-      >
-      <supports-screens android:anyDensity="true"/>
-      <uses-permission android:name="android.permission.INTERNET" />
-      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-      
-     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="16"/>
-    <application android:icon="@drawable/icon" android:label="@string/app_name" 
-                  android:theme="@style/ThemeHolo" 
-    >
-                   			 
-    	<uses-library android:name="com.google.android.maps" />
-    
-	    <activity android:name=".activities.SplashScreen"
-                  android:label="@string/app_name"
-                  android:screenOrientation="portrait">
+    package="com.cycon.macaufood"
+    android:installLocation="auto"
+    android:versionCode="7"
+    android:versionName="@string/versionNo" >
+
+    <supports-screens android:anyDensity="true" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="16" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:theme="@style/ThemeHolo" >
+        <uses-library android:name="com.google.android.maps" />
+
+        <activity
+            android:name=".activities.SplashScreen"
+            android:label="@string/app_name"
+            android:noHistory="true"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER"/>
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    
-        <activity android:name=".activities.Home"
-        		  android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
-                  android:screenOrientation="portrait"
-        		  />
-        
+        <activity
+            android:name=".activities.Home"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity android:name=".activities.Recommend" />
         <activity android:name=".activities.Coupon" />
-        <activity android:name=".activities.Search"
-        		  android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
-                   </activity>
-        <activity android:name=".activities.Map" 
-                  android:configChanges="orientation" />
-        <activity android:name=".activities.Favorite"/>
-        <activity android:name=".activities.Details"
-                  android:theme="@style/ThemeHolo"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.Intro"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.Info"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.Menu"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.NearbyList"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.About"
-        	      android:label="@string/appVersionName"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.Disclaimer"
-        	      android:label="@string/disclaimer"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.MacauWifi"
-        	      android:label="@string/macauWifi"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.Branch"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.Latest"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.FoodNews"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.FoodNewsImage"
-                  android:screenOrientation="portrait"/>
-        <activity android:name=".activities.FeedBack"
-                  android:theme="@style/Theme.Translucent"
-                  android:screenOrientation="portrait"
-        		  android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".activities.Search"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name=".activities.Map"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.Favorite" />
+        <activity
+            android:name=".activities.Details"
+            android:theme="@style/ThemeHolo" />
+        <activity android:name=".activities.Intro" />
+        <activity android:name=".activities.Info" />
+        <activity android:name=".activities.Menu" />
+        <activity android:name=".activities.NearbyList" />
+        <activity
+            android:name=".activities.About"
+            android:label="@string/appVersionName" />
+        <activity
+            android:name=".activities.Disclaimer"
+            android:label="@string/disclaimer" />
+        <activity
+            android:name=".activities.MacauWifi"
+            android:label="@string/macauWifi" />
+        <activity android:name=".activities.Branch" />
+        <activity android:name=".activities.FoodNews" />
+        <activity android:name=".activities.FoodNewsImage" />
+        <activity
+            android:name=".activities.FeedBack"
+            android:theme="@style/Theme.Translucent"
+            android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
-</manifest> 
+</manifest>

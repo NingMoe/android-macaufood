@@ -404,15 +404,11 @@ public class Search extends BaseActivity {
     }
     
     public void shrink() {
-    	parentActivity.invisibleTabs();
     	tabLayout.setVisibility(View.GONE);
-//    	gap.setVisibility(View.GONE);
     }
     
     public void expand() {
-    	parentActivity.visibleTabs();
     	tabLayout.setVisibility(View.VISIBLE);
-//    	gap.setVisibility(View.VISIBLE);
     	if (searchTextBox.getText().toString().equals("")) {
     		clearBtn.setVisibility(View.GONE);
     	}
