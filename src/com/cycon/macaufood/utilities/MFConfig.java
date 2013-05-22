@@ -34,7 +34,7 @@ public class MFConfig {
 	
 	public static String DEVICE_ID;
 	
-	public static String cafe_version_update = "1352575199";
+	public static String cafe_version_update = "1369015497";
 	
 	public static boolean updateSuccessfully;
 

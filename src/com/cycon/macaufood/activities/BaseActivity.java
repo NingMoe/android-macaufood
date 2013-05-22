@@ -54,13 +54,13 @@ public abstract class BaseActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		if (MFConfig.getInstance().getCafeLists().size() == 0) {
-			Intent i = new Intent(this, SplashScreen.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
+//			Intent i = new Intent(this, SplashScreen.class);
+//			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//			startActivity(i);
 			Process.killProcess(Process.myPid());
 		} 
+		setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 	
 	@Override
