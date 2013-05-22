@@ -22,26 +22,30 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.xmlhandler.UpdateXMLHandler;
 
-public abstract class BaseActivity extends Activity {
+public abstract class BaseActivity extends SherlockActivity {
 	
 	protected boolean isTabChild;
 	protected boolean addRefreshMenu;
@@ -55,12 +59,17 @@ public abstract class BaseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (MFConfig.getInstance().getCafeLists().size() == 0) {
-//			Intent i = new Intent(this, SplashScreen.class);
-//			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//			startActivity(i);
+			Intent i = new Intent(this, SplashScreen.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(i);
 			Process.killProcess(Process.myPid());
 		} 
 		setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		ActionBar actionbar = getSupportActionBar();
+		if (actionbar == null) {
+			Log.e("ZZZ", "actionbar is null");
+		}
+//		actionbar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00FF00")));
 	}
 	
 	@Override
@@ -102,35 +111,37 @@ public abstract class BaseActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	if (!needMenu) return false;
-    	if (addRefreshMenu) {
-    		menu.add(Menu.NONE, 1, Menu.NONE, "�?新整�?�").setIcon(R.drawable.ic_menu_refresh);
-    	}
-    	menu.add(Menu.NONE, 2, Menu.NONE, getString(R.string.foodNews)).setIcon(R.drawable.ic_menu_dishes);
-//    	menu.add(Menu.NONE, 3, Menu.NONE, "最新情報").setIcon(R.drawable.rss);
-    	menu.add(Menu.NONE, 4, Menu.NONE, getString(R.string.aboutUs)).setIcon(R.drawable.ic_menu_info_details);
+    	
+    	getSupportMenuInflater().inflate(R.menu.main_menu, menu);
     	return super.onCreateOptionsMenu(menu);
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+    	Intent i;
     	switch (item.getItemId()) {
-		case 1:
-			refresh();
-			break;
-		case 2:
-			Intent i = new Intent(this, FoodNews.class);
+		case R.id.menu_search:
+			i = new Intent(this, Search.class);
 			startActivity(i);
-			break;
-//		case 3:
-//			Intent i2 = new Intent(this, Latest.class);
-//			startActivity(i2);
-//			break;
-		case 4:
-			Intent i3 = new Intent(this, About.class);
-			startActivity(i3);
-			break;
+			return true;
+		case R.id.menu_map:
+			i = new Intent(this, Map.class);
+			startActivity(i);
+			return true;
+		case R.id.menu_favorite_list:
+			i = new Intent(this, Favorite.class);
+			startActivity(i);
+			return true;
+		case R.id.menu_refresh:
+			refresh();
+			return true;
+		case R.id.menu_about:
+			i = new Intent(this, About.class);
+			startActivity(i);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
     	}
-    	return super.onOptionsItemSelected(item);
     }
     
     public void refresh() {};

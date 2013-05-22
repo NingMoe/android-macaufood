@@ -31,29 +31,19 @@ public class Home extends TabActivity {
         tabHost = getTabHost();
 
         tabHost.addTab(tabHost.newTabSpec("tab1")
-                .setIndicator(getResources().getString(R.string.tablabel1), 
+                .setIndicator(getResources().getString(R.string.recommend_tab), 
                 		getResources().getDrawable(R.drawable.tab1))
                 .setContent(new Intent(this, Recommend.class)));
         
         tabHost.addTab(tabHost.newTabSpec("tab2")
-                .setIndicator(getResources().getString(R.string.tablabel2), 
+                .setIndicator(getResources().getString(R.string.coupon_tab), 
                 		getResources().getDrawable(R.drawable.tab2))
                 .setContent(new Intent(this, Coupon.class)));
         
         tabHost.addTab(tabHost.newTabSpec("tab3")
-                .setIndicator(getResources().getString(R.string.tablabel3), 
-                		getResources().getDrawable(R.drawable.tab3))
-                .setContent(new Intent(this, Search.class)));
-        
-        tabHost.addTab(tabHost.newTabSpec("tab4")
-                .setIndicator(getResources().getString(R.string.tablabel4), 
-                		getResources().getDrawable(R.drawable.tab4))
-                .setContent(new Intent(this, Map.class)));
-        
-        tabHost.addTab(tabHost.newTabSpec("tab5")
-                .setIndicator(getResources().getString(R.string.tablabel5), 
-                		getResources().getDrawable(R.drawable.tab5))
-                .setContent(new Intent(this, Favorite.class)));
+                .setIndicator(getResources().getString(R.string.foodNews), 
+                		getResources().getDrawable(R.drawable.tab1))
+                .setContent(new Intent(this, FoodNews.class)));
     }
     
     

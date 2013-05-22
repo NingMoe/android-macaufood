@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
-    <style name="ThemeHolo" parent="android:Theme.Holo.Light.DarkActionBar">
+
+    <style name="MFTheme" parent="Theme.Sherlock.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MFActionBarStyle</item>
     </style>
+
+    <style name="MFActionBarStyle" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/actionbar_green</item>
+        <item name="android:actionBarTabStyle">@style/MFTabStyle</item>
+        <item name="android:actionBarTabTextStyle">@style/MFGrayTextStyle</item>
+    </style>
+    
+    <style name="MFTabStyle" parent="Widget.Sherlock.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_bg</item>
+    </style>
+    
+    <style name="MFGrayTextStyle" parent="Widget.Sherlock.ActionBar.TabText">
+        <item name="android:textColor">@color/actionbar_green</item>
+    </style>
+
 </resources>

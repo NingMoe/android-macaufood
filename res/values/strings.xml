@@ -2,11 +2,13 @@
 <resources>
 <!--  Main app string -->
     <string name="app_name">食在澳門</string>
-    <string name="tablabel1">今期推介</string>
-    <string name="tablabel2">優惠發送</string>
-    <string name="tablabel3">餐廳搜尋</string>
-    <string name="tablabel4">漫游澳門</string>
-    <string name="tablabel5">我的最愛</string>
+    <string name="homepage">主頁</string>
+    <string name="recommend_tab">今期推介</string>
+    <string name="coupon_tab">優惠發送</string>
+    <string name="restaurant_search">餐廳搜尋</string>
+    <string name="map_search">漫游澳門</string>
+    <string name="favorite_list">我的最愛</string>
+    <string name="refresh">重新整理</string>
     
 <!--  Recommmend -->
     <string name="noInternetMsg">請連接網絡獲取資料</string>

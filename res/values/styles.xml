@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- A theme that has a translucent background. Here we explicitly specify 
-		that this theme is to inherit from the system's translucent theme, which 
-		sets up various attributes correctly.. -->
-	<style name="Theme.Translucent" parent="android:Theme.Holo.Light.Dialog.NoActionBar">
-	</style>
- 
-	    <style name="ThemeHolo" parent="android:Theme.Light.NoTitleBar">
+
+    <style name="MFTheme" parent="Theme.Sherlock">
+        <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
     </style>
-</resources> 
+
+    <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        <item name="background">#669900</item>
+        <item name="actionBarTabTextStyle">@style/MFGrayTextStyle</item>
+    </style>
+
+    
+    <style name="MFGrayTextStyle" parent="android:style/TextAppearance.Small">
+        <item name="android:textColor">#2456c2</item>
+    </style>
+    
+</resources>

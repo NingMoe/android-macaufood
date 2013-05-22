@@ -318,31 +318,4 @@ public class Map extends MapActivity{
 	    return super.onKeyDown(keyCode, event);
 	}
     
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {    	
-    	menu.add(Menu.NONE, 2, Menu.NONE, getString(R.string.foodNews)).setIcon(R.drawable.ic_menu_dishes);
-    	menu.add(Menu.NONE, 3, Menu.NONE, "最新情報").setIcon(R.drawable.rss);
-    	menu.add(Menu.NONE, 4, Menu.NONE, getString(R.string.aboutUs)).setIcon(R.drawable.ic_menu_info_details);
-		return super.onCreateOptionsMenu(menu);
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	switch (item.getItemId()) {
-		case 2:
-			Intent i = new Intent(this, FoodNews.class);
-			startActivity(i);
-			break;
-//		case 3:
-//			Intent i2 = new Intent(this, Latest.class);
-//			startActivity(i2);
-//			break;
-		case 4:
-			Intent i3 = new Intent(this, About.class);
-			startActivity(i3);
-			break;
-    	}
-    	return super.onOptionsItemSelected(item);
-    }
-    
 }
