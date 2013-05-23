@@ -3,6 +3,8 @@ package com.cycon.macaufood.utilities;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import android.graphics.Color;
+
 import com.cycon.macaufood.R;
 
 public class MFUtil {

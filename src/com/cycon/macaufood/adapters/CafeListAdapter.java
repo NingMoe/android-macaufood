@@ -3,6 +3,7 @@ package com.cycon.macaufood.adapters;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,9 @@ public class CafeListAdapter extends BaseAdapter {
             if (cafe != null) {
 				holder.name.setText(cafe.getTitle());
 				holder.subText.setText(cafe.getContent());
-				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
+//				convertView.setBackgroundColor(Color.WHITE);
+//				convertView.setBackgroundResource(R.drawable.cafe_row_bg);
+//				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
 				
 				imageLoader.displayImage(cafe.getId(), holder.image, position);
 				

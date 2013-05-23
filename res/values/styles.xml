@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="MFTheme" parent="Theme.Sherlock">
-        <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
+    <style name="MFTheme" parent="Theme.Sherlock.Light.DarkActionBar">
+        <item name="actionBarStyle">@style/MFActionBarStyle</item>
     </style>
 
-    <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
-        <item name="background">#669900</item>
+    <style name="MFActionBarStyle" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        <item name="actionBarTabStyle">@style/MFTabStyle</item>
         <item name="actionBarTabTextStyle">@style/MFGrayTextStyle</item>
     </style>
-
     
-    <style name="MFGrayTextStyle" parent="android:style/TextAppearance.Small">
-        <item name="android:textColor">#2456c2</item>
+    <style name="MFTabStyle" parent="Widget.Sherlock.ActionBar.TabView">
+        <item name="background">@drawable/tab_bg</item>
     </style>
     
+    <style name="MFGrayTextStyle" parent="Widget.Sherlock.ActionBar.TabText">
+    </style>
+
 </resources>

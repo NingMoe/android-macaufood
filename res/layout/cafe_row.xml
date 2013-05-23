@@ -22,9 +22,9 @@
 	    android:paddingLeft="9dip"
 	    android:paddingRight="7dip"
 	    android:singleLine="true"
-	    android:shadowDy="1"
+	    android:shadowDy="2"
 	    android:shadowColor="#999999"
-	    android:shadowRadius="1"
+	    android:shadowRadius="2"
 	    android:ellipsize="marquee"
 	    />
 	    
@@ -33,7 +33,7 @@
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:textSize="14sp"
-	    android:textColor="#777777"
+	    android:textColor="@color/green_text"
 	    android:layout_below="@id/name"
 	    android:layout_toRightOf="@id/imageView"
 	    android:paddingLeft="7dip"

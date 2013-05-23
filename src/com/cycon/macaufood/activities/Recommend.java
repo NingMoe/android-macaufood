@@ -82,6 +82,7 @@ public class Recommend extends BaseActivity {
         cafeAdapter = new CafeListAdapter(Recommend.this, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
         list.setAdapter(cafeAdapter);
         list.setOnItemClickListener(itemClickListener);
+        
         banner = (AdvView) findViewById(R.id.banner);
         banner.setLoadingAdv(loadingAdv);
         fileCache=new FileCache(this, ImageType.RECOMMEND);
@@ -135,6 +136,8 @@ public class Recommend extends BaseActivity {
 		if (MFConfig.isOnline(this)) {
 			new SendFavoriteLogTask().execute();
 		}
+		
+		
         
     }
     
