@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="MFTheme" parent="Theme.Sherlock.Light.DarkActionBar">
         <item name="actionBarStyle">@style/MFActionBarStyle</item>
+        <item name="actionButtonStyle">@style/MFActionButton</item>
     </style>
 
     <style name="MFActionBarStyle" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+        <item name="background">@drawable/actionbar_bg</item>
         <item name="actionBarTabStyle">@style/MFTabStyle</item>
         <item name="actionBarTabTextStyle">@style/MFGrayTextStyle</item>
+    </style>
+    
+    <style name="MFActionButton" parent="Widget.Sherlock.ActionButton">
+        <item name="android:minWidth">52dp</item>
     </style>
     
     <style name="MFTabStyle" parent="Widget.Sherlock.ActionBar.TabView">
@@ -15,6 +21,7 @@
     </style>
     
     <style name="MFGrayTextStyle" parent="Widget.Sherlock.ActionBar.TabText">
+        <item name="android:textColor">@color/tab_lightgray_bg</item>
     </style>
 
 </resources>

@@ -15,12 +15,7 @@
         android:id="@+id/menu_favorite_list"
         android:icon="@drawable/favorite_list"
         android:title="@string/favorite_list"
-        android:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/menu_favorite_list1"
-        android:icon="@drawable/favorite_list"
-        android:title="@string/favorite_list"
-        android:showAsAction="ifRoom"/>
+        android:showAsAction="always"/>
     <item
         android:id="@+id/menu_refresh"
         android:title="@string/refresh"
