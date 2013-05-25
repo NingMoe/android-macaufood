@@ -72,7 +72,6 @@ public class Intro extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		addRefreshMenu = true;
 		setContentView(R.layout.intro);
 		introid = getIntent().getStringExtra("introid");
 		totalPages = Integer.parseInt(getIntent().getStringExtra("page"));

@@ -26,22 +26,21 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeListAdapter;
 import com.cycon.macaufood.bean.ImageType;
@@ -51,7 +50,7 @@ import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 
-public class Recommend extends BaseActivity {
+public class Recommend extends SherlockFragment {
 
 	private static final String TAG = Recommend.class.getName();
 	
@@ -66,76 +65,62 @@ public class Recommend extends BaseActivity {
 	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 24; // 24 hours
 	private long dataTimeStamp;
 	private View loadingAdv;
+	private Context mContext;
+	private View mView;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		
+		mView = inflater.inflate(R.layout.recommend, null);
+		initView();
+		return mView;
+	}
+	
+	private void initView() {
+		loadingAdv = mView.findViewById(R.id.loadingAdv);
+        list = (ListView) mView.findViewById(R.id.list);
+        cafeAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
+        list.setAdapter(cafeAdapter);
+        list.setOnItemClickListener(itemClickListener);
+        
+        banner = (AdvView) mView.findViewById(R.id.banner);
+        banner.setLoadingAdv(loadingAdv);
+        
+        if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
+			displayRetryLayout();
+		}
+	}
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-		isTabChild = true;
-		addRefreshMenu = true;
-    	Log.e(TAG, "onCreate");
-        setContentView(R.layout.recommend);
-        loadingAdv = findViewById(R.id.loadingAdv);
-        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(),"recommendTimeStamp", 0);
-
-        list = (ListView) findViewById(R.id.list);
-        cafeAdapter = new CafeListAdapter(Recommend.this, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
-        list.setAdapter(cafeAdapter);
-        list.setOnItemClickListener(itemClickListener);
         
-        banner = (AdvView) findViewById(R.id.banner);
-        banner.setLoadingAdv(loadingAdv);
-        fileCache=new FileCache(this, ImageType.RECOMMEND);
+        mContext = getActivity();
+
+        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(mContext.getApplicationContext(),"recommendTimeStamp", 0);
+        
+        fileCache=new FileCache(mContext, ImageType.RECOMMEND);
         File f=fileCache.getFile(CACHE_FILE_STR);
 		try {
 			FileInputStream is = new FileInputStream(f);
 			parseXml(is);
-
-			if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
-				displayRetryLayout();
-			}
+//
+//			if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
+//				displayRetryLayout();
+//			}
 		} catch (FileNotFoundException e) {
 	    	Log.e(TAG, "FileNotFoundException");
 			e.printStackTrace();
 		} 
 		
 		//if no internet and no data in File, show retry message
-		if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
-
-	        if (!MFConfig.isOnline(this)) {
-	        	displayRetryLayout();
-			} 
-		}
-		
-		if (PreferenceHelper.getPreferenceValueBoolean(this, "disclaimerDialog", true)) {
-
-			TextView text = new TextView(Recommend.this);
-			text.setTextColor(Color.WHITE);
-			text.setTextSize(15);
-			text.setPadding(20, 5, 20, 0);
-			text.setText(R.string.disclaimerText);
-			text.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-			
-			new AlertDialog.Builder(Recommend.this)
-			.setTitle(getString(R.string.disclaimer))
-			.setView(text)
-			.setPositiveButton("�?��?以上�?款", new DialogInterface.OnClickListener() {
-				
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					PreferenceHelper.savePreferencesBoolean(Recommend.this, "disclaimerDialog", false);
-					if (MFConfig.isOnline(Recommend.this) && MFConfig.getInstance().getRecommendCafeList().size() == 0) {
-						pDialog = ProgressDialog.show(Recommend.this, null,
-								"載入資料中...", false, true);
-					}
-				}
-			}).show();
-			
-		}
-		
-		if (MFConfig.isOnline(this)) {
-			new SendFavoriteLogTask().execute();
-		}
+//		if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
+//
+//	        if (!MFConfig.isOnline(mContext)) {
+//	        	displayRetryLayout();
+//			} 
+//		}
 		
 		
         
@@ -154,13 +139,13 @@ public class Recommend extends BaseActivity {
 				String branch = cafeId;
 				Log.e("branch", branch);
 				if (!branch.equals("0")) {
-					Intent i = new Intent(Recommend.this, Branch.class);
+					Intent i = new Intent(mContext, Branch.class);
 					i.putExtra("branch", branch);
 					startActivity(i);
 				} else {
 					//in case that cafe is not added in cafelist yet, return
 					if (MFConfig.getInstance().getCafeLists().size() < Integer.parseInt(cafeId)) return;
-					Intent i = new Intent(Recommend.this, Details.class);
+					Intent i = new Intent(mContext, Details.class);
 					i.putExtra("id", cafeId);
 					startActivity(i);
 				}
@@ -170,7 +155,7 @@ public class Recommend extends BaseActivity {
 				
 				//in case that cafe is not added in cafelist yet, return
 				if (MFConfig.getInstance().getCafeLists().size() < Integer.parseInt(cafeId)) return;
-				Intent i = new Intent(Recommend.this, Details.class);
+				Intent i = new Intent(mContext, Details.class);
 				i.putExtra("id", cafeId);
 				startActivity(i);
 			}
@@ -178,9 +163,9 @@ public class Recommend extends BaseActivity {
     };
     
     private void displayRetryLayout() {
-        retryLayout = findViewById(R.id.retryLayout);
+        retryLayout = mView.findViewById(R.id.retryLayout);
 		retryLayout.setVisibility(View.VISIBLE);
-		retryButton = (Button) findViewById(R.id.retryButton);
+		retryButton = (Button) mView.findViewById(R.id.retryButton);
 		retryButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -190,16 +175,15 @@ public class Recommend extends BaseActivity {
     }
     
     public void refresh() {
-    	if (MFConfig.isOnline(this)) {
+    	if (MFConfig.isOnline(mContext)) {
     		new FetchXmlTask().execute();
-    		new FetchUpdateTask().execute();
         	if (retryLayout != null)
         		retryLayout.setVisibility(View.GONE);
     	}
     }
 
     @Override
-    protected void onResume() {
+	public void onResume() {
     	super.onResume();
     	if (banner != null)
     		banner.startTask();
@@ -208,7 +192,7 @@ public class Recommend extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
+	public void onPause() {
     	super.onPause();
     	//let recommend and coupon screen show all images every levae the screen
 //    	if (cafeAdapter != null)
@@ -230,8 +214,8 @@ public class Recommend extends BaseActivity {
     	@Override
     	protected void onPreExecute() {
     		super.onPreExecute();
-    		if (!PreferenceHelper.getPreferenceValueBoolean(Recommend.this, "disclaimerDialog", true)) {
-	    		pDialog = ProgressDialog.show(Recommend.this, null,
+    		if (!PreferenceHelper.getPreferenceValueBoolean(mContext, "disclaimerDialog", true)) {
+	    		pDialog = ProgressDialog.show(mContext, null,
 						"載入資料中...", false, true);
     		}
     	}
@@ -288,7 +272,7 @@ public class Recommend extends BaseActivity {
 				displayRetryLayout();
 			} else {
 	            dataTimeStamp = System.currentTimeMillis();
-	            PreferenceHelper.savePreferencesLong(getApplicationContext(), "recommendTimeStamp", dataTimeStamp);
+	            PreferenceHelper.savePreferencesLong(mContext.getApplicationContext(), "recommendTimeStamp", dataTimeStamp);
 			}
 			cafeAdapter.imageLoader.cleanup();
 			cafeAdapter.imageLoader.setImagesToLoadFromParsedCafe(MFConfig.getInstance().getRecommendCafeList());
@@ -326,49 +310,6 @@ public class Recommend extends BaseActivity {
     	}
     }
     
-	private class SendFavoriteLogTask extends AsyncTask<Void, Void, Void> {
-		
-		@Override
-		protected Void doInBackground(Void... params) {
-			
-//			SharedPreferences prefs = getSharedPreferences(
-//					"macaufood.preferences", 0);
-//			String str = prefs.getString("favorites", "");
-//			if (str.equals("")) return null;
-			
-			StringBuilder sb = new StringBuilder();
-			for (String id : MFConfig.getInstance().getFavoriteLists()) {
-				int idValue = Integer.parseInt(id) - 1;
-				sb.append(idValue + ",");
-			}
-			
-			String urlStr = "http://www.cycon.com.mo/xml_favouritelog.php?key=cafecafe&udid=android-" + 
-					MFConfig.DEVICE_ID + "&cafeid=" + sb.toString();
-			
-            try {
-            	HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-            	HttpGet request = new HttpGet(urlStr);
-            	client.execute(request);
-            	
-			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
-				e.printStackTrace();
-				return null;
-			} catch (IOException e) {
-				Log.e(TAG, "io exception");
-				e.printStackTrace();
-				return null;
-			} catch (Exception e) {
-				Log.e(TAG, "exception");
-				e.printStackTrace();
-				return null;
-			}
-			
-			return null;
-		}
-	}
 
 
 }

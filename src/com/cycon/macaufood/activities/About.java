@@ -22,7 +22,6 @@ public class About extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		needMenu = false;
 		setContentView(R.layout.about);
 		
 		disclaimer = (TextView) findViewById(R.id.disclaimer);

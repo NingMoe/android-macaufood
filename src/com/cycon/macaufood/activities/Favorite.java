@@ -31,7 +31,6 @@ public class Favorite extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		isTabChild = true;
         setContentView(R.layout.favorite);
         noFavoriteList = (TextView) findViewById(R.id.noFavoriteList);
         editBtn = (Button) findViewById(R.id.editBtn);

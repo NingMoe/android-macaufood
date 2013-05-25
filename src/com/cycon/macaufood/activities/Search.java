@@ -88,7 +88,6 @@ public class Search extends BaseActivity {
         
         Log.e(getClass().getSimpleName(), "---onCreate");
 
-		isTabChild = true;
         setContentView(R.layout.search);
         
 //        boolean landscape = Config.getInstance().isLandscape(this);

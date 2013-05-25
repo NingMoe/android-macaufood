@@ -41,7 +41,6 @@ public class MacauWifi extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		needMenu = false;
 		setContentView(R.layout.macauwifi);
 		
 		int index = 0;

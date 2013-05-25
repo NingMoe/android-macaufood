@@ -72,7 +72,6 @@ public class Info extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		addRefreshMenu = true;
 		setContentView(R.layout.intro);
 		infoid = getIntent().getStringExtra("infoid");
 		totalPages = Integer.parseInt(getIntent().getStringExtra("page"));

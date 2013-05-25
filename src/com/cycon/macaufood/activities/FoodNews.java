@@ -65,7 +65,6 @@ public class FoodNews extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		addRefreshMenu = true;
     	Log.e(TAG, "onCreate");
         setContentView(R.layout.foodnews);
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(),"foodNewsTimeStamp", 0);

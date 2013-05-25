@@ -27,18 +27,22 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeListAdapter;
 import com.cycon.macaufood.bean.ImageType;
@@ -48,7 +52,7 @@ import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 
-public class Coupon extends BaseActivity {
+public class Coupon extends SherlockFragment {
 
 	private static final String TAG = Coupon.class.getName();
 	
@@ -76,37 +80,38 @@ public class Coupon extends BaseActivity {
 	private TextView vipCoupon;
 	private int couponType = 0; //0 = normal, 1 = credit, 2 = vip
 	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	private Context mContext;
+	private View mView;
+	
 
-		isTabChild = true;
-		addRefreshMenu = true;
-    	Log.e(TAG, "onCreate");
-        setContentView(R.layout.coupon);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		
+		mView = inflater.inflate(R.layout.coupon, null);
+		initView();
+		return mView;
+	}
+	
+	private void initView() {
 
-        retryLayout = findViewById(R.id.retryLayout);
+        retryLayout = mView.findViewById(R.id.retryLayout);
 
-        normalCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), "normalCouponTimeStamp", 0);
-        creditCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), "creditCouponTimeStamp", 0);
-        vipCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), "vipCouponTimeStamp", 0);
-
-        normalCouponList = (ListView) findViewById(R.id.normalCouponList);
-        creditCouponList = (ListView) findViewById(R.id.creditCouponList);
-        vipCouponList = (ListView) findViewById(R.id.vipCouponList);
-        normalCouponAdapter = new CafeListAdapter(Coupon.this, MFConfig.getInstance().getNormalCouponCafeList(), ImageType.COUPON);
-        creditCouponAdapter = new CafeListAdapter(Coupon.this, MFConfig.getInstance().getCreditCouponCafeList(), ImageType.COUPON);
-        vipCouponAdapter = new CafeListAdapter(Coupon.this, MFConfig.getInstance().getVipCouponCafeList(), ImageType.COUPON);
+        normalCouponList = (ListView) mView.findViewById(R.id.normalCouponList);
+        creditCouponList = (ListView) mView.findViewById(R.id.creditCouponList);
+        vipCouponList = (ListView) mView.findViewById(R.id.vipCouponList);
+        normalCouponAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getNormalCouponCafeList(), ImageType.COUPON);
+        creditCouponAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getCreditCouponCafeList(), ImageType.COUPON);
+        vipCouponAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getVipCouponCafeList(), ImageType.COUPON);
         normalCouponList.setAdapter(normalCouponAdapter);
         creditCouponList.setAdapter(creditCouponAdapter);
         vipCouponList.setAdapter(vipCouponAdapter);
         normalCouponList.setOnItemClickListener(itemClickListener);
         creditCouponList.setOnItemClickListener(itemClickListener);
         vipCouponList.setOnItemClickListener(itemClickListener);
-        banner = (AdvView) findViewById(R.id.banner);
-        fileCache=new FileCache(this, ImageType.COUPON);
-		
-		normalCoupon = (TextView) findViewById(R.id.normalCoupon);
+        banner = (AdvView) mView.findViewById(R.id.banner);
+        
+		normalCoupon = (TextView) mView.findViewById(R.id.normalCoupon);
 		normalCoupon.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -123,7 +128,7 @@ public class Coupon extends BaseActivity {
 				}
 			}
 		});
-		creditCoupon = (TextView) findViewById(R.id.creditCoupon);
+		creditCoupon = (TextView) mView.findViewById(R.id.creditCoupon);
 		creditCoupon.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -140,7 +145,7 @@ public class Coupon extends BaseActivity {
 				}
 			}
 		});
-		vipCoupon = (TextView) findViewById(R.id.vipCoupon);
+		vipCoupon = (TextView) mView.findViewById(R.id.vipCoupon);
 		vipCoupon.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -157,6 +162,22 @@ public class Coupon extends BaseActivity {
 				}
 			}
 		});
+	}
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mContext = getActivity();
+
+
+        normalCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(mContext.getApplicationContext(), "normalCouponTimeStamp", 0);
+        creditCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(mContext.getApplicationContext(), "creditCouponTimeStamp", 0);
+        vipCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(mContext.getApplicationContext(), "vipCouponTimeStamp", 0);
+
+        fileCache=new FileCache(mContext, ImageType.COUPON);
+		
+
 		
 		preLoadFromFileCache();
 		//onResume will call fetch data
@@ -225,20 +246,20 @@ public class Coupon extends BaseActivity {
 //				String branch = Config.getInstance().getCafeLists().get(Integer.parseInt(cafeId) - 1).getBranch();
 				String branch = cafeId;
 				if (!branch.equals("0")) {
-					Intent i = new Intent(Coupon.this, Branch.class);
+					Intent i = new Intent(mContext, Branch.class);
 					i.putExtra("branch", branch);
 					startActivity(i);
 				} else {
 					//in case that cafe is not added in cafelist yet, return
 					if (MFConfig.getInstance().getCafeLists().size() < Integer.parseInt(cafeId)) return;
-					Intent i = new Intent(Coupon.this, Details.class);
+					Intent i = new Intent(mContext, Details.class);
 					i.putExtra("id", cafeId);
 					startActivity(i);
 				}
 			} else {
 				//in case that cafe is not added in cafelist yet, return
 				if (MFConfig.getInstance().getCafeLists().size() < Integer.parseInt(cafeId)) return;
-				Intent i = new Intent(Coupon.this, Details.class);
+				Intent i = new Intent(mContext, Details.class);
 				i.putExtra("id", cafeId);
 				startActivity(i);
 			}
@@ -247,7 +268,7 @@ public class Coupon extends BaseActivity {
     
     private void displayRetryLayout() {
 		retryLayout.setVisibility(View.VISIBLE);
-		retryButton = (Button) findViewById(R.id.retryButton);
+		retryButton = (Button) mView.findViewById(R.id.retryButton);
 		retryButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -283,23 +304,22 @@ public class Coupon extends BaseActivity {
 		if (couponType == 0 && MFConfig.getInstance().getNormalCouponCafeList().size() == 0 || 
 				couponType == 1 && MFConfig.getInstance().getCreditCouponCafeList().size() == 0 ||
 				couponType == 2 && MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
-	        if (!MFConfig.isOnline(this)) {
+	        if (!MFConfig.isOnline(mContext)) {
 	        	displayRetryLayout();
 			} 
 		} 
     }
     
     public void refresh() {
-    	if (MFConfig.isOnline(this)) {
+    	if (MFConfig.isOnline(mContext)) {
     		new FetchXmlTask().execute();
-    		new FetchUpdateTask().execute();
         	if (retryLayout != null)
         		retryLayout.setVisibility(View.GONE);
     	}
     }
 
     @Override
-    protected void onResume() {
+	public void onResume() {
     	super.onResume();
     	if (banner != null)
     		banner.startTask();
@@ -316,7 +336,7 @@ public class Coupon extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
+	public void onPause() {
     	super.onPause();
     	//let recommend and coupon screen show all images every levae the screen
 //    	if (cafeAdapter != null)
@@ -330,7 +350,7 @@ public class Coupon extends BaseActivity {
     	@Override
     	protected void onPreExecute() {
     		super.onPreExecute();
-    		pDialog = ProgressDialog.show(Coupon.this, null,
+    		pDialog = ProgressDialog.show(mContext, null,
 					"載入資料中...", false, true);
     	}
     	@Override
@@ -398,7 +418,7 @@ public class Coupon extends BaseActivity {
 					displayRetryLayout();
 				} else {
 		            normalCouponDataTimeStamp = System.currentTimeMillis();
-		            PreferenceHelper.savePreferencesLong(getApplicationContext(), "normalCouponTimeStamp", normalCouponDataTimeStamp);
+		            PreferenceHelper.savePreferencesLong(mContext.getApplicationContext(), "normalCouponTimeStamp", normalCouponDataTimeStamp);
 				}
 				normalCouponAdapter.imageLoader.cleanup();
 				normalCouponAdapter.imageLoader.setImagesToLoadFromParsedCafe(MFConfig.getInstance().getNormalCouponCafeList());
@@ -411,7 +431,7 @@ public class Coupon extends BaseActivity {
 					displayRetryLayout();
 				} else {
 		            creditCouponDataTimeStamp = System.currentTimeMillis();
-		            PreferenceHelper.savePreferencesLong(getApplicationContext(), "creditCouponTimeStamp", normalCouponDataTimeStamp);
+		            PreferenceHelper.savePreferencesLong(mContext.getApplicationContext(), "creditCouponTimeStamp", normalCouponDataTimeStamp);
 					
 				}
 				creditCouponAdapter.imageLoader.cleanup();
@@ -425,7 +445,7 @@ public class Coupon extends BaseActivity {
 					displayRetryLayout();
 				} else {
 		            vipCouponDataTimeStamp = System.currentTimeMillis();
-		            PreferenceHelper.savePreferencesLong(getApplicationContext(), "vipCouponTimeStamp", normalCouponDataTimeStamp);
+		            PreferenceHelper.savePreferencesLong(mContext.getApplicationContext(), "vipCouponTimeStamp", normalCouponDataTimeStamp);
 					
 				}
 				vipCouponAdapter.imageLoader.cleanup();
