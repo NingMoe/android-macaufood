@@ -130,13 +130,5 @@
   			android:src="@drawable/tab_shadow" />
   			
 	</FrameLayout>
-	  
-  <com.cycon.macaufood.widget.AdvView
-  		android:id="@+id/banner"
-	    android:layout_width="fill_parent"
-		android:layout_height="50dip"
-		android:scaleType="fitXY"
-		android:background="#FFFFFF"
-		mf:small="true"/>
     
 </LinearLayout>

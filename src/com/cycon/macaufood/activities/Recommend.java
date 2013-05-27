@@ -47,7 +47,6 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
-import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 
 public class Recommend extends SherlockFragment {
@@ -57,35 +56,32 @@ public class Recommend extends SherlockFragment {
 	private View retryLayout;
 	private Button retryButton;
 	private ListView list;
-	private AdvView banner;
 	private CafeListAdapter cafeAdapter;
 	private FileCache fileCache;
 	private ProgressDialog pDialog;
 	private static final String CACHE_FILE_STR = "recommend_parsed_xml";
 	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 24; // 24 hours
 	private long dataTimeStamp;
-	private View loadingAdv;
 	private Context mContext;
 	private View mView;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+		if (mView != null) {
+			 ((ViewGroup) mView.getParent()).removeView(mView);
+			return mView;
+		}
 		mView = inflater.inflate(R.layout.recommend, null);
 		initView();
 		return mView;
 	}
 	
 	private void initView() {
-		loadingAdv = mView.findViewById(R.id.loadingAdv);
         list = (ListView) mView.findViewById(R.id.list);
         cafeAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
         list.setAdapter(cafeAdapter);
         list.setOnItemClickListener(itemClickListener);
-        
-        banner = (AdvView) mView.findViewById(R.id.banner);
-        banner.setLoadingAdv(loadingAdv);
         
         if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
 			displayRetryLayout();
@@ -95,7 +91,7 @@ public class Recommend extends SherlockFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        Log.e("ZZZ", "oncreate recommend");
         mContext = getActivity();
 
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(mContext.getApplicationContext(),"recommendTimeStamp", 0);
@@ -185,21 +181,10 @@ public class Recommend extends SherlockFragment {
     @Override
 	public void onResume() {
     	super.onResume();
-    	if (banner != null)
-    		banner.startTask();
     	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
     		refresh();
     }
 
-    @Override
-	public void onPause() {
-    	super.onPause();
-    	//let recommend and coupon screen show all images every levae the screen
-//    	if (cafeAdapter != null)
-//    		cafeAdapter.imageLoader.cleanup();
-    	if (banner != null)
-    		banner.stopTask();
-    }
 
     @Override
     public void onDestroy()

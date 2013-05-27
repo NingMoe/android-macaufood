@@ -1,13 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
-    
+
     <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="48dp" >
+
+        <com.cycon.macaufood.widget.AdvView
+            android:id="@+id/banner"
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="48dp"
+            android:background="#FFFFFF"
+            android:scaleType="fitXY"
+            mf:small="true" />
+
+        <LinearLayout
+            android:id="@+id/loadingAdv"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:text="@string/loadingInfo"
+                android:textColor="#777777" />
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

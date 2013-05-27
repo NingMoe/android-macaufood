@@ -2,9 +2,9 @@
 <resources>
 
     <color name="green_text">#629d2a</color>
-    <color name="actionbar_green1">#7caf00</color>
     <color name="actionbar_bottom_line">#47732a</color>
     <color name="holo_blue_light">#33b5e5</color>
-    <color name="tab_lightgray_bg">#222222</color>
+    <color name="tab_gray_text">#333333</color>
+    <color name="white">#ffffff</color>
 
 </resources>

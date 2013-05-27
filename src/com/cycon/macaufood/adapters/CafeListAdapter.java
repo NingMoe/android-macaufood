@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class CafeListAdapter extends BaseAdapter {
 
     public CafeListAdapter(Context context, ArrayList<ParsedCafeHolder> cafes, ImageType imageType) {
             this.cafes = cafes;
+            Log.e("ZZZ", "cafelistadapter");
         	inflater = LayoutInflater.from(context);
         	imageLoader=new ImageLoader(context, 4, imageType);
         	imageLoader.setImagesToLoadFromParsedCafe(cafes);
@@ -52,7 +54,7 @@ public class CafeListAdapter extends BaseAdapter {
 				holder.name.setText(cafe.getTitle());
 				holder.subText.setText(cafe.getContent());
 //				convertView.setBackgroundColor(Color.WHITE);
-//				convertView.setBackgroundResource(R.drawable.cafe_row_bg);
+				convertView.setBackgroundResource(R.drawable.cafe_row_bg);
 //				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
 				
 				imageLoader.displayImage(cafe.getId(), holder.image, position);

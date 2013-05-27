@@ -1,73 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  	xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:background="#DDDDDD">
-  
-      <LinearLayout 
-  		android:id="@+id/retryLayout"
-	  android:orientation="vertical"
-	  android:layout_width="fill_parent"
-	  android:layout_height="fill_parent"
-	  android:paddingTop="45dip"
-	  android:visibility="gone">
-	  <TextView 
-		  android:layout_width="wrap_content"
-		  android:layout_height="wrap_content"
-		  android:text="@string/noInternetMsg"
-		  android:layout_gravity="center_horizontal"
-		  android:textSize="18sp"
-		  android:layout_marginTop="20dip"/>
-		  
-	  <Button
- 			android:id="@+id/retryButton"
-			android:layout_width="100dip"
-			android:layout_height="wrap_content"
-		    android:text="@string/retryMsg"
-		  	android:layout_gravity="center_horizontal"
-		    android:layout_marginTop="20dip"
-		      />
-	  		
-		  </LinearLayout>
-		
-	  <com.cycon.macaufood.widget.AdvView
-  		android:id="@+id/banner"
-	    android:layout_width="fill_parent"
-		android:layout_height="50dip"
-		android:scaleType="fitXY"
-		android:background="#FFFFFF"
-		mf:small="true"
-		android:layout_alignParentBottom="true"/>
-  
-  <ListView
-  	  android:id="@+id/list"
-	  android:layout_width="fill_parent"
-	  android:layout_height="fill_parent"
-	  android:layout_marginTop="34dip"
-	  android:layout_above="@id/banner"/>
-	  
-		
-		
-	  <TextView 
-	  	android:id="@+id/header"
-		android:layout_width="fill_parent"
-		android:layout_height="40dip"
-		android:paddingBottom="5dip"
-		android:textSize="18sp"
-		android:gravity="center"
-		android:paddingLeft="5dip"
-		android:paddingRight="5dip"
-		android:ellipsize="marquee"
-		android:singleLine="true"
-		android:textColor="#FFFFFF"
-		android:background="@drawable/intro_header_shadow"
-	    android:shadowColor="#000000"
-	    android:shadowDy="1.5"
-	    android:shadowRadius="1"
-	    android:textStyle="bold"
-	    android:text="@string/foodNews"
-		/>
-    
-</RelativeLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/retryLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dip"
+            android:text="@string/noInternetMsg"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/retryButton"
+            android:layout_width="100dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dip"
+            android:text="@string/retryMsg" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"/>
+
+
+</LinearLayout>

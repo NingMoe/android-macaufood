@@ -27,16 +27,20 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.FoodNewsListAdapter;
 import com.cycon.macaufood.bean.ImageType;
@@ -46,55 +50,74 @@ import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.FoodNewsXMLHandler;
 
-public class FoodNews extends BaseActivity {
+public class FoodNews extends SherlockFragment {
 
 	private static final String TAG = FoodNews.class.getName();
 	
 	private View retryLayout;
 	private Button retryButton;
 	private ListView list;
-	private AdvView banner;
 	private FoodNewsListAdapter foodListAdapter;
 	private FileCache fileCache;
 	private ProgressDialog pDialog;
 	private static final String CACHE_FILE_STR = "foodnews_parsed_xml";
 	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 48; // 48 hours
 	private long dataTimeStamp;
+	private Context mContext;
+	private View mView;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		if (mView != null) {
+			 ((ViewGroup) mView.getParent()).removeView(mView);
+			return mView;
+		}
+		mView = inflater.inflate(R.layout.foodnews, null);
+		initView();
+		return mView;
+	}
+	
+	private void initView() {
+		list = (ListView) mView.findViewById(R.id.list);
+        foodListAdapter = new FoodNewsListAdapter(mContext, MFConfig.getInstance().getFoodNewsList(), ImageType.FOODNEWS);
+        list.setAdapter(foodListAdapter);
+        list.setOnItemClickListener(itemClickListener);
+        
+		if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
+			displayRetryLayout();
+		}
+	}
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-    	Log.e(TAG, "onCreate");
-        setContentView(R.layout.foodnews);
-        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(),"foodNewsTimeStamp", 0);
+		Log.e("ZZZ", "oncreate foodnews ");
+        mContext = getActivity();
 
-        list = (ListView) findViewById(R.id.list);
-        foodListAdapter = new FoodNewsListAdapter(FoodNews.this, MFConfig.getInstance().getFoodNewsList(), ImageType.FOODNEWS);
-        list.setAdapter(foodListAdapter);
-        list.setOnItemClickListener(itemClickListener);
-        banner = (AdvView) findViewById(R.id.banner);
-        fileCache=new FileCache(this, ImageType.FOODNEWS);
+        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(mContext.getApplicationContext(),"foodNewsTimeStamp", 0);
+
+        
+        fileCache=new FileCache(mContext, ImageType.FOODNEWS);
         File f=fileCache.getFile(CACHE_FILE_STR);
 		try {
 			FileInputStream is = new FileInputStream(f);
 			parseXml(is);
 
-			if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
-				displayRetryLayout();
-			}
+
 		} catch (FileNotFoundException e) {
 	    	Log.e(TAG, "FileNotFoundException");
 			e.printStackTrace();
 		} 
 		
 		//if no internet and no data in File, show retry message
-		if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
-
-	        if (!MFConfig.isOnline(this)) {
-	        	displayRetryLayout();
-			} 
-		}
+//		if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
+//
+//	        if (!MFConfig.isOnline(this)) {
+//	        	displayRetryLayout();
+//			} 
+//		}
         
     }
     
@@ -103,7 +126,7 @@ public class FoodNews extends BaseActivity {
 				int position, long id) {
 			
 			String foodnews_id = MFConfig.getInstance().getFoodNewsList().get(position).getId();
-			Intent i = new Intent(FoodNews.this, FoodNewsImage.class);
+			Intent i = new Intent(mContext, FoodNewsImage.class);
 			i.putExtra("foodnews_id", foodnews_id);
 			startActivity(i);
 			
@@ -111,9 +134,9 @@ public class FoodNews extends BaseActivity {
     };
     
     private void displayRetryLayout() {
-        retryLayout = findViewById(R.id.retryLayout);
+        retryLayout = mView.findViewById(R.id.retryLayout);
 		retryLayout.setVisibility(View.VISIBLE);
-		retryButton = (Button) findViewById(R.id.retryButton);
+		retryButton = (Button) mView.findViewById(R.id.retryButton);
 		retryButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -123,7 +146,7 @@ public class FoodNews extends BaseActivity {
     }
     
     public void refresh() {
-    	if (MFConfig.isOnline(this)) {
+    	if (MFConfig.isOnline(mContext)) {
     		new FetchXmlTask().execute();
         	if (retryLayout != null)
         		retryLayout.setVisibility(View.GONE);
@@ -131,22 +154,10 @@ public class FoodNews extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
     	super.onResume();
-    	if (banner != null)
-    		banner.startTask();
     	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
     		refresh();
-    }
-
-    @Override
-    protected void onPause() {
-    	super.onPause();
-    	//let recommend and coupon screen show all images every levae the screen
-//    	if (cafeAdapter != null)
-//    		cafeAdapter.imageLoader.cleanup();
-    	if (banner != null)
-    		banner.stopTask();
     }
 
     @Override
@@ -162,7 +173,7 @@ public class FoodNews extends BaseActivity {
     	@Override
     	protected void onPreExecute() {
     		super.onPreExecute();
-    		pDialog = ProgressDialog.show(FoodNews.this, null,
+    		pDialog = ProgressDialog.show(mContext, null,
 						"載入資料中...", false, true);
     	}
     	@Override
@@ -218,7 +229,7 @@ public class FoodNews extends BaseActivity {
 				displayRetryLayout();
 			} else {
 	            dataTimeStamp = System.currentTimeMillis();
-	            PreferenceHelper.savePreferencesLong(getApplicationContext(), "foodNewsTimeStamp", dataTimeStamp);
+	            PreferenceHelper.savePreferencesLong(mContext.getApplicationContext(), "foodNewsTimeStamp", dataTimeStamp);
 			}
 			foodListAdapter.imageLoader.cleanup();
 			foodListAdapter.imageLoader.setImagesToLoadFromParsedFoodNews(MFConfig.getInstance().getFoodNewsList());

@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -30,14 +31,16 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.PreferenceHelper;
+import com.cycon.macaufood.widget.AdvView;
 
 public class Home extends SherlockFragmentActivity {
 
 	private static final String TAG = Home.class.getName();
 
-	private TabHost tabHost;
 	private ViewPager mViewPager;
 	private TabsAdapter mTabsAdapter;
+	private AdvView banner;
+	private View loadingAdv;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,18 +49,22 @@ public class Home extends SherlockFragmentActivity {
 		getWindow().setWindowAnimations(android.R.style.Animation);
 		setContentView(R.layout.home);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
+		loadingAdv = findViewById(R.id.loadingAdv);
+        banner = (AdvView) findViewById(R.id.banner);
+        banner.setLoadingAdv(loadingAdv);
 
 		final ActionBar bar = getSupportActionBar();
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-//		bar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
 
 		mTabsAdapter = new TabsAdapter(this, mViewPager);
 		mTabsAdapter.addTab(bar.newTab().setText(R.string.recommend_tab),
 				Recommend.class, null);
 		mTabsAdapter.addTab(bar.newTab().setText(R.string.coupon_tab),
 				Coupon.class, null);
-//		mTabsAdapter.addTab(bar.newTab().setText(R.string.foodNews),
-//				FoodNews.class, null);
+		mTabsAdapter.addTab(bar.newTab().setText(R.string.foodNews),
+				FoodNews.class, null);
+		mTabsAdapter.addTab(bar.newTab().setText(R.string.photoShare),
+				PhotoShare.class, null);
 
 		if (savedInstanceState != null) {
 			bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
@@ -92,45 +99,60 @@ public class Home extends SherlockFragmentActivity {
 
 	}
 	
-	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (banner != null)
+    		banner.startTask();
+	}
 	
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {		
-	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {	   
-	    	new AlertDialog.Builder(this)
-			.setMessage(getString(R.string.exitProgramPrompt))
-			.setPositiveButton(getString(R.string.confirmed),
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,	int whichButton) {
-					    	Process.killProcess(Process.myPid());   
-						}@Override
-						protected void finalize() throws Throwable {
-							// TODO Auto-generated method stub
-							super.finalize();
-						}
-					})
-			.setNegativeButton(getString(R.string.cancel),
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,	int whichButton) {
-							dialog.dismiss();
-						}
-					})
-			.show();
-	        return true;
-	    }
-	    return super.onKeyDown(keyCode, event);
+	protected void onPause() {
+		super.onPause();
+		if (banner != null)
+    		banner.stopTask();
 	}
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	getSupportMenuInflater().inflate(R.menu.main_menu, menu);
-    	return super.onCreateOptionsMenu(menu);
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	Intent i;
-    	switch (item.getItemId()) {
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			new AlertDialog.Builder(this)
+					.setMessage(getString(R.string.exitProgramPrompt))
+					.setPositiveButton(getString(R.string.confirmed),
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									Process.killProcess(Process.myPid());
+								}
+
+								@Override
+								protected void finalize() throws Throwable {
+									// TODO Auto-generated method stub
+									super.finalize();
+								}
+							})
+					.setNegativeButton(getString(R.string.cancel),
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									dialog.dismiss();
+								}
+							}).show();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent i;
+		switch (item.getItemId()) {
 		case R.id.menu_search:
 			i = new Intent(this, Search.class);
 			startActivity(i);
@@ -152,19 +174,20 @@ public class Home extends SherlockFragmentActivity {
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
-    	}
-    }
-    
-    public void refresh() {
-    	//TODO
+		}
+	}
+
+	public void refresh() {
+		// TODO
 
 		MFRequestHelper.checkUpdate(getApplicationContext());
-    };
+	};
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt("tab", getSupportActionBar().getSelectedNavigationIndex());
+		outState.putInt("tab", getSupportActionBar()
+				.getSelectedNavigationIndex());
 	}
 
 	public static class TabsAdapter extends FragmentPagerAdapter implements
@@ -229,22 +252,22 @@ public class Home extends SherlockFragmentActivity {
 
 		public void onPageScrollStateChanged(int arg0) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void onPageScrolled(int arg0, float arg1, int arg2) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		public void onTabReselected(Tab tab, FragmentTransaction ft) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 

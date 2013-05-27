@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="MFTheme" parent="Theme.Sherlock.Light.DarkActionBar">
+    <style name="MFTheme" parent="Theme.Sherlock.Light">
         <item name="android:actionBarStyle">@style/MFActionBarStyle</item>
         <item name="android:actionButtonStyle">@style/MFActionButton</item>
-    </style>
-
-    <style name="MFActionBarStyle" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@drawable/actionbar_bg</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="android:actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item>
+        <item name="android:homeAsUpIndicator">@drawable/abs__ic_ab_back_holo_dark</item>
         <item name="android:actionBarTabStyle">@style/MFTabStyle</item>
         <item name="android:actionBarTabTextStyle">@style/MFGrayTextStyle</item>
     </style>
-    
+
+    <style name="MFActionBarStyle" parent="Widget.Sherlock.Light.ActionBar">
+        <item name="android:background">@drawable/actionbar_bg</item>
+        <item name="android:titleTextStyle">@style/MFTitleTextStyle</item>
+    </style>
+
     <style name="MFActionButton" parent="Widget.Sherlock.ActionButton">
         <item name="android:minWidth">52dp</item>
     </style>
-    
+
     <style name="MFTabStyle" parent="Widget.Sherlock.ActionBar.TabView">
-        <item name="android:background">@drawable/tab_bg</item>
+        <item name="android:background">@drawable/tab_indicator</item>
+    </style>
+
+    <style name="MFGrayTextStyle" parent="Widget.Sherlock.ActionBar.TabText">
+        <item name="android:textColor">@color/tab_gray_text</item>
     </style>
     
-    <style name="MFGrayTextStyle" parent="Widget.Sherlock.ActionBar.TabText">
-        <item name="android:textColor">@color/tab_lightgray_bg</item>
-    </style>
+     <style name="MFTitleTextStyle" parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
+    <item name="android:textColor">@color/white</item>
+  </style>
 
 </resources>

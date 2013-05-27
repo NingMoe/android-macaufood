@@ -99,6 +99,13 @@
  <!-- Dialog -->
  	<string name="exitProgramPrompt">你確定要退出程式嗎?</string>
  	<string name="confirmed">確定</string>
+ 	
+ <!-- PhotoShare -->
+ 	<string name="photoShare">美食分享</string>
+ 	
+ 	
+ 	
+ 	<string name="construction">工程中</string>
  
 	<!--  SQL Queries -->
 	<string name="initCafeTableSql">CREATE TABLE IF NOT EXISTS CAFEENTRIES(

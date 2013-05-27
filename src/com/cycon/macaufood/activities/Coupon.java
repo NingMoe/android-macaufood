@@ -35,8 +35,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -49,7 +49,6 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
-import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 
 public class Coupon extends SherlockFragment {
@@ -61,7 +60,6 @@ public class Coupon extends SherlockFragment {
 	private ListView normalCouponList;
 	private ListView creditCouponList;
 	private ListView vipCouponList;
-	private AdvView banner;
 	private CafeListAdapter normalCouponAdapter;
 	private CafeListAdapter creditCouponAdapter;
 	private CafeListAdapter vipCouponAdapter;
@@ -87,7 +85,10 @@ public class Coupon extends SherlockFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		
+		if (mView != null) {
+			 ((ViewGroup) mView.getParent()).removeView(mView);
+			return mView;
+		}
 		mView = inflater.inflate(R.layout.coupon, null);
 		initView();
 		return mView;
@@ -109,7 +110,6 @@ public class Coupon extends SherlockFragment {
         normalCouponList.setOnItemClickListener(itemClickListener);
         creditCouponList.setOnItemClickListener(itemClickListener);
         vipCouponList.setOnItemClickListener(itemClickListener);
-        banner = (AdvView) mView.findViewById(R.id.banner);
         
 		normalCoupon = (TextView) mView.findViewById(R.id.normalCoupon);
 		normalCoupon.setOnClickListener(new OnClickListener() {
@@ -167,7 +167,7 @@ public class Coupon extends SherlockFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.e("ZZZ", "oncreate coupon");
         mContext = getActivity();
 
 
@@ -321,8 +321,6 @@ public class Coupon extends SherlockFragment {
     @Override
 	public void onResume() {
     	super.onResume();
-    	if (banner != null)
-    		banner.startTask();
     	checkIfNeededRefresh();
     }
     
@@ -333,16 +331,6 @@ public class Coupon extends SherlockFragment {
     	else if (couponType == 2) dataTimeStamp = vipCouponDataTimeStamp;
     	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
     		refresh();
-    }
-
-    @Override
-	public void onPause() {
-    	super.onPause();
-    	//let recommend and coupon screen show all images every levae the screen
-//    	if (cafeAdapter != null)
-//    		cafeAdapter.imageLoader.cleanup();
-    	if (banner != null)
-    		banner.stopTask();
     }
     
     public class FetchXmlTask extends AsyncTask<Void, Void, Void> {
