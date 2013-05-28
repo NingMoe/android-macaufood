@@ -2,25 +2,24 @@ package com.cycon.macaufood.activities;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Process;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
@@ -28,7 +27,6 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
@@ -50,8 +48,8 @@ public class Home extends SherlockFragmentActivity {
 		setContentView(R.layout.home);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		loadingAdv = findViewById(R.id.loadingAdv);
-        banner = (AdvView) findViewById(R.id.banner);
-        banner.setLoadingAdv(loadingAdv);
+		banner = (AdvView) findViewById(R.id.banner);
+		banner.setLoadingAdv(loadingAdv);
 
 		final ActionBar bar = getSupportActionBar();
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -69,48 +67,56 @@ public class Home extends SherlockFragmentActivity {
 		if (savedInstanceState != null) {
 			bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
-		
-		if (PreferenceHelper.getPreferenceValueBoolean(this, "disclaimerDialog", true)) {
+
+		if (PreferenceHelper.getPreferenceValueBoolean(this,
+				"disclaimerDialog", true)) {
 
 			TextView text = new TextView(this);
 			text.setTextSize(15);
 			text.setPadding(20, 5, 20, 0);
 			text.setText(R.string.disclaimerText);
-			text.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-			
+			text.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+					LayoutParams.WRAP_CONTENT));
+
 			new AlertDialog.Builder(this)
-			.setTitle(getString(R.string.disclaimer))
-			.setView(text)
-			.setPositiveButton("�?��?以上�?款", new DialogInterface.OnClickListener() {
-				
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					PreferenceHelper.savePreferencesBoolean(Home.this, "disclaimerDialog", false);
-//					if (MFConfig.isOnline(this) && MFConfig.getInstance().getRecommendCafeList().size() == 0) {
-//						pDialog = ProgressDialog.show(this, null,
-//								"載入資料中...", false, true);
-//					}
-				}
-			}).show();
-			
+					.setTitle(getString(R.string.disclaimer))
+					.setView(text)
+					.setPositiveButton("�?��?以上�?款",
+							new DialogInterface.OnClickListener() {
+
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+									PreferenceHelper.savePreferencesBoolean(
+											Home.this, "disclaimerDialog",
+											false);
+									// if (MFConfig.isOnline(this) &&
+									// MFConfig.getInstance().getRecommendCafeList().size()
+									// == 0) {
+									// pDialog = ProgressDialog.show(this, null,
+									// "載入資料中...", false, true);
+									// }
+								}
+							}).show();
+
 		}
-		
+
 		MFRequestHelper.sendFavoriteLog(getApplicationContext());
 
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		if (banner != null)
-    		banner.startTask();
+			banner.startTask();
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		if (banner != null)
-    		banner.stopTask();
+			banner.stopTask();
 	}
 
 	@Override
@@ -178,8 +184,6 @@ public class Home extends SherlockFragmentActivity {
 	}
 
 	public void refresh() {
-		// TODO
-
 		MFRequestHelper.checkUpdate(getApplicationContext());
 	};
 
@@ -195,6 +199,7 @@ public class Home extends SherlockFragmentActivity {
 		private final Context mContext;
 		private final ActionBar mActionBar;
 		private final ViewPager mViewPager;
+		private final FragmentManager mFragmentManager;
 		private final ArrayList<TabInfo> mTabs = new ArrayList<TabInfo>();
 
 		static final class TabInfo {
@@ -209,11 +214,13 @@ public class Home extends SherlockFragmentActivity {
 
 		public TabsAdapter(SherlockFragmentActivity activity, ViewPager pager) {
 			super(activity.getSupportFragmentManager());
+			mFragmentManager = activity.getSupportFragmentManager();
 			mContext = activity;
 			mActionBar = activity.getSupportActionBar();
 			mViewPager = pager;
 			mViewPager.setAdapter(this);
 			mViewPager.setOnPageChangeListener(this);
+
 		}
 
 		public void addTab(ActionBar.Tab tab, Class<?> clss, Bundle args) {
@@ -239,6 +246,7 @@ public class Home extends SherlockFragmentActivity {
 
 		public void onPageSelected(int position) {
 			mActionBar.setSelectedNavigationItem(position);
+
 		}
 
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
@@ -249,15 +257,25 @@ public class Home extends SherlockFragmentActivity {
 				}
 			}
 		}
+		
+		private void resetListViewAnimation(int pos) {
+
+			Fragment fragment = getActiveFragment(mViewPager, pos);
+			if (fragment instanceof Recommend) {
+				((Recommend) fragment).resetListViewAnimation();
+			} else if (fragment instanceof Coupon) {
+				((Coupon) fragment).resetListViewAnimation();
+			} else if (fragment instanceof FoodNews) {
+				((FoodNews) fragment).resetListViewAnimation();
+			}
+		}
 
 		public void onPageScrollStateChanged(int arg0) {
 			// TODO Auto-generated method stub
-
 		}
 
 		public void onPageScrolled(int arg0, float arg1, int arg2) {
 			// TODO Auto-generated method stub
-
 		}
 
 		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
@@ -267,8 +285,25 @@ public class Home extends SherlockFragmentActivity {
 
 		public void onTabReselected(Tab tab, FragmentTransaction ft) {
 			// TODO Auto-generated method stub
+			Object tag = tab.getTag();
+			for (int i = 0; i < mTabs.size(); i++) {
+				if (mTabs.get(i) == tag) {
+					mViewPager.setCurrentItem(i);
+					resetListViewAnimation(i);
+				}
+			}
 
 		}
+
+		public Fragment getActiveFragment(ViewPager container, int position) {
+			String name = makeFragmentName(container.getId(), position);
+			return mFragmentManager.findFragmentByTag(name);
+		}
+
+		private static String makeFragmentName(int viewId, int index) {
+			return "android:switcher:" + viewId + ":" + index;
+		}
+
 	}
 
 }

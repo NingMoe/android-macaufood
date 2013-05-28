@@ -48,6 +48,9 @@ import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
+import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
+import com.haarman.listviewanimations.swinginadapters.prepared.SwingLeftInAnimationAdapter;
+import com.haarman.listviewanimations.swinginadapters.prepared.SwingRightInAnimationAdapter;
 
 public class Recommend extends SherlockFragment {
 
@@ -64,6 +67,7 @@ public class Recommend extends SherlockFragment {
 	private long dataTimeStamp;
 	private Context mContext;
 	private View mView;
+	private SwingLeftInAnimationAdapter swingBottomInAnimationAdapter;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -80,7 +84,11 @@ public class Recommend extends SherlockFragment {
 	private void initView() {
         list = (ListView) mView.findViewById(R.id.list);
         cafeAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
-        list.setAdapter(cafeAdapter);
+        
+        swingBottomInAnimationAdapter = new SwingLeftInAnimationAdapter(cafeAdapter, 200, 400);
+        swingBottomInAnimationAdapter.setListView(list);
+
+		list.setAdapter(swingBottomInAnimationAdapter);
         list.setOnItemClickListener(itemClickListener);
         
         if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
@@ -169,6 +177,12 @@ public class Recommend extends SherlockFragment {
 			}
 		});
     }
+    
+
+	public void resetListViewAnimation() {
+		swingBottomInAnimationAdapter.reset();
+		swingBottomInAnimationAdapter.notifyDataSetChanged();
+	}
     
     public void refresh() {
     	if (MFConfig.isOnline(mContext)) {

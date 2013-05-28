@@ -49,6 +49,8 @@ import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.FoodNewsXMLHandler;
+import com.haarman.listviewanimations.swinginadapters.prepared.ScaleInAnimationAdapter;
+import com.haarman.listviewanimations.swinginadapters.prepared.SwingLeftInAnimationAdapter;
 
 public class FoodNews extends SherlockFragment {
 
@@ -65,6 +67,7 @@ public class FoodNews extends SherlockFragment {
 	private long dataTimeStamp;
 	private Context mContext;
 	private View mView;
+	private ScaleInAnimationAdapter swingBottomInAnimationAdapter;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,7 +84,11 @@ public class FoodNews extends SherlockFragment {
 	private void initView() {
 		list = (ListView) mView.findViewById(R.id.list);
         foodListAdapter = new FoodNewsListAdapter(mContext, MFConfig.getInstance().getFoodNewsList(), ImageType.FOODNEWS);
-        list.setAdapter(foodListAdapter);
+        
+        swingBottomInAnimationAdapter = new ScaleInAnimationAdapter(foodListAdapter, 0.5f, 200, 400);
+        swingBottomInAnimationAdapter.setListView(list);
+        
+        list.setAdapter(swingBottomInAnimationAdapter);
         list.setOnItemClickListener(itemClickListener);
         
 		if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
@@ -93,7 +100,6 @@ public class FoodNews extends SherlockFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		Log.e("ZZZ", "oncreate foodnews ");
         mContext = getActivity();
 
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(mContext.getApplicationContext(),"foodNewsTimeStamp", 0);
@@ -145,6 +151,11 @@ public class FoodNews extends SherlockFragment {
 		});
     }
     
+	public void resetListViewAnimation() {
+		swingBottomInAnimationAdapter.reset();
+		swingBottomInAnimationAdapter.notifyDataSetChanged();
+	}
+    
     public void refresh() {
     	if (MFConfig.isOnline(mContext)) {
     		new FetchXmlTask().execute();
@@ -152,7 +163,7 @@ public class FoodNews extends SherlockFragment {
         		retryLayout.setVisibility(View.GONE);
     	}
     }
-
+    
     @Override
     public void onResume() {
     	super.onResume();
