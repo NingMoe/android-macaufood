@@ -26,10 +26,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,8 +44,10 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.activities.Recommend.FetchXmlTask;
 import com.cycon.macaufood.adapters.FoodNewsListAdapter;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
@@ -85,7 +89,7 @@ public class FoodNews extends SherlockFragment {
 		list = (ListView) mView.findViewById(R.id.list);
         foodListAdapter = new FoodNewsListAdapter(mContext, MFConfig.getInstance().getFoodNewsList(), ImageType.FOODNEWS);
         
-        swingBottomInAnimationAdapter = new ScaleInAnimationAdapter(foodListAdapter, 0.5f, 200, 400);
+        swingBottomInAnimationAdapter = new ScaleInAnimationAdapter(foodListAdapter, 0.5f);
         swingBottomInAnimationAdapter.setListView(list);
         
         list.setAdapter(swingBottomInAnimationAdapter);
@@ -152,17 +156,21 @@ public class FoodNews extends SherlockFragment {
     }
     
 	public void resetListViewAnimation() {
-		swingBottomInAnimationAdapter.reset();
-		swingBottomInAnimationAdapter.notifyDataSetChanged();
+		if (swingBottomInAnimationAdapter != null) {
+			swingBottomInAnimationAdapter.reset();
+			swingBottomInAnimationAdapter.notifyDataSetChanged();
+		}
 	}
     
-    public void refresh() {
-    	if (MFConfig.isOnline(mContext)) {
-    		new FetchXmlTask().execute();
-        	if (retryLayout != null)
-        		retryLayout.setVisibility(View.GONE);
-    	}
-    }
+	@SuppressLint("NewApi")
+	public void refresh() {
+		if (MFConfig.isOnline(mContext)) {
+        	AsyncTaskHelper.execute(new FetchXmlTask());
+
+			if (retryLayout != null)
+				retryLayout.setVisibility(View.GONE);
+		}
+	}
     
     @Override
     public void onResume() {

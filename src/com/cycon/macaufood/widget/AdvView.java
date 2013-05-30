@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 
 public class AdvView extends ImageView {
@@ -85,7 +86,7 @@ public class AdvView extends ImageView {
 			setImageBitmap(cacheAdv);
 		stopTask();
 		advTask = new FetchAdvTask();
-		advTask.execute(isSmallAdv && cacheAdv != null);
+		AsyncTaskHelper.execute(advTask, isSmallAdv && cacheAdv != null);
 	}
 	
 	
@@ -112,7 +113,6 @@ public class AdvView extends ImageView {
     		String linkIdUrl = "http://www.cycon.com.mo/xml_adv.php?code=android-" + MFConfig.DEVICE_ID + 
     				"&type=" + (isSmallAdv ? "s" : "b");
 
-			Log.e(TAG, "getting adv");
             try {
             	HttpClient client = new DefaultHttpClient();
             	HttpParams httpParams = client.getParams();
@@ -189,7 +189,7 @@ public class AdvView extends ImageView {
     		}
     		
     		advTask = new FetchAdvTask();
-    		advTask.execute(true);
+    		AsyncTaskHelper.execute(advTask, true);
     	}
     }
     

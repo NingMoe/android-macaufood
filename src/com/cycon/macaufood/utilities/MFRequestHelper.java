@@ -42,14 +42,14 @@ public class MFRequestHelper {
 	public static void checkUpdate(Context c) {
 		appContext = c;
 		if (MFConfig.isOnline(appContext) && !isUpdating && System.currentTimeMillis() - updateCafeListTimeStamp > UPDATE_TIME_PERIOD) {
-			new FetchUpdateTask().execute();
+			AsyncTaskHelper.execute(new FetchUpdateTask());
 		}
 	}
 	
 	public static void sendFavoriteLog(Context c) {
 		appContext = c;
 		if (MFConfig.isOnline(appContext)) {
-			new SendFavoriteLogTask().execute();
+			AsyncTaskHelper.execute(new SendFavoriteLogTask());
 		}
 			
 	}

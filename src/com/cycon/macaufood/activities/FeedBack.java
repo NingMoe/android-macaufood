@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 
 public class FeedBack extends Activity {
@@ -55,7 +56,7 @@ public class FeedBack extends Activity {
 					Toast.makeText(FeedBack.this, getString(R.string.contentWordsTooShort), Toast.LENGTH_SHORT).show();
 					return;
 				} else {
-					new SubmitFeedBackTask().execute();
+					AsyncTaskHelper.execute(new SubmitFeedBackTask());
 				}
 			}
 		});
@@ -72,7 +73,6 @@ public class FeedBack extends Activity {
 		String emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}"; 
 		return emailText.matches(emailRegex);
 	}
-	
 	
 	private class SubmitFeedBackTask extends AsyncTask<Void, Void, Boolean> {
 		

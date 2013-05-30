@@ -41,6 +41,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 
 public class AdvFlingGallery extends OneFlingGallery {
@@ -90,7 +91,7 @@ public class AdvFlingGallery extends OneFlingGallery {
 		});
 		
 		if (MFConfig.isOnline(mContext)) {
-			new FetchAdvIdTask().execute();
+			AsyncTaskHelper.execute(new FetchAdvIdTask());
 		} else {
     		setVisibility(View.VISIBLE);
 			imageList.add(((BitmapDrawable) noadv).getBitmap());
@@ -167,7 +168,7 @@ public class AdvFlingGallery extends OneFlingGallery {
 	    		imageAdapter.notifyDataSetChanged();
     		} else {
 	    		for (String id : idList) {
-	    			new FetchAdvTask(id).execute();
+	    			AsyncTaskHelper.execute(new FetchAdvTask(id));
 	    		}
     		}
     	}
@@ -247,7 +248,7 @@ public class AdvFlingGallery extends OneFlingGallery {
         		if (MFConfig.isOnline(mContext)) {
         			imageList.clear();
         			if (!isFetchingId)
-        				new FetchAdvIdTask().execute();
+        				AsyncTaskHelper.execute(new FetchAdvIdTask());
         		} else {
             		setVisibility(View.VISIBLE);
         			imageList.add(((BitmapDrawable) noadv).getBitmap());

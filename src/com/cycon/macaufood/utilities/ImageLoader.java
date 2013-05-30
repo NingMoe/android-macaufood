@@ -184,7 +184,7 @@ public class ImageLoader {
     		currentDisplayImages.add(id);
     	
         try {
-			task.execute();
+			AsyncTaskHelper.execute(task);
 		} catch (RejectedExecutionException e) {
 			Log.e(TAG, "catchRejectedExecution");
 			e.printStackTrace();

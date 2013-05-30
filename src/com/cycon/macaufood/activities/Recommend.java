@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.util.concurrent.Executor;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,10 +27,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +48,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeListAdapter;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
@@ -64,6 +69,7 @@ public class Recommend extends SherlockFragment {
 	private ProgressDialog pDialog;
 	private static final String CACHE_FILE_STR = "recommend_parsed_xml";
 	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 24; // 24 hours
+//	private static final long REFRESH_TIME_PERIOD = 3600; // 24 hours
 	private long dataTimeStamp;
 	private Context mContext;
 	private View mView;
@@ -85,7 +91,7 @@ public class Recommend extends SherlockFragment {
         list = (ListView) mView.findViewById(R.id.list);
         cafeAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
         
-        swingBottomInAnimationAdapter = new SwingLeftInAnimationAdapter(cafeAdapter, 200, 400);
+        swingBottomInAnimationAdapter = new SwingLeftInAnimationAdapter(cafeAdapter);
         swingBottomInAnimationAdapter.setListView(list);
 
 		list.setAdapter(swingBottomInAnimationAdapter);
@@ -99,7 +105,7 @@ public class Recommend extends SherlockFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("ZZZ", "oncreate recommend");
+        
         mContext = getActivity();
 
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(mContext.getApplicationContext(),"recommendTimeStamp", 0);
@@ -180,17 +186,22 @@ public class Recommend extends SherlockFragment {
     
 
 	public void resetListViewAnimation() {
-		swingBottomInAnimationAdapter.reset();
-		swingBottomInAnimationAdapter.notifyDataSetChanged();
+		if (swingBottomInAnimationAdapter != null) {
+			swingBottomInAnimationAdapter.reset();
+			swingBottomInAnimationAdapter.notifyDataSetChanged();
+		}
 	}
     
-    public void refresh() {
-    	if (MFConfig.isOnline(mContext)) {
-    		new FetchXmlTask().execute();
-        	if (retryLayout != null)
-        		retryLayout.setVisibility(View.GONE);
-    	}
-    }
+	@SuppressLint("NewApi")
+	public void refresh() {
+		if (MFConfig.isOnline(mContext)) {
+			
+			AsyncTaskHelper.execute(new FetchXmlTask());
+
+			if (retryLayout != null)
+				retryLayout.setVisibility(View.GONE);
+		}
+	}
 
     @Override
 	public void onResume() {
@@ -217,17 +228,26 @@ public class Recommend extends SherlockFragment {
 	    		pDialog = ProgressDialog.show(mContext, null,
 						"載入資料中...", false, true);
     		}
+    		Log.e("ZZZ", "on pre execute");
     	}
     	@Override
     	protected Void doInBackground(Void... params) {
+
+        	Log.e("ZZZ", "init execute");
     		String urlStr = "http://www.cycon.com.mo/xml_caferecommend_new.php?key=cafecafe";
             try {
 				HttpClient client = new DefaultHttpClient();
             	HttpParams httpParams = client.getParams();
             	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
+            	Log.e("ZZZ", "pre http get");
             	HttpGet request = new HttpGet(urlStr);
+
+            	Log.e("ZZZ", "pre execute");
             	HttpResponse response = client.execute(request);
             	InputStream is= response.getEntity().getContent();
+            	
+            	Log.e("ZZZ", "finish getting reponse" + response.toString());
+            	Log.e("ZZZ", "finish getting reponse" + response.getEntity().toString());
             	
             	ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
@@ -236,14 +256,21 @@ public class Recommend extends SherlockFragment {
                     baos.write(buffer, 0, len);
                 }
                 baos.flush();
+                
+
+            	Log.e("ZZZ", "pre prase xml");
             	
             	parseXml(new ByteArrayInputStream(baos.toByteArray()));
+            	
+            	Log.e("ZZZ", "post prase xml");
             	if (MFConfig.tempParsedCafeList.size() != 0) {
     				File f=fileCache.getFile(CACHE_FILE_STR);
     	            OutputStream os = new FileOutputStream(f);
     	            os.write(baos.toByteArray());
     	            os.close();
             	}
+
+            	Log.e("ZZZ", "finish write to file");
 				
 				
 			} catch (MalformedURLException e) {

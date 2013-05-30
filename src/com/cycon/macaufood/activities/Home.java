@@ -184,6 +184,18 @@ public class Home extends SherlockFragmentActivity {
 	}
 
 	public void refresh() {
+		Log.e("ZZZ", "start refresh");
+		Recommend recommendFragment = (Recommend) mTabsAdapter.getActiveFragment(mViewPager, 0);
+		recommendFragment.refresh();
+		Coupon couponFragment = (Coupon) mTabsAdapter.getActiveFragment(mViewPager, 1);
+		couponFragment.refresh();
+		FoodNews foodNewsFragment = (FoodNews) mTabsAdapter.getActiveFragment(mViewPager, 2);
+		foodNewsFragment.refresh();
+//		Recommend recommendFragment = (Recommend) mTabsAdapter.getActiveFragment(mViewPager, 0);
+//		recommendFragment.refresh();
+//		Recommend recommendFragment = (Recommend) mTabsAdapter.getActiveFragment(mViewPager, 0);
+//		recommendFragment.refresh();
+		
 		MFRequestHelper.checkUpdate(getApplicationContext());
 	};
 

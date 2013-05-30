@@ -17,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -27,6 +28,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -43,8 +45,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.activities.FoodNews.FetchXmlTask;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
@@ -68,6 +72,7 @@ public class Details extends BaseActivity {
 	private ArrayList<Integer> paymentMethods = new ArrayList<Integer>();
 	private FileCache fileCache;
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -166,7 +171,7 @@ public class Details extends BaseActivity {
             imageView.setImageBitmap(bitmap);
         } else {
         	imageView.setImageResource(R.drawable.nophoto);
-        	new FetchImageTask().execute();
+        	AsyncTaskHelper.execute(new FetchImageTask());
         }
 		
 		
@@ -250,8 +255,6 @@ public class Details extends BaseActivity {
 				prefsPrivateEditor.putString("favorites", str + cafe.getId() + ",");
 				prefsPrivateEditor.commit();
 				MFConfig.getInstance().getFavoriteLists().add(cafe.getId());
-//				if (Config.isOnline(Details.this))
-//					new SendFavoriteLogTask().execute();
 			}
 		});
 		
@@ -361,10 +364,15 @@ public class Details extends BaseActivity {
 		
 		}
 		
-
-		if (MFConfig.isOnline(Details.this))
-			new SendDetailsLogTask().execute();
 		
+		if (MFConfig.isOnline(Details.this)) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+				new SendDetailsLogTask()
+						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+			} else {
+				new SendDetailsLogTask().execute();
+			}
+		}
 	}
 	
 //	private class SendFavoriteLogTask extends AsyncTask<Void, Void, Void> {

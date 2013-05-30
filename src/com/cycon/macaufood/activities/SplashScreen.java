@@ -16,7 +16,9 @@ import android.view.KeyEvent;
 import android.view.Window;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.activities.Intro.FetchPageTask;
 import com.cycon.macaufood.sqlite.LocalDbManager;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 
@@ -47,7 +49,8 @@ public class SplashScreen extends Activity {
 		MFConfig.cafe_version_update = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "cafe_version_update" ,MFConfig.cafe_version_update);
 		
 		setContentView(R.layout.splash_screen);
-		new ParseXmlTask().execute();
+
+		AsyncTaskHelper.execute(new ParseXmlTask());
 		
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);

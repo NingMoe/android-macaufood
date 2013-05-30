@@ -26,11 +26,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,8 +49,10 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.activities.Recommend.FetchXmlTask;
 import com.cycon.macaufood.adapters.CafeListAdapter;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.PreferenceHelper;
@@ -117,7 +121,7 @@ public class Coupon extends SherlockFragment {
 				.getVipCouponCafeList(), ImageType.COUPON);
 		
 		animNormalCouponAdapter = new SwingBottomInAnimationAdapter(
-				normalCouponAdapter, 200, 400);
+				normalCouponAdapter);
 		animNormalCouponAdapter.setListView(normalCouponList);
 		normalCouponList.setAdapter(animNormalCouponAdapter);
 		
@@ -385,14 +389,20 @@ public class Coupon extends SherlockFragment {
 	
 	public void resetListViewAnimation() {
 		if (couponType == 0) {
-			animNormalCouponAdapter.reset();
-			animNormalCouponAdapter.notifyDataSetChanged();
+			if (animNormalCouponAdapter != null) {
+				animNormalCouponAdapter.reset();
+				animNormalCouponAdapter.notifyDataSetChanged();
+			}
 		} else if (couponType == 1) {
-			animCreditCouponAdapter.reset();
-			animCreditCouponAdapter.notifyDataSetChanged();
+			if (animCreditCouponAdapter != null) {
+				animCreditCouponAdapter.reset();
+				animCreditCouponAdapter.notifyDataSetChanged();
+			}
 		} else if (couponType == 2) {
-			animVipCouponAdapter.reset();
-			animVipCouponAdapter.notifyDataSetChanged();
+			if (animVipCouponAdapter != null) {
+				animVipCouponAdapter.reset();
+				animVipCouponAdapter.notifyDataSetChanged();
+			}
 		}
 	}
 	
@@ -406,9 +416,11 @@ public class Coupon extends SherlockFragment {
 //
 //	}
 
+	@SuppressLint("NewApi")
 	public void refresh() {
-		if (MFConfig.isOnline(getActivity())) {
-			new FetchXmlTask().execute();
+		if (MFConfig.isOnline(mContext)) {
+        	AsyncTaskHelper.execute(new FetchXmlTask());
+
 			if (retryLayout != null)
 				retryLayout.setVisibility(View.GONE);
 		}

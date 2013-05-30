@@ -39,7 +39,10 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.activities.Info.FetchImageTask;
+import com.cycon.macaufood.activities.Info.FetchTextTask;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFUtil;
@@ -160,11 +163,11 @@ public class Intro extends BaseActivity {
 				if (imageMap.isEmpty() || textMap.isEmpty())
 					text.setText(R.string.noInternetMsg);
 			} else {
-				new FetchPageTask().execute();
+				AsyncTaskHelper.execute(new FetchPageTask());
 				//load first 2 photos first
 				for (int i = 1; i <= 2; i++) {
-					new FetchImageTask(i).execute();
-					new FetchTextTask(i).execute();
+					AsyncTaskHelper.execute(new FetchImageTask(i));
+					AsyncTaskHelper.execute(new FetchTextTask(i));
 				}
 			}
 		}
@@ -172,11 +175,11 @@ public class Intro extends BaseActivity {
 	
 	public void refresh() {
 		if (MFConfig.isOnline(Intro.this)) {
-			new FetchPageTask().execute();
+			AsyncTaskHelper.execute(new FetchPageTask());
 			//load first 2 photos first
 			for (int i = 1; i <= 2; i++) {
-				new FetchImageTask(i).execute();
-				new FetchTextTask(i).execute();
+				AsyncTaskHelper.execute(new FetchImageTask(i));
+				AsyncTaskHelper.execute(new FetchTextTask(i));
 			}
 		}
 	}
@@ -235,8 +238,8 @@ public class Intro extends BaseActivity {
     		imageAdapter.notifyDataSetChanged();
     		if (finishLoadingFirstImage) {
 	    		for (int i = 3; i <= serverTotalPages; i++) {
-	    			new FetchImageTask(i).execute();
-	    			new FetchTextTask(i).execute();
+					AsyncTaskHelper.execute(new FetchImageTask(i));
+					AsyncTaskHelper.execute(new FetchTextTask(i));
 	    		}
     		}
     	}
@@ -400,8 +403,8 @@ public class Intro extends BaseActivity {
         			finishLoadingFirstImage = true;
         			
     	    		for (int i = 3; i <= serverTotalPages; i++) {
-    	    			new FetchImageTask(i).execute();
-    	    			new FetchTextTask(i).execute();
+    					AsyncTaskHelper.execute(new FetchImageTask(i));
+    					AsyncTaskHelper.execute(new FetchTextTask(i));
     	    		}
         		}
     		}
