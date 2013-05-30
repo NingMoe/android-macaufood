@@ -56,7 +56,7 @@ public class FeedBack extends Activity {
 					Toast.makeText(FeedBack.this, getString(R.string.contentWordsTooShort), Toast.LENGTH_SHORT).show();
 					return;
 				} else {
-					AsyncTaskHelper.execute(new SubmitFeedBackTask());
+					AsyncTaskHelper.executeWithResultBoolean(new SubmitFeedBackTask());
 				}
 			}
 		});

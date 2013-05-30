@@ -184,7 +184,7 @@ public class ImageLoader {
     		currentDisplayImages.add(id);
     	
         try {
-			AsyncTaskHelper.execute(task);
+			AsyncTaskHelper.executeWithResultBitmap(task);
 		} catch (RejectedExecutionException e) {
 			Log.e(TAG, "catchRejectedExecution");
 			e.printStackTrace();
@@ -212,7 +212,7 @@ public class ImageLoader {
     }
     
     
-    private class FetchImageTask extends AsyncTask<String, Void, Bitmap> {
+    private class FetchImageTask extends AsyncTask<Void, Void, Bitmap> {
     	
     	public ImageToLoad p;
     	private boolean noConnection;
@@ -222,7 +222,7 @@ public class ImageLoader {
 		}
 
 		@Override
-		protected Bitmap doInBackground(String... params) {
+		protected Bitmap doInBackground(Void... params) {
             Bitmap bmp=getBitmap(p.id);
             if (bmp != null) {
 //            	ETLog.e(TAG, "load successful " + p.id + " max tasks no = " + imagesLoading.size());

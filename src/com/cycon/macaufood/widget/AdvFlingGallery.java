@@ -168,7 +168,7 @@ public class AdvFlingGallery extends OneFlingGallery {
 	    		imageAdapter.notifyDataSetChanged();
     		} else {
 	    		for (String id : idList) {
-	    			AsyncTaskHelper.execute(new FetchAdvTask(id));
+	    			AsyncTaskHelper.executeWithResultBitmap(new FetchAdvTask(id));
 	    		}
     		}
     	}

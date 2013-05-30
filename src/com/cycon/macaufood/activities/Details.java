@@ -171,7 +171,7 @@ public class Details extends BaseActivity {
             imageView.setImageBitmap(bitmap);
         } else {
         	imageView.setImageResource(R.drawable.nophoto);
-        	AsyncTaskHelper.execute(new FetchImageTask());
+        	AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask());
         }
 		
 		

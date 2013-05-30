@@ -162,11 +162,11 @@ public class Info extends BaseActivity {
 				if (imageMap.isEmpty() || textMap.isEmpty())
 					text.setText(R.string.noInternetMsg);
 			} else {
-				AsyncTaskHelper.execute(new FetchPageTask());
+				AsyncTaskHelper.executeWithResultString(new FetchPageTask());
 				//load first 2 photos first
 				for (int i = 1; i <= 2; i++) {
-					AsyncTaskHelper.execute(new FetchImageTask(i));
-					AsyncTaskHelper.execute(new FetchTextTask(i));
+					AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask(i));
+					AsyncTaskHelper.executeWithResultString(new FetchTextTask(i));
 				}
 			}
 		}
@@ -174,11 +174,11 @@ public class Info extends BaseActivity {
 	
 	public void refresh() {
 		if (MFConfig.isOnline(Info.this)) {
-			AsyncTaskHelper.execute(new FetchPageTask());
+			AsyncTaskHelper.executeWithResultString(new FetchPageTask());
 			//load first 2 photos first
 			for (int i = 1; i <= 2; i++) {
-				AsyncTaskHelper.execute(new FetchImageTask(i));
-				AsyncTaskHelper.execute(new FetchTextTask(i));
+				AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask(i));
+				AsyncTaskHelper.executeWithResultString(new FetchTextTask(i));
 			}
 		}
 	}
@@ -237,8 +237,8 @@ public class Info extends BaseActivity {
     		imageAdapter.notifyDataSetChanged();
     		if (finishLoadingFirstImage) {
 	    		for (int i = 3; i <= serverTotalPages; i++) {
-					AsyncTaskHelper.execute(new FetchImageTask(i));
-					AsyncTaskHelper.execute(new FetchTextTask(i));
+					AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask(i));
+					AsyncTaskHelper.executeWithResultString(new FetchTextTask(i));
 	    		}
     		}
     	}
@@ -402,8 +402,8 @@ public class Info extends BaseActivity {
         			finishLoadingFirstImage = true;
         			
     	    		for (int i = 3; i <= serverTotalPages; i++) {
-    					AsyncTaskHelper.execute(new FetchImageTask(i));
-    					AsyncTaskHelper.execute(new FetchTextTask(i));
+    					AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask(i));
+    					AsyncTaskHelper.executeWithResultString(new FetchTextTask(i));
     	    		}
         		}
     		}
