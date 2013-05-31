@@ -51,6 +51,7 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
@@ -98,7 +99,9 @@ public class Recommend extends SherlockFragment {
         list.setOnItemClickListener(itemClickListener);
         
         if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
-			displayRetryLayout();
+        	if (!MFConfig.isOnline(mContext)) {
+        		displayRetryLayout();
+        	}
 		}
 	}
 	
@@ -172,7 +175,7 @@ public class Recommend extends SherlockFragment {
     	};
     };
     
-    private void displayRetryLayout() {
+    public void displayRetryLayout() {
         retryLayout = mView.findViewById(R.id.retryLayout);
 		retryLayout.setVisibility(View.VISIBLE);
 		retryButton = (Button) mView.findViewById(R.id.retryButton);
@@ -182,6 +185,21 @@ public class Recommend extends SherlockFragment {
 				refresh();
 			}
 		});
+    }
+    
+    public void populateListView() {
+		
+    	Log.e("ZZZ", "recommend size = " + MFConfig.getInstance().getRecommendCafeList().size());
+		//if no internet and no data in File, show retry message
+		if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
+			displayRetryLayout();
+		} else {
+            dataTimeStamp = System.currentTimeMillis();
+            PreferenceHelper.savePreferencesLong(mContext.getApplicationContext(), "recommendTimeStamp", dataTimeStamp);
+		}
+		cafeAdapter.imageLoader.cleanup();
+		cafeAdapter.imageLoader.setImagesToLoadFromParsedCafe(MFConfig.getInstance().getRecommendCafeList());
+		cafeAdapter.notifyDataSetChanged();
     }
     
 
@@ -195,20 +213,20 @@ public class Recommend extends SherlockFragment {
 	@SuppressLint("NewApi")
 	public void refresh() {
 		if (MFConfig.isOnline(mContext)) {
-			
-			AsyncTaskHelper.execute(new FetchXmlTask());
+
+			((Home)getActivity()).refresh();
 
 			if (retryLayout != null)
 				retryLayout.setVisibility(View.GONE);
 		}
 	}
 
-    @Override
-	public void onResume() {
-    	super.onResume();
-    	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
-    		refresh();
-    }
+//    @Override
+//	public void onResume() {
+//    	super.onResume();
+//    	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
+//    		refresh();
+//    }
 
 
     @Override
@@ -224,11 +242,8 @@ public class Recommend extends SherlockFragment {
     	@Override
     	protected void onPreExecute() {
     		super.onPreExecute();
-    		if (!PreferenceHelper.getPreferenceValueBoolean(mContext, "disclaimerDialog", true)) {
 	    		pDialog = ProgressDialog.show(mContext, null,
 						"載入資料中...", false, true);
-    		}
-    		Log.e("ZZZ", "on pre execute");
     	}
     	@Override
     	protected Void doInBackground(Void... params) {
@@ -263,7 +278,7 @@ public class Recommend extends SherlockFragment {
             	parseXml(new ByteArrayInputStream(baos.toByteArray()));
             	
             	Log.e("ZZZ", "post prase xml");
-            	if (MFConfig.tempParsedCafeList.size() != 0) {
+            	if (MFConfig.tempParsedRecommendCafeList.size() != 0) {
     				File f=fileCache.getFile(CACHE_FILE_STR);
     	            OutputStream os = new FileOutputStream(f);
     	            os.write(baos.toByteArray());
@@ -308,12 +323,12 @@ public class Recommend extends SherlockFragment {
     }
     
     private void parseXml(InputStream is) {    	
-    	MFConfig.tempParsedCafeList.clear();
+    	MFConfig.tempParsedRecommendCafeList.clear();
     	try {
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			SAXParser sp = spf.newSAXParser();
 			XMLReader xr = sp.getXMLReader();
-			ServerCafeXMLHandler myXMLHandler = new ServerCafeXMLHandler();
+			ServerCafeXMLHandler myXMLHandler = new ServerCafeXMLHandler(MFConfig.tempParsedRecommendCafeList);
 			xr.setContentHandler(myXMLHandler);
 			xr.parse(new InputSource(is));	
 		} catch (FactoryConfigurationError e) {
@@ -330,9 +345,9 @@ public class Recommend extends SherlockFragment {
 			e.printStackTrace();
 		}
 		
-    	if (MFConfig.tempParsedCafeList.size() != 0) {
+    	if (MFConfig.tempParsedRecommendCafeList.size() != 0) {
     		MFConfig.getInstance().getRecommendCafeList().clear();
-    		MFConfig.getInstance().getRecommendCafeList().addAll(MFConfig.tempParsedCafeList);
+    		MFConfig.getInstance().getRecommendCafeList().addAll(MFConfig.tempParsedRecommendCafeList);
     	}
     }
     

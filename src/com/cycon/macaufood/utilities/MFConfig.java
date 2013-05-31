@@ -38,21 +38,23 @@ public class MFConfig {
 	
 	public static boolean updateSuccessfully;
 
-	private List<Cafe> cafeLists = Collections.synchronizedList(new ArrayList<Cafe>(2000));
+	private List<Cafe> cafeLists = Collections.synchronizedList(new ArrayList<Cafe>(2500));
 	
 	private ArrayList<String> favoriteLists = new ArrayList<String>(20);
 	
 	private ArrayList<Cafe> nearbyLists = new ArrayList<Cafe>(50);
 	
-	private ArrayList<ParsedCafeHolder> recommendCafeList = new ArrayList<ParsedCafeHolder>(10);
-	private ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
+	private ArrayList<ParsedCafeHolder> recommendCafeList = new ArrayList<ParsedCafeHolder>(60);
+	private ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(60);
 	private ArrayList<ParsedCafeHolder> creditCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
-	private ArrayList<ParsedCafeHolder> vipCouponCafeList = new ArrayList<ParsedCafeHolder>(20);
+	private ArrayList<ParsedCafeHolder> vipCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
 	private ArrayList<ParsedFoodNewsHolder> foodNewsList = new ArrayList<ParsedFoodNewsHolder>(20);
 	
-	public static ArrayList<ParsedCafeHolder> tempParsedCafeList = new ArrayList<ParsedCafeHolder>();
-	
-	public static ArrayList<ParsedFoodNewsHolder> tempParsedFoodNewsList = new ArrayList<ParsedFoodNewsHolder>();
+	public static List<ParsedCafeHolder> tempParsedRecommendCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(60));
+	public static List<ParsedCafeHolder> tempParsedNormalCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(60));
+	public static List<ParsedCafeHolder> tempParsedCreditCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(30));
+	public static List<ParsedCafeHolder> tempParsedVipCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(30));
+	public static List<ParsedFoodNewsHolder> tempParsedFoodNewsList = Collections.synchronizedList(new ArrayList<ParsedFoodNewsHolder>(20));
 	
 	public static int deviceWidth;
 	

@@ -9,11 +9,12 @@
     <string name="map_search">漫游澳門</string>
     <string name="favorite_list">我的最愛</string>
     <string name="refresh">重新整理</string>
+    <string name="loadingInfo">載入資訊中...</string>
+    <string name="loadingContent">載入主頁資料中...</string>
     
 <!--  Recommmend -->
     <string name="noInternetMsg">請連接網絡獲取資料</string>
     <string name="retryMsg">重試</string>
-    <string name="loadingInfo">載入資訊中...</string>
     
 <!--  Coupon  -->
     <string name="normalCoupon">普通優惠</string>

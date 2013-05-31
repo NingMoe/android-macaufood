@@ -73,31 +73,7 @@
 		  		
   </LinearLayout>
   
-  <LinearLayout 
-  		android:id="@+id/retryLayout"
-	  android:orientation="vertical"
-	  android:layout_width="fill_parent"
-	  android:layout_height="fill_parent"
-	  android:visibility="gone">
-	  <TextView 
-		  android:layout_width="wrap_content"
-		  android:layout_height="wrap_content"
-		  android:text="@string/noInternetMsg"
-		  android:layout_gravity="center_horizontal"
-		  android:textSize="18sp"
-		  android:layout_marginTop="20dip"/>
-		  
-	  <Button
- 			android:id="@+id/retryButton"
-			android:layout_width="100dip"
-			android:layout_height="wrap_content"
-		    android:text="@string/retryMsg"
-		  	android:layout_gravity="center_horizontal"
-		    android:layout_marginTop="20dip"
-		      />
-	  		
-		  </LinearLayout>
-		  
+  <include layout="@layout/retry_layout" />
 		  
   <FrameLayout
   		android:layout_width="fill_parent"

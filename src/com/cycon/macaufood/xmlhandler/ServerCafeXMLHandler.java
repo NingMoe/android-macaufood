@@ -1,5 +1,7 @@
 package com.cycon.macaufood.xmlhandler;
 
+import java.util.List;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -10,8 +12,13 @@ import com.cycon.macaufood.utilities.MFConfig;
 
 	public class ServerCafeXMLHandler extends DefaultHandler{
 
-		public static ParsedCafeHolder cafe = null;
+		private ParsedCafeHolder cafe = null;
 		private StringBuffer tempValue = new StringBuffer();
+		private List tempParsedList;
+		
+		public ServerCafeXMLHandler(List list) {
+			tempParsedList = list;
+		}
 
 		@Override
 		public void startElement(String uri, String localName, String qName,
@@ -30,7 +37,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 			if (localName.equals("list")) return;
 			
 			if (localName.equals("cafe")) {
-				MFConfig.tempParsedCafeList.add(cafe);
+				tempParsedList.add(cafe);
 //				if (couponType == 0) {
 //					Config.getInstance().getNormalCouponCafeList().add(cafe);
 //				} else if (couponType == 1) {

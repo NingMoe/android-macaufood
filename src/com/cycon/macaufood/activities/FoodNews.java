@@ -50,6 +50,7 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.xmlhandler.FoodNewsXMLHandler;
@@ -96,7 +97,9 @@ public class FoodNews extends SherlockFragment {
         list.setOnItemClickListener(itemClickListener);
         
 		if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
-			displayRetryLayout();
+			if (!MFConfig.isOnline(mContext)) {
+        		displayRetryLayout();
+        	}
 		}
 	}
 	
@@ -143,7 +146,7 @@ public class FoodNews extends SherlockFragment {
 		}
     };
     
-    private void displayRetryLayout() {
+    public void displayRetryLayout() {
         retryLayout = mView.findViewById(R.id.retryLayout);
 		retryLayout.setVisibility(View.VISIBLE);
 		retryButton = (Button) mView.findViewById(R.id.retryButton);
@@ -153,6 +156,20 @@ public class FoodNews extends SherlockFragment {
 				refresh();
 			}
 		});
+    }
+    
+    public void populateListView() {
+		//if no internet and no data in File, show retry message
+		if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
+			displayRetryLayout();
+		} else {
+            dataTimeStamp = System.currentTimeMillis();
+            PreferenceHelper.savePreferencesLong(mContext.getApplicationContext(), "foodNewsTimeStamp", dataTimeStamp);
+		}
+		foodListAdapter.imageLoader.cleanup();
+		foodListAdapter.imageLoader.setImagesToLoadFromParsedFoodNews(MFConfig.getInstance().getFoodNewsList());
+		Log.e(TAG, "populate");
+		foodListAdapter.notifyDataSetChanged();
     }
     
 	public void resetListViewAnimation() {
@@ -165,19 +182,19 @@ public class FoodNews extends SherlockFragment {
 	@SuppressLint("NewApi")
 	public void refresh() {
 		if (MFConfig.isOnline(mContext)) {
-        	AsyncTaskHelper.execute(new FetchXmlTask());
-
+			((Home)getActivity()).refresh();
+        	
 			if (retryLayout != null)
 				retryLayout.setVisibility(View.GONE);
 		}
 	}
     
-    @Override
-    public void onResume() {
-    	super.onResume();
-    	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
-    		refresh();
-    }
+//    @Override
+//    public void onResume() {
+//    	super.onResume();
+//    	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
+//    		refresh();
+//    }
 
     @Override
     public void onDestroy()
@@ -243,17 +260,7 @@ public class FoodNews extends SherlockFragment {
     			pDialog.dismiss();
     		}
     		
-			//if no internet and no data in File, show retry message
-			if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
-				displayRetryLayout();
-			} else {
-	            dataTimeStamp = System.currentTimeMillis();
-	            PreferenceHelper.savePreferencesLong(mContext.getApplicationContext(), "foodNewsTimeStamp", dataTimeStamp);
-			}
-			foodListAdapter.imageLoader.cleanup();
-			foodListAdapter.imageLoader.setImagesToLoadFromParsedFoodNews(MFConfig.getInstance().getFoodNewsList());
-			Log.e(TAG, "populate");
-    		foodListAdapter.notifyDataSetChanged();
+
     	}
     }
     
@@ -263,7 +270,7 @@ public class FoodNews extends SherlockFragment {
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			SAXParser sp = spf.newSAXParser();
 			XMLReader xr = sp.getXMLReader();
-			FoodNewsXMLHandler myXMLHandler = new FoodNewsXMLHandler();
+			FoodNewsXMLHandler myXMLHandler = new FoodNewsXMLHandler(MFConfig.tempParsedFoodNewsList);
 			xr.setContentHandler(myXMLHandler);
 			xr.parse(new InputSource(is));	
 		} catch (FactoryConfigurationError e) {

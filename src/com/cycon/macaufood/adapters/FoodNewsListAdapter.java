@@ -52,7 +52,7 @@ public class FoodNewsListAdapter extends BaseAdapter {
 				holder.subject.setText(cafe.getSubject());
 				holder.content.setText(cafe.getContent());
 				holder.time.setText(cafe.getTimeadded());
-				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
+				convertView.setBackgroundResource(R.drawable.cafe_row_bg);
 				
 				imageLoader.displayImage(cafe.getId(), holder.image, position);
 				

@@ -29,6 +29,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.cycon.macaufood.R;
@@ -46,6 +47,7 @@ public class ImageLoader {
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     private Drawable nophoto;
     private Drawable nointernet;
+    private Context mContext;
     
     private LinkedList<String> imagesToLoad;
     private ConcurrentLinkedQueue<FetchImageTask> imagesLoading;
@@ -59,6 +61,7 @@ public class ImageLoader {
     
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
     	Log.e(TAG, "initImageLoader");
+    	mContext = context;
     	if (imageType == ImageType.RECOMMEND) {
     		imageTypeUrl = "recommend_new";
     	} else if (imageType == ImageType.COUPON) {
@@ -119,7 +122,7 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
                 memoryCache.put(id, bitmap);
             } else {
-            	imageView.setImageDrawable(nophoto);
+//            	imageView.setImageDrawable(nophoto);
             	
             	boolean needLoad = true;
             	for (FetchImageTask task : imagesLoading) {
@@ -229,8 +232,8 @@ public class ImageLoader {
             	memoryCache.put(p.id, bmp);
             }
             else {
-            	if (!noConnection)
-            		memoryCache.put(p.id, ((BitmapDrawable) nophoto).getBitmap());
+//            	if (!noConnection)
+//            		memoryCache.put(p.id, ((BitmapDrawable) nophoto).getBitmap());
             }
             
         	for (FetchImageTask task : imagesLoading) {
@@ -291,6 +294,8 @@ public class ImageLoader {
 								view.setImageDrawable(nophoto);
 							} else {
 								view.setImageBitmap(result);
+								view.setAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
+								
 							}
 						}
 					}
@@ -309,6 +314,7 @@ public class ImageLoader {
 						} else {
 							Log.e(TAG, "set photo id = " + p.id);
 							p.imageView.setImageBitmap(result);
+							p.imageView.setAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
 						}
 					}
 				}

@@ -129,6 +129,7 @@
 			  	/>
 	  		
 	  		</LinearLayout>
+
 	  		
 	  		<RelativeLayout
 	  			android:id="@+id/advLoadBg"
@@ -296,6 +297,7 @@
 	  	android:background="#DDDDDD"
 	  	android:visibility="gone"
 	  	>
+   	  	  		
 	  	
 	  		<TextView 
 	  			android:id="@+id/searchResultsNumber"
@@ -315,7 +317,6 @@
 			  	android:layout_height="fill_parent"
 			  	android:layout_marginBottom="50dip"
 			/>	  
-			
 			
 	  	<ImageView
 	  		android:layout_width="fill_parent"

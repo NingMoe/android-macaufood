@@ -1,5 +1,7 @@
 package com.cycon.macaufood.xmlhandler;
 
+import java.util.List;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -12,6 +14,11 @@ import com.cycon.macaufood.utilities.MFConfig;
 
 		public static ParsedFoodNewsHolder cafe = null;
 		private StringBuffer tempValue = new StringBuffer();
+		private List tempParsedList;
+		
+		public FoodNewsXMLHandler(List list) {
+			tempParsedList = list;
+		}
 
 		@Override
 		public void startElement(String uri, String localName, String qName,

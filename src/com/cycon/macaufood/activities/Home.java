@@ -3,6 +3,7 @@ package com.cycon.macaufood.activities;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +28,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
@@ -39,6 +42,7 @@ public class Home extends SherlockFragmentActivity {
 	private TabsAdapter mTabsAdapter;
 	private AdvView banner;
 	private View loadingAdv;
+	private ProgressDialog pDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -102,7 +106,9 @@ public class Home extends SherlockFragmentActivity {
 		}
 
 		MFRequestHelper.sendFavoriteLog(getApplicationContext());
+		
 
+		refresh();
 	}
 
 	@Override
@@ -117,6 +123,17 @@ public class Home extends SherlockFragmentActivity {
 		super.onPause();
 		if (banner != null)
 			banner.stopTask();
+	}
+	
+	public void showProgressDialog() {
+		pDialog = ProgressDialog.show(this, null,
+				getString(R.string.loadingContent), false, true);
+	}
+	
+	public void hideProgressDialog() {
+		if (pDialog != null) {
+			pDialog.dismiss();
+		}
 	}
 
 	@Override
@@ -182,21 +199,22 @@ public class Home extends SherlockFragmentActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	public Fragment[] getFragments() {
+		Fragment[] fragments = new Fragment[3];
+		for (int i = 0; i < fragments.length; i++) {
+			fragments[i] = mTabsAdapter.getActiveFragment(mViewPager, i);
+		}
+		return fragments;
+	}
 
 	public void refresh() {
-		Log.e("ZZZ", "start refresh");
-		Recommend recommendFragment = (Recommend) mTabsAdapter.getActiveFragment(mViewPager, 0);
-		recommendFragment.refresh();
-		Coupon couponFragment = (Coupon) mTabsAdapter.getActiveFragment(mViewPager, 1);
-		couponFragment.refresh();
-		FoodNews foodNewsFragment = (FoodNews) mTabsAdapter.getActiveFragment(mViewPager, 2);
-		foodNewsFragment.refresh();
-//		Recommend recommendFragment = (Recommend) mTabsAdapter.getActiveFragment(mViewPager, 0);
-//		recommendFragment.refresh();
-//		Recommend recommendFragment = (Recommend) mTabsAdapter.getActiveFragment(mViewPager, 0);
-//		recommendFragment.refresh();
-		
-		MFRequestHelper.checkUpdate(getApplicationContext());
+		if (MFConfig.isOnline(this)) {
+			MFFetchListHelper.fetchAllList(this);
+			MFRequestHelper.checkUpdate(getApplicationContext());
+		} else {
+			Toast.makeText(this, getString(R.string.noInternetMsg), Toast.LENGTH_SHORT).show();
+		}
 	};
 
 	@Override

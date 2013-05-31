@@ -5,35 +5,12 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/retryLayout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:visibility="gone" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dip"
-            android:text="@string/noInternetMsg"
-            android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/retryButton"
-            android:layout_width="100dip"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dip"
-            android:text="@string/retryMsg" />
-    </LinearLayout>
+    <include layout="@layout/retry_layout" />
 
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:layout_weight="1"/>
-
+        android:layout_weight="1" />
 
 </LinearLayout>
