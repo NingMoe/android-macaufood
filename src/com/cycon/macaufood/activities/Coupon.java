@@ -1,39 +1,13 @@
 package com.cycon.macaufood.activities;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.util.List;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,22 +20,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.activities.Recommend.FetchXmlTask;
 import com.cycon.macaufood.adapters.CafeListAdapter;
 import com.cycon.macaufood.bean.ImageType;
-import com.cycon.macaufood.bean.ParsedCafeHolder;
-import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
-import com.cycon.macaufood.utilities.PreferenceHelper;
-import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
-import com.haarman.listviewanimations.swinginadapters.prepared.SwingLeftInAnimationAdapter;
 
 public class Coupon extends SherlockFragment {
 
@@ -79,16 +45,6 @@ public class Coupon extends SherlockFragment {
 	private SwingBottomInAnimationAdapter animCreditCouponAdapter;
 	private SwingBottomInAnimationAdapter animVipCouponAdapter;
 	private FileCache fileCache;
-	private ProgressDialog pDialog;
-	private static final String NORMAL_COUPON_CACHE_FILE_STR = "normal_coupon_parsed_xml";
-	private static final String CREDIT_COUPON_CACHE_FILE_STR = "credit_coupon_parsed_xml";
-	private static final String VIP_COUPON_CACHE_FILE_STR = "vip_coupon_parsed_xml";
-	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 48; // 48
-																		// hours
-	private long normalCouponDataTimeStamp;
-	private long creditCouponDataTimeStamp;
-	private long vipCouponDataTimeStamp;
-
 	private TextView normalCoupon;
 	private TextView creditCoupon;
 	private TextView vipCoupon;
@@ -122,25 +78,22 @@ public class Coupon extends SherlockFragment {
 				.getInstance().getCreditCouponCafeList(), ImageType.COUPON);
 		vipCouponAdapter = new CafeListAdapter(mContext, MFConfig.getInstance()
 				.getVipCouponCafeList(), ImageType.COUPON);
-		
+
 		animNormalCouponAdapter = new SwingBottomInAnimationAdapter(
 				normalCouponAdapter);
 		animNormalCouponAdapter.setListView(normalCouponList);
 		normalCouponList.setAdapter(animNormalCouponAdapter);
-		
+
 		animCreditCouponAdapter = new SwingBottomInAnimationAdapter(
-				creditCouponAdapter, 200, 400);
+				creditCouponAdapter);
 		animCreditCouponAdapter.setListView(creditCouponList);
 		creditCouponList.setAdapter(animCreditCouponAdapter);
-		
+
 		animVipCouponAdapter = new SwingBottomInAnimationAdapter(
-				vipCouponAdapter, 200, 400);
+				vipCouponAdapter);
 		animVipCouponAdapter.setListView(vipCouponList);
 		vipCouponList.setAdapter(animVipCouponAdapter);
 
-//		 normalCouponList.setAdapter(normalCouponAdapter);
-		// creditCouponList.setAdapter(creditCouponAdapter);
-		// vipCouponList.setAdapter(vipCouponAdapter);
 		normalCouponList.setOnItemClickListener(itemClickListener);
 		creditCouponList.setOnItemClickListener(itemClickListener);
 		vipCouponList.setOnItemClickListener(itemClickListener);
@@ -160,7 +113,7 @@ public class Coupon extends SherlockFragment {
 					if (MFConfig.getInstance().getNormalCouponCafeList().size() == 0) {
 						preLoadFromFileCache();
 					}
-					checkIfNeededRefresh();
+					populateListView(couponType);
 				}
 			}
 		});
@@ -179,7 +132,7 @@ public class Coupon extends SherlockFragment {
 					if (MFConfig.getInstance().getCreditCouponCafeList().size() == 0) {
 						preLoadFromFileCache();
 					}
-					checkIfNeededRefresh();
+					populateListView(couponType);
 				}
 			}
 		});
@@ -198,11 +151,10 @@ public class Coupon extends SherlockFragment {
 					if (MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
 						preLoadFromFileCache();
 					}
-					checkIfNeededRefresh();
+					populateListView(couponType);
 				}
 			}
 		});
-		
 
 		// if no internet and no data in File, show retry message
 		if (couponType == 0
@@ -212,24 +164,16 @@ public class Coupon extends SherlockFragment {
 				|| couponType == 2
 				&& MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
 			if (!MFConfig.isOnline(mContext)) {
-        		displayRetryLayout();
-        	}
+				displayRetryLayout();
+			}
 		}
-		
+
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
-
-		normalCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(
-				mContext.getApplicationContext(), "normalCouponTimeStamp", 0);
-		creditCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(
-				mContext.getApplicationContext(), "creditCouponTimeStamp", 0);
-		vipCouponDataTimeStamp = PreferenceHelper.getPreferenceValueLong(
-				mContext.getApplicationContext(), "vipCouponTimeStamp", 0);
-
 		fileCache = new FileCache(mContext, ImageType.COUPON);
 
 		preLoadFromFileCache();
@@ -335,7 +279,6 @@ public class Coupon extends SherlockFragment {
 	};
 
 	public void displayRetryLayout() {
-		Log.e("ZZZ", "displayretrylayout");
 		retryLayout.setVisibility(View.VISIBLE);
 		retryButton = (Button) mView.findViewById(R.id.retryButton);
 		retryButton.setOnClickListener(new OnClickListener() {
@@ -345,17 +288,15 @@ public class Coupon extends SherlockFragment {
 			}
 		});
 	}
-	
+
 	public void populateListView(int type) {
-		Log.e("ZZZ", "populate listview coupon");
 
 		if (couponType == 0 && type == 0) {
 
-	    	Log.e("ZZZ", "0 coupon size = " + MFConfig.getInstance().getNormalCouponCafeList().size());
 			// if no internet and no data in File, show retry message
 			if (MFConfig.getInstance().getNormalCouponCafeList().size() == 0) {
 				displayRetryLayout();
-			} 
+			}
 			normalCouponAdapter.imageLoader.cleanup();
 			normalCouponAdapter.imageLoader
 					.setImagesToLoadFromParsedCafe(MFConfig.getInstance()
@@ -364,11 +305,10 @@ public class Coupon extends SherlockFragment {
 
 		} else if (couponType == 1 && type == 1) {
 
-	    	Log.e("ZZZ", "1 coupon size = " + MFConfig.getInstance().getCreditCouponCafeList().size());
 			// if no internet and no data in File, show retry message
 			if (MFConfig.getInstance().getCreditCouponCafeList().size() == 0) {
 				displayRetryLayout();
-			} 
+			}
 			creditCouponAdapter.imageLoader.cleanup();
 			creditCouponAdapter.imageLoader
 					.setImagesToLoadFromParsedCafe(MFConfig.getInstance()
@@ -377,15 +317,13 @@ public class Coupon extends SherlockFragment {
 
 		} else if (couponType == 2 && type == 2) {
 
-	    	Log.e("ZZZ", "2 coupon size = " + MFConfig.getInstance().getVipCouponCafeList().size());
 			// if no internet and no data in File, show retry message
 			if (MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
 				displayRetryLayout();
-			} 
+			}
 			vipCouponAdapter.imageLoader.cleanup();
-			vipCouponAdapter.imageLoader
-					.setImagesToLoadFromParsedCafe(MFConfig.getInstance()
-							.getVipCouponCafeList());
+			vipCouponAdapter.imageLoader.setImagesToLoadFromParsedCafe(MFConfig
+					.getInstance().getVipCouponCafeList());
 			vipCouponAdapter.notifyDataSetChanged();
 
 		}
@@ -393,62 +331,35 @@ public class Coupon extends SherlockFragment {
 
 	private void preLoadFromFileCache() {
 		File f = null;
+		FileInputStream is = null;
 
-		if (couponType == 0)
-			f = fileCache.getFile(NORMAL_COUPON_CACHE_FILE_STR);
-		else if (couponType == 1)
-			f = fileCache.getFile(CREDIT_COUPON_CACHE_FILE_STR);
-		else if (couponType == 2)
-			f = fileCache.getFile(VIP_COUPON_CACHE_FILE_STR);
 		try {
-			FileInputStream is = new FileInputStream(f);
-			parseXml(is, couponType);
-			// if no internet and no data in File, show retry message
-//			if (couponType == 0
-//					&& MFConfig.getInstance().getNormalCouponCafeList().size() == 0
-//					|| couponType == 1
-//					&& MFConfig.getInstance().getCreditCouponCafeList().size() == 0
-//					|| couponType == 2
-//					&& MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
-//				displayRetryLayout();
-//			}
+			if (couponType == 0) {
+				f = fileCache.getFile(MFConstants.NORMAL_COUPON_XML_FILE_NAME);
+				is = new FileInputStream(f);
+				MFFetchListHelper.parseXml(is,
+						MFConfig.tempParsedNormalCouponCafeList, MFConfig
+								.getInstance().getNormalCouponCafeList());
+			} else if (couponType == 1) {
+				f = fileCache.getFile(MFConstants.CREDIT_COUPON_XML_FILE_NAME);
+				is = new FileInputStream(f);
+				MFFetchListHelper.parseXml(is,
+						MFConfig.tempParsedCreditCouponCafeList, MFConfig
+								.getInstance().getCreditCouponCafeList());
+			} else if (couponType == 2) {
+				f = fileCache.getFile(MFConstants.VIP_COUPON_XML_FILE_NAME);
+				is = new FileInputStream(f);
+				MFFetchListHelper.parseXml(is,
+						MFConfig.tempParsedVipCouponCafeList, MFConfig
+								.getInstance().getVipCouponCafeList());
+			}
+
 		} catch (FileNotFoundException e) {
 			Log.e(TAG, "FileNotFoundException");
 			e.printStackTrace();
 		}
-
-		// if no internet and no data in File, show retry message
-//		if (couponType == 0
-//				&& MFConfig.getInstance().getNormalCouponCafeList().size() == 0
-//				|| couponType == 1
-//				&& MFConfig.getInstance().getCreditCouponCafeList().size() == 0
-//				|| couponType == 2
-//				&& MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
-//			if (!MFConfig.isOnline(mContext)) {
-//				displayRetryLayout();
-//			}
-//		}
 	}
-	
-//	@Override
-//	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//		inflater.inflate(R.menu.main_menu, menu);
-//		super.onCreateOptionsMenu(menu, inflater);
-//	}
-//
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		Intent i;
-//		switch (item.getItemId()) {
-//		case R.id.menu_refresh:
-//			refresh();
-//			return true;
-//		case R.id.menu_about:
-//			return true;
-//		default:
-//			return super.onOptionsItemSelected(item);
-//		}
-//	}
+
 	
 	public void resetListViewAnimation() {
 		if (couponType == 0) {
@@ -468,166 +379,15 @@ public class Coupon extends SherlockFragment {
 			}
 		}
 	}
-	
-//	@Override
-//	public void setUserVisibleHint(boolean isVisibleToUser) {
-//		super.setUserVisibleHint(isVisibleToUser);
-//
-//		if (isVisibleToUser) { 
-//			normalCouponList.setVisibility(View.VISIBLE);
-//			}
-//
-//	}
 
 	@SuppressLint("NewApi")
 	public void refresh() {
 		if (MFConfig.isOnline(mContext)) {
-			((Home)getActivity()).refresh();
+			((Home) getActivity()).refresh();
 
 			if (retryLayout != null)
 				retryLayout.setVisibility(View.GONE);
 		}
-	}
-	
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		checkIfNeededRefresh();
-	}
-
-	private void checkIfNeededRefresh() {
-//		long dataTimeStamp = 0;
-//		if (couponType == 0)
-//			dataTimeStamp = normalCouponDataTimeStamp;
-//		else if (couponType == 1)
-//			dataTimeStamp = creditCouponDataTimeStamp;
-//		else if (couponType == 2)
-//			dataTimeStamp = vipCouponDataTimeStamp;
-//		if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
-//			refresh();
-	}
-
-	public class FetchXmlTask extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			pDialog = ProgressDialog.show(mContext, null, "載入資料中...", false,
-					true);
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			File f = null;
-
-			int type = couponType;
-
-			if (couponType == 0)
-				f = fileCache.getFile(NORMAL_COUPON_CACHE_FILE_STR);
-			else if (couponType == 1)
-				f = fileCache.getFile(CREDIT_COUPON_CACHE_FILE_STR);
-			else if (couponType == 2)
-				f = fileCache.getFile(VIP_COUPON_CACHE_FILE_STR);
-
-			String urlStr = "http://www.cycon.com.mo/xml_cafecoupon_new.php?key=cafecafe&type="
-					+ couponType;
-			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpParams httpParams = client.getParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-				HttpGet request = new HttpGet(urlStr);
-				HttpResponse response = client.execute(request);
-				InputStream is = response.getEntity().getContent();
-
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				byte[] buffer = new byte[1024];
-				int len;
-				while ((len = is.read(buffer)) > 0) {
-					baos.write(buffer, 0, len);
-				}
-				baos.flush();
-
-				parseXml(new ByteArrayInputStream(baos.toByteArray()), type);
-				if (MFConfig.tempParsedNormalCouponCafeList.size() != 0) {
-					OutputStream os = new FileOutputStream(f);
-					os.write(baos.toByteArray());
-					os.close();
-				}
-
-			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
-				e.printStackTrace();
-			} catch (IOException e) {
-				Log.e(TAG, "io exception");
-				e.printStackTrace();
-			}
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-
-			if (pDialog != null) {
-				pDialog.dismiss();
-			}
-
-
-		}
-	}
-
-	private void parseXml(InputStream is, int type) {
-		List<ParsedCafeHolder> list = null;
-		if (couponType == 0) {
-			list = MFConfig.tempParsedNormalCouponCafeList;
-		} else if (couponType == 1) {
-			list = MFConfig.tempParsedCreditCouponCafeList;
-		} else if (couponType == 2) {
-			list = MFConfig.tempParsedVipCouponCafeList;
-		}
-		list.clear();
-		
-		
-		try {
-			SAXParserFactory spf = SAXParserFactory.newInstance();
-			SAXParser sp = spf.newSAXParser();
-			XMLReader xr = sp.getXMLReader();
-			ServerCafeXMLHandler myXMLHandler = new ServerCafeXMLHandler(list);
-			// myXMLHandler.setCouponType(couponType);
-			xr.setContentHandler(myXMLHandler);
-			xr.parse(new InputSource(is));
-		} catch (FactoryConfigurationError e) {
-			Log.e(TAG, "FactoryConfigurationError");
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			Log.e(TAG, "ParserConfigurationException");
-			e.printStackTrace();
-		} catch (SAXException e) {
-			Log.e(TAG, "SAXException");
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.e(TAG, "IOException");
-			e.printStackTrace();
-		}
-
-		if (MFConfig.tempParsedNormalCouponCafeList.size() != 0) {
-			if (type == 0) {
-				MFConfig.getInstance().getNormalCouponCafeList().clear();
-				MFConfig.getInstance().getNormalCouponCafeList()
-						.addAll(list);
-			} else if (type == 1) {
-				MFConfig.getInstance().getCreditCouponCafeList().clear();
-				MFConfig.getInstance().getCreditCouponCafeList()
-						.addAll(list);
-			} else if (type == 2) {
-				MFConfig.getInstance().getVipCouponCafeList().clear();
-				MFConfig.getInstance().getVipCouponCafeList()
-						.addAll(list);
-			}
-		}
-
 	}
 
 }

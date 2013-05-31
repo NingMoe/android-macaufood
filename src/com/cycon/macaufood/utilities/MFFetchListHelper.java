@@ -105,7 +105,7 @@ public class MFFetchListHelper {
 				}
 				baos.flush();
 
-				parseXml(new ByteArrayInputStream(baos.toByteArray()), info);
+				parseXml(new ByteArrayInputStream(baos.toByteArray()), info.tempParsedList, info.contentList);
 
 				if (info.tempParsedList.size() != 0) {
 					FileCache fileCache=new FileCache(homeActivity, info.imageType);
@@ -134,15 +134,13 @@ public class MFFetchListHelper {
 			Log.e(TAG, "onPostExecute");
 			
 			homeActivity.hideProgressDialog();
-
-			// if no internet and no data in File, show retry message
-//			if (info.contentList.size() == 0) {
 			
 			Fragment[] fragment = homeActivity.getFragments();
 			Recommend recommendFragment = (Recommend)fragment[0];
 			Coupon couponFragment = (Coupon)fragment[1];
 			FoodNews foodNewsFragment = (FoodNews)fragment[2];
 			if (info.imageType == ImageType.RECOMMEND && recommendFragment != null) {
+				Log.e(TAG, "onPostExecute recommend");
 				recommendFragment.populateListView();
 			} else if (info.imageType == ImageType.COUPON && couponFragment != null) {
 				int type = 0;
@@ -151,8 +149,10 @@ public class MFFetchListHelper {
 				} else if (info.cacheFileName.equals(MFConstants.VIP_COUPON_XML_FILE_NAME)) {
 					type = 2;
 				}
+				Log.e(TAG, "onPostExecute coupon type = " + type);
 				couponFragment.populateListView(type);
 			} else if (info.imageType == ImageType.FOODNEWS && foodNewsFragment != null) {
+				Log.e(TAG, "onPostExecute foodnews");
 				foodNewsFragment.populateListView();
 			} 
 			
@@ -175,17 +175,17 @@ public class MFFetchListHelper {
 		}
 	}
 
-	private static void parseXml(InputStream is, FetchListInfo info) {
-		info.tempParsedList.clear();
+	public static void parseXml(InputStream is, List tempParsedList, List contentList) {
+		tempParsedList.clear();
 		try {
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			SAXParser sp = spf.newSAXParser();
 			XMLReader xr = sp.getXMLReader();
 			DefaultHandler xmlHandler;
-			if (info.imageType == ImageType.FOODNEWS) {
-				xmlHandler = new FoodNewsXMLHandler(info.tempParsedList);
+			if (tempParsedList == MFConfig.tempParsedFoodNewsList) {
+				xmlHandler = new FoodNewsXMLHandler(tempParsedList);
 			} else {
-				xmlHandler = new ServerCafeXMLHandler(info.tempParsedList);
+				xmlHandler = new ServerCafeXMLHandler(tempParsedList);
 			}
 			xr.setContentHandler(xmlHandler);
 			xr.parse(new InputSource(is));
@@ -203,9 +203,9 @@ public class MFFetchListHelper {
 			e.printStackTrace();
 		}
 
-		if (info.tempParsedList.size() != 0) {
-			info.contentList.clear();
-			info.contentList.addAll(info.tempParsedList);
+		if (tempParsedList.size() != 0) {
+			contentList.clear();
+			contentList.addAll(tempParsedList);
 		}
 	}
 

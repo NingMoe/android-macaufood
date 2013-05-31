@@ -45,7 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.activities.FoodNews.FetchXmlTask;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;

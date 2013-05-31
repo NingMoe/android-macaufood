@@ -29,6 +29,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.PreferenceHelper;
@@ -37,6 +38,8 @@ import com.cycon.macaufood.widget.AdvView;
 public class Home extends SherlockFragmentActivity {
 
 	private static final String TAG = Home.class.getName();
+
+	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 48; // 48 hours
 
 	private ViewPager mViewPager;
 	private TabsAdapter mTabsAdapter;
@@ -108,9 +111,18 @@ public class Home extends SherlockFragmentActivity {
 		MFRequestHelper.sendFavoriteLog(getApplicationContext());
 		
 
+//        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY, 0);
+        
 		refresh();
 	}
 
+//  @Override
+//	public void onResume() {
+//  	super.onResume();
+//  	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
+//  		refresh();
+//  }
+	
 	@Override
 	protected void onResume() {
 		super.onResume();

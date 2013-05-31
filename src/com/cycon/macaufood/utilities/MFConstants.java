@@ -13,4 +13,6 @@ public class MFConstants {
 	public static final String CREDIT_COUPON_XML_FILE_NAME = "credit_coupon_parsed_xml";
 	public static final String VIP_COUPON_XML_FILE_NAME = "vip_coupon_parsed_xml";
 	public static final String FOODNEWS_XML_FILE_NAME = "foodnews_parsed_xml";
+	
+	public static final String TIME_STAMP_PREF_KEY = "listTimeStamp";
 }
