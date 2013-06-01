@@ -40,12 +40,15 @@ public class Home extends SherlockFragmentActivity {
 	private static final String TAG = Home.class.getName();
 
 	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 48; // 48 hours
+//	private static final long REFRESH_TIME_PERIOD = 10000; // 10sec
 
 	private ViewPager mViewPager;
 	private TabsAdapter mTabsAdapter;
 	private AdvView banner;
 	private View loadingAdv;
 	private ProgressDialog pDialog;
+	private long dataTimeStamp;
+	private boolean isShowingDisclaimer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,56 +79,64 @@ public class Home extends SherlockFragmentActivity {
 		}
 
 		if (PreferenceHelper.getPreferenceValueBoolean(this,
-				"disclaimerDialog", true)) {
+				MFConstants.SHOW_DISCLAIMER_PREF_KEY, true)) {
+			
+			isShowingDisclaimer = true;
 
-			TextView text = new TextView(this);
-			text.setTextSize(15);
-			text.setPadding(20, 5, 20, 0);
-			text.setText(R.string.disclaimerText);
-			text.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT));
-
-			new AlertDialog.Builder(this)
-					.setTitle(getString(R.string.disclaimer))
-					.setView(text)
-					.setPositiveButton("�?��?以上�?款",
+			AlertDialog dialog = new AlertDialog.Builder(this)
+					.setTitle(R.string.disclaimer)
+					.setMessage(R.string.disclaimerText)
+					.setCancelable(false)
+					.setPositiveButton(getString(R.string.agreeDisclaimer),
 							new DialogInterface.OnClickListener() {
 
 								public void onClick(DialogInterface dialog,
 										int which) {
+									isShowingDisclaimer = false;
 									dialog.dismiss();
-									PreferenceHelper.savePreferencesBoolean(
-											Home.this, "disclaimerDialog",
-											false);
-									// if (MFConfig.isOnline(this) &&
-									// MFConfig.getInstance().getRecommendCafeList().size()
-									// == 0) {
-									// pDialog = ProgressDialog.show(this, null,
-									// "載入資料中...", false, true);
-									// }
+									PreferenceHelper
+											.savePreferencesBoolean(
+													Home.this,
+													MFConstants.SHOW_DISCLAIMER_PREF_KEY,
+													false);
+									//refresh data only when user click agree disclaimer
+									if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
+										refresh();
 								}
 							}).show();
+			
+			TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+			textView.setTextSize(15);
 
 		}
 
 		MFRequestHelper.sendFavoriteLog(getApplicationContext());
 		
-
-//        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY, 0);
+        dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY, 0);
         
-		refresh();
 	}
-
-//  @Override
-//	public void onResume() {
-//  	super.onResume();
-//  	if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD)
-//  		refresh();
-//  }
+	
+//	public int getCurrentFragmentIndex() {
+//		return mViewPager.getCurrentItem();
+//	}
+	
+	public void setDataTimeStamp(long dataTimeStamp) {
+		this.dataTimeStamp = dataTimeStamp;
+	}
+	
+	public long getDataTimeStamp() {
+		return dataTimeStamp;
+	}
+	
+	public boolean isShowingDisClaimer() {
+		return isShowingDisclaimer;
+	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD && !isShowingDisclaimer)
+			refresh();
 		if (banner != null)
 			banner.startTask();
 	}
@@ -143,9 +154,7 @@ public class Home extends SherlockFragmentActivity {
 	}
 	
 	public void hideProgressDialog() {
-		if (pDialog != null) {
-			pDialog.dismiss();
-		}
+		pDialog.dismiss();
 	}
 
 	@Override
@@ -202,6 +211,9 @@ public class Home extends SherlockFragmentActivity {
 			return true;
 		case R.id.menu_refresh:
 			refresh();
+			if (!MFConfig.isOnline(this)) {
+				Toast.makeText(this, getString(R.string.noInternetMsg), Toast.LENGTH_SHORT).show();
+			}
 			return true;
 		case R.id.menu_about:
 			i = new Intent(this, About.class);
@@ -224,9 +236,7 @@ public class Home extends SherlockFragmentActivity {
 		if (MFConfig.isOnline(this)) {
 			MFFetchListHelper.fetchAllList(this);
 			MFRequestHelper.checkUpdate(getApplicationContext());
-		} else {
-			Toast.makeText(this, getString(R.string.noInternetMsg), Toast.LENGTH_SHORT).show();
-		}
+		} 
 	};
 
 	@Override

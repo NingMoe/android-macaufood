@@ -39,6 +39,7 @@ public class FoodNews extends SherlockFragment {
 	private Context mContext;
 	private View mView;
 	private ScaleInAnimationAdapter scaleInAnimationAdapter;
+	public boolean mIsVisible;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,10 +55,14 @@ public class FoodNews extends SherlockFragment {
 	
 	private void initView() {
 		list = (ListView) mView.findViewById(R.id.list);
+        retryLayout = mView.findViewById(R.id.retryLayout);
         foodListAdapter = new FoodNewsListAdapter(mContext, MFConfig.getInstance().getFoodNewsList(), ImageType.FOODNEWS);
         
         scaleInAnimationAdapter = new ScaleInAnimationAdapter(foodListAdapter, 0.5f);
         scaleInAnimationAdapter.setListView(list);
+        if (MFFetchListHelper.isFetching) {
+        	scaleInAnimationAdapter.setAnimationEnabled(false);
+		}
         
         list.setAdapter(scaleInAnimationAdapter);
         list.setOnItemClickListener(itemClickListener);
@@ -84,6 +89,11 @@ public class FoodNews extends SherlockFragment {
 	    	Log.e(TAG, "FileNotFoundException");
 			e.printStackTrace();
 		} 
+
+		//refresh when file cache xml is deleted by user
+        if (MFConfig.getInstance().getFoodNewsList().size() == 0 && !MFFetchListHelper.isFetching && !((Home)getActivity()).isShowingDisClaimer()) {
+        	refresh();
+		}
         
     }
     
@@ -100,7 +110,6 @@ public class FoodNews extends SherlockFragment {
     };
     
     public void displayRetryLayout() {
-        retryLayout = mView.findViewById(R.id.retryLayout);
 		retryLayout.setVisibility(View.VISIBLE);
 		retryButton = (Button) mView.findViewById(R.id.retryButton);
 		retryButton.setOnClickListener(new OnClickListener() {
@@ -111,13 +120,33 @@ public class FoodNews extends SherlockFragment {
 		});
     }
     
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+
+		if (isVisibleToUser) {
+			mIsVisible = true;
+		} else {
+			mIsVisible = false;
+		}
+
+	}
+    
     public void populateListView() {
 		//if no internet and no data in File, show retry message
 		if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
 			displayRetryLayout();
-		} 
+		} else {
+			if (retryLayout != null)
+				retryLayout.setVisibility(View.GONE);
+		}
 		foodListAdapter.imageLoader.cleanup();
 		foodListAdapter.imageLoader.setImagesToLoadFromParsedFoodNews(MFConfig.getInstance().getFoodNewsList());
+		if (mIsVisible) {
+			scaleInAnimationAdapter.reset();
+		} else {
+			scaleInAnimationAdapter.setAnimationEnabled(true);
+		}
 		foodListAdapter.notifyDataSetChanged();
     }
     

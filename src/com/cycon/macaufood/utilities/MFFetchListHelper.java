@@ -44,11 +44,11 @@ import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 public class MFFetchListHelper {
 
 	private static final String TAG = MFFetchListHelper.class.getName();
-	private static boolean isFetching = false;
+	public static boolean isFetching = false;
 
 	public static void fetchAllList(Home homeActivity) {
-//		if (!isFetching) {
-//			isFetching = true;
+		if (!isFetching) {
+			isFetching = true;
 
 			homeActivity.showProgressDialog();
 			FetchListInfo recommendInfo = new FetchListInfo(MFConstants.RECOMMEND_URL, MFConstants.RECOMMEND_XML_FILE_NAME, ImageType.RECOMMEND, MFConfig.tempParsedRecommendCafeList, MFConfig.getInstance().getRecommendCafeList());
@@ -66,7 +66,7 @@ public class MFFetchListHelper {
 					homeActivity));
 			AsyncTaskHelper.execute(new FetchXmlTask(foodNewsInfo,
 					homeActivity));
-//		}
+		}
 	}
 
 	private static class FetchXmlTask extends AsyncTask<Void, Void, Void> {
@@ -91,7 +91,7 @@ public class MFFetchListHelper {
 			try {
 				HttpClient client = new DefaultHttpClient();
 				HttpParams httpParams = client.getParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
+				HttpConnectionParams.setConnectionTimeout(httpParams, 8000);
 				HttpGet request = new HttpGet(urlStr);
 
 				HttpResponse response = client.execute(request);
@@ -133,15 +133,40 @@ public class MFFetchListHelper {
 
 			Log.e(TAG, "onPostExecute");
 			
-			homeActivity.hideProgressDialog();
+//			homeActivity.decrementPDialogCount();
+//			if (homeActivity.getPDialogCount() <= 0) {
+//				homeActivity.hideProgressDialog();
+//				
+//				Fragment[] fragment = homeActivity.getFragments();
+//				Recommend recommendFragment = (Recommend)fragment[0];
+//				Coupon couponFragment = (Coupon)fragment[1];
+//				FoodNews foodNewsFragment = (FoodNews)fragment[2];
+//				if (recommendFragment != null) {
+//					recommendFragment.populateListView();
+//				} 
+//				if (couponFragment != null) {
+//					couponFragment.populateListView(0);
+//				}
+//				if (foodNewsFragment != null) {
+//					foodNewsFragment.populateListView();
+//				} 
+//			}
 			
 			Fragment[] fragment = homeActivity.getFragments();
 			Recommend recommendFragment = (Recommend)fragment[0];
 			Coupon couponFragment = (Coupon)fragment[1];
 			FoodNews foodNewsFragment = (FoodNews)fragment[2];
 			if (info.imageType == ImageType.RECOMMEND && recommendFragment != null) {
-				Log.e(TAG, "onPostExecute recommend");
+				if (recommendFragment.mIsVisible) {
+					homeActivity.hideProgressDialog();
+				}
 				recommendFragment.populateListView();
+
+				homeActivity.setDataTimeStamp(System.currentTimeMillis());
+				PreferenceHelper.savePreferencesLong(
+						homeActivity.getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY,
+						homeActivity.getDataTimeStamp());
+				
 			} else if (info.imageType == ImageType.COUPON && couponFragment != null) {
 				int type = 0;
 				if (info.cacheFileName.equals(MFConstants.CREDIT_COUPON_XML_FILE_NAME)) {
@@ -149,29 +174,19 @@ public class MFFetchListHelper {
 				} else if (info.cacheFileName.equals(MFConstants.VIP_COUPON_XML_FILE_NAME)) {
 					type = 2;
 				}
-				Log.e(TAG, "onPostExecute coupon type = " + type);
+				if (couponFragment.mIsVisible && couponFragment.couponType == type) {
+					homeActivity.hideProgressDialog();
+				}
 				couponFragment.populateListView(type);
 			} else if (info.imageType == ImageType.FOODNEWS && foodNewsFragment != null) {
-				Log.e(TAG, "onPostExecute foodnews");
+				if (foodNewsFragment.mIsVisible) {
+					homeActivity.hideProgressDialog();
+				}
 				foodNewsFragment.populateListView();
 			} 
 			
-//				if (info.fragment instanceof Recommend) {
-//					Log.e("ZZZ", "recommend on post execute");
-//					((Recommend)info.fragment).populateListView();
-//				} else if (info.fragment instanceof Coupon) {
-//					Log.e("ZZZ", "coupon on post execute");
-//					((Coupon)info.fragment).populateListView();
-//				} else if (info.fragment instanceof FoodNews) {
-//					Log.e("ZZZ", "foodnews on post execute");
-//					((FoodNews)info.fragment).populateListView();
-//				}
-//			} else {
-//				dataTimeStamp = System.currentTimeMillis();
-//				PreferenceHelper.savePreferencesLong(
-//						mContext.getApplicationContext(), "recommendTimeStamp",
-//						dataTimeStamp);
-//			}
+			isFetching = false;
+			
 		}
 	}
 

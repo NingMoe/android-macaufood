@@ -15,4 +15,5 @@ public class MFConstants {
 	public static final String FOODNEWS_XML_FILE_NAME = "foodnews_parsed_xml";
 	
 	public static final String TIME_STAMP_PREF_KEY = "listTimeStamp";
+	public static final String SHOW_DISCLAIMER_PREF_KEY = "disclaimerDialog";
 }

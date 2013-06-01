@@ -39,6 +39,7 @@ public class Recommend extends SherlockFragment {
 	private Context mContext;
 	private View mView;
 	private SwingLeftInAnimationAdapter swingLeftInAnimationAdapter;
+	public boolean mIsVisible;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,10 +55,14 @@ public class Recommend extends SherlockFragment {
 	
 	private void initView() {
         list = (ListView) mView.findViewById(R.id.list);
+        retryLayout = mView.findViewById(R.id.retryLayout);
         cafeAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
         
         swingLeftInAnimationAdapter = new SwingLeftInAnimationAdapter(cafeAdapter);
         swingLeftInAnimationAdapter.setListView(list);
+        if (MFFetchListHelper.isFetching || ((Home)getActivity()).isShowingDisClaimer()) {
+			swingLeftInAnimationAdapter.setAnimationEnabled(false);
+		}
 
 		list.setAdapter(swingLeftInAnimationAdapter);
         list.setOnItemClickListener(itemClickListener);
@@ -84,6 +89,10 @@ public class Recommend extends SherlockFragment {
 	    	Log.e(TAG, "FileNotFoundException");
 			e.printStackTrace();
 		} 
+		//refresh when file cache xml is deleted by user
+        if (MFConfig.getInstance().getRecommendCafeList().size() == 0 && !MFFetchListHelper.isFetching && !((Home)getActivity()).isShowingDisClaimer() ) {
+        	refresh();
+		}
         
     }
     
@@ -120,7 +129,6 @@ public class Recommend extends SherlockFragment {
     };
     
     public void displayRetryLayout() {
-        retryLayout = mView.findViewById(R.id.retryLayout);
 		retryLayout.setVisibility(View.VISIBLE);
 		retryButton = (Button) mView.findViewById(R.id.retryButton);
 		retryButton.setOnClickListener(new OnClickListener() {
@@ -131,14 +139,34 @@ public class Recommend extends SherlockFragment {
 		});
     }
     
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+
+		if (isVisibleToUser) {
+			mIsVisible = true;
+		} else {
+			mIsVisible = false;
+		}
+
+	}
+    
     public void populateListView() {
 		
 		//if no internet and no data in File, show retry message
 		if (MFConfig.getInstance().getRecommendCafeList().size() == 0) {
 			displayRetryLayout();
+		} else {
+			if (retryLayout != null)
+				retryLayout.setVisibility(View.GONE);
 		}
 		cafeAdapter.imageLoader.cleanup();
 		cafeAdapter.imageLoader.setImagesToLoadFromParsedCafe(MFConfig.getInstance().getRecommendCafeList());
+		if (mIsVisible) {
+			swingLeftInAnimationAdapter.reset();
+		} else {
+			swingLeftInAnimationAdapter.setAnimationEnabled(true);
+		}
 		cafeAdapter.notifyDataSetChanged();
     }
     

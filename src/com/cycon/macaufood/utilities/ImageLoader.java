@@ -29,6 +29,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
@@ -46,6 +47,7 @@ public class ImageLoader {
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     private Drawable nophoto;
+    private Drawable loadingBlankPhoto;
     private Drawable nointernet;
     private Context mContext;
     
@@ -74,6 +76,7 @@ public class ImageLoader {
         fileCache=new FileCache(context, imageType);
         lastVisibleRowIndex = lastRowIndex;
         nophoto = context.getResources().getDrawable(R.drawable.nophoto);
+        loadingBlankPhoto = context.getResources().getDrawable(R.drawable.cafe_row_bg);
         nointernet = context.getResources().getDrawable(R.drawable.nointernet);
         
         imagesLoading = new ConcurrentLinkedQueue<FetchImageTask>();
@@ -122,7 +125,8 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
                 memoryCache.put(id, bitmap);
             } else {
-//            	imageView.setImageDrawable(nophoto);
+//            	imageView.setVisibility(View.INVISIBLE);
+            	imageView.setImageDrawable(loadingBlankPhoto);
             	
             	boolean needLoad = true;
             	for (FetchImageTask task : imagesLoading) {
@@ -232,8 +236,8 @@ public class ImageLoader {
             	memoryCache.put(p.id, bmp);
             }
             else {
-//            	if (!noConnection)
-//            		memoryCache.put(p.id, ((BitmapDrawable) nophoto).getBitmap());
+            	if (!noConnection)
+            		memoryCache.put(p.id, ((BitmapDrawable) nophoto).getBitmap());
             }
             
         	for (FetchImageTask task : imagesLoading) {

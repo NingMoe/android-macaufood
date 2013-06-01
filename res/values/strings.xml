@@ -99,6 +99,7 @@
     
  <!-- Dialog -->
  	<string name="exitProgramPrompt">你確定要退出程式嗎?</string>
+ 	<string name="agreeDisclaimer">同意以上條款</string>
  	<string name="confirmed">確定</string>
  	
  <!-- PhotoShare -->
