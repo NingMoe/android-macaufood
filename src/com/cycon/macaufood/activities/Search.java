@@ -36,6 +36,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvFlingGallery;
 import com.cycon.macaufood.widget.AdvView;
@@ -289,25 +290,25 @@ public class Search extends BaseActivity {
         
         
         region = (WheelView) findViewById(R.id.region);
-        regionAdapter = new ArrayWheelAdapter<String>(this, MFUtil.regionNames);
+        regionAdapter = new ArrayWheelAdapter<String>(this, MFConstants.regionNames);
         regionAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
         regionAdapter.setItemTextResource(R.id.text);
         region.setViewAdapter(regionAdapter);
         region.addChangingListener(new OnWheelChangedListener() {
 			
 			public void onChanged(WheelView wheel, int oldValue, int newValue) {
-				regionTitle.setText(MFUtil.regionNames[newValue]);
+				regionTitle.setText(MFConstants.regionNames[newValue]);
 			}
 		});
     
         dishesType = (WheelView) findViewById(R.id.foodType);
-        dishesTypeAdapter = new ArrayWheelAdapter<String>(this, MFUtil.dishesType);
+        dishesTypeAdapter = new ArrayWheelAdapter<String>(this, MFConstants.dishesType);
         dishesTypeAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
         dishesTypeAdapter.setItemTextResource(R.id.text);
         dishesType.setViewAdapter(dishesTypeAdapter);
         
         servicesType = (WheelView) findViewById(R.id.restType);
-        servicesTypeAdapter = new ArrayWheelAdapter<String>(this, MFUtil.serviceType);
+        servicesTypeAdapter = new ArrayWheelAdapter<String>(this, MFConstants.serviceType);
         servicesTypeAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
         servicesTypeAdapter.setItemTextResource(R.id.text);
         servicesType.setViewAdapter(servicesTypeAdapter);
@@ -471,7 +472,7 @@ public class Search extends BaseActivity {
 			boolean matchServices;
 			int regionIndex = region.getCurrentItem();
 			int dishesIndex = dishesType.getCurrentItem();
-			int dishesId = MFUtil.dishesId[dishesIndex];
+			int dishesId = MFConstants.dishesId[dishesIndex];
 			int servicesIndex = servicesType.getCurrentItem();
 			
 			

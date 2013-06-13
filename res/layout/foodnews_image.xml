@@ -4,51 +4,20 @@
 		android:layout_height="fill_parent"
 		android:background="#FFFFFF"
 		>
-		
-	<TextView
-		android:id="@+id/menu_panel"
-		android:layout_width="fill_parent"
-		android:layout_height="40dip"
-		android:background="@drawable/menu_panel"
-		android:layout_alignParentBottom="true">
-		
-		</TextView>
   		
 	<WebView android:id="@+id/webView"
 		android:layout_width="fill_parent" 
-		android:layout_height="fill_parent" 
-		android:layout_marginTop="34dip"
-		android:layout_above="@id/menu_panel"/>
+		android:layout_height="fill_parent" />
   		
 	<TextView android:id="@+id/errorMsg"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:layout_marginTop="60dip"
 		android:textSize="18sp"
-		android:textColor="#000000"
+		android:textColor="@color/tab_gray_text"
 		android:text="@string/noInternetMsg"
 		android:gravity="center_horizontal"
 		android:visibility="gone"
-		/>
-		
-	  <TextView 
-	  	android:id="@+id/header"
-		android:layout_width="fill_parent"
-		android:layout_height="40dip"
-		android:paddingBottom="5dip"
-		android:textSize="18sp"
-		android:gravity="center"
-		android:paddingLeft="5dip"
-		android:paddingRight="5dip"
-		android:ellipsize="marquee"
-		android:singleLine="true"
-		android:textColor="#FFFFFF"
-		android:background="@drawable/intro_header_shadow"
-	    android:shadowColor="#000000"
-	    android:shadowDy="1.5"
-	    android:shadowRadius="1"
-	    android:textStyle="bold"
-	    android:text="@string/foodNews"
 		/>
 	<ProgressBar
 		android:id="@+id/progressBar"

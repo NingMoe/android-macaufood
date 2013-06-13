@@ -16,6 +16,7 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFRequestHelper;
 
 
 	public class UpdateXMLHandler extends DefaultHandler{
@@ -39,7 +40,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 		throws SAXException {
 			
 			if (localName.equals("list")) {
-				MFConfig.updateSuccessfully = true;
+				MFRequestHelper.updateSuccessfully = true;
 				return;
 			}
 			

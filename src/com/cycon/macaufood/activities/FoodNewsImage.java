@@ -1,7 +1,9 @@
 package com.cycon.macaufood.activities;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -21,11 +23,13 @@ public class FoodNewsImage extends BaseActivity {
 	private WebView webView;
 	private ProgressBar progressBar;
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.foodnews_image);
+		setTitle(getString(R.string.foodNews) + " ~ " + getIntent().getStringExtra("foodnews_name"));
 		foodnews_id = getIntent().getStringExtra("foodnews_id");
 		errorMsg = (TextView) findViewById(R.id.errorMsg);
 		webView = (WebView) findViewById(R.id.webView);
@@ -34,7 +38,7 @@ public class FoodNewsImage extends BaseActivity {
 		webView.loadUrl(getUrl());
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-
+		webView.getSettings().setUseWideViewPort(true) ; 
 		webView.setInitialScale(60);
 
 		webView.setWebViewClient(new WebViewClient() {
@@ -71,6 +75,7 @@ public class FoodNewsImage extends BaseActivity {
 	}
 
 	private String getUrl() {
+		Log.e("ZZZ", foodnews_id);
 		return "http://www.cycon.com.mo/appimages/article_content/"
 				+ foodnews_id + ".jpg";
 	}

@@ -34,6 +34,7 @@ public class MFRequestHelper {
 	
 	private static final String TAG = MFRequestHelper.class.getName();
 
+	public static boolean updateSuccessfully;
 	private static long updateCafeListTimeStamp;
 	private static final long UPDATE_TIME_PERIOD = 3600 * 1000 * 12; // 12 hours
 	private static boolean isUpdating = false;
@@ -72,7 +73,7 @@ public class MFRequestHelper {
             	LocalDbManager.getInstance(appContext).beginWritableDb();
             	parseUpdateXml(is);
             	LocalDbManager.getInstance(appContext).endWritableDb();
-            	if (MFConfig.updateSuccessfully) {
+            	if (updateSuccessfully) {
             		Log.e("BaseActivity", "update success");
             		
             		urlStr = "http://www.cycon.com.mo/cafe_version_update.txt";
@@ -99,7 +100,7 @@ public class MFRequestHelper {
 						Log.e(TAG, "EXCEPTION" + e.getMessage());
 					}
 					updateCafeListTimeStamp = System.currentTimeMillis();
-    	            MFConfig.updateSuccessfully = false;
+    	            updateSuccessfully = false;
             	}
 				
 				

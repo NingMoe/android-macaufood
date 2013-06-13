@@ -102,8 +102,10 @@ public class FoodNews extends SherlockFragment {
 				int position, long id) {
 			
 			String foodnews_id = MFConfig.getInstance().getFoodNewsList().get(position).getId();
+			String foodnews_name = MFConfig.getInstance().getFoodNewsList().get(position).getSubject();
 			Intent i = new Intent(mContext, FoodNewsImage.class);
 			i.putExtra("foodnews_id", foodnews_id);
+			i.putExtra("foodnews_name", foodnews_name);
 			startActivity(i);
 			
 		}
