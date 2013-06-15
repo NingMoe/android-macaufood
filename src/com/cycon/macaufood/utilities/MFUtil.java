@@ -3,9 +3,8 @@ package com.cycon.macaufood.utilities;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import android.graphics.Color;
-
-import com.cycon.macaufood.R;
+import android.content.res.Resources;
+import android.util.TypedValue;
 
 public class MFUtil {
 
@@ -25,6 +24,15 @@ public class MFUtil {
             }
         }
         catch(Exception ex){}
+    }
+    
+    
+    public static int getPixelsFromDip(float dips, Resources res){
+  	  return  Math.round(dips * res.getDisplayMetrics().density);
+    }  
+    
+    public static float getDipFromPixels(int pixel, Resources res) {
+  	  return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixel, res.getDisplayMetrics());
     }
     
 //    public static int getRowDrawable(int row) {

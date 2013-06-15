@@ -102,6 +102,7 @@ public class Home extends SherlockFragmentActivity {
 								}
 							}).show();
 			
+			
 			TextView textView = (TextView) dialog.findViewById(android.R.id.message);
 			textView.setTextSize(15);
 

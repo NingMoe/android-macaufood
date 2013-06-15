@@ -56,9 +56,7 @@ public class Intro extends BaseActivity {
 	private ProgressDialog pDialog;
 	private OneFlingGallery gallery;
 	private GalleryNavigator navi;
-	private View dummyView;
 	private TextView text;
-	private TextView header;
 	private String introid;
 	private int totalPages;
 	private int serverTotalPages;
@@ -76,20 +74,14 @@ public class Intro extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.intro);
+		setTitle(getString(R.string.intro) + " ~ " + getIntent().getStringExtra("name"));
 		introid = getIntent().getStringExtra("introid");
 		totalPages = Integer.parseInt(getIntent().getStringExtra("page"));
 		if (totalPages == 0) totalPages = 1;
 		gallery = (OneFlingGallery) findViewById(R.id.gallery);
-		dummyView = findViewById(R.id.dummyView);
 		navi = (GalleryNavigator) findViewById(R.id.navi);
 		text = (TextView) findViewById(R.id.text);
         fileCache=new FileCache(this, ImageType.INTRO);
-
-//        in = AnimationUtils.loadAnimation(this,
-//                R.anim.fade_in);
-        
-		header = (TextView) findViewById(R.id.header);
-		header.setText("簡介 ~ " + getIntent().getStringExtra("name"));
 		
 		textMap = new Hashtable<Integer, String>(totalPages);
 		imageMap = new Hashtable<Integer, Bitmap>(totalPages);
@@ -391,14 +383,6 @@ public class Intro extends BaseActivity {
         		if (page == 1) {
         			PreferenceHelper.savePreferencesLong(getApplicationContext(), "introTimeStamp", System.currentTimeMillis());
         			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-        			params.topMargin = 51;
-        			gallery.setLayoutParams(params);
-        			
-        	        int height = MFConfig.deviceWidth * result.getHeight() / result.getWidth();
-        			LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, height);
-        			params1.topMargin = 51;
-        			dummyView.setLayoutParams(params1);
-        			
         			imageAdapter.notifyDataSetChanged();
         			finishLoadingFirstImage = true;
         			

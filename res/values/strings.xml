@@ -30,11 +30,19 @@
     <string name="paymentMethod">付款方法</string>
     <string name="businessHours">營業時間</string>
     <string name="info">訊息</string>
+    <string name="intro">簡介</string>
+    <string name="menu">菜單</string>
+    <string name="information">資訊</string>
     <string name="addFavorite">加入最愛</string>
     <string name="feedBack">給店主意見</string>
     <string name="alreadyInFavorite">已加入最愛</string>
     <string name="branch">分店</string>
     <string name="branchList">分店列表</string>
+    
+<!-- Menu -->
+    <string name="nextPage">下一頁</string>
+    <string name="prevPage">上一頁</string>
+    <string name="callPhone">撥打電話</string>
     
 <!--  FeedBack -->
     <string name="fbName">名字</string>

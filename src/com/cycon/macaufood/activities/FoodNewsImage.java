@@ -23,7 +23,6 @@ public class FoodNewsImage extends BaseActivity {
 	private WebView webView;
 	private ProgressBar progressBar;
 
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

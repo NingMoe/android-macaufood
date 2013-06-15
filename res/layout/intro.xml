@@ -1,89 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-<LinearLayout
-	android:orientation="vertical"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
-  		
-	<View android:id="@+id/dummyView"
-		android:layout_width="fill_parent" android:layout_height="240dip" 
-		android:background="#00000000"
-		android:layout_marginTop="34dip"/>
-	
-		
-	<LinearLayout 
-	  android:orientation="vertical"
-	  android:layout_width="fill_parent"
-	  android:layout_height="0dip"
-	  android:layout_weight="1"
-	  android:background="@drawable/intro_body_bg"
-		>
-		
-	<com.cycon.macaufood.widget.GalleryNavigator android:id="@+id/navi"
-		android:layout_marginTop="15dip" 
-		android:layout_gravity="center_horizontal" 
-		android:layout_marginBottom="8dip"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content" />
-		
-		<ScrollView 
-				android:layout_width="fill_parent"
-				android:layout_height="fill_parent"
-				android:layout_margin="12dip"
-				android:padding="10dip"
-				android:background="@drawable/round_edge_white_bg"
-				android:scrollbarStyle="outsideOverlay">
-		
-		<TextView
-			android:id="@+id/text"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:textColor="#000000"
-			android:textSize="17sp"
-			/>
-				
-			
-		</ScrollView>
-		
-		</LinearLayout>
-	
+    <com.cycon.macaufood.widget.OneFlingGallery
+        android:id="@+id/gallery"
+        android:layout_width="fill_parent"
+        android:layout_height="240dip"
+        android:background="#AAAAAA"
+        android:fadingEdge="none"
+        android:spacing="0px"
+        android:unselectedAlpha="255" />
+
+    <com.cycon.macaufood.widget.GalleryNavigator
+        android:id="@+id/navi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="3dip"
+        android:layout_marginTop="15dip" />
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_margin="12dip"
+        android:background="@drawable/round_edge_white_bg"
+        android:scrollbarStyle="outsideOverlay" >
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="10dip"
+            android:textColor="#000000"
+            android:textSize="17sp" />
+    </ScrollView>
+
 </LinearLayout>
-
-<RelativeLayout
-		android:orientation="vertical"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		>
-  		
-	<com.cycon.macaufood.widget.OneFlingGallery android:id="@+id/gallery"
-		android:spacing="0px" android:fadingEdge="none"
-		android:layout_width="fill_parent" android:layout_height="240dip" 
-		android:background="#AAAAAA" android:unselectedAlpha="255" 
-		android:layout_marginTop="34dip"/>
-		
-	  <TextView 
-	  	android:id="@+id/header"
-		android:layout_width="fill_parent"
-		android:layout_height="40dip"
-		android:paddingBottom="5dip"
-		android:textSize="18sp"
-		android:gravity="center"
-		android:paddingLeft="5dip"
-		android:paddingRight="5dip"
-		android:ellipsize="marquee"
-		android:singleLine="true"
-		android:textColor="#FFFFFF"
-		android:background="@drawable/intro_header_shadow"
-	    android:shadowColor="#000000"
-	    android:shadowDy="1.5"
-	    android:shadowRadius="1"
-	    android:textStyle="bold"
-		/>    
-		
-	</RelativeLayout>
-
-</FrameLayout>

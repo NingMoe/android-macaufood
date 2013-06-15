@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/search"
+        android:title="@string/restaurant_search"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/menu_map"
+        android:icon="@drawable/map"
+        android:title="@string/map_search"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/menu_favorite_list"
+        android:icon="@drawable/favorite_list"
+        android:title="@string/favorite_list"
+        android:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_refresh"
+        android:title="@string/refresh"
+        android:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/menu_about"
+        android:title="@string/aboutUs"
+        android:showAsAction="collapseActionView"/>
+
+</menu>

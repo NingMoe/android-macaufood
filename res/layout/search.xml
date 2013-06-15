@@ -66,7 +66,6 @@
 	  			android:id="@+id/advLoadBg"
 			    android:layout_width="fill_parent"
 				android:layout_height="fill_parent"
-				android:background="@drawable/search_bg"
 				>
 				
 				<LinearLayout 
@@ -87,6 +86,7 @@
 					    android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:text="@string/loadingAdv"
+						android:textColor="@color/tab_gray_text"
 						android:paddingLeft="10dip"
 						android:textSize="17sp"
 			  		  	/>
@@ -130,7 +130,6 @@
 		  	android:layout_height="fill_parent"
 		  	android:orientation="vertical"
 		  	android:visibility="gone"
-    		android:background="@drawable/search_bg"
 		  	>
     	
     

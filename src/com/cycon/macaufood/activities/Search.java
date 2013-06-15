@@ -131,8 +131,6 @@ public class Search extends BaseActivity {
 		});
 		
         
-        advancedSearchLayout.getBackground().setDither(true);
-        
         regionTitle = (TextView) findViewById(R.id.regionTitle);
         
         searchBtn = (Button) findViewById(R.id.searchBtn);

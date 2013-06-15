@@ -1,6 +1,9 @@
 
 package com.cycon.macaufood.widget;
 
+import com.cycon.macaufood.R;
+import com.cycon.macaufood.utilities.MFUtil;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -8,8 +11,8 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class GalleryNavigator extends View {
-    private static final int SPACING = 15;
-    private static final int RADIUS = 5;
+    private static int SPACING;
+    private static int RADIUS;
     private int mSize = 0;
     private int mPosition = 0;
     private static final Paint mOnPaint = new Paint(Paint.ANTI_ALIAS_FLAG);;
@@ -17,8 +20,7 @@ public class GalleryNavigator extends View {
 
     public GalleryNavigator(Context context) {
         super(context);
-        mOnPaint.setColor(0xCCFFFFFF);
-        mOffPaint.setColor(0x66FFFFFF);
+        init();
     }
 
     public GalleryNavigator(Context c, int size) {
@@ -28,8 +30,14 @@ public class GalleryNavigator extends View {
 
     public GalleryNavigator(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mOnPaint.setColor(0xCCFFFFFF);
-        mOffPaint.setColor(0x66FFFFFF);
+        init();
+    }
+    
+    private void init() {
+        mOnPaint.setColor(getResources().getColor(R.color.green_text));
+        mOffPaint.setColor(0xFF999999);
+        SPACING = MFUtil.getPixelsFromDip(10f, getResources());
+        RADIUS = MFUtil.getPixelsFromDip(3f, getResources());
     }
 
     @Override
