@@ -28,6 +28,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
@@ -35,6 +37,8 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
+import android.widget.ViewSwitcher;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
@@ -48,13 +52,13 @@ import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.GalleryNavigator;
 import com.cycon.macaufood.widget.OneFlingGallery;
 
-public class Info extends BaseActivity {
+public class Info extends BaseActivity implements ViewSwitcher.ViewFactory{
 	
 	private static final String TAG = Info.class.getName();
 	private ProgressDialog pDialog;
 	private OneFlingGallery gallery;
 	private GalleryNavigator navi;
-	private TextView text;
+	private TextSwitcher textSwitcher;
 	private String infoid;
 	private int totalPages;
 	private int serverTotalPages;
@@ -78,7 +82,15 @@ public class Info extends BaseActivity {
 		if (totalPages == 0) totalPages = 1;
 		gallery = (OneFlingGallery) findViewById(R.id.gallery);
 		navi = (GalleryNavigator) findViewById(R.id.navi);
-		text = (TextView) findViewById(R.id.text);
+		textSwitcher = (TextSwitcher) findViewById(R.id.text);
+		textSwitcher.setFactory(this);
+
+        Animation in = AnimationUtils.loadAnimation(this,
+                android.R.anim.fade_in);
+        Animation out = AnimationUtils.loadAnimation(this,
+                android.R.anim.fade_out);
+        textSwitcher.setInAnimation(in);
+        textSwitcher.setOutAnimation(out);
         fileCache=new FileCache(this, ImageType.INFO);
 		
 		textMap = new Hashtable<Integer, String>(totalPages);
@@ -94,9 +106,8 @@ public class Info extends BaseActivity {
 				String s = textMap.get(id + 1);
 				//prevent sliding text even when text is same
 				if (s != null) {
-					if (!text.getText().toString().equals(s)) {	
-						text.setText(s);
-//						text.startAnimation(in);
+					if (!((TextView)textSwitcher.getCurrentView()).getText().toString().equals(s)) {	
+						textSwitcher.setText(s);
 					}
 				}
 				navi.setPosition(id);
@@ -152,7 +163,7 @@ public class Info extends BaseActivity {
 		    		) {
 			if (!MFConfig.isOnline(Info.this)) {
 				if (imageMap.isEmpty() || textMap.isEmpty())
-					text.setText(R.string.noInternetMsg);
+					textSwitcher.setText(getString(R.string.noInternetMsg));
 			} else {
 				AsyncTaskHelper.executeWithResultString(new FetchPageTask());
 				//load first 2 photos first
@@ -295,11 +306,12 @@ public class Info extends BaseActivity {
     		//if 2nd image is null, do not show internet msg coz there may only be 1
     		if (result == null) {
     			if (page != 2 && (imageMap.isEmpty() || textMap.isEmpty()))
-    				text.setText(R.string.noInternetMsg);
+    				textSwitcher.setText(getString(R.string.noInternetMsg));
     		}
     		else {
     			if (page == navi.getPosition() + 1) {
-    				text.setText(result);
+    				textSwitcher.setText(result);
+    				
     			}
     			
     			textMap.put(page, result);
@@ -367,7 +379,7 @@ public class Info extends BaseActivity {
     		
     		if (result == null) {
     			if (page != 2 && (imageMap.isEmpty() || textMap.isEmpty()))
-    				text.setText(R.string.noInternetMsg);
+    				textSwitcher.setText(getString(R.string.noInternetMsg));
     		}
     		else {
     			imageMap.put(page, result);
@@ -464,4 +476,12 @@ public class Info extends BaseActivity {
             return totalBytesSkipped;
         }
     }
+
+	public View makeView() {
+		TextView t = new TextView(this);
+        t.setTextSize(17);
+        int px = MFUtil.getPixelsFromDip(10f, getResources());
+        t.setPadding(px, px, px, px);
+        return t;
+	}
 }
