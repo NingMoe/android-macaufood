@@ -20,7 +20,6 @@ public class Branch extends BaseActivity {
 	private static final String TAG = Branch.class.getName();
 	private ListView list;
 	private AdvView banner;
-	private TextView searchResultsNumber;
 	private CafeSearchListAdapter cafeAdapter;
 	private ArrayList<Cafe> branchList = new ArrayList<Cafe>();
 	
@@ -41,8 +40,6 @@ public class Branch extends BaseActivity {
         list = (ListView) findViewById(R.id.list);
         list.setOnItemClickListener(itemClickListener);
         banner = (AdvView) findViewById(R.id.banner);
-        searchResultsNumber = (TextView) findViewById(R.id.searchResultsNumber);
-        searchResultsNumber.setText("共 " + branchList.size() + " 間分店");
         
         cafeAdapter = new CafeSearchListAdapter(Branch.this, branchList);
         list.setAdapter(cafeAdapter);

@@ -3,7 +3,8 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
   android:layout_width="fill_parent"
-  android:layout_height="80dip">
+  android:layout_height="80dip"
+  android:background="@drawable/light_green_gradient_bg">
   
   <ImageView 
   		android:id="@+id/imageView"
@@ -22,9 +23,9 @@
 	    android:paddingLeft="9dip"
 	    android:paddingRight="7dip"
 	    android:singleLine="true"
-	    android:shadowDy="1"
+	    android:shadowDy="2"
 	    android:shadowColor="#999999"
-	    android:shadowRadius="1"
+	    android:shadowRadius="2"
 	    android:ellipsize="marquee"
 	    />
 	    

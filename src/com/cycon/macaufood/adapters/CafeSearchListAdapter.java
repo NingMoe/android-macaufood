@@ -67,7 +67,6 @@ public class CafeSearchListAdapter extends BaseAdapter {
 				if (!cafe.getOption_banquet().equals("1")) holder.banquet.getDrawable().mutate().setAlpha(50); 
 				else holder.banquet.getDrawable().mutate().setAlpha(255); 
 				
-				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
 				imageLoader.displayImage(cafe.getId(), holder.image, position);
 				
 			}

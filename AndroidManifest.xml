@@ -41,12 +41,15 @@
         <activity android:name=".activities.Coupon" />
         <activity
             android:name=".activities.Search"
+            android:label="@string/restaurant_search"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
         </activity>
         <activity
             android:name=".activities.Map"
+            android:label="@string/map_search"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.Favorite" />
+        <activity android:name=".activities.Favorite" 
+            android:label="@string/favorite_list"/>
         <activity android:name=".activities.Details" />
         <activity android:name=".activities.Intro" />
         <activity android:name=".activities.Info" />
@@ -61,7 +64,8 @@
         <activity
             android:name=".activities.MacauWifi"
             android:label="@string/macauWifi" />
-        <activity android:name=".activities.Branch" />
+        <activity android:name=".activities.Branch"
+            android:label="@string/branchList" />
         <activity android:name=".activities.FoodNews" />
         <activity android:name=".activities.FoodNewsImage" />
         <activity

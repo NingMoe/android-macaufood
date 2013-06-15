@@ -29,6 +29,7 @@ import android.util.Log;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFRequestHelper;
@@ -38,6 +39,7 @@ import com.cycon.macaufood.xmlhandler.UpdateXMLHandler;
 public abstract class BaseActivity extends SherlockActivity {
 	
 	private static final String TAG = "BaseActivity";
+	protected ActionBar mActionBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +51,8 @@ public abstract class BaseActivity extends SherlockActivity {
 //			Process.killProcess(Process.myPid());
 //		} 
 		setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-		ActionBar actionbar = getSupportActionBar();
-		if (actionbar == null) {
-			Log.e("ZZZ", "actionbar is null");
-		}
-//		actionbar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00FF00")));
+		mActionBar = getSupportActionBar();
+		mActionBar.setDisplayHomeAsUpEnabled(true);
 	}
 	
 	@Override
@@ -62,7 +61,16 @@ public abstract class BaseActivity extends SherlockActivity {
 		MFRequestHelper.checkUpdate(getApplicationContext());
 	}
 
-
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	
+	}
     
 
 	

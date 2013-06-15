@@ -294,28 +294,5 @@ public class Map extends MapActivity{
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {		
-	    if ((keyCode == KeyEvent.KEYCODE_BACK) && name == null) {	   
-	    	new AlertDialog.Builder(this)
-			.setMessage("你確定�?退出程�?嗎?      ")
-			.setPositiveButton("確定",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,	int whichButton) {
-					    	Process.killProcess(Process.myPid());   
-						}
-					})
-			.setNegativeButton("�?�消",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,	int whichButton) {
-							dialog.dismiss();
-						}
-					})
-			.show();
-	        return true;
-	    }
-	    return super.onKeyDown(keyCode, event);
-	}
     
 }

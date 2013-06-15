@@ -27,21 +27,21 @@ public class MFUtil {
         catch(Exception ex){}
     }
     
-    public static int getRowDrawable(int row) {
-    	int remainder = row % 5;
-    	switch (remainder) {
-    	case 1:
-    		return R.drawable.row1_color;
-    	case 2:
-    		return R.drawable.row2_color;
-    	case 3:
-    		return R.drawable.row3_color;
-    	case 4:
-    		return R.drawable.row4_color;
-    	case 0:
-    		return R.drawable.row0_color;
-    				
-    	}
-		return 0;
-    }
+//    public static int getRowDrawable(int row) {
+//    	int remainder = row % 5;
+//    	switch (remainder) {
+//    	case 1:
+//    		return R.drawable.row1_color;
+//    	case 2:
+//    		return R.drawable.row2_color;
+//    	case 3:
+//    		return R.drawable.row3_color;
+//    	case 4:
+//    		return R.drawable.row4_color;
+//    	case 0:
+//    		return R.drawable.row0_color;
+//    				
+//    	}
+//		return 0;
+//    }
 }

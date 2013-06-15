@@ -53,10 +53,6 @@ public class CafeListAdapter extends BaseAdapter {
             if (cafe != null) {
 				holder.name.setText(cafe.getTitle());
 				holder.subText.setText(cafe.getContent());
-//				convertView.setBackgroundColor(Color.WHITE);
-				convertView.setBackgroundResource(R.drawable.cafe_row_bg);
-//				convertView.setBackgroundResource(MFUtil.getRowDrawable(position));
-				
 				imageLoader.displayImage(cafe.getId(), holder.image, position);
 				
 			}

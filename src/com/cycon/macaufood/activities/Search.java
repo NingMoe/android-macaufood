@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
-import android.app.AlertDialog;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Process;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -37,23 +37,18 @@ import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
-import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvFlingGallery;
 import com.cycon.macaufood.widget.AdvView;
-import com.cycon.macaufood.widget.DirectSearchLayout;
 import com.cycon.macaufood.widget.GalleryNavigator;
 
 public class Search extends BaseActivity {
 	
 	private static final String TAG = "Search";
 
-	private TextView directSearch;
-	private TextView advancedSearch;
-	private TextView searchResults;
-	private DirectSearchLayout directSearchLayout;
+	private TabsAdapter mTabsAdapter;
+	private View directSearchLayout;
 	private View advancedSearchLayout;
 	private View searchResultsLayout;
-	private View tabLayout;
 	private View advLoadBg;
 	private TextView searchResultsNumber;
 //	private AdvView banner;
@@ -79,7 +74,6 @@ public class Search extends BaseActivity {
 	private ArrayList<Cafe> searchResultCafes = new ArrayList<Cafe>();
 	private CafeSearchListAdapter searchResultsAdapter;
 	
-	private Home parentActivity;
 	
 	private int fromWhichSearch; //1 = direct search, 2 = advanced search 
 	
@@ -90,18 +84,23 @@ public class Search extends BaseActivity {
         Log.e(getClass().getSimpleName(), "---onCreate");
 
         setContentView(R.layout.search);
-        
-//        boolean landscape = Config.getInstance().isLandscape(this);
-        boolean landscape = false;
-        
-		parentActivity = (Home) Search.this.getParent();
+
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        Tab tab1 = mActionBar.newTab().setText(R.string.directSearch);
+        Tab tab2 = mActionBar.newTab().setText(R.string.advancedSearch);
+        Tab tab3 = mActionBar.newTab().setText(R.string.searchResults);
+        tab1.setTabListener(new TabsAdapter());
+        tab2.setTabListener(new TabsAdapter());
+        tab3.setTabListener(new TabsAdapter());
+
+		if (savedInstanceState != null) {
+			mActionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+		}
 		
-		tabLayout = findViewById(R.id.tabLayout);
 //        banner = (AdvView) findViewById(R.id.banner);
         smallBanner = (AdvView) findViewById(R.id.smallBanner);
         advLoadBg = findViewById(R.id.advLoadBg);
-        directSearchLayout = (DirectSearchLayout) findViewById(R.id.directSearchLayout);
-        directSearchLayout.setActivity(this);
+        directSearchLayout = findViewById(R.id.directSearchLayout);
         advancedSearchLayout = findViewById(R.id.advancedSearchLayout);
         searchResultsLayout = findViewById(R.id.searchResultsLayout);
         searchResultsNumber = (TextView) findViewById(R.id.searchResultsNumber);
@@ -134,42 +133,6 @@ public class Search extends BaseActivity {
         
         advancedSearchLayout.getBackground().setDither(true);
         
-        directSearch = (TextView) findViewById(R.id.directSearch);
-        directSearch.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				if (!directSearchLayout.isShown()) {
-					setDirectSearchTab(true);
-					setAdvancedSearchTab(false);
-					setSearchResultsTab(false);
-			    	searchResultsAdapter.imageLoader.cleanup();
-				}
-			}
-		});
-        advancedSearch = (TextView) findViewById(R.id.advancedSearch);
-        advancedSearch.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				if (!advancedSearchLayout.isShown()) {
-					setDirectSearchTab(false);
-					setAdvancedSearchTab(true);
-					setSearchResultsTab(false);
-			    	searchResultsAdapter.imageLoader.cleanup();
-				}
-			}
-		});
-        searchResults = (TextView) findViewById(R.id.searchResults);
-        searchResults.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				if (!searchResultsLayout.isShown()) {
-					setDirectSearchTab(false);
-					setAdvancedSearchTab(false);
-					setSearchResultsTab(true);
-				}
-			}
-		});
-        
         regionTitle = (TextView) findViewById(R.id.regionTitle);
         
         searchBtn = (Button) findViewById(R.id.searchBtn);
@@ -185,7 +148,6 @@ public class Search extends BaseActivity {
         directSearchBtn.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				expand();
 				hideKeyboard(v);
 				doPostDirectSearch();
 				fromWhichSearch = 1;
@@ -200,7 +162,6 @@ public class Search extends BaseActivity {
 				clearBtn.setVisibility(View.GONE);
 				directSearchBtn.setVisibility(View.GONE);
 				searchCafes.clear();
-				shrink();
 				showKeyboard(searchTextBox);
 			}
 		});
@@ -220,7 +181,6 @@ public class Search extends BaseActivity {
         searchTextBox.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-					shrink();
 //					clearBtn.setVisibility(View.VISIBLE);
 			}
 		});
@@ -229,7 +189,6 @@ public class Search extends BaseActivity {
 			
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					expand();
 					hideKeyboard(v);
 					doPostDirectSearch();
 					fromWhichSearch = 1;
@@ -245,7 +204,6 @@ public class Search extends BaseActivity {
 				if (event.getAction() == KeyEvent.ACTION_UP) {
 					switch (keyCode) {
 					case KeyEvent.KEYCODE_ENTER:
-						expand();
 						hideKeyboard(v);
 						doPostDirectSearch();
 						fromWhichSearch = 1;
@@ -291,7 +249,7 @@ public class Search extends BaseActivity {
         
         region = (WheelView) findViewById(R.id.region);
         regionAdapter = new ArrayWheelAdapter<String>(this, MFConstants.regionNames);
-        regionAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
+        regionAdapter.setItemResource(R.layout.wheel_text_item);
         regionAdapter.setItemTextResource(R.id.text);
         region.setViewAdapter(regionAdapter);
         region.addChangingListener(new OnWheelChangedListener() {
@@ -303,27 +261,35 @@ public class Search extends BaseActivity {
     
         dishesType = (WheelView) findViewById(R.id.foodType);
         dishesTypeAdapter = new ArrayWheelAdapter<String>(this, MFConstants.dishesType);
-        dishesTypeAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
+        dishesTypeAdapter.setItemResource(R.layout.wheel_text_item);
         dishesTypeAdapter.setItemTextResource(R.id.text);
         dishesType.setViewAdapter(dishesTypeAdapter);
         
         servicesType = (WheelView) findViewById(R.id.restType);
         servicesTypeAdapter = new ArrayWheelAdapter<String>(this, MFConstants.serviceType);
-        servicesTypeAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
+        servicesTypeAdapter.setItemResource(R.layout.wheel_text_item);
         servicesTypeAdapter.setItemTextResource(R.id.text);
         servicesType.setViewAdapter(servicesTypeAdapter);
+        
+
+        mActionBar.addTab(tab1);
+        mActionBar.addTab(tab2);
+        mActionBar.addTab(tab3);
     }
+    
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt("tab", getSupportActionBar()
+				.getSelectedNavigationIndex());
+	}
     
     private void setDirectSearchTab(boolean select) {
     	if (select) {
-    		directSearch.setTextColor(Color.parseColor("#FFFFFF"));
-    		directSearch.setBackgroundResource(R.drawable.search_tab_selected);
     		directSearchLayout.setVisibility(View.VISIBLE);
 //    		if (banner.isShown())
 //    			banner.startTask();
     	} else {
-    		directSearch.setTextColor(Color.parseColor("#888888"));
-    		directSearch.setBackgroundResource(R.drawable.search_tab_unselected);
     		directSearchLayout.setVisibility(View.GONE);
 //    		banner.stopTask();
     	}
@@ -331,25 +297,17 @@ public class Search extends BaseActivity {
     
     private void setAdvancedSearchTab(boolean select) {
     	if (select) {
-    		advancedSearch.setTextColor(Color.parseColor("#FFFFFF"));
-    		advancedSearch.setBackgroundResource(R.drawable.search_tab_selected);
     		advancedSearchLayout.setVisibility(View.VISIBLE);
     	} else {
-    		advancedSearch.setTextColor(Color.parseColor("#888888"));
-    		advancedSearch.setBackgroundResource(R.drawable.search_tab_unselected);
     		advancedSearchLayout.setVisibility(View.GONE);
     	}
     }
     
     private void setSearchResultsTab(boolean select) {
     	if (select) {
-    		searchResults.setTextColor(Color.parseColor("#FFFFFF"));
-    		searchResults.setBackgroundResource(R.drawable.search_tab_selected);
     		searchResultsLayout.setVisibility(View.VISIBLE);
 			smallBanner.startTask();
     	} else {
-    		searchResults.setTextColor(Color.parseColor("#888888"));
-    		searchResults.setBackgroundResource(R.drawable.search_tab_unselected);
     		searchResultsLayout.setVisibility(View.GONE);
     		smallBanner.stopTask();
     	}
@@ -370,15 +328,14 @@ public class Search extends BaseActivity {
     @Override
     protected void onResume() {
     	super.onResume();
-    	expand();
 
     	gallery.startTimer();
 
-		if (directSearch.getTextColors().getDefaultColor() == Color.parseColor("#FFFFFF")) {
+		if (directSearchLayout.isShown()) {
 			if (searchTextBox.getText().toString().trim().length() == 0) {
 //				banner.startTask();
 			}
-    	} else if (searchResults.getTextColors().getDefaultColor() == Color.parseColor("#FFFFFF")) {
+    	} else if (searchResultsLayout.isShown()) {
     		smallBanner.startTask();
     	}
     }
@@ -403,16 +360,6 @@ public class Search extends BaseActivity {
 	    imm.showSoftInput(view, 0);
     }
     
-    public void shrink() {
-    	tabLayout.setVisibility(View.GONE);
-    }
-    
-    public void expand() {
-    	tabLayout.setVisibility(View.VISIBLE);
-    	if (searchTextBox.getText().toString().equals("")) {
-    		clearBtn.setVisibility(View.GONE);
-    	}
-    }
     
 	private void doDirectSearch(String query) {
 		
@@ -658,19 +605,40 @@ public class Search extends BaseActivity {
 			startActivity(i);
         }
     }
-    
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//    	super.onConfigurationChanged(newConfig);
-//    	boolean landscape = Config.getInstance().isLandscape(this);
-//    	regionAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
-//    	dishesTypeAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
-//    	servicesTypeAdapter.setItemResource(landscape ? R.layout.wheel_text_item_landscape : R.layout.wheel_text_item);
-//
-//        region.setViewAdapter(regionAdapter);
-//        dishesType.setViewAdapter(dishesTypeAdapter);
-//        servicesType.setViewAdapter(servicesTypeAdapter);
-//    }
+	
+	private class TabsAdapter implements ActionBar.TabListener {
+
+		public void onTabSelected(Tab tab,
+				android.support.v4.app.FragmentTransaction ft) {
+			if (tab.getPosition() == 0)
+				setDirectSearchTab(true);
+			else if (tab.getPosition() == 1) 
+				setAdvancedSearchTab(true);
+			else if (tab.getPosition() == 2)
+				setSearchResultsTab(true);
+			
+		}
+
+		public void onTabUnselected(Tab tab,
+				android.support.v4.app.FragmentTransaction ft) {
+
+			if (tab.getPosition() == 0)
+				setDirectSearchTab(false);
+			else if (tab.getPosition() == 1) 
+				setAdvancedSearchTab(false);
+			else if (tab.getPosition() == 2)
+				setSearchResultsTab(false);
+
+	    	searchResultsAdapter.imageLoader.cleanup();
+		}
+
+		public void onTabReselected(Tab tab,
+				android.support.v4.app.FragmentTransaction ft) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
     
     @Override
     public void onDestroy() {
@@ -693,34 +661,18 @@ public class Search extends BaseActivity {
 				}
 				return true;
 			} else {
-	    	
-		    	new AlertDialog.Builder(this)
-				.setMessage("你確定�?退出程�?嗎?      ")
-				.setPositiveButton("確定",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,	int whichButton) {
-						    	Process.killProcess(Process.myPid());   
-							}
-						})
-				.setNegativeButton("�?�消",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,	int whichButton) {
-								dialog.dismiss();
-							}
-						})
-				.show();
-		        return true;
+				finish();
 			}
 	    }
 	    return super.onKeyDown(keyCode, event);
 	}
     
-	@Override
-	public void onAttachedToWindow() {
-	    super.onAttachedToWindow();
-	    Window window = getWindow();
-	    window.setFormat(PixelFormat.RGBA_8888);
-	}
+//	@Override
+//	public void onAttachedToWindow() {
+//	    super.onAttachedToWindow();
+//	    Window window = getWindow();
+//	    window.setFormat(PixelFormat.RGBA_8888);
+//	}
     
     
 }

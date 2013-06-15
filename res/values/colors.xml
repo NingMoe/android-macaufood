@@ -6,5 +6,7 @@
     <color name="holo_blue_light">#33b5e5</color>
     <color name="tab_gray_text">#505050</color>
     <color name="white">#ffffff</color>
-
+    <color name="light_green">#dae5c6</color>
+    <color name="dark_green">#0c8f4d</color>
+    
 </resources>
