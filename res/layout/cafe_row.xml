@@ -25,7 +25,7 @@
 	    android:singleLine="true"
 	    android:shadowDy="2"
 	    android:shadowColor="#999999"
-	    android:shadowRadius="2"
+	    android:shadowRadius="1"
 	    android:ellipsize="marquee"
 	    />
 	    

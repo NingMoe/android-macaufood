@@ -25,6 +25,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +60,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 	
 	private static final String TAG = Intro.class.getName();
 	private ProgressDialog pDialog;
-	private OneFlingGallery gallery;
+//	private OneFlingGallery gallery;
 	private GalleryNavigator navi;
 	private TextSwitcher textSwitcher;
 	private String introid;
@@ -67,6 +69,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 	private Hashtable<Integer, Bitmap> imageMap;
 	private Hashtable<Integer, String> textMap;
 	private ImageAdapter imageAdapter;
+	private ViewPager viewPager;
 	private boolean finishLoadingFirstImage;
 	private FileCache fileCache;
 	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 24 * 7; // 4 days
@@ -82,7 +85,8 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 		introid = getIntent().getStringExtra("introid");
 		totalPages = Integer.parseInt(getIntent().getStringExtra("page"));
 		if (totalPages == 0) totalPages = 1;
-		gallery = (OneFlingGallery) findViewById(R.id.gallery);
+		viewPager = (ViewPager) findViewById(R.id.pager);
+//		gallery = (OneFlingGallery) findViewById(R.id.gallery);
 		navi = (GalleryNavigator) findViewById(R.id.navi);
 		textSwitcher = (TextSwitcher) findViewById(R.id.text);
 		textSwitcher.setFactory(this);
@@ -99,27 +103,27 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 		imageMap = new Hashtable<Integer, Bitmap>(totalPages);
 		imageViewsMap = new Hashtable<Integer, ImageView>(totalPages);
 		imageAdapter = new ImageAdapter(this);
-		gallery.setAdapter(imageAdapter);
-		gallery.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int id,
-					long arg3) {
-					
-				String s = textMap.get(id + 1);
-				//prevent sliding text even when text is same
-				if (s != null) {
-					if (!((TextView)textSwitcher.getCurrentView()).getText().toString().equals(s)) {	
-						textSwitcher.setText(s);
-					}
-				}
-				navi.setPosition(id);
-				navi.invalidate();
-			}
-
-			public void onNothingSelected(AdapterView<?> arg0) {
-				
-			}
-		});
+//		gallery.setAdapter(imageAdapter);
+//		gallery.setOnItemSelectedListener(new OnItemSelectedListener() {
+//
+//			public void onItemSelected(AdapterView<?> arg0, View arg1, int id,
+//					long arg3) {
+//					
+//				String s = textMap.get(id + 1);
+//				//prevent sliding text even when text is same
+//				if (s != null) {
+//					if (!((TextView)textSwitcher.getCurrentView()).getText().toString().equals(s)) {	
+//						textSwitcher.setText(s);
+//					}
+//				}
+//				navi.setPosition(id);
+//				navi.invalidate();
+//			}
+//
+//			public void onNothingSelected(AdapterView<?> arg0) {
+//				
+//			}
+//		});
 		
 		boolean cacheError = false;
 		
@@ -174,6 +178,10 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 				}
 			}
 		}
+		
+		viewPager.setAdapter(imageAdapter);
+		viewPager.setOnPageChangeListener(imageAdapter);
+		imageAdapter.onPageSelected(0);
 	}
 	
 	public void refresh() {
@@ -385,15 +393,16 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
     			imageMap.put(page, result);
     			ImageView imageView = imageViewsMap.get(page);
     			if (imageView != null) {
-    				imageView.setImageBitmap(result);
-    		        int height = MFConfig.deviceWidth * result.getHeight() / result.getWidth();
-    		        imageView.setLayoutParams(new Gallery.LayoutParams(MFConfig.deviceWidth, height));
+					int height = MFConfig.deviceWidth * result.getHeight()
+							/ result.getWidth();
+					viewPager.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+							height));
+					imageView.setImageBitmap(result);
     			}
     			
         		//load rest photos
         		if (page == 1) {
         			PreferenceHelper.savePreferencesLong(getApplicationContext(), "introTimeStamp", System.currentTimeMillis());
-        			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
         			imageAdapter.notifyDataSetChanged();
         			finishLoadingFirstImage = true;
         			
@@ -416,7 +425,8 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
     }
     
     
-    public class ImageAdapter extends BaseAdapter {
+    public class ImageAdapter extends PagerAdapter implements
+	ViewPager.OnPageChangeListener {
         private Context mContext;
 
         public ImageAdapter(Context c) {
@@ -427,30 +437,58 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
         	return serverTotalPages;
         }
 
-        public Object getItem(int position) {
-        	return imageMap.get(position + 1);
-        }
+		@Override
+		public boolean isViewFromObject(View view, Object object) {
+			return view == ((ImageView) object);
+		}
 
-        public long getItemId(int position) {
-        	return position;
-        }
 
-        public View getView(int position, View convertView, ViewGroup parent) {
-        
-	        Bitmap bmp = imageMap.get(position + 1);
-        	ImageView i = new ImageView(mContext);
-        	if (bmp == null) {
-    	        i.setLayoutParams(new Gallery.LayoutParams(MFConfig.deviceWidth, 360));
-    	        imageViewsMap.put(position + 1, i);
-        		return i;
-        	}
-	        i.setImageBitmap(bmp);
-	        int height = MFConfig.deviceWidth * bmp.getHeight() / bmp.getWidth();
-	        i.setLayoutParams(new Gallery.LayoutParams(MFConfig.deviceWidth, height));
-	        
-	    	return i;
-	    	
-        }
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			ImageView imageView = new ImageView(mContext);
+			imageViewsMap.put(position + 1, imageView);
+			Bitmap bmp = imageMap.get(position + 1);
+			if (bmp == null) {
+				((ViewPager) container).addView(imageView, 0);
+				return imageView;
+			}
+			int height = MFConfig.deviceWidth * bmp.getHeight()
+					/ bmp.getWidth();
+			viewPager.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+					height));
+			imageView.setImageBitmap(bmp);
+			((ViewPager) container).addView(imageView, 0);
+			return imageView;
+		}
+
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			((ViewPager) container).removeView((ImageView) object);
+		}
+
+
+		public void onPageScrollStateChanged(int state) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void onPageSelected(int position) {
+			String s = textMap.get(position + 1);
+			// prevent sliding text even when text is same
+			if (s != null) {
+				if (!((TextView) textSwitcher.getCurrentView()).getText()
+						.toString().equals(s)) {
+					textSwitcher.setText(s);
+				}
+			}
+			navi.setPosition(position);
+			navi.invalidate();
+		}
     }
     
     
