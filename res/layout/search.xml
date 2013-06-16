@@ -11,17 +11,14 @@
 	  	android:layout_width="fill_parent"
 	  	android:layout_height="fill_parent"
 	  	android:orientation="vertical"
-	  	android:paddingTop="9dip"
-	  	android:paddingBottom="0dip"
+	  	android:paddingTop="3dip"
 	  	>
 	  	
 	  	<LinearLayout
 		  	android:layout_width="fill_parent"
 		  	android:layout_height="wrap_content"
 	  		android:orientation="horizontal" 
-	  		android:paddingBottom="3dip"
-		  	android:paddingRight="5dip"
-		  	android:paddingLeft="5dip">
+	  		android:padding="8dip">
 			  	
 		   	  <Button
 			  	android:id="@+id/directSearchBtn"
@@ -39,7 +36,7 @@
 			<EditText
 				android:id="@+id/searchTextBox"
 			  	android:layout_width="0dip"
-			  	android:layout_height="42dip"	
+			  	android:layout_height="wrap_content"	
 			  	android:layout_weight="1"
 			  	android:singleLine="true"
 			  	android:hint="@string/enterName"
@@ -96,16 +93,16 @@
 	  		  	
 				<com.cycon.macaufood.widget.GalleryNavigator android:id="@+id/navi"
 					android:layout_alignParentBottom="true"
-					android:layout_marginBottom="10dip"
+					android:layout_marginBottom="12dip"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_centerHorizontal="true"/>
 	  		  	
-	  		  	<com.cycon.macaufood.widget.AdvFlingGallery android:id="@+id/gallery"
-					android:spacing="0px" android:fadingEdge="none"
+	  		  	<com.cycon.macaufood.widget.AdvViewPager android:id="@+id/gallery"
+					android:spacing="0dip" android:fadingEdge="none"
 					android:layout_width="fill_parent" android:layout_height="fill_parent" 
-					android:visibility="gone" android:unselectedAlpha="255"
-					android:layout_marginBottom="30dip" android:background="#000000"/>
+					android:layout_marginTop="10dip"
+					android:layout_marginBottom="30dip"/>
 	  		
 	  		<ListView 
 			  	android:id="@+id/searchList"

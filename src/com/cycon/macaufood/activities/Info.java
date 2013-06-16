@@ -445,13 +445,8 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
-			Log.e("ZZZ", "instantiate item");
 			ImageView imageView = new ImageView(mContext);
 			imageViewsMap.put(position + 1, imageView);
-			// int padding =
-			// mContext.getResources().getDimensionPixelSize(R.dimen.padding_medium);
-			// imageView.setPadding(padding, padding, padding, padding);
-			// imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			Bitmap bmp = imageMap.get(position + 1);
 			if (bmp == null) {
 				((ViewPager) container).addView(imageView, 0);
@@ -462,7 +457,6 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 			viewPager.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
 					height));
 			imageView.setImageBitmap(bmp);
-//			imageView.setPadding(10, 10, 10, 10);
 			((ViewPager) container).addView(imageView, 0);
 			return imageView;
 		}

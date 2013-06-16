@@ -343,7 +343,10 @@ public class Details extends BaseActivity {
 			paymentGrid.setVisibility(View.VISIBLE);
 			String[] strs = cafe.getPayment().split(",");
 			for (String str : strs) {
-				paymentMethods.add(Integer.parseInt(str));
+				try {
+					paymentMethods.add(Integer.parseInt(str));
+				} catch (NumberFormatException e) {
+				}
 			}
 		
 			if (paymentMethods.size() > 8) {

@@ -37,7 +37,7 @@ import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
-import com.cycon.macaufood.widget.AdvFlingGallery;
+import com.cycon.macaufood.widget.AdvViewPager;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.widget.GalleryNavigator;
 
@@ -53,7 +53,7 @@ public class Search extends BaseActivity {
 	private TextView searchResultsNumber;
 //	private AdvView banner;
 	private GalleryNavigator navi;
-	private AdvFlingGallery gallery;
+	private AdvViewPager advViewPager;
 	private AdvView smallBanner;
 	private EditText searchTextBox;
 	private Button clearBtn;
@@ -114,21 +114,21 @@ public class Search extends BaseActivity {
         searchResultsList.setOnItemClickListener(resultItemClickListener);
         
 		navi = (GalleryNavigator) findViewById(R.id.navi);
-		gallery = (AdvFlingGallery) findViewById(R.id.gallery);
-		gallery.setNavi(navi);
-		gallery.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int id,
-					long arg3) {
-					
-				navi.setPosition(id);
-				navi.invalidate();
-			}
-
-			public void onNothingSelected(AdapterView<?> arg0) {
-				
-			}
-		});
+		advViewPager = (AdvViewPager) findViewById(R.id.gallery);
+		advViewPager.setNavi(navi);
+//		advViewPager.setOnItemSelectedListener(new OnItemSelectedListener() {
+//
+//			public void onItemSelected(AdapterView<?> arg0, View arg1, int id,
+//					long arg3) {
+//					
+//				navi.setPosition(id);
+//				navi.invalidate();
+//			}
+//
+//			public void onNothingSelected(AdapterView<?> arg0) {
+//				
+//			}
+//		});
 		
         
         regionTitle = (TextView) findViewById(R.id.regionTitle);
@@ -220,7 +220,7 @@ public class Search extends BaseActivity {
 					searchList.setVisibility(View.GONE);
 					clearBtn.setVisibility(View.GONE);
 					searchCafes.clear();
-					gallery.setVisibility(View.VISIBLE);
+					advViewPager.setVisibility(View.VISIBLE);
 //					banner.startTask();
 				} else {
 					directSearchBtn.setVisibility(View.VISIBLE);
@@ -228,7 +228,7 @@ public class Search extends BaseActivity {
 					searchList.setVisibility(View.VISIBLE);
 					advLoadBg.setBackgroundColor(Color.BLACK);
 					doDirectSearch(s.toString());
-					gallery.setVisibility(View.GONE);
+					advViewPager.setVisibility(View.GONE);
 //					banner.stopTask();
 				}
 			}
@@ -327,7 +327,7 @@ public class Search extends BaseActivity {
     protected void onResume() {
     	super.onResume();
 
-    	gallery.startTimer();
+    	advViewPager.startTimer();
 
 		if (directSearchLayout.isShown()) {
 			if (searchTextBox.getText().toString().trim().length() == 0) {
@@ -343,7 +343,7 @@ public class Search extends BaseActivity {
     	super.onPause();
     	searchResultsAdapter.imageLoader.cleanup();
 //		banner.stopTask();
-    	gallery.stopTimer();
+    	advViewPager.stopTimer();
 		smallBanner.stopTask();
     }
     

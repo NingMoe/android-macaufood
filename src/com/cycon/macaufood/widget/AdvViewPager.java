@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
@@ -29,6 +30,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -38,16 +41,18 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ImageView.ScaleType;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFUtil;
 
-public class AdvFlingGallery extends OneFlingGallery {
+public class AdvViewPager extends ViewPager {
 	
 	private static final String TAG = "AdvFlingGallery";
-	private ImageAdapter imageAdapter;
+	private ImageAdapter imageAdapter = new ImageAdapter();
 	private Context mContext;
 	private ArrayList<String> idList = new ArrayList<String>();
 
@@ -61,12 +66,12 @@ public class AdvFlingGallery extends OneFlingGallery {
 	private boolean isFetchingId;
 	private static final long REFRESH_PERIOD = 8000;
 
-	public AdvFlingGallery(Context context) {
+	public AdvViewPager(Context context) {
 		super(context);
 		init();
 	}
 	
-	public AdvFlingGallery(Context context, AttributeSet attrs) {
+	public AdvViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
 	}
@@ -76,26 +81,15 @@ public class AdvFlingGallery extends OneFlingGallery {
 		mHandler = new Handler();
 		noadv = getContext().getResources().getDrawable(R.drawable.searchadv);
 		mContext = this.getContext();
-		imageAdapter = new ImageAdapter();
-		setAdapter(imageAdapter);
-		setOnItemClickListener(new OnItemClickListener() {
-
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if (linkIdList.size() != 0) {
-					String url = "http://www.cycon.com.mo/xml_advclick.php?id= " + linkIdList.get(position) + "&code=" + MFConfig.DEVICE_ID;
-					Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-					mContext.startActivity(myIntent);
-				}
-				
-			}
-		});
+		setOnPageChangeListener(imageAdapter);
+		
 		
 		if (MFConfig.isOnline(mContext)) {
 			AsyncTaskHelper.execute(new FetchAdvIdTask());
 		} else {
     		setVisibility(View.VISIBLE);
 			imageList.add(((BitmapDrawable) noadv).getBitmap());
-			imageAdapter.notifyDataSetChanged();
+			setAdapter(imageAdapter);
 		}
 	}
 	
@@ -165,7 +159,7 @@ public class AdvFlingGallery extends OneFlingGallery {
     		if (idList.size() == 0) {
         		setVisibility(View.VISIBLE);
 				imageList.add(((BitmapDrawable) noadv).getBitmap());
-	    		imageAdapter.notifyDataSetChanged();
+				setAdapter(imageAdapter);
     		} else {
 	    		for (String id : idList) {
 	    			AsyncTaskHelper.executeWithResultBitmap(new FetchAdvTask(id));
@@ -212,10 +206,7 @@ public class AdvFlingGallery extends OneFlingGallery {
     	@Override
     	protected void onPostExecute(Bitmap result) {
     		super.onPostExecute(result);
-//    		setVisibility(View.VISIBLE);
     		if (result == null) {
-//    			imageList.add(object)
-//    				setImageResource(isSmallAdv ? R.drawable.adv2 : R.drawable.searchadv);
     		}
     		else {
     			Random rand = new Random();
@@ -234,7 +225,9 @@ public class AdvFlingGallery extends OneFlingGallery {
 	    		navi.setSize(idList.size());
 	    		navi.setVisibility(View.GONE);
 	    		navi.setVisibility(View.VISIBLE);
-	    		imageAdapter.notifyDataSetChanged();
+	    		
+	    		setAdapter(imageAdapter);
+	    		
 	    		startTimer();
     		}
             
@@ -252,11 +245,11 @@ public class AdvFlingGallery extends OneFlingGallery {
         		} else {
             		setVisibility(View.VISIBLE);
         			imageList.add(((BitmapDrawable) noadv).getBitmap());
-            		imageAdapter.notifyDataSetChanged();
+        			setAdapter(imageAdapter);
         		}
         	} else {
-				int cur = getSelectedItemPosition();
-				setSelection(cur == linkIdList.size() - 1 ? 0 : cur + 1, true);
+				int cur = getCurrentItem(); 
+				setCurrentItem(cur == linkIdList.size() - 1 ? 0 : cur + 1, true);
         	}
 
         }
@@ -272,37 +265,61 @@ public class AdvFlingGallery extends OneFlingGallery {
 		return super.onTouchEvent(event);
    }
    
-   public class ImageAdapter extends BaseAdapter {
+   public class ImageAdapter extends PagerAdapter implements
+	ViewPager.OnPageChangeListener {
+	   
 
        public int getCount() {
        	return imageList.size();
        }
-
-       public Object getItem(int position) {
-       	return imageList.get(position);
-       }
-
-       public long getItemId(int position) {
-       	return position;
-       }
-
-       public View getView(int position, View convertView, ViewGroup parent) {
-
-   			if (imageList.size() == 0) return null;
+       
+       @Override
+		public boolean isViewFromObject(View view, Object object) {
+			return view == ((ImageView) object);
+		}
+       
+       @Override
+		public Object instantiateItem(ViewGroup container, int position) {
+    	   if (imageList.size() == 0) return null;
 	        Bitmap bmp = imageList.get(position);
-       	ImageView i = new ImageView(mContext);
-//       	if (bmp == null) {
-//   	        i.setLayoutParams(new Gallery.LayoutParams(Config.deviceWidth, 360));
-//       		return i;
-//       	}
+	        ImageView i = new ImageView(mContext);
 	        i.setImageBitmap(bmp);
 	        i.setScaleType(ScaleType.FIT_CENTER);
-//	        int height = Config.deviceWidth * bmp.getHeight() / bmp.getWidth();
-	        i.setLayoutParams(new Gallery.LayoutParams(MFConfig.deviceWidth, getHeight()));
-	        
+	        final int pos = position;
+	        i.setOnClickListener(new OnClickListener() {
+				
+				public void onClick(View arg0) {
+					if (linkIdList.size() != 0) {
+						String url = "http://www.cycon.com.mo/xml_advclick.php?id= " + linkIdList.get(pos) + "&code=" + MFConfig.DEVICE_ID;
+						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+						mContext.startActivity(myIntent);
+					}
+				}
+			});
+	        ((ViewPager) container).addView(i, 0);
 	    	return i;
-	    	
        }
+       
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			((ViewPager) container).removeView((ImageView) object);
+		}
+
+	public void onPageScrollStateChanged(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onPageSelected(int position) {
+		navi.setPosition(position);
+		navi.invalidate();
+	}
+	
    }
    
    public void startTimer() {
