@@ -48,6 +48,7 @@ public class MFRequestHelper {
 	private static Context appContext;
 	private static final int TIMEOUT_PERIOD = 10000;
 
+	//check update everytime fresh launch as we did not save updatetimestamp in preferences
 	public static void checkUpdate(Context c) {
 		appContext = c;
 		if (MFConfig.isOnline(appContext) && !isUpdating && System.currentTimeMillis() - updateCafeListTimeStamp > UPDATE_TIME_PERIOD) {

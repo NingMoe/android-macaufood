@@ -26,7 +26,6 @@ public class CafeListAdapter extends BaseAdapter {
 
     public CafeListAdapter(Context context, ArrayList<ParsedCafeHolder> cafes, ImageType imageType) {
             this.cafes = cafes;
-            Log.e("ZZZ", "cafelistadapter");
         	inflater = LayoutInflater.from(context);
         	imageLoader=new ImageLoader(context, 4, imageType);
         	imageLoader.setImagesToLoadFromParsedCafe(cafes);

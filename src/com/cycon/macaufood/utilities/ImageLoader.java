@@ -62,7 +62,6 @@ public class ImageLoader {
     private static final int MAX_TASKS_NUMBER = 7;
     
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
-    	Log.e(TAG, "initImageLoader");
     	mContext = context;
     	if (imageType == ImageType.RECOMMEND) {
     		imageTypeUrl = "recommend_new";
@@ -76,7 +75,7 @@ public class ImageLoader {
         fileCache=new FileCache(context, imageType);
         lastVisibleRowIndex = lastRowIndex;
         nophoto = context.getResources().getDrawable(R.drawable.nophoto);
-        loadingBlankPhoto = context.getResources().getDrawable(R.drawable.cafe_row_bg);
+        loadingBlankPhoto = context.getResources().getDrawable(imageType == ImageType.REGULAR ? R.drawable.light_green_gradient_bg : R.drawable.cafe_row_bg);
         nointernet = context.getResources().getDrawable(R.drawable.nointernet);
         
         imagesLoading = new ConcurrentLinkedQueue<FetchImageTask>();

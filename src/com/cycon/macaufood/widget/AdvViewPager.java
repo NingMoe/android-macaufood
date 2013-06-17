@@ -3,27 +3,15 @@ package com.cycon.macaufood.widget;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 
 import android.content.Context;
 import android.content.Intent;
@@ -41,11 +29,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ImageView.ScaleType;
 
 import com.cycon.macaufood.R;
@@ -61,7 +45,7 @@ public class AdvViewPager extends ViewPager {
 	private static final String TAG = "AdvFlingGallery";
 	private static final String ADV_ID_LIST = "adv_id_list";
 
-	private static final long REFRESH_PERIOD = 8000;
+	private static final long REFRESH_PERIOD = 6000;
 	
 	private ImageAdapter imageAdapter = new ImageAdapter();
 	private Context mContext;
@@ -343,7 +327,7 @@ public class AdvViewPager extends ViewPager {
 	        Bitmap bmp = imageList.get(position);
 	        ImageView i = new ImageView(mContext);
 	        i.setImageBitmap(bmp);
-	        i.setScaleType(ScaleType.FIT_CENTER);
+	        i.setScaleType(ScaleType.FIT_END);
 	        final int pos = position;
 	        i.setOnClickListener(new OnClickListener() {
 				

@@ -39,6 +39,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.widget.AdvViewPager;
 import com.cycon.macaufood.widget.AdvView;
+import com.cycon.macaufood.widget.DirectSearchLayout;
 import com.cycon.macaufood.widget.GalleryNavigator;
 
 public class Search extends BaseActivity {
@@ -46,7 +47,7 @@ public class Search extends BaseActivity {
 	private static final String TAG = "Search";
 
 	private TabsAdapter mTabsAdapter;
-	private View directSearchLayout;
+	private DirectSearchLayout directSearchLayout;
 	private View advancedSearchLayout;
 	private View searchResultsLayout;
 	private View advLoadBg;
@@ -84,6 +85,7 @@ public class Search extends BaseActivity {
         Log.e(getClass().getSimpleName(), "---onCreate");
 
         setContentView(R.layout.search);
+        
 
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         Tab tab1 = mActionBar.newTab().setText(R.string.directSearch);
@@ -100,7 +102,8 @@ public class Search extends BaseActivity {
 //        banner = (AdvView) findViewById(R.id.banner);
         smallBanner = (AdvView) findViewById(R.id.smallBanner);
         advLoadBg = findViewById(R.id.advLoadBg);
-        directSearchLayout = findViewById(R.id.directSearchLayout);
+        directSearchLayout = (DirectSearchLayout) findViewById(R.id.directSearchLayout);
+        directSearchLayout.setActivity(this);
         advancedSearchLayout = findViewById(R.id.advancedSearchLayout);
         searchResultsLayout = findViewById(R.id.searchResultsLayout);
         searchResultsNumber = (TextView) findViewById(R.id.searchResultsNumber);
@@ -133,6 +136,7 @@ public class Search extends BaseActivity {
         directSearchBtn.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
+				expand();
 				hideKeyboard(v);
 				doPostDirectSearch();
 				fromWhichSearch = 1;
@@ -147,6 +151,7 @@ public class Search extends BaseActivity {
 				clearBtn.setVisibility(View.GONE);
 				directSearchBtn.setVisibility(View.GONE);
 				searchCafes.clear();
+				shrink();
 				showKeyboard(searchTextBox);
 			}
 		});
@@ -166,6 +171,7 @@ public class Search extends BaseActivity {
         searchTextBox.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
+					shrink();
 //					clearBtn.setVisibility(View.VISIBLE);
 			}
 		});
@@ -174,6 +180,7 @@ public class Search extends BaseActivity {
 			
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					expand();
 					hideKeyboard(v);
 					doPostDirectSearch();
 					fromWhichSearch = 1;
@@ -189,6 +196,7 @@ public class Search extends BaseActivity {
 				if (event.getAction() == KeyEvent.ACTION_UP) {
 					switch (keyCode) {
 					case KeyEvent.KEYCODE_ENTER:
+						expand();
 						hideKeyboard(v);
 						doPostDirectSearch();
 						fromWhichSearch = 1;
@@ -213,7 +221,6 @@ public class Search extends BaseActivity {
 					directSearchBtn.setVisibility(View.VISIBLE);
 					clearBtn.setVisibility(View.VISIBLE);
 					searchList.setVisibility(View.VISIBLE);
-					advLoadBg.setBackgroundColor(Color.BLACK);
 					doDirectSearch(s.toString());
 					advViewPager.setVisibility(View.GONE);
 //					banner.stopTask();
@@ -313,6 +320,7 @@ public class Search extends BaseActivity {
     @Override
     protected void onResume() {
     	super.onResume();
+    	expand();
 
     	advViewPager.startTimer();
 
@@ -345,6 +353,16 @@ public class Search extends BaseActivity {
 	    imm.showSoftInput(view, 0);
     }
     
+    public void shrink() {
+    	mActionBar.hide();
+    }
+    
+    public void expand() {
+    	mActionBar.show();
+    	if (searchTextBox.getText().toString().equals("")) {
+    		clearBtn.setVisibility(View.GONE);
+    	}
+    }
     
 	private void doDirectSearch(String query) {
 		

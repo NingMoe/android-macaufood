@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
@@ -59,6 +60,7 @@ import com.cycon.macaufood.utilities.MFRequestHelper;
 			} else if (localName.equals("d")) {
 				details = tempValue.toString();
 			}
+			
 		}
 
 		@Override
