@@ -116,20 +116,7 @@ public class Search extends BaseActivity {
 		navi = (GalleryNavigator) findViewById(R.id.navi);
 		advViewPager = (AdvViewPager) findViewById(R.id.gallery);
 		advViewPager.setNavi(navi);
-//		advViewPager.setOnItemSelectedListener(new OnItemSelectedListener() {
-//
-//			public void onItemSelected(AdapterView<?> arg0, View arg1, int id,
-//					long arg3) {
-//					
-//				navi.setPosition(id);
-//				navi.invalidate();
-//			}
-//
-//			public void onNothingSelected(AdapterView<?> arg0) {
-//				
-//			}
-//		});
-		
+		advViewPager.setLoadingLayout(findViewById(R.id.loadingProgressLayout));
         
         regionTitle = (TextView) findViewById(R.id.regionTitle);
         

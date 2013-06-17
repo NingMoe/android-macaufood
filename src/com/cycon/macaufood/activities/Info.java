@@ -50,6 +50,7 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.GalleryNavigator;
@@ -137,7 +138,7 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 				f = fileCache.getFile(infoid + "-" + i + "-image");
 				fis = new FileInputStream(f);
 				imageMap.put(i,
-						BitmapFactory.decodeStream(new FlushedInputStream(fis)));
+						BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis)));
 				imageAdapter.notifyDataSetChanged();
 			}
 			for (int i = 1; i <= serverTotalPages; i++) {
@@ -200,23 +201,8 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 			String urlStr = "http://www.cycon.com.mo/detail_page.php?id="
 					+ infoid;
 			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpParams httpParams = client.getParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-				HttpGet request = new HttpGet(urlStr);
-				HttpResponse response = client.execute(request);
-				InputStream is = response.getEntity().getContent();
-
 				File f = fileCache.getFile(infoid + "-page");
-				OutputStream os = new FileOutputStream(f);
-				MFUtil.CopyStream(is, os);
-				os.close();
-
-				FileInputStream fis = new FileInputStream(f);
-				BufferedReader rd = new BufferedReader(new InputStreamReader(
-						fis));
-				String pageStr = rd.readLine().trim();
-				rd.close();
+				String pageStr = MFRequestHelper.getString(urlStr, f);
 
 				try {
 					serverTotalPages = Integer.parseInt(pageStr);
@@ -267,33 +253,12 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 		@Override
 		protected String doInBackground(Void... params) {
 
-			StringBuilder sb = new StringBuilder();
-
 			String urlStr = "http://www.cycon.com.mo/detail_text.php?id="
 					+ infoid + "&page=" + page;
 
 			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpParams httpParams = client.getParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-				HttpGet request = new HttpGet(urlStr);
-				HttpResponse response = client.execute(request);
-				InputStream is = response.getEntity().getContent();
-
 				File f = fileCache.getFile(infoid + "-" + page + "-text");
-				OutputStream os = new FileOutputStream(f);
-				MFUtil.CopyStream(is, os);
-				os.close();
-
-				FileInputStream fis = new FileInputStream(f);
-				BufferedReader rd = new BufferedReader(new InputStreamReader(
-						fis));
-				String line = null;
-				while ((line = rd.readLine()) != null) {
-					sb.append(line + "\n");
-				}
-				rd.close();
-				return sb.toString();
+				return MFRequestHelper.getString(urlStr, f);
 
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -351,20 +316,8 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 			String urlStr = "http://www.cycon.com.mo/appimages/intro/" + infoid
 					+ "-" + page + ".jpg";
 			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpParams httpParams = client.getParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-				HttpGet request = new HttpGet(urlStr);
-				HttpResponse response = client.execute(request);
-				InputStream is = response.getEntity().getContent();
-
 				File f = fileCache.getFile(infoid + "-" + page + "-image");
-				OutputStream os = new FileOutputStream(f);
-				MFUtil.CopyStream(is, os);
-				os.close();
-
-				FileInputStream fis = new FileInputStream(f);
-				return BitmapFactory.decodeStream(new FlushedInputStream(fis));
+				return MFRequestHelper.getBitmap(urlStr, f);
 
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -491,29 +444,6 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 		}
 	}
 
-	static class FlushedInputStream extends FilterInputStream {
-		public FlushedInputStream(InputStream inputStream) {
-			super(inputStream);
-		}
-
-		@Override
-		public long skip(long n) throws IOException {
-			long totalBytesSkipped = 0L;
-			while (totalBytesSkipped < n) {
-				long bytesSkipped = in.skip(n - totalBytesSkipped);
-				if (bytesSkipped == 0L) {
-					int bytes = read();
-					if (bytes < 0) {
-						break; // we reached EOF
-					} else {
-						bytesSkipped = 1; // we read one byte
-					}
-				}
-				totalBytesSkipped += bytesSkipped;
-			}
-			return totalBytesSkipped;
-		}
-	}
 
 	public View makeView() {
 		TextView t = new TextView(this);

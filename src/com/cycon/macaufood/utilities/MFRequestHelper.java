@@ -1,9 +1,13 @@
 package com.cycon.macaufood.utilities;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -12,6 +16,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -27,6 +32,8 @@ import com.cycon.macaufood.xmlhandler.UpdateXMLHandler;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -39,6 +46,7 @@ public class MFRequestHelper {
 	private static final long UPDATE_TIME_PERIOD = 3600 * 1000 * 12; // 12 hours
 	private static boolean isUpdating = false;
 	private static Context appContext;
+	private static final int TIMEOUT_PERIOD = 10000;
 
 	public static void checkUpdate(Context c) {
 		appContext = c;
@@ -55,6 +63,62 @@ public class MFRequestHelper {
 			
 	}
 	
+	public static InputStream executeRequest(String url) throws ClientProtocolException, IOException {
+		HttpClient client = new DefaultHttpClient();
+		HttpParams httpParams = client.getParams();
+		HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_PERIOD);
+		HttpGet request = new HttpGet(url);
+		HttpResponse response = client.execute(request);
+		InputStream is = response.getEntity().getContent();
+		return is;
+	}
+	
+	public static Bitmap getBitmap(String url, File cacheFile) throws ClientProtocolException, IOException {
+		InputStream is = executeRequest(url);
+		
+		if (cacheFile == null) {
+			return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
+		}
+
+		OutputStream os = new FileOutputStream(cacheFile);
+		MFUtil.CopyStream(is, os);
+		os.close();
+
+		FileInputStream fis = new FileInputStream(cacheFile);
+		return BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis));
+	}
+	
+	public static String getString(String url, File cacheFile) throws ClientProtocolException, IOException {
+		InputStream is = executeRequest(url);
+		
+		StringBuilder sb = new StringBuilder();
+		
+		if (cacheFile == null) {
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					is));
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			rd.close();
+			return sb.toString().trim();
+		}
+
+		OutputStream os = new FileOutputStream(cacheFile);
+		MFUtil.CopyStream(is, os);
+		os.close();
+
+		FileInputStream fis = new FileInputStream(cacheFile);
+		BufferedReader rd = new BufferedReader(new InputStreamReader(
+				fis));
+		String line = null;
+		while ((line = rd.readLine()) != null) {
+			sb.append(line + "\n");
+		}
+		rd.close();
+		return sb.toString().trim();
+	}
+	
 	
     public static class FetchUpdateTask extends AsyncTask<Void, Void, Void> {
     	
@@ -64,12 +128,7 @@ public class MFRequestHelper {
     		isUpdating = true;
     		String urlStr = "http://www.cycon.com.mo/xml_updatelogandroid.php?key=cafecafe&lastupdatetime=" + MFConfig.cafe_version_update;
             try {
-				HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-            	HttpGet request = new HttpGet(urlStr);
-            	HttpResponse response = client.execute(request);
-            	InputStream is= response.getEntity().getContent();
+            	InputStream is = executeRequest(urlStr);
             	LocalDbManager.getInstance(appContext).beginWritableDb();
             	parseUpdateXml(is);
             	LocalDbManager.getInstance(appContext).endWritableDb();
@@ -78,9 +137,7 @@ public class MFRequestHelper {
             		
             		urlStr = "http://www.cycon.com.mo/cafe_version_update.txt";
 				    try {
-				    	request = new HttpGet(urlStr);
-		            	response = client.execute(request);
-		            	is= response.getEntity().getContent();
+				    	is = executeRequest(urlStr);
 				        
 				    	BufferedReader rd = new BufferedReader(new InputStreamReader(is
 								));

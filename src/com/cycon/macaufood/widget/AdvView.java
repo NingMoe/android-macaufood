@@ -29,6 +29,8 @@ import android.widget.ImageView;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFRequestHelper;
+import com.cycon.macaufood.utilities.MFUtil;
 
 public class AdvView extends ImageView {
 	
@@ -114,14 +116,7 @@ public class AdvView extends ImageView {
     				"&type=" + (isSmallAdv ? "s" : "b");
 
             try {
-            	HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-            	HttpGet request = new HttpGet(linkIdUrl);
-            	HttpResponse response = client.execute(request);
-            	BufferedReader rd = new BufferedReader(new InputStreamReader(
-						response.getEntity().getContent()));
-            	tempLinkId = rd.readLine().trim();
+            	tempLinkId = MFRequestHelper.getString(linkIdUrl, null);
 				if (tempLinkId == null || tempLinkId.equals("")) return null;
 				
 				try {
@@ -154,7 +149,7 @@ public class AdvView extends ImageView {
             	HttpGet request = new HttpGet(urlStr);
             	HttpResponse response = client.execute(request);
             	InputStream is= response.getEntity().getContent();
-				return BitmapFactory.decodeStream(new FlushedInputStream(is));
+				return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
 				
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -193,29 +188,5 @@ public class AdvView extends ImageView {
     	}
     }
     
-    
-    static class FlushedInputStream extends FilterInputStream {
-        public FlushedInputStream(InputStream inputStream) {
-            super(inputStream);
-        }
-
-        @Override
-        public long skip(long n) throws IOException {
-            long totalBytesSkipped = 0L;
-            while (totalBytesSkipped < n) {
-                long bytesSkipped = in.skip(n - totalBytesSkipped);
-                if (bytesSkipped == 0L) {
-                      int bytes = read();
-                      if (bytes < 0) {
-                          break;  // we reached EOF
-                      } else {
-                          bytesSkipped = 1; // we read one byte
-                      }
-               }
-                totalBytesSkipped += bytesSkipped;
-            }
-            return totalBytesSkipped;
-        }
-    }
 
 }

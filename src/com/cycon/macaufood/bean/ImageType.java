@@ -1,7 +1,7 @@
 package com.cycon.macaufood.bean;
 
 public enum ImageType {
-	RECOMMEND("Recommend"), COUPON("Coupon"), REGULAR("Regular"), INTRO("Intro"), INFO("Info"), FOODNEWS("FoodNews");
+	RECOMMEND("Recommend"), COUPON("Coupon"), REGULAR("Regular"), INTRO("Intro"), INFO("Info"), FOODNEWS("FoodNews"), ADV("Adv");
 	
 	private final String value;
 	

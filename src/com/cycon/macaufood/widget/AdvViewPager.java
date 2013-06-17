@@ -1,10 +1,14 @@
 package com.cycon.macaufood.widget;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,13 +49,20 @@ import android.widget.LinearLayout;
 import android.widget.ImageView.ScaleType;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
+import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.MFUtil;
 
 public class AdvViewPager extends ViewPager {
 	
 	private static final String TAG = "AdvFlingGallery";
+	private static final String ADV_ID_LIST = "adv_id_list";
+
+	private static final long REFRESH_PERIOD = 8000;
+	
 	private ImageAdapter imageAdapter = new ImageAdapter();
 	private Context mContext;
 	private ArrayList<String> idList = new ArrayList<String>();
@@ -64,7 +75,9 @@ public class AdvViewPager extends ViewPager {
 	private Handler mHandler;
 	private Drawable noadv;
 	private boolean isFetchingId;
-	private static final long REFRESH_PERIOD = 8000;
+	private FileCache fileCache;
+	private boolean isUsingCache;
+	private View loadingLayout;
 
 	public AdvViewPager(Context context) {
 		super(context);
@@ -83,11 +96,55 @@ public class AdvViewPager extends ViewPager {
 		mContext = this.getContext();
 		setOnPageChangeListener(imageAdapter);
 		
+		fileCache = new FileCache(mContext, ImageType.ADV);
+		
+		boolean cacheError = false;
+		
+		try {
+			File f = fileCache.getFile(ADV_ID_LIST);
+			FileInputStream fis = new FileInputStream(f);
+			BufferedReader rd = new BufferedReader(new InputStreamReader(fis));
+			String advListStr = rd.readLine().trim();
+			
+			String[] advIdList = advListStr.split(",");
+        	for (String id : advIdList) {
+
+        		if (!id.equals("")) {
+        			Integer.parseInt(id);
+        			//to make sure the adv is in random order
+        			Random rand = new Random(); 
+        			boolean randomValue = rand.nextBoolean();
+        			if (randomValue) {
+        				linkIdList.add(id);
+        			} else {
+        				linkIdList.add(0, id);
+        			}
+        		}
+        	}
+        	
+        	for (int i = 0; i < linkIdList.size(); i++) {
+				f = fileCache.getFile(linkIdList.get(i));
+				fis = new FileInputStream(f);
+				imageList.add(BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis)));
+			}
+        	
+        	
+		} catch (Exception e) {
+			cacheError = true;
+		}
+		
+		if (imageList.size() > 0) {
+			isUsingCache = true;
+    		
+    		setAdapter(imageAdapter);
+    		
+    		startTimer();
+		}
+		
 		
 		if (MFConfig.isOnline(mContext)) {
 			AsyncTaskHelper.execute(new FetchAdvIdTask());
-		} else {
-    		setVisibility(View.VISIBLE);
+		} else if (!isUsingCache){
 			imageList.add(((BitmapDrawable) noadv).getBitmap());
 			setAdapter(imageAdapter);
 		}
@@ -95,6 +152,18 @@ public class AdvViewPager extends ViewPager {
 	
 	public void setNavi(GalleryNavigator navi) {
 		this.navi = navi;
+		if (isUsingCache) {
+			navi.setSize(linkIdList.size());
+			navi.setVisibility(View.GONE);
+			navi.setVisibility(View.VISIBLE);
+		}
+	}
+	
+	public void setLoadingLayout(View loadingLayout) {
+		this.loadingLayout = loadingLayout;
+		if (isUsingCache) {
+			loadingLayout.setVisibility(View.GONE);
+		}
 	}
 
    private class FetchAdvIdTask extends AsyncTask<Void, Void, Void> {
@@ -114,15 +183,9 @@ public class AdvViewPager extends ViewPager {
     				"&type=b";
 
             try {
-            	HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-            	HttpGet request = new HttpGet(linkIdUrl);
-            	HttpResponse response = client.execute(request);
-            	BufferedReader rd = new BufferedReader(new InputStreamReader(
-						response.getEntity().getContent()));
-            	String advListStr = rd.readLine().trim();
-				Log.e(TAG, advListStr);
+            	File f = fileCache.getFile(ADV_ID_LIST);
+            	String advListStr = MFRequestHelper.getString(linkIdUrl, f);
+            	
             	String[] advIdList = advListStr.split(",");
             	for (String id : advIdList) {
 
@@ -156,8 +219,7 @@ public class AdvViewPager extends ViewPager {
     		
     		isFetchingId = false;
     		
-    		if (idList.size() == 0) {
-        		setVisibility(View.VISIBLE);
+    		if (idList.size() == 0 && !isUsingCache) {
 				imageList.add(((BitmapDrawable) noadv).getBitmap());
 				setAdapter(imageAdapter);
     		} else {
@@ -184,13 +246,8 @@ public class AdvViewPager extends ViewPager {
 
     		String urlStr = "http://www.cycon.com.mo/appimages/adv_rotate_banner/" + id + ".jpg";
             try {
-				HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-            	HttpGet request = new HttpGet(urlStr);
-            	HttpResponse response = client.execute(request);
-            	InputStream is= response.getEntity().getContent();
-				return BitmapFactory.decodeStream(new FlushedInputStream(is));
+            	File f = fileCache.getFile(id);
+            	return MFRequestHelper.getBitmap(urlStr, f);
 				
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -206,9 +263,7 @@ public class AdvViewPager extends ViewPager {
     	@Override
     	protected void onPostExecute(Bitmap result) {
     		super.onPostExecute(result);
-    		if (result == null) {
-    		}
-    		else {
+    		if (result != null && !isUsingCache) {
     			Random rand = new Random();
     			boolean randomValue = rand.nextBoolean();
     			if (randomValue) {
@@ -219,16 +274,20 @@ public class AdvViewPager extends ViewPager {
 	    			linkIdList.add(0, id);
     			}
     		}
-    		//populate after all images are load
-    		if (imageList.size() == idList.size()) {
-    			setVisibility(View.VISIBLE);
-	    		navi.setSize(idList.size());
-	    		navi.setVisibility(View.GONE);
-	    		navi.setVisibility(View.VISIBLE);
-	    		
-	    		setAdapter(imageAdapter);
-	    		
-	    		startTimer();
+    		
+    		if (!isUsingCache) {
+	    		//populate after all images are load
+	    		if (imageList.size() == idList.size()) {
+
+	    			loadingLayout.setVisibility(View.GONE);
+		    		navi.setSize(idList.size());
+		    		navi.setVisibility(View.GONE);
+		    		navi.setVisibility(View.VISIBLE);
+		    		
+		    		setAdapter(imageAdapter);
+		    		
+		    		startTimer();
+	    		}
     		}
             
     	}
@@ -243,7 +302,7 @@ public class AdvViewPager extends ViewPager {
         			if (!isFetchingId)
         				AsyncTaskHelper.execute(new FetchAdvIdTask());
         		} else {
-            		setVisibility(View.VISIBLE);
+//            		setVisibility(View.VISIBLE);
         			imageList.add(((BitmapDrawable) noadv).getBitmap());
         			setAdapter(imageAdapter);
         		}
@@ -340,31 +399,6 @@ public class AdvViewPager extends ViewPager {
 		   timer.cancel();
 	   }
    }
-    
-    
-    static class FlushedInputStream extends FilterInputStream {
-        public FlushedInputStream(InputStream inputStream) {
-            super(inputStream);
-        }
-
-        @Override
-        public long skip(long n) throws IOException {
-            long totalBytesSkipped = 0L;
-            while (totalBytesSkipped < n) {
-                long bytesSkipped = in.skip(n - totalBytesSkipped);
-                if (bytesSkipped == 0L) {
-                      int bytes = read();
-                      if (bytes < 0) {
-                          break;  // we reached EOF
-                      } else {
-                          bytesSkipped = 1; // we read one byte
-                      }
-               }
-                totalBytesSkipped += bytesSkipped;
-            }
-            return totalBytesSkipped;
-        }
-    }
 	
 	
 }
