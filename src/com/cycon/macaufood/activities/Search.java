@@ -7,12 +7,15 @@ import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.widget.SearchView;
+
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.support.v4.widget.SearchViewCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -37,6 +40,7 @@ import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
+import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvViewPager;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.widget.DirectSearchLayout;
@@ -46,19 +50,16 @@ public class Search extends BaseActivity {
 	
 	private static final String TAG = "Search";
 
-	private TabsAdapter mTabsAdapter;
 	private DirectSearchLayout directSearchLayout;
 	private View advancedSearchLayout;
 	private View searchResultsLayout;
-	private View advLoadBg;
 	private TextView searchResultsNumber;
 //	private AdvView banner;
 	private GalleryNavigator navi;
 	private AdvViewPager advViewPager;
 	private AdvView smallBanner;
 	private EditText searchTextBox;
-	private Button clearBtn;
-	private Button directSearchBtn;
+	private View clearBtn;
 	private Button searchBtn;
 	private ListView searchList;
 	private ListView searchResultsList;
@@ -85,7 +86,6 @@ public class Search extends BaseActivity {
         Log.e(getClass().getSimpleName(), "---onCreate");
 
         setContentView(R.layout.search);
-        
 
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         Tab tab1 = mActionBar.newTab().setText(R.string.directSearch);
@@ -101,7 +101,6 @@ public class Search extends BaseActivity {
 		
 //        banner = (AdvView) findViewById(R.id.banner);
         smallBanner = (AdvView) findViewById(R.id.smallBanner);
-        advLoadBg = findViewById(R.id.advLoadBg);
         directSearchLayout = (DirectSearchLayout) findViewById(R.id.directSearchLayout);
         directSearchLayout.setActivity(this);
         advancedSearchLayout = findViewById(R.id.advancedSearchLayout);
@@ -132,24 +131,12 @@ public class Search extends BaseActivity {
 			}
 		});
         
-        directSearchBtn = (Button) findViewById(R.id.directSearchBtn);
-        directSearchBtn.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				expand();
-				hideKeyboard(v);
-				doPostDirectSearch();
-				fromWhichSearch = 1;
-			}
-		});
-        
-        clearBtn = (Button) findViewById(R.id.clearBtn);
+        clearBtn = findViewById(R.id.clearBtn);
         clearBtn.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				searchTextBox.setText("");
 				clearBtn.setVisibility(View.GONE);
-				directSearchBtn.setVisibility(View.GONE);
 				searchCafes.clear();
 				shrink();
 				showKeyboard(searchTextBox);
@@ -211,17 +198,17 @@ public class Search extends BaseActivity {
 			
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s.toString().trim().length() == 0) {
-					directSearchBtn.setVisibility(View.GONE);
 					searchList.setVisibility(View.GONE);
 					clearBtn.setVisibility(View.GONE);
 					searchCafes.clear();
 					advViewPager.setVisibility(View.VISIBLE);
+					navi.setVisibility(View.VISIBLE);
 //					banner.startTask();
 				} else {
-					directSearchBtn.setVisibility(View.VISIBLE);
 					clearBtn.setVisibility(View.VISIBLE);
 					searchList.setVisibility(View.VISIBLE);
 					doDirectSearch(s.toString());
+					navi.setVisibility(View.GONE);
 					advViewPager.setVisibility(View.GONE);
 //					banner.stopTask();
 				}
@@ -588,10 +575,11 @@ public class Search extends BaseActivity {
             
             if (convertView == null) {
                 text = new TextView(Search.this);
-                text.setTextColor(Color.BLACK);
-                text.setTextSize(20f);
-                text.setPadding(10, 3, 7, 3);
-                text.setShadowLayer(1, 0, 1, Color.parseColor("#999999"));
+                text.setTextColor(getResources().getColor(R.color.dark_gray_text));
+                text.setTextSize(19f);
+                int leftPadding = MFUtil.getPixelsFromDip(10, getResources());
+                int topPadding = MFUtil.getPixelsFromDip(5, getResources());
+                text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
             } else {
                 text = (TextView)convertView;
             }
