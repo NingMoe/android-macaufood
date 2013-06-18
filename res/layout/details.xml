@@ -39,7 +39,6 @@
 	  	android:textSize="13sp"
 	  	android:text="@string/branch"
 	  	android:textColor="#FFFFFF"
-	  	android:background="@drawable/custom_light_button_bg"
 	  	android:layout_alignParentRight="true"
 	  	android:layout_marginTop="5dip"
 	  	android:layout_marginRight="5dip"
