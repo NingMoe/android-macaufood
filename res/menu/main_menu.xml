@@ -21,8 +21,16 @@
         android:title="@string/refresh"
         android:showAsAction="collapseActionView"/>
     <item
+        android:id="@+id/menu_wifi"
+        android:title="@string/macauWifi"
+        android:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/menu_disclaimer"
+        android:title="@string/disclaimer"
+        android:showAsAction="collapseActionView"/>
+    <item
         android:id="@+id/menu_about"
-        android:title="@string/aboutUs"
+        android:title="@string/advertiseUs"
         android:showAsAction="collapseActionView"/>
 
 </menu>

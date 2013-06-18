@@ -114,6 +114,24 @@ public class Home extends SherlockFragmentActivity {
         
 	}
 	
+	private void showDisclaimerDialog() {
+		AlertDialog dialog = new AlertDialog.Builder(this)
+		.setTitle(R.string.disclaimer)
+		.setMessage(R.string.disclaimerText)
+		.setCancelable(false)
+		.setPositiveButton(getString(R.string.agreeDisclaimer),
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog,
+							int which) {
+						dialog.dismiss();
+					}
+				}).show();
+
+		TextView textView = (TextView) dialog.findViewById(android.R.id.message);
+		textView.setTextSize(15);
+	}
+	
 //	public int getCurrentFragmentIndex() {
 //		return mViewPager.getCurrentItem();
 //	}
@@ -212,6 +230,13 @@ public class Home extends SherlockFragmentActivity {
 			if (!MFConfig.isOnline(this)) {
 				Toast.makeText(this, getString(R.string.noInternetMsg), Toast.LENGTH_SHORT).show();
 			}
+			return true;
+		case R.id.menu_wifi:
+			i = new Intent(this, MacauWifi.class);
+			startActivity(i);
+			return true;
+		case R.id.menu_disclaimer:
+			showDisclaimerDialog();
 			return true;
 		case R.id.menu_about:
 			i = new Intent(this, About.class);

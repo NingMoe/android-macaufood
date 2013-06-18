@@ -57,7 +57,7 @@
         <activity android:name=".activities.NearbyList" />
         <activity
             android:name=".activities.About"
-            android:label="@string/appVersionName" />
+            android:label="@string/advertiseUs" />
         <activity
             android:name=".activities.Disclaimer"
             android:label="@string/disclaimer" />

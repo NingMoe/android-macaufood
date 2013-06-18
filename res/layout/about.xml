@@ -2,25 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="35dip"
-        android:background="@drawable/menu_panel"
-        android:ellipsize="marquee"
-        android:gravity="center"
-        android:paddingLeft="5dip"
-        android:paddingRight="5dip"
-        android:shadowColor="#000000"
-        android:shadowDy="1.5"
-        android:shadowRadius="1"
-        android:singleLine="true"
-        android:text="@string/appVersionName"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+    android:orientation="vertical"
+  	android:background="@color/default_bg_color" >
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -29,40 +12,7 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:divider="#999999"
-            android:orientation="vertical"
-            android:showDividers="end|middle" >
-
-            <TextView
-                android:id="@+id/disclaimer"
-                android:layout_width="fill_parent"
-                android:layout_height="60dip"
-                android:background="@drawable/about_item_bg"
-                android:drawableRight="@drawable/arrow3"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:paddingLeft="15dip"
-                android:paddingRight="15dip"
-                android:text="@string/disclaimer"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/macauWifi"
-                android:layout_width="fill_parent"
-                android:layout_height="60dip"
-                android:background="@drawable/about_item_bg"
-                android:drawableRight="@drawable/arrow3"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:paddingLeft="15dip"
-                android:paddingRight="15dip"
-                android:text="@string/macauWifi"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                style="?android:attr/listSeparatorTextViewStyle"
-                android:background="#888888"
-                android:text="@string/advertiseUs" />
+            android:orientation="vertical" >
 
             <TextView
                 android:id="@+id/ourWebsite"
@@ -76,6 +26,12 @@
                 android:paddingRight="15dip"
                 android:text="@string/ourWebsite"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="@android:drawable/divider_horizontal_bright"
+                />
 
             <TextView
                 android:id="@+id/emailUs"
@@ -89,6 +45,12 @@
                 android:paddingRight="15dip"
                 android:text="@string/emailUs"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="@android:drawable/divider_horizontal_bright"
+                />
 
             <TextView
                 android:id="@+id/callUs1"
@@ -102,6 +64,12 @@
                 android:paddingRight="15dip"
                 android:text="@string/callUs1"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="@android:drawable/divider_horizontal_bright"
+                />
 
             <TextView
                 android:id="@+id/callUs2"
@@ -115,6 +83,12 @@
                 android:paddingRight="15dip"
                 android:text="@string/callUs2"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="@android:drawable/divider_horizontal_bright"
+                />
 
             <TextView
                 android:id="@+id/faxUs"
@@ -127,6 +101,12 @@
                 android:paddingRight="15dip"
                 android:text="@string/faxUs"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="@android:drawable/divider_horizontal_bright"
+                />
         </LinearLayout>
     </ScrollView>
 

@@ -12,6 +12,7 @@
 	  	android:layout_height="fill_parent"
 	  	android:orientation="vertical"
 	  	android:paddingTop="3dip"
+	  	android:background="@color/default_bg_color"
 	  	>
 	  	
 	  	<RelativeLayout
@@ -97,6 +98,7 @@
 			  	android:layout_width="fill_parent"
 			  	android:layout_height="fill_parent"
 			  	android:visibility="gone"
+			  	android:cacheColorHint="#00000000"
 			/>	  		
 			
 			</RelativeLayout>
@@ -206,6 +208,7 @@
 	  	android:layout_height="fill_parent"
 	  	android:orientation="vertical"
 	  	android:visibility="gone"
+	  	android:background="@color/default_bg_color"
 	  	>
    	  	  		
 	  	

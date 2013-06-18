@@ -3,7 +3,8 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   	xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
+  android:layout_height="fill_parent"
+  	android:background="@color/default_bg_color">
   
 	  <com.cycon.macaufood.widget.AdvView
   		android:id="@+id/banner"

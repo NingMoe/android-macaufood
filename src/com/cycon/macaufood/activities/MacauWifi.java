@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.utilities.MFUtil;
 
 public class MacauWifi extends BaseActivity {
 
@@ -79,19 +80,22 @@ public class MacauWifi extends BaseActivity {
 			} else {
 				text = (TextView) convertView;
 			}
+
+            int leftPadding = MFUtil.getPixelsFromDip(10f, getResources());
+            int topPadding = MFUtil.getPixelsFromDip(7f, getResources());
 			if (objects[position].equals(getString(R.string.macauRegion)) || 
 					objects[position].equals(getString(R.string.taipaRegion)) || 
 					objects[position].equals(getString(R.string.coloaneRegion))) {
                 text.setTextColor(Color.WHITE);
                 text.setTextSize(18f);
-                text.setPadding(10, 7, 7, 7);
-                text.setBackgroundColor(Color.parseColor("#888888"));
+                text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
+                text.setBackgroundResource(R.drawable.subheader_bg);
                 text.setText((CharSequence) objects[position]);
                 return text;
 			} else {
                 text.setTextColor(Color.BLACK);
                 text.setTextSize(16f);
-                text.setPadding(10, 7, 7, 7);
+                text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
                 text.setBackgroundColor(Color.WHITE);
                 text.setText((CharSequence) objects[position]);
                 return text;
