@@ -44,6 +44,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
@@ -51,27 +52,27 @@ import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PhoneUtils;
 
 public class Details extends BaseActivity {
 	
 	private static final String TAG = "Details";
-	private TextView branch;
+	private static final int FAVORITE_MENU_ID = 1;
+	private static final int BRANCH_MENU_ID = 2;
+	private static final int FEEDBACK_MENU_ID = 3;
 	private TextView name, addr, website, cash, phone, businessHours, infoText;
 	private ImageView imageView;
 	private ImageView delivery, booking, midnight, party, buffet, banquet;
 	private ImageView intro, info, menu;
 	private GridView paymentGrid;
 	private LinearLayout addrRow, phoneRow, websiteRow;
-	private Button favoriteBtn;
-	private Button feedbackBtn;
-	private TextView alreadyInFavorite;
 	private Cafe cafe;
 	private ArrayList<Integer> paymentMethods = new ArrayList<Integer>();
 	private FileCache fileCache;
+	private boolean isFavorite;
 
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -81,6 +82,7 @@ public class Details extends BaseActivity {
 		} else {
 			setContentView(R.layout.details);
 		}
+		
 		
 		imageView = (ImageView) findViewById(R.id.image);
 		delivery = (ImageView) findViewById(R.id.delivery);
@@ -93,7 +95,6 @@ public class Details extends BaseActivity {
 		info = (ImageView) findViewById(R.id.info);
 		menu = (ImageView) findViewById(R.id.menu);
 		name = (TextView) findViewById(R.id.name);
-		branch = (TextView) findViewById(R.id.branch);
 		addr = (TextView) findViewById(R.id.addr);
 		phone = (TextView) findViewById(R.id.phone);
 		website = (TextView) findViewById(R.id.website);
@@ -104,9 +105,6 @@ public class Details extends BaseActivity {
 		addrRow = (LinearLayout) findViewById(R.id.addrRow);
 		phoneRow = (LinearLayout) findViewById(R.id.phoneRow);
 		websiteRow = (LinearLayout) findViewById(R.id.websiteRow);
-		favoriteBtn = (Button) findViewById(R.id.favoriteBtn);
-		feedbackBtn = (Button) findViewById(R.id.feedBackBtn);
-		alreadyInFavorite = (TextView) findViewById(R.id.alreadyInFavorite);
 		
 		String id = getIntent().getStringExtra("id");
 		
@@ -120,25 +118,8 @@ public class Details extends BaseActivity {
 			cafe.setId(id);
 		}
 		
-		if (!cafe.getBranch().equals("0")) {
-			name.setPadding(20, 7, 70, 7);
-			branch.setVisibility(View.VISIBLE);
-			branch.setOnClickListener(new OnClickListener() {
-				
-				public void onClick(View v) {
-					if (getIntent().getBooleanExtra("fromBranch", false)) {
-						finish();
-					} else {
-						Intent i = new Intent(Details.this, Branch.class);
-						i.putExtra("branch", cafe.getBranch());
-						startActivity(i);
-					}
-				} 	
-			});
-		}
 		
-
-		
+		setTitle(cafe.getName());
 		name.setText(cafe.getName());
 		addr.setText(cafe.getAddress());
 		phone.setText(cafe.getPhone());
@@ -174,19 +155,9 @@ public class Details extends BaseActivity {
         }
 		
 		
-//		imageLoader = new ImageLoader(this, 0, ImageType.REGULAR);
-//		ArrayList<Cafe> list = new ArrayList<Cafe>(1);
-//		list.add(cafe);
-//		imageLoader.setImagesToLoadFromCafe(list);
-//		imageLoader.displayImage(id, imageView, 0);
-		
 		if (MFConfig.getInstance().getFavoriteLists().contains(cafe.getId())) {
-			favoriteBtn.setVisibility(View.GONE);
-			alreadyInFavorite.setVisibility(View.VISIBLE);
-		} else {
-			favoriteBtn.setVisibility(View.VISIBLE);
-			alreadyInFavorite.setVisibility(View.GONE);
-		}
+			isFavorite = true;
+		} 
 		
 		if (!cafe.getOption_phoneorder().equals("1")) delivery.setAlpha(0); 
 		if (!cafe.getOption_booking().equals("1")) booking.setAlpha(50); 
@@ -239,33 +210,7 @@ public class Details extends BaseActivity {
 				}
 			});
 		}
-		
 
-		favoriteBtn.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				Toast.makeText(Details.this, "�?功加入", Toast.LENGTH_SHORT).show();
-				favoriteBtn.setVisibility(View.GONE);
-				alreadyInFavorite.setVisibility(View.VISIBLE);
-				SharedPreferences prefs = getSharedPreferences(
-						"macaufood.preferences", 0);
-				Editor prefsPrivateEditor = prefs.edit();
-				String str = prefs.getString("favorites", "");
-				prefsPrivateEditor.putString("favorites", str + cafe.getId() + ",");
-				prefsPrivateEditor.commit();
-				MFConfig.getInstance().getFavoriteLists().add(cafe.getId());
-			}
-		});
-		
-		feedbackBtn.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View arg0) {
-				Intent i = new Intent(Details.this, FeedBack.class);
-				i.putExtra("id", cafe.getId());
-				startActivity(i);
-			}
-		});
-		
 
 		if (cafe.getAddress().trim().length() != 0) {
 			addrRow.setOnClickListener(new OnClickListener() {
@@ -366,86 +311,73 @@ public class Details extends BaseActivity {
 		
 		}
 		
+
+		int idValue = Integer.parseInt(cafe.getId()) - 1;
 		
-		if (MFConfig.isOnline(Details.this)) {
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				new SendDetailsLogTask()
-						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+		String urlStr = "http://www.cycon.com.mo/xml_detaillog2.php?key=cafecafe&udid=android-" + 
+				MFConfig.DEVICE_ID + "&cafeid=" + idValue + "&source=&type0=" + cafe.getType0() + 
+				"&type1=" + cafe.getType1() + "&type2=" + cafe.getType2() + "&district=" + cafe.getDistrict();
+		MFRequestHelper.sendRequest(urlStr, getApplicationContext());
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		menu.add(0, FAVORITE_MENU_ID, 1, R.string.addFavorite).setIcon(isFavorite ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_empty).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		if (!cafe.getBranch().equals("0")) {
+			menu.add(0, BRANCH_MENU_ID, 2, R.string.branch).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);;
+		}
+		menu.add(0, FEEDBACK_MENU_ID, 3, R.string.feedBack).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);;
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case FAVORITE_MENU_ID:
+			toggleAddFavorite(item);
+			return true;
+		case BRANCH_MENU_ID:
+			if (getIntent().getBooleanExtra("fromBranch", false)) {
+				finish();
 			} else {
-				new SendDetailsLogTask().execute();
+				Intent i = new Intent(Details.this, Branch.class);
+				i.putExtra("branch", cafe.getBranch());
+				startActivity(i);
 			}
+			return true;
+		case FEEDBACK_MENU_ID:
+			Intent i = new Intent(Details.this, FeedBack.class);
+			i.putExtra("id", cafe.getId());
+			startActivity(i);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 	
-//	private class SendFavoriteLogTask extends AsyncTask<Void, Void, Void> {
-//		
-//		@Override
-//		protected Void doInBackground(Void... params) {
-//			
-//			int idValue = Integer.parseInt(cafe.getId()) - 1;
-//			
-//			String urlStr = "http://www.cycon.com.mo/xml_favouritelog.php?key=cafecafe&udid=android-" + 
-//				Config.DEVICE_ID + "&cafeid=" + idValue;
-//			
-//            try {
-//            	HttpClient client = new DefaultHttpClient();
-//            	HttpParams httpParams = client.getParams();
-//            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-//            	HttpGet request = new HttpGet(urlStr);
-//            	client.execute(request);
-//            	
-//			} catch (MalformedURLException e) {
-//				ETLog.e(TAG, "malformed url exception");
-//				e.printStackTrace();
-//				return null;
-//			} catch (IOException e) {
-//				ETLog.e(TAG, "io exception");
-//				e.printStackTrace();
-//				return null;
-//			} catch (Exception e) {
-//				ETLog.e(TAG, "exception");
-//				e.printStackTrace();
-//				return null;
-//			}
-//			
-//			return null;
-//		}
-//	}
-	
-	private class SendDetailsLogTask extends AsyncTask<Void, Void, Void> {
+	private void toggleAddFavorite(MenuItem item) {
+
+			SharedPreferences prefs = getSharedPreferences(
+					"macaufood.preferences", 0);
+			Editor prefsPrivateEditor = prefs.edit();
 		
-		@Override
-		protected Void doInBackground(Void... params) {
-			
-			int idValue = Integer.parseInt(cafe.getId()) - 1;
-			
-			String urlStr = "http://www.cycon.com.mo/xml_detaillog2.php?key=cafecafe&udid=android-" + 
-					MFConfig.DEVICE_ID + "&cafeid=" + idValue + "&source=&type0=" + cafe.getType0() + 
-					"&type1=" + cafe.getType1() + "&type2=" + cafe.getType2() + "&district=" + cafe.getDistrict();
-			
-            try {
-            	HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-            	HttpGet request = new HttpGet(urlStr);
-            	client.execute(request);
-            	
-			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
-				e.printStackTrace();
-				return null;
-			} catch (IOException e) {
-				Log.e(TAG, "io exception");
-				e.printStackTrace();
-				return null;
-			} catch (Exception e) {
-				Log.e(TAG, "exception");
-				e.printStackTrace();
-				return null;
+			if (isFavorite) {
+				isFavorite = false;
+				item.setIcon(R.drawable.ic_bookmark_empty);
+				MFConfig.getInstance().getFavoriteLists().remove(cafe.getId());
+				Toast.makeText(Details.this, getString(R.string.alreadyRemoveFromFavorite), Toast.LENGTH_SHORT).show();
+			} else {
+				isFavorite = true;
+				item.setIcon(R.drawable.ic_bookmark);
+				MFConfig.getInstance().getFavoriteLists().add(cafe.getId());
+				Toast.makeText(Details.this, getString(R.string.alreadyInFavorite), Toast.LENGTH_SHORT).show();
 			}
-			
-			return null;
-		}
+			String str = ""; 
+			for (String id : MFConfig.getInstance().getFavoriteLists()) {
+				str += id + ",";
+			}
+			prefsPrivateEditor.putString("favorites", str);
+			prefsPrivateEditor.commit();
 	}
 	
 	private class FetchImageTask extends AsyncTask<Void, Void, Bitmap> {
@@ -457,24 +389,11 @@ public class Details extends BaseActivity {
 			
 	        //from web
 	        try {
-	            Bitmap bitmap=null;
 
 				String urlStr = "http://www.cycon.com.mo/appimages/cafephoto/" + cafe.getId() + ".jpg";
-				
-				HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 20000);
-            	HttpGet request = new HttpGet(urlStr);
-            	HttpResponse response = client.execute(request);
-            	InputStream is= response.getEntity().getContent();
 	            File f=fileCache.getFile(cafe.getId());
-	            OutputStream os = new FileOutputStream(f);
-	            MFUtil.CopyStream(is, os);
-	            os.close();
-	            bitmap = decodeFile(f);
-
-	            if (bitmap == null) Log.e(TAG, "decode returns null");
-	            return bitmap;
+	            return MFRequestHelper.getBitmap(urlStr, f);
+	            
 	        } catch (FileNotFoundException ex){
 	        	Log.e(TAG, "no photo");
 	           ex.printStackTrace();

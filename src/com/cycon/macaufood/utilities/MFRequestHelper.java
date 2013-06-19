@@ -57,14 +57,26 @@ public class MFRequestHelper {
 	}
 	
 	public static void sendFavoriteLog(Context c) {
-		appContext = c;
-		if (MFConfig.isOnline(appContext)) {
-			AsyncTaskHelper.execute(new SendFavoriteLogTask());
+		StringBuilder sb = new StringBuilder();
+		for (String id : MFConfig.getInstance().getFavoriteLists()) {
+			int idValue = Integer.parseInt(id) - 1;
+			sb.append(idValue + ",");
 		}
-			
+		
+		String urlStr = "http://www.cycon.com.mo/xml_favouritelog.php?key=cafecafe&udid=android-" + 
+				MFConfig.DEVICE_ID + "&cafeid=" + sb.toString();
+		
+		sendRequest(urlStr, c);
 	}
 	
-	public static InputStream executeRequest(String url) throws ClientProtocolException, IOException {
+	public static void sendRequest(String url, Context c) {
+		appContext = c;
+		if (MFConfig.isOnline(appContext)) {
+			AsyncTaskHelper.execute(new SendRequestTask(url));
+		}
+	}
+	
+	private static InputStream executeRequest(String url) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
 		HttpParams httpParams = client.getParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_PERIOD);
@@ -207,25 +219,22 @@ public class MFRequestHelper {
 		}
     }
 	
-	private static class SendFavoriteLogTask extends AsyncTask<Void, Void, Void> {
+	private static class SendRequestTask extends AsyncTask<Void, Void, Void> {
+		
+		private String url;
+		
+		private SendRequestTask(String url) {
+			this.url = url;
+		}
 		
 		@Override
 		protected Void doInBackground(Void... params) {
 			
-			StringBuilder sb = new StringBuilder();
-			for (String id : MFConfig.getInstance().getFavoriteLists()) {
-				int idValue = Integer.parseInt(id) - 1;
-				sb.append(idValue + ",");
-			}
-			
-			String urlStr = "http://www.cycon.com.mo/xml_favouritelog.php?key=cafecafe&udid=android-" + 
-					MFConfig.DEVICE_ID + "&cafeid=" + sb.toString();
-			
             try {
             	HttpClient client = new DefaultHttpClient();
             	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-            	HttpGet request = new HttpGet(urlStr);
+            	HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_PERIOD);
+            	HttpGet request = new HttpGet(url);
             	client.execute(request);
             	
 			} catch (MalformedURLException e) {
@@ -245,4 +254,6 @@ public class MFRequestHelper {
 			return null;
 		}
 	}
+	
+	
 }

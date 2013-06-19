@@ -34,8 +34,9 @@
     <string name="menu">菜單</string>
     <string name="information">資訊</string>
     <string name="addFavorite">加入最愛</string>
-    <string name="feedBack">給店主意見</string>
+    <string name="feedBack">意見</string>
     <string name="alreadyInFavorite">已加入最愛</string>
+    <string name="alreadyRemoveFromFavorite">已從最愛移除</string>
     <string name="branch">分店</string>
     <string name="branchList">分店列表</string>
     
