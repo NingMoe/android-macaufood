@@ -458,7 +458,7 @@ public class Details extends BaseActivity {
 			int paymentValue = paymentMethods.get(position);
 			if (position == 0) {
 				TextView text = new TextView(Details.this);
-				text.setText("現金");
+				text.setText(" 現金");
 				text.setTextSize(17);
 				return text; 
 			}
