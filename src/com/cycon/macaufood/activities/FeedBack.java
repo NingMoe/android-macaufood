@@ -39,8 +39,8 @@ public class FeedBack extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.feedback);
 		
-		submit = (Button)findViewById(R.id.submitBtn);
-		cancel = (Button)findViewById(R.id.cancelBtn);
+//		submit = (Button)findViewById(R.id.submitBtn);
+//		cancel = (Button)findViewById(R.id.cancelBtn);
 		name = (TextView)findViewById(R.id.nameText);
 		email = (TextView)findViewById(R.id.emailText);
 		content = (TextView)findViewById(R.id.contentText);

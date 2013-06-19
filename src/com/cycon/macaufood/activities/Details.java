@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
+import com.cycon.macaufood.utilities.FeedBackDialogHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
@@ -253,7 +255,7 @@ public class Details extends BaseActivity {
 									startActivity(intent); 
 								}
 							})
-					.setNegativeButton("�?�消",
+					.setNegativeButton("取消",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,	int whichButton) {
 									dialog.dismiss();
@@ -346,9 +348,7 @@ public class Details extends BaseActivity {
 			}
 			return true;
 		case FEEDBACK_MENU_ID:
-			Intent i = new Intent(Details.this, FeedBack.class);
-			i.putExtra("id", cafe.getId());
-			startActivity(i);
+			FeedBackDialogHelper.showFeedBackDialog(this, getLayoutInflater(), getIntent().getStringExtra("id"));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -458,7 +458,7 @@ public class Details extends BaseActivity {
 			int paymentValue = paymentMethods.get(position);
 			if (position == 0) {
 				TextView text = new TextView(Details.this);
-				text.setText(" �?�金");
+				text.setText("現金");
 				text.setTextSize(17);
 				return text; 
 			}

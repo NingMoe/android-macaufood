@@ -68,9 +68,6 @@
             android:label="@string/branchList" />
         <activity android:name=".activities.FoodNews" />
         <activity android:name=".activities.FoodNewsImage" />
-        <activity
-            android:name=".activities.FeedBack"
-            android:windowSoftInputMode="stateAlwaysHidden" />
     </application>
 
 </manifest>
