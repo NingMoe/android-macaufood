@@ -3,21 +3,8 @@ package com.cycon.macaufood.activities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -28,20 +15,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,10 +35,8 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FeedBackDialogHelper;
 import com.cycon.macaufood.utilities.FileCache;
-import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFRequestHelper;
-import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PhoneUtils;
 
 public class Details extends BaseActivity {
@@ -70,6 +51,7 @@ public class Details extends BaseActivity {
 	private ImageView intro, info, menu;
 	private GridView paymentGrid;
 	private LinearLayout addrRow, phoneRow, websiteRow;
+	private View websiteRowSep;
 	private Cafe cafe;
 	private ArrayList<Integer> paymentMethods = new ArrayList<Integer>();
 	private FileCache fileCache;
@@ -107,6 +89,7 @@ public class Details extends BaseActivity {
 		addrRow = (LinearLayout) findViewById(R.id.addrRow);
 		phoneRow = (LinearLayout) findViewById(R.id.phoneRow);
 		websiteRow = (LinearLayout) findViewById(R.id.websiteRow);
+		websiteRowSep = findViewById(R.id.websiteRowSep);
 		
 		String id = getIntent().getStringExtra("id");
 		
@@ -128,8 +111,9 @@ public class Details extends BaseActivity {
 		final String websiteStr = cafe.getWebsite().trim();
 		if (websiteStr.length() != 0 && !websiteStr.equals("-1")) {
 			websiteRow.setVisibility(View.VISIBLE);
+			websiteRowSep.setVisibility(View.VISIBLE);
 			website.setText(websiteStr);
-			website.setOnClickListener(new OnClickListener() {
+			websiteRow.setOnClickListener(new OnClickListener() {
 				
 				public void onClick(View v) {
 					try {
@@ -161,7 +145,7 @@ public class Details extends BaseActivity {
 			isFavorite = true;
 		} 
 		
-		if (!cafe.getOption_phoneorder().equals("1")) delivery.setAlpha(0); 
+		if (!cafe.getOption_phoneorder().equals("1")) delivery.setAlpha(50); 
 		if (!cafe.getOption_booking().equals("1")) booking.setAlpha(50); 
 		if (!cafe.getOption_night().equals("1")) midnight.setAlpha(50); 
 		if (!cafe.getOption_call().equals("1")) party.setAlpha(50); 
