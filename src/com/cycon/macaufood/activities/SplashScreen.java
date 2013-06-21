@@ -30,6 +30,7 @@ public class SplashScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		
 		String id = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "deviceId", "");
 		if (id.equals("")) {
 			MFConfig.DEVICE_ID = UUID.randomUUID().toString().replaceAll("-", "");

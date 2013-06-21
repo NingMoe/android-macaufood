@@ -4,7 +4,7 @@
   android:orientation="vertical"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:background="#DDDDDD">
+  android:background="@color/default_bg_color">
   
 	<TextView 
 		android:id="@+id/noFavoriteList"
@@ -12,9 +12,8 @@
 		android:layout_height="fill_parent"
 		android:gravity="center_horizontal"
 		android:textSize="18sp"
-		android:textColor="#555555"
+		android:textColor="@color/tab_gray_text"
 		android:paddingTop="10dip"
-		android:textStyle="bold"
 		android:text="@string/noFavoriteList"
 		android:visibility="visible"
 	/>
@@ -32,15 +31,5 @@
 	    
 	    
 	/>
-	
-	<Button
-		android:id="@+id/editBtn"
-	    android:layout_width="fill_parent"
-	    android:layout_height="35dip"
-		android:text="@string/editList"
-		android:background="@drawable/custom_button_bg"
-	  	android:textSize="15sp"
-	  	android:textColor="#FFFFFF"
-		/>
     
 </LinearLayout>

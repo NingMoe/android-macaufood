@@ -14,16 +14,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
+import com.cycon.macaufood.utilities.FeedBackDialogHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.widget.DDListView;
 
 public class Favorite extends BaseActivity {
         
+	private static final int EDIT_LIST_MENU_ID = 1;
 	private FavoriteAdapter cafeAdapter;
 	private DDListView list;
-	private Button editBtn;
 	private boolean isEditMode;
 	private TextView noFavoriteList;
 	
@@ -33,27 +35,37 @@ public class Favorite extends BaseActivity {
 
         setContentView(R.layout.favorite);
         noFavoriteList = (TextView) findViewById(R.id.noFavoriteList);
-        editBtn = (Button) findViewById(R.id.editBtn);
-        editBtn.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				if (isEditMode) {
-					isEditMode = false;
-					editBtn.setText(getResources().getString(R.string.editList));
-					cafeAdapter.notifyDataSetChanged();
-			        list.setDropListener(null);
-				} else {
-					isEditMode = true;
-					editBtn.setText(getResources().getString(R.string.done));
-					cafeAdapter.notifyDataSetChanged();
-			        list.setDropListener(onDrop);
-				}
-			}
-		});
         list = (DDListView) findViewById(R.id.list);
         cafeAdapter = new FavoriteAdapter();
         list.setAdapter(cafeAdapter);
         list.setOnItemClickListener(favoriteItemClickListener);
+	}
+    
+	@Override
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		menu.add(0, EDIT_LIST_MENU_ID, 0, R.string.editList).setIcon(R.drawable.ic_edit).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case EDIT_LIST_MENU_ID:
+			if (isEditMode) {
+				isEditMode = false;
+				item.setIcon(R.drawable.ic_edit);
+				cafeAdapter.notifyDataSetChanged();
+		        list.setDropListener(null);
+			} else {
+				isEditMode = true;
+				item.setIcon(R.drawable.ic_done);
+				cafeAdapter.notifyDataSetChanged();
+		        list.setDropListener(onDrop);
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 	
 	private DDListView.DropListener onDrop=new DDListView.DropListener() {
@@ -85,7 +97,6 @@ public class Favorite extends BaseActivity {
         	noFavoriteList.setVisibility(View.GONE);
         }
 		isEditMode = false;
-		editBtn.setText(getResources().getString(R.string.editList));
         list.setDropListener(null);
     	cafeAdapter.notifyDataSetChanged();
     };
@@ -93,10 +104,12 @@ public class Favorite extends BaseActivity {
     AdapterView.OnItemClickListener favoriteItemClickListener = new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView<?> parent, View view,
 				int position, long id) {
-    		
-			Intent i = new Intent(Favorite.this, Details.class);
-			i.putExtra("id", MFConfig.getInstance().getFavoriteLists().get(position));
-			startActivity(i);
+			
+			if (!isEditMode) {
+				Intent i = new Intent(Favorite.this, Details.class);
+				i.putExtra("id", MFConfig.getInstance().getFavoriteLists().get(position));
+				startActivity(i);
+			}
     	};
     };
     

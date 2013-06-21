@@ -76,7 +76,7 @@
 <!--  Favorite -->
     <string name="editList">編輯列表</string>
     <string name="done">完成</string>
-    <string name="noFavoriteList">未有資料顯示</string>
+    <string name="noFavoriteList">暫時沒有任何最愛餐廳</string>
 
 <!--  Map -->
     <string name="searchNearby">按此顯示範圍內餐廳</string>

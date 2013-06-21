@@ -5,12 +5,28 @@
   android:orientation="vertical"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:background="@drawable/splash_screen">
+  android:background="@drawable/detail_body_bg">
   
   <View 
 	  android:layout_width="0dip"
 	  android:layout_height="0dip"
-  	android:layout_weight="8"/>
+  	android:layout_weight="3"/>
+  
+  <TextView
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:text="Powered by"
+	  android:textSize="20sp"
+	  android:textColor="@color/dark_green"
+	  android:paddingLeft="20dip" 
+	  android:layout_marginBottom="20dip"/>
+  
+  <ImageView
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_gravity="center_horizontal"
+	  android:src="@drawable/cycon_logo"
+	  android:layout_marginBottom="20dip" />
   	
   	<ProgressBar 
 	  android:layout_width="wrap_content"
@@ -21,5 +37,15 @@
 	  android:layout_width="0dip"
 	  android:layout_height="0dip"
   	android:layout_weight="3"/>
+  
+  
+  <TextView
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:text="www.cycon.com.mo"
+	  android:textSize="20sp"
+	  android:textColor="@color/dark_green"
+	  android:layout_gravity="center_horizontal"
+	  android:layout_marginBottom="20dip"/>
     
 </LinearLayout>

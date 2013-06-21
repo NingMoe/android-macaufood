@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.utilities.MFUtil;
 
 
 public class DDListView extends ListView {
@@ -62,9 +63,9 @@ public class DDListView extends ListView {
 
 	public DDListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-	    mItemHeightNormal = 69;
+	    mItemHeightNormal = MFUtil.getPixelsFromDip(46f, getResources());
         mItemHeightHalf = mItemHeightNormal / 2;
-        mItemHeightExpanded = 69;
+        mItemHeightExpanded = MFUtil.getPixelsFromDip(46f, getResources());
 	}
 	@Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
@@ -186,7 +187,7 @@ public class DDListView extends ListView {
                if (mDragPos == mFirstDragPos) {
                    visibility = View.INVISIBLE;
                 } else {
-                    height = 5;
+                    height = MFUtil.getPixelsFromDip(10f, getResources());;
                     vv.setBackgroundColor(Color.parseColor("#5599DDFF"));
                     vv.findViewById(R.id.label).setVisibility(View.INVISIBLE);
                     vv.findViewById(R.id.icon).setVisibility(View.INVISIBLE);
@@ -247,7 +248,7 @@ public class DDListView extends ListView {
                             int ref = pointToPosition(0, mHeight / 2);
                             if (ref == AdapterView.INVALID_POSITION) {
                                 //we hit a divider or an invisible view, check somewhere else
-                                ref = pointToPosition(0, mHeight / 2 + getDividerHeight() + 69);
+                                ref = pointToPosition(0, mHeight / 2 + getDividerHeight() + MFUtil.getPixelsFromDip(46f, getResources()));
                             }
                             View v = getChildAt(ref - getFirstVisiblePosition());
                             if (v!= null) {
@@ -301,8 +302,8 @@ public class DDListView extends ListView {
     
     private void stopDragging() {
         if (mDragView != null) {
-            WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
-            wm.removeView(mDragView);
+//            WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
+//            wm.removeView(mDragView);
             mDragView.setImageDrawable(null);
             mDragView = null;
         }
