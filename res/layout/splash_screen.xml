@@ -5,7 +5,7 @@
   android:orientation="vertical"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:background="@drawable/detail_body_bg">
+  android:background="@drawable/splash_screen_bg">
   
   <View 
 	  android:layout_width="0dip"
@@ -17,21 +17,32 @@
 	  android:layout_height="wrap_content"
 	  android:text="Powered by"
 	  android:textSize="20sp"
+	  android:shadowDx="2"
+	  android:shadowDy="5"
+	  android:shadowRadius="2"
+	  android:shadowColor="#22000000"
 	  android:textColor="@color/dark_green"
 	  android:paddingLeft="20dip" 
-	  android:layout_marginBottom="20dip"/>
+	  android:layout_marginBottom="30dip"/>
   
   <ImageView
 	  android:layout_width="wrap_content"
 	  android:layout_height="wrap_content"
 	  android:layout_gravity="center_horizontal"
 	  android:src="@drawable/cycon_logo"
-	  android:layout_marginBottom="20dip" />
+	  android:layout_marginBottom="7dip" />
   	
   	<ProgressBar 
 	  android:layout_width="wrap_content"
 	  android:layout_height="wrap_content"
 	  android:layout_gravity="center_horizontal"/>
+  
+  <ImageView
+	  android:layout_width="wrap_content"
+	  android:layout_height="wrap_content"
+	  android:layout_gravity="center_horizontal"
+	  android:src="@drawable/macaufood_logo"
+	  android:layout_marginTop="5dip" />
   
   <View 
 	  android:layout_width="0dip"
@@ -44,6 +55,10 @@
 	  android:layout_height="wrap_content"
 	  android:text="www.cycon.com.mo"
 	  android:textSize="20sp"
+	  android:shadowDx="2"
+	  android:shadowDy="5"
+	  android:shadowRadius="2"
+	  android:shadowColor="#33000000"
 	  android:textColor="@color/dark_green"
 	  android:layout_gravity="center_horizontal"
 	  android:layout_marginBottom="20dip"/>

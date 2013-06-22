@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <style name="MFNoActionBarTheme" parent="MFTheme">
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
     <style name="MFTheme" parent="Theme.Sherlock.Light">
         <item name="android:actionBarStyle">@style/MFActionBarStyle</item>
@@ -29,9 +33,9 @@
         <item name="android:textSize">13sp</item>
         <item name="android:maxLines">1</item>
     </style>
-    
-     <style name="MFTitleTextStyle" parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
-   	 <item name="android:textColor">@color/white</item>
-  </style>
+
+    <style name="MFTitleTextStyle" parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+    </style>
 
 </resources>
