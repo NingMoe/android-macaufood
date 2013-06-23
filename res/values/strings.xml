@@ -79,9 +79,11 @@
     <string name="noFavoriteList">暫時沒有任何最愛餐廳</string>
 
 <!--  Map -->
-    <string name="searchNearby">按此顯示範圍內餐廳</string>
-    <string name="backToMacau">按此顯示澳門地圖</string>
+    <string name="searchNearby">搜尋範圍中心內餐廳</string>
+    <string name="backToMacau">顯示澳門地圖</string>
     <string name="restList">餐廳列表</string>
+    <string name="showList">顯示列表</string>
+    <string name="showMap">顯示地圖</string>
 
 <!--  About -->
     <string name="disclaimer">免責聲明</string>

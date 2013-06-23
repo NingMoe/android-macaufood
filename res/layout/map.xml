@@ -14,22 +14,10 @@
 	/>
 	
 	<ImageButton
-		android:id="@+id/showList"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_gravity="left"
-		android:layout_margin="7dip"
-		android:padding="5dip"
-		android:src="@drawable/ic_list"
-		android:background="@drawable/light_button_bg"
-		android:visibility="gone"
-		/>
-	
-	<ImageButton
 		android:id="@+id/location"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:src="@drawable/ic_menu_mylocation"
+		android:src="@drawable/ic_current_location"
 		android:layout_gravity="right"
 		android:layout_margin="7dip"
 		android:background="@drawable/light_button_bg"
@@ -43,10 +31,17 @@
 		android:text="@string/searchNearby"
 		android:layout_gravity="center_horizontal"
 		android:layout_margin="7dip"
-		android:textColor="#4488BB"
+		android:textColor="@color/green_text"
 		android:background="@drawable/light_button_bg"
 		android:padding="10dip"
 		android:textSize="15sp"
 		/>
+	
+	
+  <ListView
+  	  android:id="@+id/list"
+	  android:layout_width="fill_parent"
+	  android:layout_height="fill_parent"
+	  android:visibility="gone"/>
 	
 </FrameLayout>

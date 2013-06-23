@@ -1,57 +1,53 @@
 package com.cycon.macaufood.activities;
 
-
 import java.util.List;
 import java.util.PriorityQueue;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Process;
-import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 
+import com.actionbarsherlock.app.SherlockMapActivity;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.MyItemizedOverlay;
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-
 /**
  * A list view that demonstrates the use of setEmptyView. This example alos uses
  * a custom layout file that adds some extra buttons to the screen.
  */
-public class Map extends MapActivity{
+public class Map extends SherlockMapActivity {
 
+	private static final int SHOW_LIST_MENU_ID = 1;
 	private static final double LAT_MIN = 22.104;
 	private static final double LAT_MAX = 22.21;
 	private static final double LONG_MIN = 113.52;
 	private static final double LONG_MAX = 113.60;
 	private static final double LAT_DEFAULT = 22.194791;
 	private static final double LONG_DEFAULT = 113.545122;
-	private static final long DISMISS_LOC_TIME= 60000;
+	private static final long DISMISS_LOC_TIME = 60000;
 	private static final int MIN_DIST_RELOC = 20;
 	private ImageButton location;
-	private ImageButton showList;
 	private MapView mapView;
 	private MyItemizedOverlay itemizedoverlay;
 	private MyItemizedOverlay selectRestOverlay;
@@ -64,227 +60,279 @@ public class Map extends MapActivity{
 	private boolean shownNearby;
 	private long curLocationTimeStamp;
 	private int zoomlevel;
+	private com.actionbarsherlock.view.MenuItem mShowListMenuItem;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //use same logic as in BaseActivity
+	private ListView list;
+	private CafeSearchListAdapter cafeAdapter;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// use same logic as in BaseActivity
 		if (MFConfig.getInstance().getCafeLists().size() == 0) {
 			Process.killProcess(Process.myPid());
-		} 
-        setContentView(R.layout.map);
-        name = getIntent().getStringExtra("name");
-        selectedCafeId = getIntent().getStringExtra("id");
-        String coordx = getIntent().getStringExtra("coordx");
-        String coordy = getIntent().getStringExtra("coordy");
-        
-        mapView = (MapView) findViewById(R.id.mapview);
-        mapView.setBuiltInZoomControls(true);
+			finish();
+			return;
+		}
 
-    	// Acquire a reference to the system Location Manager
-    	locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-    	
-    	// Define a listener that responds to location updates
-    	locationListener = new LocationListener() {
-    	    public void onLocationChanged(Location location) {
-    	    	
-    	      // Called when a new location is found by the network location provider.
-    	      makeUseOfNewLocation(location);
-    	      curLocationTimeStamp = System.currentTimeMillis();
-    	    }
+		super.onCreate(savedInstanceState);
 
-    	    public void onStatusChanged(String provider, int status, Bundle extras) {}
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setContentView(R.layout.map);
 
-    	    public void onProviderEnabled(String provider) {}
+		list = (ListView) findViewById(R.id.list);
+		cafeAdapter = new CafeSearchListAdapter(this, MFConfig.getInstance()
+				.getSearchResultList());
+		cafeAdapter.imageLoader.setImagesToLoadFromCafe(MFConfig.getInstance()
+				.getSearchResultList());
+		list.setAdapter(cafeAdapter);
+		list.setOnItemClickListener(itemClickListener);
+		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
+			list.setVisibility(View.VISIBLE);
+			mapView.setVisibility(View.GONE);
+		}
 
-    	    public void onProviderDisabled(String provider) {}
-    	  };
-        
-        List<Overlay> mapOverlays = mapView.getOverlays();
-        GeoPoint point = null;
-        
-        if (coordx != null && coordy != null) {
-            Drawable redMarker = this.getResources().getDrawable(R.drawable.red_marker);
-            redMarker.setBounds(-redMarker.getIntrinsicWidth() / 2 + 14, -redMarker.getIntrinsicHeight(), redMarker.getIntrinsicWidth() / 2 + 14, 0);
-        	selectRestOverlay = new MyItemizedOverlay(null, redMarker, mapView, false, true);
-	        point = new GeoPoint((int)(Double.parseDouble(coordx)*1E6),(int)(Double.parseDouble(coordy)*1E6));
-	        OverlayItem overlayitem = new OverlayItem(point, name, null);
-	        selectRestOverlay.addOverlay(overlayitem, null);
-	        mapOverlays.add(selectRestOverlay);
-	        selectRestOverlay.callPopulate();
-        } else {
-	        point = new GeoPoint((int)(LAT_DEFAULT*1E6),(int)(LONG_DEFAULT*1E6));
-        }
+		name = getIntent().getStringExtra("name");
+		selectedCafeId = getIntent().getStringExtra("id");
+		String coordx = getIntent().getStringExtra("coordx");
+		String coordy = getIntent().getStringExtra("coordy");
 
-        MapController mapController = mapView.getController();
-        if (name != null) {
-        	mapController.setZoom(18);
-            mapController.animateTo(point);
-        } else {
-        	mapController.setZoom(16);
-        	mapController.setCenter(point);
-        }
+		mapView = (MapView) findViewById(R.id.mapview);
+		mapView.setBuiltInZoomControls(true);
 
-        
-        location = (ImageButton) findViewById(R.id.location);
-        location.setOnClickListener(new OnClickListener() {
+		// Acquire a reference to the system Location Manager
+		locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+
+		// Define a listener that responds to location updates
+		locationListener = new LocationListener() {
+			public void onLocationChanged(Location location) {
+
+				// Called when a new location is found by the network location
+				// provider.
+				makeUseOfNewLocation(location);
+				curLocationTimeStamp = System.currentTimeMillis();
+			}
+
+			public void onStatusChanged(String provider, int status,
+					Bundle extras) {
+			}
+
+			public void onProviderEnabled(String provider) {
+			}
+
+			public void onProviderDisabled(String provider) {
+			}
+		};
+
+		List<Overlay> mapOverlays = mapView.getOverlays();
+		GeoPoint point = null;
+
+		if (coordx != null && coordy != null) {
+			Drawable redMarker = this.getResources().getDrawable(
+					R.drawable.red_marker);
+			int offset = MFUtil.getPixelsFromDip(9f, getResources());
+			redMarker.setBounds(-redMarker.getIntrinsicWidth() / 2 + offset,
+					-redMarker.getIntrinsicHeight(),
+					redMarker.getIntrinsicWidth() / 2 + offset, 0);
+			selectRestOverlay = new MyItemizedOverlay(null, redMarker, mapView,
+					false, true);
+			point = new GeoPoint((int) (Double.parseDouble(coordx) * 1E6),
+					(int) (Double.parseDouble(coordy) * 1E6));
+			OverlayItem overlayitem = new OverlayItem(point, name, null);
+			selectRestOverlay.addOverlay(overlayitem, null);
+			mapOverlays.add(selectRestOverlay);
+			selectRestOverlay.callPopulate();
+		} else {
+			point = new GeoPoint((int) (LAT_DEFAULT * 1E6),
+					(int) (LONG_DEFAULT * 1E6));
+		}
+
+		MapController mapController = mapView.getController();
+		if (name != null) {
+			mapController.setZoom(18);
+			mapController.animateTo(point);
+		} else {
+			mapController.setZoom(17);
+			mapController.setCenter(point);
+		}
+
+		location = (ImageButton) findViewById(R.id.location);
+		location.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				Location loc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-				if (loc != null) makeUseOfNewLocation(loc);
-				// Register the listener with the Location Manager to receive location updates
-		    	locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, MIN_DIST_RELOC, locationListener);
-		    	
+				Location loc = locationManager
+						.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+				if (loc != null)
+					makeUseOfNewLocation(loc);
+				// Register the listener with the Location Manager to receive
+				// location updates
+				locationManager.requestLocationUpdates(
+						LocationManager.NETWORK_PROVIDER, 0, MIN_DIST_RELOC,
+						locationListener);
+
 			}
 		});
-        
-        showList = (ImageButton) findViewById(R.id.showList);
-        showList.setOnClickListener(new OnClickListener() {
+
+		searchNearby = (Button) findViewById(R.id.searchNearby);
+		searchNearby.setOnClickListener(new OnClickListener() {
+
 			public void onClick(View v) {
-				Intent i = new Intent(Map.this, NearbyList.class);
-				startActivity(i);
-			}
-		});
-        
-        searchNearby = (Button) findViewById(R.id.searchNearby);
-        searchNearby.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				if (searchNearby.getText().toString().equals(getString(R.string.backToMacau))) {
-					GeoPoint point = new GeoPoint((int)(LAT_DEFAULT*1E6),(int)(LONG_DEFAULT*1E6));
-			        MapController mapController = mapView.getController();
-			        mapController.setCenter(point);
-		        	mapController.setZoom(16);
-		        	searchNearby.setText(R.string.searchNearby);
+				if (searchNearby.getText().toString()
+						.equals(getString(R.string.backToMacau))) {
+					GeoPoint point = new GeoPoint((int) (LAT_DEFAULT * 1E6),
+							(int) (LONG_DEFAULT * 1E6));
+					MapController mapController = mapView.getController();
+					mapController.setCenter(point);
+					mapController.setZoom(17);
+					searchNearby.setText(R.string.searchNearby);
 				} else {
-					MFConfig.getInstance().getNearbyLists().clear();
+					MFConfig.getInstance().getSearchResultList().clear();
 					searchNearby();
-					if (MFConfig.getInstance().getNearbyLists().size() != 0 )
-						showList.setVisibility(View.VISIBLE);
+					if (MFConfig.getInstance().getSearchResultList().size() != 0)
+						mShowListMenuItem.setVisible(true);
 					else
-						showList.setVisibility(View.GONE);
+						mShowListMenuItem.setVisible(false);
 				}
 			}
 		});
-    }
-    
-    private void searchNearby() {
-    	int nwLatitude;
-    	int nwLongitutde;
-    	int seLatitude;
-    	int seLongitutde;
-    	
-    	int centerLatitude = mapView.getMapCenter().getLatitudeE6();
-    	int centerLongitutde = mapView.getMapCenter().getLongitudeE6();
-    	
-    	nwLatitude = centerLatitude + mapView.getLatitudeSpan() / 2;
-    	seLatitude = centerLatitude - mapView.getLatitudeSpan() / 2;
-    	nwLongitutde = centerLongitutde - mapView.getLongitudeSpan() / 2;
-    	seLongitutde = centerLongitutde + mapView.getLongitudeSpan() / 2;
-    	
-    	
-    	PriorityQueue<Cafe> queue = new  PriorityQueue<Cafe>(); 
-    	List<Overlay> mapOverlays = mapView.getOverlays();
-    	if (itemizedoverlay == null) {
-	        Drawable blueMarker = this.getResources().getDrawable(R.drawable.blue_marker);
-	        blueMarker.setBounds(-blueMarker.getIntrinsicWidth() / 2 + 14, -blueMarker.getIntrinsicHeight(), blueMarker.getIntrinsicWidth() / 2 + 14, 0);
-        	
-    	itemizedoverlay = new MyItemizedOverlay(this, blueMarker, mapView, true, true);
-		mapOverlays.add(itemizedoverlay);
-    	}
-    	else 
-        	itemizedoverlay.clearOverlayData();
-    		
-    	for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
-    		int coordx = 0;
-    		int coordy = 0;
-    		try {
-				coordx = (int) (Double.parseDouble(cafe.getCoordx())*1E6);
-				coordy = (int) (Double.parseDouble(cafe.getCoordy())*1E6);
+	}
+
+	private void searchNearby() {
+		int nwLatitude;
+		int nwLongitutde;
+		int seLatitude;
+		int seLongitutde;
+
+		int centerLatitude = mapView.getMapCenter().getLatitudeE6();
+		int centerLongitutde = mapView.getMapCenter().getLongitudeE6();
+
+		nwLatitude = centerLatitude + mapView.getLatitudeSpan() / 2;
+		seLatitude = centerLatitude - mapView.getLatitudeSpan() / 2;
+		nwLongitutde = centerLongitutde - mapView.getLongitudeSpan() / 2;
+		seLongitutde = centerLongitutde + mapView.getLongitudeSpan() / 2;
+
+		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>();
+		List<Overlay> mapOverlays = mapView.getOverlays();
+		if (itemizedoverlay == null) {
+
+			int offset = MFUtil.getPixelsFromDip(9f, getResources());
+			Drawable blueMarker = this.getResources().getDrawable(
+					R.drawable.blue_marker);
+			blueMarker.setBounds(-blueMarker.getIntrinsicWidth() / 2 + offset,
+					-blueMarker.getIntrinsicHeight(),
+					blueMarker.getIntrinsicWidth() / 2 + offset, 0);
+
+			itemizedoverlay = new MyItemizedOverlay(this, blueMarker, mapView,
+					true, true);
+			mapOverlays.add(itemizedoverlay);
+		} else
+			itemizedoverlay.clearOverlayData();
+
+		for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
+			int coordx = 0;
+			int coordy = 0;
+			try {
+				coordx = (int) (Double.parseDouble(cafe.getCoordx()) * 1E6);
+				coordy = (int) (Double.parseDouble(cafe.getCoordy()) * 1E6);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-    		if (coordx < nwLatitude && coordx > seLatitude 
-    				&& coordy < seLongitutde && coordy > nwLongitutde) {
-    			cafe.setDistance(Math.hypot(centerLatitude - coordx, centerLongitutde - coordy));
-    			queue.add(cafe);
-    		}
-    	}
-    	for (int i = 0; i < 50 && queue.size() > 0; i++) {
-    		Cafe cafe = queue.poll();
-			if (cafe.getStatus().equals("0")) continue;
-    		MFConfig.getInstance().getNearbyLists().add(cafe);
-    		if (cafe.getId().equals(selectedCafeId)) continue;
-			GeoPoint point = new GeoPoint((int) (Double.parseDouble(cafe.getCoordx())*1E6), (int) (Double.parseDouble(cafe.getCoordy())*1E6));
-	        OverlayItem overlayitem = new OverlayItem(point, cafe.getName(), 
-	        		cafe.getPhone().trim().length() == 0 ? null : cafe.getPhone());
-	        itemizedoverlay.addOverlay(overlayitem, cafe.getId());
-    	}
-    	
-    	itemizedoverlay.hideBalloon();
-    	itemizedoverlay.callPopulate();
-    	if (!shownNearby) {
-		mapOverlays.add(itemizedoverlay);
-		shownNearby = true;
-    	}
-    	
+			if (coordx < nwLatitude && coordx > seLatitude
+					&& coordy < seLongitutde && coordy > nwLongitutde) {
+				cafe.setDistance(Math.hypot(centerLatitude - coordx,
+						centerLongitutde - coordy));
+				queue.add(cafe);
+			}
+		}
+		for (int i = 0; i < 50 && queue.size() > 0; i++) {
+			Cafe cafe = queue.poll();
+			if (cafe.getStatus().equals("0"))
+				continue;
+			MFConfig.getInstance().getSearchResultList().add(cafe);
+			if (cafe.getId().equals(selectedCafeId))
+				continue;
+			GeoPoint point = new GeoPoint((int) (Double.parseDouble(cafe
+					.getCoordx()) * 1E6), (int) (Double.parseDouble(cafe
+					.getCoordy()) * 1E6));
+			OverlayItem overlayitem = new OverlayItem(point, cafe.getName(),
+					cafe.getPhone().trim().length() == 0 ? null
+							: cafe.getPhone());
+			itemizedoverlay.addOverlay(overlayitem, cafe.getId());
+		}
+
+		itemizedoverlay.hideBalloon();
+		itemizedoverlay.callPopulate();
+		if (!shownNearby) {
+			mapOverlays.add(itemizedoverlay);
+			shownNearby = true;
+		}
+		cafeAdapter.notifyDataSetChanged();
+
 		mapView.postInvalidate();
-    }
-    
-    private void makeUseOfNewLocation(Location location) {
-    	if (location == null) return;
-    	List<Overlay> mapOverlays = mapView.getOverlays();
-    	
-    	if (curLocationOverlay == null) {
-	        Drawable drawable = this.getResources().getDrawable(R.drawable.cur_location);
-	        drawable.setBounds(-drawable.getIntrinsicWidth() / 2 + 20, -drawable.getIntrinsicHeight(), drawable.getIntrinsicWidth() / 2 + 20, 0);
-	        curLocationOverlay = new MyItemizedOverlay(null, drawable, mapView, false, true);
-	        mapOverlays.add(curLocationOverlay);
-    	} else {
-    		curLocationOverlay.clearOverlayData();
-    	}
-        GeoPoint point = new GeoPoint((int) (location.getLatitude() * 1E6), (int) (location.getLongitude() * 1E6));
-        OverlayItem overlayitem = new OverlayItem(point, "你在這裡", null);
-        
-        curLocationOverlay.addOverlay(overlayitem, null);
-        curLocationOverlay.hideBalloon();
-        curLocationOverlay.callPopulate();
-        
-        MapController mapController = mapView.getController();
-        mapController.animateTo(point);
-        mapController.setZoom(18);
-        
-        mapView.postInvalidate();
-        
-        double x = location.getLatitude();
-        double y = location.getLongitude();
-        if (x < LAT_MIN || x > LAT_MAX || y < LONG_MIN || y > LONG_MAX) {
-        	searchNearby.setText(R.string.backToMacau);
-        }
-    }
-	  
+	}
+
+	private void makeUseOfNewLocation(Location location) {
+		if (location == null)
+			return;
+		List<Overlay> mapOverlays = mapView.getOverlays();
+
+		if (curLocationOverlay == null) {
+			Drawable drawable = this.getResources().getDrawable(
+					R.drawable.cur_location);
+
+			int offset = MFUtil.getPixelsFromDip(13f, getResources());
+			drawable.setBounds(-drawable.getIntrinsicWidth() / 2 + offset,
+					-drawable.getIntrinsicHeight(),
+					drawable.getIntrinsicWidth() / 2 + offset, 0);
+			curLocationOverlay = new MyItemizedOverlay(null, drawable, mapView,
+					false, true);
+			mapOverlays.add(curLocationOverlay);
+		} else {
+			curLocationOverlay.clearOverlayData();
+		}
+		GeoPoint point = new GeoPoint((int) (location.getLatitude() * 1E6),
+				(int) (location.getLongitude() * 1E6));
+		OverlayItem overlayitem = new OverlayItem(point, "你在這裡", null);
+
+		curLocationOverlay.addOverlay(overlayitem, null);
+		curLocationOverlay.hideBalloon();
+		curLocationOverlay.callPopulate();
+
+		MapController mapController = mapView.getController();
+		mapController.animateTo(point);
+		mapController.setZoom(18);
+
+		mapView.postInvalidate();
+
+		double x = location.getLatitude();
+		double y = location.getLongitude();
+		if (x < LAT_MIN || x > LAT_MAX || y < LONG_MIN || y > LONG_MAX) {
+			searchNearby.setText(R.string.backToMacau);
+		}
+	}
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		locationManager.removeUpdates(locationListener);
 		zoomlevel = mapView.getZoomLevel();
 	}
-	
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		//if longer than a period time, dismiss the cur Location marker
-		if (curLocationTimeStamp != 0 && System.currentTimeMillis() - curLocationTimeStamp > DISMISS_LOC_TIME) {
+		// if longer than a period time, dismiss the cur Location marker
+		if (curLocationTimeStamp != 0
+				&& System.currentTimeMillis() - curLocationTimeStamp > DISMISS_LOC_TIME) {
 			if (curLocationOverlay != null) {
-	    		curLocationOverlay.clearOverlayData();
-	    		curLocationOverlay.hideBalloon();
+				curLocationOverlay.clearOverlayData();
+				curLocationOverlay.hideBalloon();
 			}
 		}
-		
+
 		if (itemizedoverlay != null) {
-	        MapController mapController = mapView.getController();
-	        if (zoomlevel != 0)
-        	mapController.setZoom(zoomlevel);
+			MapController mapController = mapView.getController();
+			if (zoomlevel != 0)
+				mapController.setZoom(zoomlevel);
 			mapView.postInvalidate();
 		}
 	}
@@ -294,5 +342,59 @@ public class Map extends MapActivity{
 		// TODO Auto-generated method stub
 		return false;
 	}
-    
+
+	@Override
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		menu.add(0, SHOW_LIST_MENU_ID, 0, R.string.showList)
+				.setIcon(R.drawable.ic_action_list)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		// menu.add(0, SHOW_MAP_MENU_ID, 1,
+		// R.string.showMap).setIcon(R.drawable.map).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		mShowListMenuItem = menu.getItem(0);
+		// mShowMapMenuItem = menu.getItem(1);
+		if (MFConfig.getInstance().getSearchResultList().size() == 0)
+			mShowListMenuItem.setVisible(false);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
+		switch (item.getItemId()) {
+		case SHOW_LIST_MENU_ID:
+			if (list.isShown()) {
+				list.setVisibility(View.GONE);
+				mapView.setVisibility(View.VISIBLE);
+				item.setIcon(R.drawable.ic_action_list).setTitle(
+						R.string.showList);
+				setTitle(R.string.map_search);
+			} else {
+				list.setVisibility(View.VISIBLE);
+				mapView.setVisibility(View.GONE);
+				item.setIcon(R.drawable.map).setTitle(R.string.showMap);
+				setTitle(R.string.searchResults);
+			}
+			// Intent i = new Intent(Map.this, NearbyList.class);
+			// startActivity(i);
+			return true;
+		case android.R.id.home:
+			finish();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+
+			Intent i = new Intent(Map.this, Details.class);
+			i.putExtra("id",
+					MFConfig.getInstance().getSearchResultList().get(position)
+							.getId());
+			startActivity(i);
+		};
+	};
+
 }

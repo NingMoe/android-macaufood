@@ -17,7 +17,10 @@ import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.support.v4.widget.SearchViewCompat;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -53,7 +56,7 @@ public class Search extends BaseActivity {
 	private DirectSearchLayout directSearchLayout;
 	private View advancedSearchLayout;
 	private View searchResultsLayout;
-	private TextView searchResultsNumber;
+//	private TextView searchResultsNumber;
 //	private AdvView banner;
 	private GalleryNavigator navi;
 	private AdvViewPager advViewPager;
@@ -105,7 +108,7 @@ public class Search extends BaseActivity {
         directSearchLayout.setActivity(this);
         advancedSearchLayout = findViewById(R.id.advancedSearchLayout);
         searchResultsLayout = findViewById(R.id.searchResultsLayout);
-        searchResultsNumber = (TextView) findViewById(R.id.searchResultsNumber);
+//        searchResultsNumber = (TextView) findViewById(R.id.searchResultsNumber);
         searchList = (ListView) findViewById(R.id.searchList);
         searchAdapter = new SearchAdapter(searchCafes);
         searchList.setAdapter(searchAdapter);
@@ -294,13 +297,17 @@ public class Search extends BaseActivity {
     
     private void doPostDirectSearch() {
     	
+    	MFConfig.getInstance().getSearchResultList().clear();
+    	MFConfig.getInstance().getSearchResultList().addAll(searchCafes);
+    	Intent i = new Intent(this, Map.class);
+    	startActivity(i);
+    	
 		searchResultCafes.clear();
 		searchResultCafes.addAll(searchCafes);
 		searchResultsAdapter.imageLoader.setImagesToLoadFromCafe(searchResultCafes);
 		searchResultsAdapter.notifyDataSetChanged();
 		setDirectSearchTab(false);
 		setSearchResultsTab(true);
-		searchResultsNumber.setText("共 " + searchResultCafes.size() + " 項�?果");
 		searchResultsList.setSelectionAfterHeaderView();
     }
     
@@ -398,6 +405,7 @@ public class Search extends BaseActivity {
 	}
 	
 	private void doAdvancedSearch() {
+		MFConfig.getInstance().getSearchResultList().clear();
 		searchResultCafes.clear();
 		
 		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
@@ -494,6 +502,7 @@ public class Search extends BaseActivity {
 			if (matchDishes && matchDistrict && matchServices) {
 				if (cafe.getPriority().equals("0")) {
 					searchResultCafes.add(cafe);
+					MFConfig.getInstance().getSearchResultList().add(cafe);
 				} else {
 					int priority = Integer.parseInt(cafe.getPriority());
 					if (priorityList.size() == 0) {
@@ -519,12 +528,19 @@ public class Search extends BaseActivity {
 			
 			
 		}
+		
+
+    	MFConfig.getInstance().getSearchResultList().clear();
+    	MFConfig.getInstance().getSearchResultList().addAll(0, priorityList);
+    	Intent i = new Intent(this, Map.class);
+    	startActivity(i);
+		
 		searchResultCafes.addAll(0, priorityList);
 		searchResultsAdapter.imageLoader.setImagesToLoadFromCafe(searchResultCafes);
 		searchResultsAdapter.notifyDataSetChanged();
 		setAdvancedSearchTab(false);
 		setSearchResultsTab(true);
-		searchResultsNumber.setText("共 " + searchResultCafes.size() + " 項�?果");
+//		searchResultsNumber.setText("共 " + searchResultCafes.size() + " 項�?果");
 		searchResultsList.setSelectionAfterHeaderView();
 	}
 	
@@ -584,7 +600,12 @@ public class Search extends BaseActivity {
                 text = (TextView)convertView;
             }
             
-            text.setText(cafe.getName());
+            String keyString = searchTextBox.getText().toString().toLowerCase().trim();
+            String cafeName = cafe.getName().toLowerCase().trim();
+            int index = cafeName.indexOf(keyString);
+            SpannableString spannable = new SpannableString(cafe.getName());
+            spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.green_text)), index, index + keyString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            text.setText(spannable);
 
             return text;
         }

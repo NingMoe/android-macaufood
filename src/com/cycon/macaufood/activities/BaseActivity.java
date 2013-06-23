@@ -1,11 +1,18 @@
 package com.cycon.macaufood.activities;
 
 
+import java.util.List;
+
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -21,19 +28,15 @@ public abstract class BaseActivity extends SherlockActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		if (MFConfig.getInstance().getCafeLists().size() == 0) {
-			Intent i = new Intent(this, SplashScreen.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
 			android.os.Process.killProcess(android.os.Process.myPid());
 			finish();
 			return;
 		} 
+		super.onCreate(savedInstanceState);
 		setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		mActionBar = getSupportActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-//		getActionbarTitle().setEllipsize(TextUtils.TruncateAt.MARQUEE);
 	}
 	
 	private TextView getActionbarTitle() {
@@ -56,6 +59,7 @@ public abstract class BaseActivity extends SherlockActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			finish();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}

@@ -37,7 +37,6 @@ public class Home extends SherlockFragmentActivity {
 	private static final String TAG = Home.class.getName();
 
 	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 48; // 48 hours
-//	private static final long REFRESH_TIME_PERIOD = 10000; // 10sec
 
 	private ViewPager mViewPager;
 	private TabsAdapter mTabsAdapter;
@@ -50,6 +49,15 @@ public class Home extends SherlockFragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if (MFConfig.getInstance().getCafeLists().size() == 0) {
+			Intent i = new Intent(this, SplashScreen.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(i);
+			android.os.Process.killProcess(android.os.Process.myPid());
+			finish();
+			return;
+		} 
 
 		getWindow().setWindowAnimations(android.R.style.Animation);
 		setContentView(R.layout.home);

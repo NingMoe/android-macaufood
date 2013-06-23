@@ -40,7 +40,7 @@ public class MFConfig {
 	
 	private ArrayList<String> favoriteLists = new ArrayList<String>(20);
 	
-	private ArrayList<Cafe> nearbyLists = new ArrayList<Cafe>(50);
+	private ArrayList<Cafe> searchResultList = new ArrayList<Cafe>(50);
 	
 	private ArrayList<ParsedCafeHolder> recommendCafeList = new ArrayList<ParsedCafeHolder>(60);
 	private ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(60);
@@ -64,8 +64,8 @@ public class MFConfig {
 	public ArrayList<String> getFavoriteLists() {
 		return favoriteLists;
 	}
-	public ArrayList<Cafe> getNearbyLists() {
-		return nearbyLists;
+	public ArrayList<Cafe> getSearchResultList() {
+		return searchResultList;
 	}
 	public void setRecommendCafeList(ArrayList<ParsedCafeHolder> list) {
 		recommendCafeList = list;

@@ -30,9 +30,9 @@ public class NearbyList extends BaseActivity {
         list.setOnItemClickListener(itemClickListener);
         banner = (AdvView) findViewById(R.id.banner);
         searchResultsNumber = (TextView) findViewById(R.id.searchResultsNumber);
-        searchResultsNumber.setText("共 " + MFConfig.getInstance().getNearbyLists().size() + " 項�?果(從近到�?�排列)");
+        searchResultsNumber.setText("共 " + MFConfig.getInstance().getSearchResultList().size() + " 項�?果(從近到�?�排列)");
         
-        cafeAdapter = new CafeSearchListAdapter(NearbyList.this, MFConfig.getInstance().getNearbyLists());
+        cafeAdapter = new CafeSearchListAdapter(NearbyList.this, MFConfig.getInstance().getSearchResultList());
         list.setAdapter(cafeAdapter);
 	}
 	
@@ -41,7 +41,7 @@ public class NearbyList extends BaseActivity {
 				int position, long id) {
     		
 			Intent i = new Intent(NearbyList.this, Details.class);
-			i.putExtra("id", MFConfig.getInstance().getNearbyLists().get(position).getId());
+			i.putExtra("id", MFConfig.getInstance().getSearchResultList().get(position).getId());
 			startActivity(i);
     	};
     };
