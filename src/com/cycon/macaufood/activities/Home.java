@@ -52,7 +52,6 @@ public class Home extends SherlockFragmentActivity {
 		
 		if (MFConfig.getInstance().getCafeLists().size() == 0) {
 			Intent i = new Intent(this, SplashScreen.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(i);
 			android.os.Process.killProcess(android.os.Process.myPid());
 			finish();

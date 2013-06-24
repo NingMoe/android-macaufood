@@ -1,47 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  	xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-    
-	<com.google.android.maps.MapView
-	    android:id="@+id/mapview"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:clickable="true"
-	    android:apiKey="00kmYUAQqXetma6tuPCHKaWHWFcUtn1okvlAifg"
-	/>
-	
-	<ImageButton
-		android:id="@+id/location"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:src="@drawable/ic_current_location"
-		android:layout_gravity="right"
-		android:layout_margin="7dip"
-		android:background="@drawable/light_button_bg"
-		android:padding="5dip"
-		/>
-		
-	<Button
-		android:id="@+id/searchNearby"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/searchNearby"
-		android:layout_gravity="center_horizontal"
-		android:layout_margin="7dip"
-		android:textColor="@color/green_text"
-		android:background="@drawable/light_button_bg"
-		android:padding="10dip"
-		android:textSize="15sp"
-		/>
-	
-	
-  <ListView
-  	  android:id="@+id/list"
-	  android:layout_width="fill_parent"
-	  android:layout_height="fill_parent"
-	  android:visibility="gone"/>
-	
+    android:layout_height="fill_parent" >
+
+    <com.google.android.maps.MapView
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="00kmYUAQqXetma6tuPCHKaWHWFcUtn1okvlAifg"
+        android:clickable="true" />
+
+    <ImageButton
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_margin="7dip"
+        android:background="@drawable/light_button_bg"
+        android:padding="5dip"
+        android:src="@drawable/ic_current_location" />
+
+    <Button
+        android:id="@+id/searchNearby"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="7dip"
+        android:background="@drawable/light_button_bg"
+        android:padding="10dip"
+        android:text="@string/searchNearby"
+        android:textColor="@color/green_text"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:id="@+id/listLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1" />
+
+        <com.cycon.macaufood.widget.AdvView
+            android:id="@+id/smallBanner"
+            android:layout_width="fill_parent"
+            android:layout_height="50dip"
+            android:layout_gravity="bottom"
+            android:background="#FFFFFF"
+            android:scaleType="fitXY"
+            mf:small="true" />
+    </LinearLayout>
+
 </FrameLayout>

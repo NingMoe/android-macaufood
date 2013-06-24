@@ -202,32 +202,5 @@
 	  	
 	  	</LinearLayout>
 	  	
-	  <FrameLayout
- 		android:id="@+id/searchResultsLayout"
-	  	android:layout_width="fill_parent"
-	  	android:layout_height="fill_parent"
-	  	android:orientation="vertical"
-	  	android:visibility="gone"
-	  	android:background="@color/default_bg_color"
-	  	>
-   	  	  		
-	  	
-	  		<ListView 
-			  	android:id="@+id/searchResultsList"
-			  	android:layout_width="fill_parent"
-			  	android:layout_height="fill_parent"
-			  	android:layout_marginBottom="50dip"
-			/>	  
-  			
-		  <com.cycon.macaufood.widget.AdvView
-		  		android:id="@+id/smallBanner"
-			    android:layout_width="fill_parent"
-				android:layout_height="50dip"
-				android:scaleType="fitXY"
-				android:background="#FFFFFF"
-				mf:small="true"
-				android:layout_gravity="bottom"/>
-	  	
-	  	</FrameLayout>
             
 </LinearLayout>

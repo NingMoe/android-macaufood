@@ -25,6 +25,7 @@ import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.widget.MyItemizedOverlay;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
@@ -61,6 +62,8 @@ public class Map extends SherlockMapActivity {
 	private long curLocationTimeStamp;
 	private int zoomlevel;
 	private com.actionbarsherlock.view.MenuItem mShowListMenuItem;
+	private AdvView smallBanner;
+	private View listLayout;
 
 	private ListView list;
 	private CafeSearchListAdapter cafeAdapter;
@@ -79,17 +82,15 @@ public class Map extends SherlockMapActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.map);
 
+        smallBanner = (AdvView) findViewById(R.id.smallBanner);
 		list = (ListView) findViewById(R.id.list);
+		listLayout = findViewById(R.id.listLayout);
 		cafeAdapter = new CafeSearchListAdapter(this, MFConfig.getInstance()
 				.getSearchResultList());
 		cafeAdapter.imageLoader.setImagesToLoadFromCafe(MFConfig.getInstance()
 				.getSearchResultList());
 		list.setAdapter(cafeAdapter);
 		list.setOnItemClickListener(itemClickListener);
-		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
-			list.setVisibility(View.VISIBLE);
-			mapView.setVisibility(View.GONE);
-		}
 
 		name = getIntent().getStringExtra("name");
 		selectedCafeId = getIntent().getStringExtra("id");
@@ -194,6 +195,14 @@ public class Map extends SherlockMapActivity {
 				}
 			}
 		});
+		
+		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
+			populateOverlayFromSearchList();
+			listLayout.setVisibility(View.VISIBLE);
+			smallBanner.startTask();
+			mapView.setVisibility(View.GONE);
+			setTitle(R.string.searchResults);
+		}
 	}
 
 	private void searchNearby() {
@@ -266,6 +275,49 @@ public class Map extends SherlockMapActivity {
 			shownNearby = true;
 		}
 		cafeAdapter.notifyDataSetChanged();
+		cafeAdapter.imageLoader.cleanup();
+		cafeAdapter.imageLoader.setImagesToLoadFromCafe(MFConfig.getInstance()
+				.getSearchResultList());
+
+		mapView.postInvalidate();
+	}
+	
+	private void populateOverlayFromSearchList() {
+
+		List<Overlay> mapOverlays = mapView.getOverlays();
+
+		if (itemizedoverlay == null) {
+
+			int offset = MFUtil.getPixelsFromDip(9f, getResources());
+			Drawable blueMarker = this.getResources().getDrawable(
+					R.drawable.blue_marker);
+			blueMarker.setBounds(-blueMarker.getIntrinsicWidth() / 2 + offset,
+					-blueMarker.getIntrinsicHeight(),
+					blueMarker.getIntrinsicWidth() / 2 + offset, 0);
+
+			itemizedoverlay = new MyItemizedOverlay(this, blueMarker, mapView,
+					true, true);
+			mapOverlays.add(itemizedoverlay);
+		} else
+			itemizedoverlay.clearOverlayData();
+		
+		
+		for (Cafe  cafe : MFConfig.getInstance().getSearchResultList()) {
+			GeoPoint point = new GeoPoint((int) (Double.parseDouble(cafe
+					.getCoordx()) * 1E6), (int) (Double.parseDouble(cafe
+					.getCoordy()) * 1E6));
+			OverlayItem overlayitem = new OverlayItem(point, cafe.getName(),
+					cafe.getPhone().trim().length() == 0 ? null
+							: cafe.getPhone());
+			itemizedoverlay.addOverlay(overlayitem, cafe.getId());
+		}
+		
+		itemizedoverlay.hideBalloon();
+		itemizedoverlay.callPopulate();
+		if (!shownNearby) {
+			mapOverlays.add(itemizedoverlay);
+			shownNearby = true;
+		}
 
 		mapView.postInvalidate();
 	}
@@ -315,6 +367,7 @@ public class Map extends SherlockMapActivity {
 		super.onPause();
 		locationManager.removeUpdates(locationListener);
 		zoomlevel = mapView.getZoomLevel();
+		smallBanner.stopTask();
 	}
 
 	@Override
@@ -335,6 +388,18 @@ public class Map extends SherlockMapActivity {
 				mapController.setZoom(zoomlevel);
 			mapView.postInvalidate();
 		}
+		
+		if (listLayout.isShown()) {
+			smallBanner.startTask();
+		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		
+		MFConfig.getInstance().getSearchResultList().clear();
+		cafeAdapter.imageLoader.cleanup();
 	}
 
 	@Override
@@ -352,8 +417,12 @@ public class Map extends SherlockMapActivity {
 		// R.string.showMap).setIcon(R.drawable.map).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		mShowListMenuItem = menu.getItem(0);
 		// mShowMapMenuItem = menu.getItem(1);
-		if (MFConfig.getInstance().getSearchResultList().size() == 0)
+		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
+			mShowListMenuItem.setIcon(R.drawable.map).setTitle(
+					R.string.showMap);
+		} else {
 			mShowListMenuItem.setVisible(false);
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -362,20 +431,20 @@ public class Map extends SherlockMapActivity {
 			com.actionbarsherlock.view.MenuItem item) {
 		switch (item.getItemId()) {
 		case SHOW_LIST_MENU_ID:
-			if (list.isShown()) {
-				list.setVisibility(View.GONE);
+			if (listLayout.isShown()) {
+				listLayout.setVisibility(View.GONE);
+				smallBanner.stopTask();
 				mapView.setVisibility(View.VISIBLE);
 				item.setIcon(R.drawable.ic_action_list).setTitle(
 						R.string.showList);
 				setTitle(R.string.map_search);
 			} else {
-				list.setVisibility(View.VISIBLE);
+				listLayout.setVisibility(View.VISIBLE);
+				smallBanner.startTask();
 				mapView.setVisibility(View.GONE);
 				item.setIcon(R.drawable.map).setTitle(R.string.showMap);
 				setTitle(R.string.searchResults);
 			}
-			// Intent i = new Intent(Map.this, NearbyList.class);
-			// startActivity(i);
 			return true;
 		case android.R.id.home:
 			finish();

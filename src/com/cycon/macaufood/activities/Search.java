@@ -55,17 +55,12 @@ public class Search extends BaseActivity {
 
 	private DirectSearchLayout directSearchLayout;
 	private View advancedSearchLayout;
-	private View searchResultsLayout;
-//	private TextView searchResultsNumber;
-//	private AdvView banner;
 	private GalleryNavigator navi;
 	private AdvViewPager advViewPager;
-	private AdvView smallBanner;
 	private EditText searchTextBox;
 	private View clearBtn;
 	private Button searchBtn;
 	private ListView searchList;
-	private ListView searchResultsList;
 	private TextView regionTitle;
 	private WheelView region;
 	private WheelView dishesType;
@@ -76,8 +71,6 @@ public class Search extends BaseActivity {
 	
 	private ArrayList<Cafe> searchCafes = new ArrayList<Cafe>();
 	private SearchAdapter searchAdapter;
-	private ArrayList<Cafe> searchResultCafes = new ArrayList<Cafe>();
-	private CafeSearchListAdapter searchResultsAdapter;
 	
 	
 	private int fromWhichSearch; //1 = direct search, 2 = advanced search 
@@ -93,30 +86,20 @@ public class Search extends BaseActivity {
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         Tab tab1 = mActionBar.newTab().setText(R.string.directSearch);
         Tab tab2 = mActionBar.newTab().setText(R.string.advancedSearch);
-        Tab tab3 = mActionBar.newTab().setText(R.string.searchResults);
         tab1.setTabListener(new TabsAdapter());
         tab2.setTabListener(new TabsAdapter());
-        tab3.setTabListener(new TabsAdapter());
 
 		if (savedInstanceState != null) {
 			mActionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
 		}
 		
-//        banner = (AdvView) findViewById(R.id.banner);
-        smallBanner = (AdvView) findViewById(R.id.smallBanner);
         directSearchLayout = (DirectSearchLayout) findViewById(R.id.directSearchLayout);
         directSearchLayout.setActivity(this);
         advancedSearchLayout = findViewById(R.id.advancedSearchLayout);
-        searchResultsLayout = findViewById(R.id.searchResultsLayout);
-//        searchResultsNumber = (TextView) findViewById(R.id.searchResultsNumber);
         searchList = (ListView) findViewById(R.id.searchList);
         searchAdapter = new SearchAdapter(searchCafes);
         searchList.setAdapter(searchAdapter);
         searchList.setOnItemClickListener(itemClickListener);
-        searchResultsList = (ListView) findViewById(R.id.searchResultsList);
-        searchResultsAdapter = new CafeSearchListAdapter(this, searchResultCafes);
-        searchResultsList.setAdapter(searchResultsAdapter);
-        searchResultsList.setOnItemClickListener(resultItemClickListener);
         
 		navi = (GalleryNavigator) findViewById(R.id.navi);
 		advViewPager = (AdvViewPager) findViewById(R.id.gallery);
@@ -256,7 +239,6 @@ public class Search extends BaseActivity {
 
         mActionBar.addTab(tab1);
         mActionBar.addTab(tab2);
-        mActionBar.addTab(tab3);
     }
     
 	@Override
@@ -285,15 +267,6 @@ public class Search extends BaseActivity {
     	}
     }
     
-    private void setSearchResultsTab(boolean select) {
-    	if (select) {
-    		searchResultsLayout.setVisibility(View.VISIBLE);
-			smallBanner.startTask();
-    	} else {
-    		searchResultsLayout.setVisibility(View.GONE);
-    		smallBanner.stopTask();
-    	}
-    }
     
     private void doPostDirectSearch() {
     	
@@ -301,14 +274,6 @@ public class Search extends BaseActivity {
     	MFConfig.getInstance().getSearchResultList().addAll(searchCafes);
     	Intent i = new Intent(this, Map.class);
     	startActivity(i);
-    	
-		searchResultCafes.clear();
-		searchResultCafes.addAll(searchCafes);
-		searchResultsAdapter.imageLoader.setImagesToLoadFromCafe(searchResultCafes);
-		searchResultsAdapter.notifyDataSetChanged();
-		setDirectSearchTab(false);
-		setSearchResultsTab(true);
-		searchResultsList.setSelectionAfterHeaderView();
     }
     
     @Override
@@ -317,23 +282,12 @@ public class Search extends BaseActivity {
     	expand();
 
     	advViewPager.startTimer();
-
-		if (directSearchLayout.isShown()) {
-			if (searchTextBox.getText().toString().trim().length() == 0) {
-//				banner.startTask();
-			}
-    	} else if (searchResultsLayout.isShown()) {
-    		smallBanner.startTask();
-    	}
     }
     
     @Override
     protected void onPause() {
     	super.onPause();
-    	searchResultsAdapter.imageLoader.cleanup();
-//		banner.stopTask();
     	advViewPager.stopTimer();
-		smallBanner.stopTask();
     }
     
     
@@ -406,7 +360,6 @@ public class Search extends BaseActivity {
 	
 	private void doAdvancedSearch() {
 		MFConfig.getInstance().getSearchResultList().clear();
-		searchResultCafes.clear();
 		
 		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
 		
@@ -501,7 +454,6 @@ public class Search extends BaseActivity {
 			
 			if (matchDishes && matchDistrict && matchServices) {
 				if (cafe.getPriority().equals("0")) {
-					searchResultCafes.add(cafe);
 					MFConfig.getInstance().getSearchResultList().add(cafe);
 				} else {
 					int priority = Integer.parseInt(cafe.getPriority());
@@ -534,14 +486,6 @@ public class Search extends BaseActivity {
     	MFConfig.getInstance().getSearchResultList().addAll(0, priorityList);
     	Intent i = new Intent(this, Map.class);
     	startActivity(i);
-		
-		searchResultCafes.addAll(0, priorityList);
-		searchResultsAdapter.imageLoader.setImagesToLoadFromCafe(searchResultCafes);
-		searchResultsAdapter.notifyDataSetChanged();
-		setAdvancedSearchTab(false);
-		setSearchResultsTab(true);
-//		searchResultsNumber.setText("共 " + searchResultCafes.size() + " 項�?果");
-		searchResultsList.setSelectionAfterHeaderView();
 	}
 	
     AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
@@ -550,16 +494,6 @@ public class Search extends BaseActivity {
     		
 			Intent i = new Intent(Search.this, Details.class);
 			i.putExtra("id", searchCafes.get(position).getId());
-			startActivity(i);
-    	};
-    };
-	
-    AdapterView.OnItemClickListener resultItemClickListener = new AdapterView.OnItemClickListener() {
-		public void onItemClick(AdapterView<?> parent, View view,
-				int position, long id) {
-    		
-			Intent i = new Intent(Search.this, Details.class);
-			i.putExtra("id", searchResultCafes.get(position).getId());
 			startActivity(i);
     	};
     };
@@ -626,8 +560,6 @@ public class Search extends BaseActivity {
 				setDirectSearchTab(true);
 			else if (tab.getPosition() == 1) 
 				setAdvancedSearchTab(true);
-			else if (tab.getPosition() == 2)
-				setSearchResultsTab(true);
 			
 		}
 
@@ -638,10 +570,6 @@ public class Search extends BaseActivity {
 				setDirectSearchTab(false);
 			else if (tab.getPosition() == 1) 
 				setAdvancedSearchTab(false);
-			else if (tab.getPosition() == 2)
-				setSearchResultsTab(false);
-
-	    	searchResultsAdapter.imageLoader.cleanup();
 		}
 
 		public void onTabReselected(Tab tab,
@@ -657,34 +585,6 @@ public class Search extends BaseActivity {
     	super.onDestroy();
     	Log.e(getClass().getSimpleName(), "---onDestroy");
     }
-    
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {		
-	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {	 
-	    	if (searchResultsLayout.isShown() && fromWhichSearch != 0) {
-				if (fromWhichSearch == 1) {
-					setDirectSearchTab(true);
-					setSearchResultsTab(false);
-			    	searchResultsAdapter.imageLoader.cleanup();
-				} else {
-					setAdvancedSearchTab(true);
-					setSearchResultsTab(false);
-			    	searchResultsAdapter.imageLoader.cleanup();
-				}
-				return true;
-			} else {
-				finish();
-			}
-	    }
-	    return super.onKeyDown(keyCode, event);
-	}
-    
-//	@Override
-//	public void onAttachedToWindow() {
-//	    super.onAttachedToWindow();
-//	    Window window = getWindow();
-//	    window.setFormat(PixelFormat.RGBA_8888);
-//	}
     
     
 }

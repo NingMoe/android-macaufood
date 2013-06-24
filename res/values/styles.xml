@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <style name="MFNoActionBarTheme" parent="MFTheme">
-        <item name="android:windowNoTitle">true</item>
-    </style>
 
     <style name="MFTheme" parent="Theme.Sherlock.Light">
         <item name="actionBarStyle">@style/MFActionBarStyle</item>
