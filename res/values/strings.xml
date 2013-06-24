@@ -70,7 +70,8 @@
     <string name="dishes">菜式</string>
     <string name="category">種類</string>
     <string name="searchResults">搜尋結果</string>
-    <string name="noSearchData">未有資料顯示</string>
+    <string name="noSearchResults">搜尋不到符合要求的餐廳</string>
+    <string name="selectOneItemPrompt">請選擇至少一項</string>
     <string name="loadingAdv">載入廣告中...</string>
 
 <!--  Favorite -->

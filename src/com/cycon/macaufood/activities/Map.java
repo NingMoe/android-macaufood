@@ -64,6 +64,7 @@ public class Map extends SherlockMapActivity {
 	private com.actionbarsherlock.view.MenuItem mShowListMenuItem;
 	private AdvView smallBanner;
 	private View listLayout;
+	private View mapLayout;
 
 	private ListView list;
 	private CafeSearchListAdapter cafeAdapter;
@@ -85,10 +86,11 @@ public class Map extends SherlockMapActivity {
         smallBanner = (AdvView) findViewById(R.id.smallBanner);
 		list = (ListView) findViewById(R.id.list);
 		listLayout = findViewById(R.id.listLayout);
+		mapLayout = findViewById(R.id.mapLayout);
 		cafeAdapter = new CafeSearchListAdapter(this, MFConfig.getInstance()
 				.getSearchResultList());
-		cafeAdapter.imageLoader.setImagesToLoadFromCafe(MFConfig.getInstance()
-				.getSearchResultList());
+//		cafeAdapter.imageLoader.setImagesToLoadFromCafe(MFConfig.getInstance()
+//				.getSearchResultList());
 		list.setAdapter(cafeAdapter);
 		list.setOnItemClickListener(itemClickListener);
 
@@ -200,7 +202,7 @@ public class Map extends SherlockMapActivity {
 			populateOverlayFromSearchList();
 			listLayout.setVisibility(View.VISIBLE);
 			smallBanner.startTask();
-			mapView.setVisibility(View.GONE);
+			mapLayout.setVisibility(View.GONE);
 			setTitle(R.string.searchResults);
 		}
 	}
@@ -276,8 +278,8 @@ public class Map extends SherlockMapActivity {
 		}
 		cafeAdapter.notifyDataSetChanged();
 		cafeAdapter.imageLoader.cleanup();
-		cafeAdapter.imageLoader.setImagesToLoadFromCafe(MFConfig.getInstance()
-				.getSearchResultList());
+//		cafeAdapter.imageLoader.setImagesToLoadFromCafe(MFConfig.getInstance()
+//				.getSearchResultList());
 
 		mapView.postInvalidate();
 	}
@@ -396,10 +398,11 @@ public class Map extends SherlockMapActivity {
 	
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
-		
 		MFConfig.getInstance().getSearchResultList().clear();
 		cafeAdapter.imageLoader.cleanup();
+		smallBanner.unbind();
+
+		super.onDestroy();
 	}
 
 	@Override
@@ -434,14 +437,14 @@ public class Map extends SherlockMapActivity {
 			if (listLayout.isShown()) {
 				listLayout.setVisibility(View.GONE);
 				smallBanner.stopTask();
-				mapView.setVisibility(View.VISIBLE);
+				mapLayout.setVisibility(View.VISIBLE);
 				item.setIcon(R.drawable.ic_action_list).setTitle(
 						R.string.showList);
 				setTitle(R.string.map_search);
 			} else {
 				listLayout.setVisibility(View.VISIBLE);
 				smallBanner.startTask();
-				mapView.setVisibility(View.GONE);
+				mapLayout.setVisibility(View.GONE);
 				item.setIcon(R.drawable.map).setTitle(R.string.showMap);
 				setTitle(R.string.searchResults);
 			}

@@ -26,7 +26,7 @@ public class CafeSearchListAdapter extends BaseAdapter {
             this.cafes = cafes;
         	inflater = LayoutInflater.from(context);
         	imageLoader=new ImageLoader(context, 4, ImageType.REGULAR);
-        	imageLoader.setImagesToLoadFromCafe(cafes);
+//        	imageLoader.setImagesToLoadFromCafe(cafes);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

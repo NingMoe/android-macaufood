@@ -5,17 +5,11 @@ import java.util.ArrayList;
 import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
 import kankan.wheel.widget.adapters.ArrayWheelAdapter;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.widget.SearchView;
-
-import android.app.FragmentTransaction;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.support.v4.widget.SearchViewCompat;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -23,29 +17,30 @@ import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvViewPager;
-import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.widget.DirectSearchLayout;
 import com.cycon.macaufood.widget.GalleryNavigator;
 
@@ -100,6 +95,15 @@ public class Search extends BaseActivity {
         searchAdapter = new SearchAdapter(searchCafes);
         searchList.setAdapter(searchAdapter);
         searchList.setOnItemClickListener(itemClickListener);
+        searchList.setOnTouchListener(new OnTouchListener() {
+			
+			public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					hideKeyboard();
+				}
+				return false;
+			}
+		});
         
 		navi = (GalleryNavigator) findViewById(R.id.navi);
 		advViewPager = (AdvViewPager) findViewById(R.id.gallery);
@@ -153,9 +157,9 @@ public class Search extends BaseActivity {
 			
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					expand();
 					hideKeyboard(v);
 					doPostDirectSearch();
+//					expand();
 					fromWhichSearch = 1;
 					return true;
 				}
@@ -169,9 +173,9 @@ public class Search extends BaseActivity {
 				if (event.getAction() == KeyEvent.ACTION_UP) {
 					switch (keyCode) {
 					case KeyEvent.KEYCODE_ENTER:
-						expand();
 						hideKeyboard(v);
 						doPostDirectSearch();
+//						expand();
 						fromWhichSearch = 1;
 						return true;
 					}
@@ -270,10 +274,12 @@ public class Search extends BaseActivity {
     
     private void doPostDirectSearch() {
     	
-    	MFConfig.getInstance().getSearchResultList().clear();
-    	MFConfig.getInstance().getSearchResultList().addAll(searchCafes);
-    	Intent i = new Intent(this, Map.class);
-    	startActivity(i);
+    	if (searchCafes.size() > 0) {
+	    	MFConfig.getInstance().getSearchResultList().clear();
+	    	MFConfig.getInstance().getSearchResultList().addAll(searchCafes);
+	    	Intent i = new Intent(this, Map.class);
+	    	startActivity(i);
+    	}
     }
     
     @Override
@@ -290,6 +296,11 @@ public class Search extends BaseActivity {
     	advViewPager.stopTimer();
     }
     
+    public void hideKeyboard() {
+    	InputMethodManager imm = (InputMethodManager) getSystemService(
+    		    INPUT_METHOD_SERVICE);
+    		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    }
     
     public void hideKeyboard(View view) {
 	    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -363,15 +374,21 @@ public class Search extends BaseActivity {
 		
 		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
 		
+		int regionIndex = region.getCurrentItem();
+		int dishesIndex = dishesType.getCurrentItem();
+		int dishesId = MFConstants.dishesId[dishesIndex];
+		int servicesIndex = servicesType.getCurrentItem();
+		
+		if (regionIndex == 0 && dishesIndex == 0 && servicesIndex == 0) {
+			Toast.makeText(this, R.string.selectOneItemPrompt, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
 		for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
 			if (cafe.getStatus().equals("0")) continue;
 			boolean matchDistrict;
 			boolean matchDishes;
 			boolean matchServices;
-			int regionIndex = region.getCurrentItem();
-			int dishesIndex = dishesType.getCurrentItem();
-			int dishesId = MFConstants.dishesId[dishesIndex];
-			int servicesIndex = servicesType.getCurrentItem();
 			
 			
 			if (regionIndex == 0 || regionIndex == Integer.parseInt(cafe.getDistrict())) {
@@ -484,8 +501,20 @@ public class Search extends BaseActivity {
 
     	MFConfig.getInstance().getSearchResultList().clear();
     	MFConfig.getInstance().getSearchResultList().addAll(0, priorityList);
-    	Intent i = new Intent(this, Map.class);
-    	startActivity(i);
+    	if (MFConfig.getInstance().getSearchResultList().size() > 0) {
+	    	Intent i = new Intent(this, Map.class);
+	    	startActivity(i);
+    	} else {
+    		new AlertDialog.Builder(this)
+    			.setMessage(R.string.noSearchResults)
+    								.setPositiveButton(getString(R.string.confirmed),
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int whichButton) {
+									dialog.dismiss();
+								}
+							}).show();
+    	}
 	}
 	
     AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {

@@ -4,34 +4,41 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <com.google.android.maps.MapView
-        android:id="@+id/mapview"
+    <FrameLayout
+        android:id="@+id/mapLayout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:apiKey="00kmYUAQqXetma6tuPCHKaWHWFcUtn1okvlAifg"
-        android:clickable="true" />
+        android:layout_height="fill_parent" >
 
-    <ImageButton
-        android:id="@+id/location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="7dip"
-        android:background="@drawable/light_button_bg"
-        android:padding="5dip"
-        android:src="@drawable/ic_current_location" />
+        <com.google.android.maps.MapView
+            android:id="@+id/mapview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:apiKey="00kmYUAQqXetma6tuPCHKaWHWFcUtn1okvlAifg"
+            android:clickable="true" >
+        </com.google.android.maps.MapView>
 
-    <Button
-        android:id="@+id/searchNearby"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="7dip"
-        android:background="@drawable/light_button_bg"
-        android:padding="10dip"
-        android:text="@string/searchNearby"
-        android:textColor="@color/green_text"
-        android:textSize="15sp" />
+        <ImageButton
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="7dip"
+            android:background="@drawable/light_button_bg"
+            android:padding="5dip"
+            android:src="@drawable/ic_current_location" />
+
+        <Button
+            android:id="@+id/searchNearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="7dip"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/light_button_bg"
+            android:padding="10dip"
+            android:text="@string/searchNearby"
+            android:textColor="@color/green_text"
+            android:textSize="15sp" />
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/listLayout"

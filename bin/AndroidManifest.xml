@@ -52,7 +52,6 @@
         <activity android:name=".activities.Intro" />
         <activity android:name=".activities.Info" />
         <activity android:name=".activities.Menu" />
-        <activity android:name=".activities.NearbyList" />
         <activity
             android:name=".activities.About"
             android:label="@string/advertiseUs" />
