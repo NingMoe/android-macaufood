@@ -18,9 +18,9 @@
 	  	<RelativeLayout
 		  	android:layout_width="fill_parent"
 		  	android:layout_height="wrap_content"
-	  		android:paddingLeft="12dip"
+	  		android:paddingLeft="16dip"
 	  		android:paddingTop="8dip"
-	  		android:paddingRight="12dip"
+	  		android:paddingRight="16dip"
 	  		android:paddingBottom="3dip">
 		   	  
 			<EditText

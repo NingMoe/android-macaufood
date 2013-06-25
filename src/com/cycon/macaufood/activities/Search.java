@@ -37,6 +37,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
+import com.cycon.macaufood.utilities.AdvancedSearchHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
@@ -370,9 +371,6 @@ public class Search extends BaseActivity {
 	}
 	
 	private void doAdvancedSearch() {
-		MFConfig.getInstance().getSearchResultList().clear();
-		
-		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
 		
 		int regionIndex = region.getCurrentItem();
 		int dishesIndex = dishesType.getCurrentItem();
@@ -384,123 +382,8 @@ public class Search extends BaseActivity {
 			return;
 		}
 		
-		for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
-			if (cafe.getStatus().equals("0")) continue;
-			boolean matchDistrict;
-			boolean matchDishes;
-			boolean matchServices;
-			
-			
-			if (regionIndex == 0 || regionIndex == Integer.parseInt(cafe.getDistrict())) {
-				matchDistrict = true;
-			} else {
-				matchDistrict = false;
-			}
-			
-			if (dishesId == 0 || dishesId == Integer.parseInt(cafe.getType0())
-					|| dishesId == Integer.parseInt(cafe.getType1()) 
-					|| dishesId == Integer.parseInt(cafe.getType2())) {
-				matchDishes = true;
-			} else {
-				matchDishes = false;
-			}
-			
-			switch(servicesIndex) {
-				case 0:
-					matchServices = true;
-					break;
-				case 1:
-					if (cafe.getOption_phoneorder().equals("1")) {
-						matchServices = true;
-					} else {
-						matchServices = false;
-					}
-					break;
-				case 2:
-					if (cafe.getOption_booking().equals("1")) {
-						matchServices = true;
-					} else {
-						matchServices = false;
-					}
-					break;
-				case 3:
-					if (cafe.getOption_night().equals("1")) {
-						matchServices = true;
-					} else {
-						matchServices = false;
-					}
-					break;
-				case 4:
-					if (cafe.getOption_call().equals("1")) {
-						matchServices = true;
-					} else {
-						matchServices = false;
-					}
-					break;
-				case 5:
-					if (cafe.getOption_buffet().equals("1")) {
-						matchServices = true;
-					} else {
-						matchServices = false;
-					}
-					break;
-				case 6:
-					if (cafe.getOption_banquet().equals("1")) {
-						matchServices = true;
-					} else {
-						matchServices = false;
-					}
-					break;
-				case 7:
-					if (cafe.getOption_wifi().equals("1")) {
-						matchServices = true;
-					} else {
-						matchServices = false;
-					}
-					break;
-				case 8:
-					if (cafe.getOption_parking().equals("1")) {
-						matchServices = true;
-					} else {
-						matchServices = false;
-					}
-					break;
-				default:
-					matchServices = false;
-			}
-			
-			if (matchDishes && matchDistrict && matchServices) {
-				if (cafe.getPriority().equals("0")) {
-					MFConfig.getInstance().getSearchResultList().add(cafe);
-				} else {
-					int priority = Integer.parseInt(cafe.getPriority());
-					if (priorityList.size() == 0) {
-						priorityList.add(cafe);
-					} else {
-						boolean added = false;
-						for (int i = 0; i < priorityList.size(); i++) {
-							if (Integer.parseInt(priorityList.get(i).getPriority())
-									< priority) {
-								priorityList.add(i, cafe);
-								added = true;
-								break;
-							}
-						}
-						if (!added) {
-							priorityList.add(cafe);
-						}
-						
-					}
-				}
-			}
-			
-			
-			
-		}
+		AdvancedSearchHelper.search(regionIndex, dishesId, servicesIndex);
 		
-
-    	MFConfig.getInstance().getSearchResultList().clear();
-    	MFConfig.getInstance().getSearchResultList().addAll(0, priorityList);
     	if (MFConfig.getInstance().getSearchResultList().size() > 0) {
 	    	Intent i = new Intent(this, Map.class);
 	    	startActivity(i);
@@ -556,7 +439,7 @@ public class Search extends BaseActivity {
                 text = new TextView(Search.this);
                 text.setTextColor(getResources().getColor(R.color.dark_gray_text));
                 text.setTextSize(19f);
-                int leftPadding = MFUtil.getPixelsFromDip(10, getResources());
+                int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
                 int topPadding = MFUtil.getPixelsFromDip(5, getResources());
                 text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
             } else {

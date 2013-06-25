@@ -3,6 +3,7 @@ package com.cycon.macaufood.activities;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -11,19 +12,26 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Process;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
+import com.cycon.macaufood.utilities.AdvancedSearchHelper;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.widget.MyItemizedOverlay;
@@ -37,7 +45,7 @@ import com.google.android.maps.OverlayItem;
  * A list view that demonstrates the use of setEmptyView. This example alos uses
  * a custom layout file that adds some extra buttons to the screen.
  */
-public class Map extends SherlockMapActivity {
+public class Map extends SherlockMapActivity{
 
 	private static final int SHOW_LIST_MENU_ID = 1;
 	private static final double LAT_MIN = 22.104;
@@ -68,7 +76,12 @@ public class Map extends SherlockMapActivity {
 
 	private ListView list;
 	private CafeSearchListAdapter cafeAdapter;
+	private Spinner regionSpinner;
+	private Spinner dishesSpinner;
+	private Spinner categorySpinner;
+	private TextView headerView;
 
+	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// use same logic as in BaseActivity
@@ -85,6 +98,17 @@ public class Map extends SherlockMapActivity {
 
         smallBanner = (AdvView) findViewById(R.id.smallBanner);
 		list = (ListView) findViewById(R.id.list);
+
+		headerView = new TextView(this);
+		headerView.setText(R.string.totalResultsFound);
+		headerView.setTextSize(12f);
+		headerView.setGravity(Gravity.CENTER_HORIZONTAL);
+		headerView.setTextColor(getResources().getColor(R.color.tab_gray_text));
+		headerView.setPadding(0, MFUtil.getPixelsFromDip(1f, getResources()), 0, MFUtil.getPixelsFromDip(1f, getResources()));
+		headerView.setBackgroundResource(R.drawable.headerview_bg);
+		list.addHeaderView(headerView);
+		list.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
+		
 		listLayout = findViewById(R.id.listLayout);
 		mapLayout = findViewById(R.id.mapLayout);
 		cafeAdapter = new CafeSearchListAdapter(this, MFConfig.getInstance()
@@ -93,6 +117,22 @@ public class Map extends SherlockMapActivity {
 //				.getSearchResultList());
 		list.setAdapter(cafeAdapter);
 		list.setOnItemClickListener(itemClickListener);
+		
+		regionSpinner = (Spinner) findViewById(R.id.regionSpinner);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview, MFConstants.regionNames);
+		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+		regionSpinner.setAdapter(adapter);
+		regionSpinner.setOnItemSelectedListener(itemSelectListener);
+		dishesSpinner = (Spinner) findViewById(R.id.dishesSpinner);
+		adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview, MFConstants.dishesType);
+		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+		dishesSpinner.setAdapter(adapter);
+		dishesSpinner.setOnItemSelectedListener(itemSelectListener);
+		categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
+		adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview, MFConstants.serviceType);
+		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+		categorySpinner.setAdapter(adapter);
+		categorySpinner.setOnItemSelectedListener(itemSelectListener);
 
 		name = getIntent().getStringExtra("name");
 		selectedCafeId = getIntent().getStringExtra("id");
@@ -199,12 +239,29 @@ public class Map extends SherlockMapActivity {
 		});
 		
 		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
-			populateOverlayFromSearchList();
+			
 			listLayout.setVisibility(View.VISIBLE);
 			smallBanner.startTask();
 			mapLayout.setVisibility(View.GONE);
 			setTitle(R.string.searchResults);
 		}
+	}
+	
+	private void doAdvancedSearch() {
+		int regionIndex = regionSpinner.getSelectedItemPosition();
+		int dishesIndex = dishesSpinner.getSelectedItemPosition();
+		int dishesId = MFConstants.dishesId[dishesIndex];
+		int servicesIndex = categorySpinner.getSelectedItemPosition();
+		
+		//if all zero...
+		//TODO
+		
+		AdvancedSearchHelper.search(regionIndex, dishesId, servicesIndex);
+		
+		//if result size 0...
+		//TODO
+		
+		cafeAdapter.notifyDataSetChanged();
 	}
 
 	private void searchNearby() {
@@ -435,6 +492,7 @@ public class Map extends SherlockMapActivity {
 		switch (item.getItemId()) {
 		case SHOW_LIST_MENU_ID:
 			if (listLayout.isShown()) {
+				populateOverlayFromSearchList();
 				listLayout.setVisibility(View.GONE);
 				smallBanner.stopTask();
 				mapLayout.setVisibility(View.VISIBLE);
@@ -467,6 +525,19 @@ public class Map extends SherlockMapActivity {
 							.getId());
 			startActivity(i);
 		};
+	};
+	
+	AdapterView.OnItemSelectedListener itemSelectListener = new AdapterView.OnItemSelectedListener() {
+
+		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+				long arg3) {
+			doAdvancedSearch();
+		}
+
+		public void onNothingSelected(AdapterView<?> arg0) {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 
 }

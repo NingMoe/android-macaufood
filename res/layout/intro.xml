@@ -3,34 +3,40 @@
     android:id="@+id/mainLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="@color/gray_green" >
+    android:orientation="vertical" >
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="fill_parent"
         android:layout_height="260dp"
-        android:background="#AAAAAA"/>
+        android:background="#AAAAAA" />
 
-    <com.cycon.macaufood.widget.GalleryNavigator
-        android:id="@+id/navi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="3dip"
-        android:layout_marginTop="15dip" />
-
-    <ScrollView
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_margin="12dip"
-        android:background="@drawable/round_edge_white_bg"
-        android:scrollbarStyle="outsideOverlay" >
+        android:background="@drawable/gray_green_bg"
+        android:orientation="vertical" >
 
-        <TextSwitcher
-            android:id="@+id/text"
+        <com.cycon.macaufood.widget.GalleryNavigator
+            android:id="@+id/navi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="3dip"
+            android:layout_marginTop="15dip" />
+
+        <ScrollView
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-    </ScrollView>
+            android:layout_height="fill_parent"
+            android:layout_margin="12dip"
+            android:background="@drawable/round_edge_white_bg"
+            android:scrollbarStyle="outsideOverlay" >
+
+            <TextSwitcher
+                android:id="@+id/text"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" />
+        </ScrollView>
+    </LinearLayout>
 
 </LinearLayout>
