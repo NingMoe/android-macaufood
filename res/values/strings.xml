@@ -85,7 +85,8 @@
     <string name="restList">餐廳列表</string>
     <string name="showList">顯示列表</string>
     <string name="showMap">顯示地圖</string>
-    <string name="totalResultsFound">共有16間餐廳</string>
+    <string name="totalResultsFound">共有%d間餐廳</string>
+    <string name="mapCenterArea">地圖中心</string>
 
 <!--  About -->
     <string name="disclaimer">免責聲明</string>

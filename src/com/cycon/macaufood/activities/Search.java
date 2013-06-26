@@ -386,6 +386,9 @@ public class Search extends BaseActivity {
 		
     	if (MFConfig.getInstance().getSearchResultList().size() > 0) {
 	    	Intent i = new Intent(this, Map.class);
+	    	i.putExtra("regionIndex", regionIndex);
+	    	i.putExtra("dishesIndex", dishesIndex);
+	    	i.putExtra("servicesIndex", servicesIndex);
 	    	startActivity(i);
     	} else {
     		new AlertDialog.Builder(this)

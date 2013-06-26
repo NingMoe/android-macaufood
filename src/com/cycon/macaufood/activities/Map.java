@@ -1,5 +1,7 @@
 package com.cycon.macaufood.activities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -11,7 +13,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Process;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockMapActivity;
 import com.cycon.macaufood.R;
@@ -80,8 +85,11 @@ public class Map extends SherlockMapActivity{
 	private Spinner dishesSpinner;
 	private Spinner categorySpinner;
 	private TextView headerView;
+	private TextView listMessage;
+	private ArrayAdapter<String> regionAdapter;
+	private List<String> regionStrings;
+	private boolean disableItemSelect;
 
-	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// use same logic as in BaseActivity
@@ -98,16 +106,16 @@ public class Map extends SherlockMapActivity{
 
         smallBanner = (AdvView) findViewById(R.id.smallBanner);
 		list = (ListView) findViewById(R.id.list);
+		listMessage = (TextView) findViewById(R.id.listMessage);
 
 		headerView = new TextView(this);
-		headerView.setText(R.string.totalResultsFound);
+		headerView.setText(getString(R.string.totalResultsFound, MFConfig.getInstance().getSearchResultList().size()));
 		headerView.setTextSize(12f);
 		headerView.setGravity(Gravity.CENTER_HORIZONTAL);
 		headerView.setTextColor(getResources().getColor(R.color.tab_gray_text));
 		headerView.setPadding(0, MFUtil.getPixelsFromDip(1f, getResources()), 0, MFUtil.getPixelsFromDip(1f, getResources()));
 		headerView.setBackgroundResource(R.drawable.headerview_bg);
-		list.addHeaderView(headerView);
-		list.setOverScrollMode(ListView.OVER_SCROLL_NEVER);
+		list.addHeaderView(headerView, null, false);
 		
 		listLayout = findViewById(R.id.listLayout);
 		mapLayout = findViewById(R.id.mapLayout);
@@ -119,20 +127,49 @@ public class Map extends SherlockMapActivity{
 		list.setOnItemClickListener(itemClickListener);
 		
 		regionSpinner = (Spinner) findViewById(R.id.regionSpinner);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview, MFConstants.regionNames);
-		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
-		regionSpinner.setAdapter(adapter);
-		regionSpinner.setOnItemSelectedListener(itemSelectListener);
+		regionStrings = new ArrayList<String>(Arrays.asList(MFConstants.regionNames));
+		regionAdapter = new ArrayAdapter<String>(this, R.layout.spinner_textview, regionStrings);
+		regionAdapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+		regionSpinner.setAdapter(regionAdapter);
+		int regionIndex = getIntent().getIntExtra("regionIndex", 0);
+		regionSpinner.setSelection(regionIndex);
 		dishesSpinner = (Spinner) findViewById(R.id.dishesSpinner);
-		adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview, MFConstants.dishesType);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview, MFConstants.dishesType);
 		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
 		dishesSpinner.setAdapter(adapter);
-		dishesSpinner.setOnItemSelectedListener(itemSelectListener);
+		int dishesIndex = getIntent().getIntExtra("dishesIndex", 0);
+		dishesSpinner.setSelection(dishesIndex);
 		categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
 		adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview, MFConstants.serviceType);
 		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
 		categorySpinner.setAdapter(adapter);
-		categorySpinner.setOnItemSelectedListener(itemSelectListener);
+		int servicesIndex = getIntent().getIntExtra("servicesIndex", 0);
+		categorySpinner.setSelection(servicesIndex);
+		
+		if (servicesIndex == 0 && dishesIndex == 0 && regionIndex == 0) {
+			listMessage.setVisibility(View.VISIBLE);
+			list.setVisibility(View.INVISIBLE);
+		}
+		
+		//to avoid calling onitemselected first time
+		regionSpinner.post(new Runnable() {
+			
+			public void run() {
+				regionSpinner.setOnItemSelectedListener(itemSelectListener);
+			}
+		});
+		dishesSpinner.post(new Runnable() {
+			
+			public void run() {
+				dishesSpinner.setOnItemSelectedListener(itemSelectListener);
+			}
+		});
+		categorySpinner.post(new Runnable() {
+			
+			public void run() {
+				categorySpinner.setOnItemSelectedListener(itemSelectListener);
+			}
+		});
 
 		name = getIntent().getStringExtra("name");
 		selectedCafeId = getIntent().getStringExtra("id");
@@ -238,6 +275,7 @@ public class Map extends SherlockMapActivity{
 			}
 		});
 		
+		//display map
 		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
 			
 			listLayout.setVisibility(View.VISIBLE);
@@ -248,20 +286,54 @@ public class Map extends SherlockMapActivity{
 	}
 	
 	private void doAdvancedSearch() {
+		Log.e("ZZZ", "doadvancedsearch");
+
 		int regionIndex = regionSpinner.getSelectedItemPosition();
 		int dishesIndex = dishesSpinner.getSelectedItemPosition();
 		int dishesId = MFConstants.dishesId[dishesIndex];
 		int servicesIndex = categorySpinner.getSelectedItemPosition();
 		
-		//if all zero...
-		//TODO
+		if (regionStrings.get(0).equals(getString(R.string.mapCenterArea))) {
+			regionStrings.remove(0);
+			regionAdapter.notifyDataSetChanged();
+			if (regionIndex != 0) {
+				regionSpinner.setSelection(regionIndex - 1);
+				return;
+			}
+		}
 		
-		AdvancedSearchHelper.search(regionIndex, dishesId, servicesIndex);
+
+		listMessage.setVisibility(View.GONE);
+		list.setVisibility(View.VISIBLE);
+
 		
-		//if result size 0...
-		//TODO
+		if (regionIndex == 0 && dishesIndex == 0 && servicesIndex == 0 ) {
+			listMessage.setVisibility(View.VISIBLE);
+			listMessage.setText(R.string.selectOneItemPrompt);
+			list.setVisibility(View.INVISIBLE);
+			MFConfig.getInstance().getSearchResultList().clear();
+			if (mapLayout.isShown()) {
+				Toast.makeText(this, R.string.selectOneItemPrompt, Toast.LENGTH_SHORT).show();
+				populateOverlayFromSearchList();
+			}
+		} else {
+			AdvancedSearchHelper.search(regionIndex, dishesId, servicesIndex);
+			if (MFConfig.getInstance().getSearchResultList().size() == 0) {
+				listMessage.setVisibility(View.VISIBLE);
+				listMessage.setText(R.string.noSearchResults);
+				list.setVisibility(View.INVISIBLE);
+			}
+			if (listLayout.isShown()) {
+				cafeAdapter.notifyDataSetChanged();
+				cafeAdapter.imageLoader.cleanup();
+				list.setSelection(0);
+				headerView.setText(getString(R.string.totalResultsFound, MFConfig.getInstance().getSearchResultList().size()));
+			}
+		}
 		
-		cafeAdapter.notifyDataSetChanged();
+		if (mapLayout.isShown())
+			populateOverlayFromSearchList();
+		
 	}
 
 	private void searchNearby() {
@@ -311,10 +383,13 @@ public class Map extends SherlockMapActivity{
 				queue.add(cafe);
 			}
 		}
-		for (int i = 0; i < 50 && queue.size() > 0; i++) {
+		int displayNumber = 50;
+		for (int i = 0; i < displayNumber && queue.size() > 0; i++) {
 			Cafe cafe = queue.poll();
-			if (cafe.getStatus().equals("0"))
+			if (cafe.getStatus().equals("0")) {
+				displayNumber++;
 				continue;
+			}
 			MFConfig.getInstance().getSearchResultList().add(cafe);
 			if (cafe.getId().equals(selectedCafeId))
 				continue;
@@ -333,12 +408,28 @@ public class Map extends SherlockMapActivity{
 			mapOverlays.add(itemizedoverlay);
 			shownNearby = true;
 		}
-		cafeAdapter.notifyDataSetChanged();
-		cafeAdapter.imageLoader.cleanup();
-//		cafeAdapter.imageLoader.setImagesToLoadFromCafe(MFConfig.getInstance()
-//				.getSearchResultList());
+		
+		disableItemSelect = true;
+		
+		if (!regionStrings.get(0).equals(getString(R.string.mapCenterArea))) {
+			regionStrings.add(0, getString(R.string.mapCenterArea));
+			regionAdapter.notifyDataSetChanged();
+			regionSpinner.setSelection(0);
+			dishesSpinner.setSelection(0);
+			categorySpinner.setSelection(0);
+		}
+		
+		listMessage.setVisibility(View.GONE);
+		list.setVisibility(View.VISIBLE);
 
 		mapView.postInvalidate();
+		
+		new Handler().postDelayed(new Runnable() {
+			
+			public void run() {
+				disableItemSelect = false;
+			}
+		}, 500);
 	}
 	
 	private void populateOverlayFromSearchList() {
@@ -473,16 +564,14 @@ public class Map extends SherlockMapActivity{
 		menu.add(0, SHOW_LIST_MENU_ID, 0, R.string.showList)
 				.setIcon(R.drawable.ic_action_list)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		// menu.add(0, SHOW_MAP_MENU_ID, 1,
-		// R.string.showMap).setIcon(R.drawable.map).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		mShowListMenuItem = menu.getItem(0);
-		// mShowMapMenuItem = menu.getItem(1);
 		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
 			mShowListMenuItem.setIcon(R.drawable.map).setTitle(
 					R.string.showMap);
-		} else {
-			mShowListMenuItem.setVisible(false);
-		}
+		} 
+//		else {
+//			mShowListMenuItem.setVisible(false);
+//		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -505,6 +594,13 @@ public class Map extends SherlockMapActivity{
 				mapLayout.setVisibility(View.GONE);
 				item.setIcon(R.drawable.map).setTitle(R.string.showMap);
 				setTitle(R.string.searchResults);
+				//update cafeadapter only when switch to listview
+				cafeAdapter.notifyDataSetChanged();
+				cafeAdapter.imageLoader.cleanup();
+				list.setSelection(0);
+//				listMessage.setVisibility(View.GONE);
+//				list.setVisibility(View.VISIBLE);
+				headerView.setText(getString(R.string.totalResultsFound, MFConfig.getInstance().getSearchResultList().size()));
 			}
 			return true;
 		case android.R.id.home:
@@ -521,7 +617,7 @@ public class Map extends SherlockMapActivity{
 
 			Intent i = new Intent(Map.this, Details.class);
 			i.putExtra("id",
-					MFConfig.getInstance().getSearchResultList().get(position)
+					MFConfig.getInstance().getSearchResultList().get(position - 1)
 							.getId());
 			startActivity(i);
 		};
@@ -529,14 +625,16 @@ public class Map extends SherlockMapActivity{
 	
 	AdapterView.OnItemSelectedListener itemSelectListener = new AdapterView.OnItemSelectedListener() {
 
-		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
-			doAdvancedSearch();
+		public void onItemSelected(AdapterView<?> parent, View view, int position,
+				long id) {
+			Log.e("ZZZ", "onitemselected");
+			if (!disableItemSelect) {
+				doAdvancedSearch();
+			}
 		}
 
-		public void onNothingSelected(AdapterView<?> arg0) {
-			// TODO Auto-generated method stub
-			
+		public void onNothingSelected(AdapterView<?> parent) {
+			Log.e("ZZZ", "nothing selected");
 		}
 	};
 
