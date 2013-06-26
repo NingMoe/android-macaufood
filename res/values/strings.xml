@@ -87,6 +87,7 @@
     <string name="showMap">顯示地圖</string>
     <string name="totalResultsFound">共有%d間餐廳</string>
     <string name="mapCenterArea">地圖中心</string>
+    <string name="displaySearchQuery">搜尋名字有%s的餐廳</string>
 
 <!--  About -->
     <string name="disclaimer">免責聲明</string>

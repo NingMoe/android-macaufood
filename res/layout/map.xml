@@ -6,67 +6,24 @@
     android:background="@color/default_bg_color"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <include
+        android:id="@+id/mapFilterPanel"
+        layout="@layout/map_filter_panel" />
+
+    <TextView
+        android:id="@+id/displaySearchQuery"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:textColor="@color/tab_gray_text"
         android:background="@drawable/headerview_bg"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="6dp"
-        android:paddingRight="4dp"
-        android:paddingTop="4dp" >
+        android:visibility="gone" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="@string/region"
-            android:textColor="@color/green_text"
-            android:textSize="14sp" />
-
-        <Spinner
-            android:id="@+id/regionSpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:prompt="@string/mapCenterArea" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:paddingLeft="5dp"
-            android:text="@string/dishes"
-            android:textColor="@color/green_text"
-            android:textSize="14sp" />
-
-        <Spinner
-            android:id="@+id/dishesSpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:paddingLeft="5dp"
-            android:text="@string/category"
-            android:textColor="@color/green_text"
-            android:textSize="14sp" />
-
-        <Spinner
-            android:id="@+id/categorySpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-    </LinearLayout>
-    
-    
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1px"
-            android:background="@android:drawable/divider_horizontal_bright" />
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="@android:drawable/divider_horizontal_bright" />
 
     <FrameLayout
         android:id="@+id/mapLayout"
@@ -128,7 +85,7 @@
             android:layout_height="0dip"
             android:layout_weight="1"
             android:fadingEdge="horizontal"
-            android:headerDividersEnabled="true"/>
+            android:headerDividersEnabled="true" />
 
         <com.cycon.macaufood.widget.AdvView
             android:id="@+id/smallBanner"

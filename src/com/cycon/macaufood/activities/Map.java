@@ -15,6 +15,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -89,6 +92,8 @@ public class Map extends SherlockMapActivity{
 	private ArrayAdapter<String> regionAdapter;
 	private List<String> regionStrings;
 	private boolean disableItemSelect;
+	private View mapFilterPanel;
+	private TextView displaySearchQuery;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -107,6 +112,8 @@ public class Map extends SherlockMapActivity{
         smallBanner = (AdvView) findViewById(R.id.smallBanner);
 		list = (ListView) findViewById(R.id.list);
 		listMessage = (TextView) findViewById(R.id.listMessage);
+		mapFilterPanel = findViewById(R.id.mapFilterPanel);
+		displaySearchQuery = (TextView) findViewById(R.id.displaySearchQuery);
 
 		headerView = new TextView(this);
 		headerView.setText(getString(R.string.totalResultsFound, MFConfig.getInstance().getSearchResultList().size()));
@@ -145,11 +152,7 @@ public class Map extends SherlockMapActivity{
 		categorySpinner.setAdapter(adapter);
 		int servicesIndex = getIntent().getIntExtra("servicesIndex", 0);
 		categorySpinner.setSelection(servicesIndex);
-		
-		if (servicesIndex == 0 && dishesIndex == 0 && regionIndex == 0) {
-			listMessage.setVisibility(View.VISIBLE);
-			list.setVisibility(View.INVISIBLE);
-		}
+
 		
 		//to avoid calling onitemselected first time
 		regionSpinner.post(new Runnable() {
@@ -282,6 +285,22 @@ public class Map extends SherlockMapActivity{
 			smallBanner.startTask();
 			mapLayout.setVisibility(View.GONE);
 			setTitle(R.string.searchResults);
+		}
+
+		
+		String queryText = getIntent().getStringExtra("querySearch");
+		if (queryText != null) {
+			mapFilterPanel.setVisibility(View.GONE);
+			displaySearchQuery.setVisibility(View.VISIBLE);
+			
+			String displayString = getString(R.string.displaySearchQuery, "\"" + queryText + "\"");
+			SpannableString spannable = new SpannableString(displayString);
+			int index = displayString.indexOf("\"") + 1;
+			spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.green_text)), index, index + queryText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			displaySearchQuery.setText(spannable);
+		} else if (servicesIndex == 0 && dishesIndex == 0 && regionIndex == 0) {
+			listMessage.setVisibility(View.VISIBLE);
+			list.setVisibility(View.INVISIBLE);
 		}
 	}
 	
@@ -421,7 +440,8 @@ public class Map extends SherlockMapActivity{
 		
 		listMessage.setVisibility(View.GONE);
 		list.setVisibility(View.VISIBLE);
-
+		mapFilterPanel.setVisibility(View.VISIBLE);
+		displaySearchQuery.setVisibility(View.GONE);
 		mapView.postInvalidate();
 		
 		new Handler().postDelayed(new Runnable() {
@@ -429,7 +449,7 @@ public class Map extends SherlockMapActivity{
 			public void run() {
 				disableItemSelect = false;
 			}
-		}, 500);
+		}, 400);
 	}
 	
 	private void populateOverlayFromSearchList() {
@@ -627,14 +647,12 @@ public class Map extends SherlockMapActivity{
 
 		public void onItemSelected(AdapterView<?> parent, View view, int position,
 				long id) {
-			Log.e("ZZZ", "onitemselected");
 			if (!disableItemSelect) {
 				doAdvancedSearch();
 			}
 		}
 
 		public void onNothingSelected(AdapterView<?> parent) {
-			Log.e("ZZZ", "nothing selected");
 		}
 	};
 

@@ -275,10 +275,15 @@ public class Search extends BaseActivity {
     
     private void doPostDirectSearch() {
     	
-    	if (searchCafes.size() > 0) {
+    	if (searchCafes.size() == 1) {
+        	Intent i = new Intent(Search.this, Details.class);
+    		i.putExtra("id", searchCafes.get(0).getId());
+    		startActivity(i);
+    	} else if (searchCafes.size() > 1) {
 	    	MFConfig.getInstance().getSearchResultList().clear();
 	    	MFConfig.getInstance().getSearchResultList().addAll(searchCafes);
 	    	Intent i = new Intent(this, Map.class);
+	    	i.putExtra("querySearch", searchTextBox.getText().toString().trim());
 	    	startActivity(i);
     	}
     }
