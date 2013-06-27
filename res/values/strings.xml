@@ -71,6 +71,7 @@
     <string name="category">服務</string>
     <string name="searchResults">搜尋結果</string>
     <string name="noSearchResults">搜尋不到符合要求的餐廳</string>
+    <string name="noMapSearchResults">搜尋不到地圖範圍內的餐廳</string>
     <string name="selectOneItemPrompt">請選擇至少一項</string>
     <string name="loadingAdv">載入廣告中...</string>
 

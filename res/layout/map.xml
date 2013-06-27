@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/default_bg_color"
@@ -29,14 +30,22 @@
         android:id="@+id/mapLayout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
-
-        <com.google.android.maps.MapView
-            android:id="@+id/mapview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:apiKey="00kmYUAQqXetma6tuPCHKaWHWFcUtn1okvlAifg"
-            android:clickable="true" >
-        </com.google.android.maps.MapView>
+        
+        <fragment
+			  android:id="@+id/map"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent"
+			  class="com.google.android.gms.maps.SupportMapFragment"
+			  map:cameraTargetLat="22.19971287"
+			  map:cameraTargetLng="113.54500506"
+			  map:cameraZoom="14"
+			  map:mapType="normal"
+			  map:uiCompass="true"
+			  map:uiRotateGestures="true"
+			  map:uiScrollGestures="true"
+			  map:uiTiltGestures="true"
+			  map:uiZoomControls="true"
+			  map:uiZoomGestures="true"/>
 
         <ImageButton
             android:id="@+id/location"
@@ -46,7 +55,8 @@
             android:layout_margin="7dip"
             android:background="@drawable/light_button_bg"
             android:padding="5dip"
-            android:src="@drawable/ic_current_location" />
+            android:src="@drawable/ic_current_location"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/searchNearby"
