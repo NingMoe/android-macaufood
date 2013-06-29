@@ -1,11 +1,13 @@
 package com.cycon.macaufood.bean;
 
+import java.io.Serializable;
+
 import android.util.Log;
 
 import com.cycon.macaufood.utilities.CafeAttrToken;
 
 
-public class Cafe implements Comparable<Cafe>{
+public class Cafe implements Comparable<Cafe>, Serializable{
 	private String id;
 	private String name;
 	private String phone = "";

@@ -55,6 +55,7 @@ public class MFConfig {
 	public static List<ParsedFoodNewsHolder> tempParsedFoodNewsList = Collections.synchronizedList(new ArrayList<ParsedFoodNewsHolder>(20));
 	
 	public static int deviceWidth;
+	public static int deviceHeight;
 	
 	private static MFConfig config;
 	

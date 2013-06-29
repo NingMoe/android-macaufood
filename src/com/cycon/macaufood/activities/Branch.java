@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
@@ -16,6 +17,8 @@ import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.widget.AdvView;
 
 public class Branch extends BaseActivity {
+	
+	private static final int DISPLAY_MAP_MENU_ID = 1;
 
 	private static final String TAG = Branch.class.getName();
 	private ListView list;
@@ -55,6 +58,28 @@ public class Branch extends BaseActivity {
 			startActivity(i);
     	};
     };
+    
+    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+    	if (branchList.size() > 1) {
+    		menu.add(0, DISPLAY_MAP_MENU_ID, 0, R.string.showMap).setIcon(R.drawable.map).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		}
+    	return super.onCreateOptionsMenu(menu);
+    };
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	switch (item.getItemId()) {
+    	case DISPLAY_MAP_MENU_ID:
+			Intent i = new Intent(Branch.this, Map.class);
+			i.putExtra("fromBranch", true);
+			i.putExtra("branchList", branchList);
+			startActivity(i);
+			return true;
+    	default:
+			return super.onOptionsItemSelected(item);
+    	}
+    	
+    }
     
     protected void onResume() {
     	super.onResume();

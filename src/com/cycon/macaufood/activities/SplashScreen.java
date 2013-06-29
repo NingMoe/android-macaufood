@@ -56,6 +56,7 @@ public class SplashScreen extends Activity {
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		MFConfig.deviceWidth = dm.widthPixels;
+		MFConfig.deviceHeight = dm.heightPixels;
 	}
 	
 	private void parseFavoriteList() {

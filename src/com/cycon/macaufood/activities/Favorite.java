@@ -24,6 +24,7 @@ import com.cycon.macaufood.widget.DDListView;
 public class Favorite extends BaseActivity {
         
 	private static final int EDIT_LIST_MENU_ID = 1;
+	private static final int DISPLAY_MAP_MENU_ID = 2;
 	private FavoriteAdapter cafeAdapter;
 	private DDListView list;
 	private boolean isEditMode;
@@ -44,6 +45,7 @@ public class Favorite extends BaseActivity {
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
 		menu.add(0, EDIT_LIST_MENU_ID, 0, R.string.editList).setIcon(R.drawable.ic_edit).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(0, DISPLAY_MAP_MENU_ID, 1, R.string.showMap).setIcon(R.drawable.map).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -62,6 +64,11 @@ public class Favorite extends BaseActivity {
 				cafeAdapter.notifyDataSetChanged();
 		        list.setDropListener(onDrop);
 			}
+			return true;
+		case DISPLAY_MAP_MENU_ID:
+			Intent i = new Intent(Favorite.this, Map.class);
+			i.putExtra("fromFavorite", true);
+			startActivity(i);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,7 +75,6 @@ public class Map extends SherlockFragmentActivity {
 	private String name;
 	private String selectedCafeId;
 	private Button searchNearby;
-	private com.actionbarsherlock.view.MenuItem mShowListMenuItem;
 	private AdvView smallBanner;
 	private View listLayout;
 	private View mapLayout;
@@ -89,11 +93,10 @@ public class Map extends SherlockFragmentActivity {
 	private TextView displaySearchQuery;
 	private boolean needPopulateMarkers;
 	private GoogleMap mMap;
-	private Marker mPreviousMarker;
 	private HashMap<Marker, String> mMarkersHashMap = new HashMap<Marker, String>();
 	private BitmapDescriptor greenBitmap;
-	private BitmapDescriptor lightBlueBitmap;
-	private BitmapDescriptor blueBitmap;
+	private BitmapDescriptor blueBitmap;;
+	private BitmapDescriptor favoriteBitmap;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -109,13 +112,13 @@ public class Map extends SherlockFragmentActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.map);
 
-		setUpMapIfNeeded();
-
 		smallBanner = (AdvView) findViewById(R.id.smallBanner);
 		list = (ListView) findViewById(R.id.list);
 		listMessage = (TextView) findViewById(R.id.listMessage);
 		mapFilterPanel = findViewById(R.id.mapFilterPanel);
 		displaySearchQuery = (TextView) findViewById(R.id.displaySearchQuery);
+		
+		setUpMapIfNeeded();
 
 		headerView = new TextView(this);
 		headerView.setText(getString(R.string.totalResultsFound, MFConfig
@@ -181,7 +184,6 @@ public class Map extends SherlockFragmentActivity {
 		});
 
 
-
 		// display list
 		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
 			needPopulateMarkers = true;
@@ -227,9 +229,9 @@ public class Map extends SherlockFragmentActivity {
 	}
 
 	private void setUpMap() {
-		greenBitmap = BitmapDescriptorFactory.defaultMarker(90);
-		lightBlueBitmap = BitmapDescriptorFactory.defaultMarker(180);
-		blueBitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+		greenBitmap = BitmapDescriptorFactory.fromResource(R.drawable.green_pin);
+		blueBitmap = BitmapDescriptorFactory.fromResource(R.drawable.blue_pin);
+		favoriteBitmap = BitmapDescriptorFactory.fromResource(R.drawable.favorite_heart_pin);
 		mMap.setMyLocationEnabled(true);
 		mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
 			
@@ -247,17 +249,17 @@ public class Map extends SherlockFragmentActivity {
 				return null;
 			}
 		});
-		mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-			
-			public boolean onMarkerClick(Marker marker) {
-				marker.setIcon(lightBlueBitmap);
-				if (mPreviousMarker != null) {
-					mPreviousMarker.setIcon(greenBitmap);
-				}
-				mPreviousMarker = marker;
-				return false;
-			}
-		});
+//		mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+//			
+//			public boolean onMarkerClick(Marker marker) {
+//				marker.setIcon(lightBlueBitmap);
+//				if (mPreviousMarker != null) {
+//					mPreviousMarker.setIcon(greenBitmap);
+//				}
+//				mPreviousMarker = marker;
+//				return false;
+//			}
+//		});
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 			
 			public void onInfoWindowClick(Marker marker) {
@@ -276,14 +278,14 @@ public class Map extends SherlockFragmentActivity {
 //				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16));
 			}
 		});
-		mMap.setOnMapClickListener(new OnMapClickListener() {
-			
-			public void onMapClick(LatLng point) {
-				if (mPreviousMarker != null) {
-					mPreviousMarker.setIcon(greenBitmap);
-				}
-			}
-		});
+//		mMap.setOnMapClickListener(new OnMapClickListener() {
+//			
+//			public void onMapClick(LatLng point) {
+//				if (mPreviousMarker != null) {
+//					mPreviousMarker.setIcon(greenBitmap);
+//				}
+//			}
+//		});
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 			
 			public void onCameraChange(CameraPosition position) {
@@ -303,7 +305,8 @@ public class Map extends SherlockFragmentActivity {
 			LatLng selectedLatLng = new LatLng(Double.parseDouble(coordx), Double.parseDouble(coordy));
 			mMap.addMarker(new MarkerOptions()
             .position(selectedLatLng)
-            .title(name));
+            .title(name)
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin)));
 			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 16));
 		}
 
@@ -321,6 +324,51 @@ public class Map extends SherlockFragmentActivity {
 				}
 			}
 		});
+		
+		if (getIntent().getBooleanExtra("fromFavorite", false)) {
+			searchNearby.setVisibility(View.GONE);
+			mapFilterPanel.setVisibility(View.GONE);
+			
+			Builder boundsBuilder = new LatLngBounds.Builder();
+			
+			for (String str : MFConfig.getInstance().getFavoriteLists()) {
+				Cafe cafe = MFConfig.getInstance().getCafeLists().get(Integer.parseInt(str) - 1);
+				boundsBuilder.include(getLatLngFromCafe(cafe));
+				Marker marker = mMap.addMarker(new MarkerOptions()
+	            .position(getLatLngFromCafe(cafe))
+	            .title(cafe.getName())
+	            .snippet(MFUtil.getDishesStringFromCafe(cafe))
+	            .icon(favoriteBitmap));
+				
+				mMarkersHashMap.put(marker, cafe.getId());
+				
+				if (MFConfig.getInstance().getFavoriteLists().size() == 1) {
+					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getLatLngFromCafe(cafe), 16));
+				}
+			}
+			if (MFConfig.getInstance().getFavoriteLists().size() > 1) {
+				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(60f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
+			}
+		} else if (getIntent().getBooleanExtra("fromBranch", false)) {
+			searchNearby.setVisibility(View.GONE);
+			mapFilterPanel.setVisibility(View.GONE);
+			
+			Builder boundsBuilder = new LatLngBounds.Builder();
+			ArrayList<Cafe> branchList = (ArrayList<Cafe>) getIntent().getSerializableExtra("branchList");
+			for (Cafe cafe : branchList) {
+				boundsBuilder.include(getLatLngFromCafe(cafe));
+				Marker marker = mMap.addMarker(new MarkerOptions()
+	            .position(getLatLngFromCafe(cafe))
+	            .title(cafe.getName())
+	            .snippet(MFUtil.getDishesStringFromCafe(cafe))
+	            .icon(greenBitmap));
+				
+				mMarkersHashMap.put(marker, cafe.getId());
+			}
+			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(60f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
+//			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFUtil.getPixelsFromDip(50f, getResources())));
+		}
+		
 	}
 
 	private void doAdvancedSearch() {
@@ -384,7 +432,7 @@ public class Map extends SherlockFragmentActivity {
 		
 		mMap.clear();
 		mMarkersHashMap.clear();
-		mPreviousMarker = null;
+//		mPreviousMarker = null;
 		
 		LatLng mapCenter = mMap.getCameraPosition().target;
 		LatLngBounds currentBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
@@ -464,7 +512,7 @@ public class Map extends SherlockFragmentActivity {
 		
 		mMap.clear();
 		mMarkersHashMap.clear();
-		mPreviousMarker = null;
+//		mPreviousMarker = null;
 		
 //		Builder boundsBuilder = new LatLngBounds.Builder();
 
@@ -514,14 +562,16 @@ public class Map extends SherlockFragmentActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		if (getIntent().getBooleanExtra("fromFavorite", false)) return false;
+		if (getIntent().getBooleanExtra("fromBranch", false)) return false;
+		
 		menu.add(0, SHOW_LIST_MENU_ID, 0, R.string.showList)
 				.setIcon(R.drawable.ic_action_list)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		mShowListMenuItem = menu.getItem(0);
 		if (MFConfig.getInstance().getSearchResultList().size() > 0) {
-			mShowListMenuItem.setIcon(R.drawable.map)
+			menu.getItem(0).setIcon(R.drawable.map)
 					.setTitle(R.string.showMap);
-		}
+		} 
 		return super.onCreateOptionsMenu(menu);
 	}
 
