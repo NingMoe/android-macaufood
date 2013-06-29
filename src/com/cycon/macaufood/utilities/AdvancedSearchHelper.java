@@ -2,6 +2,8 @@ package com.cycon.macaufood.utilities;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import com.cycon.macaufood.bean.Cafe;
 
 public class AdvancedSearchHelper {
@@ -127,7 +129,7 @@ public class AdvancedSearchHelper {
 		}
 		
 
-    	MFConfig.getInstance().getSearchResultList().clear();
+//    	MFConfig.getInstance().getSearchResultList().clear();
     	MFConfig.getInstance().getSearchResultList().addAll(0, priorityList);
 	}
 	

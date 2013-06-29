@@ -4,9 +4,14 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import android.content.res.Resources;
+import android.util.Log;
 import android.util.TypedValue;
+
+import com.cycon.macaufood.bean.Cafe;
 
 public class MFUtil {
 
@@ -26,6 +31,30 @@ public class MFUtil {
             }
         }
         catch(Exception ex){}
+    }
+    
+    public static String getDishesStringFromCafe(Cafe cafe) {
+    	StringBuilder sb = new StringBuilder();
+    	int dishes1 = Integer.parseInt(cafe.getType0() == null ? "0" : cafe.getType0());
+    	int dishes2 = Integer.parseInt(cafe.getType1());
+    	int dishes3 = Integer.parseInt(cafe.getType2());
+    	int index1 = Arrays.asList(MFConstants.dishesId).indexOf(dishes1);
+    	int index2 = Arrays.asList(MFConstants.dishesId).indexOf(dishes2);
+    	int index3 = Arrays.asList(MFConstants.dishesId).indexOf(dishes3);
+    	if (index1 != 0) {
+    		sb.append(MFConstants.dishesType[index1]);
+    	}
+    	if (index2 != 0) {
+    		sb.append(',');
+    		sb.append(MFConstants.dishesType[index2]);
+    	}
+    	if (index3 != 0) {
+    		sb.append(',');
+    		sb.append(MFConstants.dishesType[index3]);
+    	}
+    	
+    	return sb.toString();
+    	
     }
     
     

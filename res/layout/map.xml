@@ -47,17 +47,6 @@
 			  map:uiZoomControls="true"
 			  map:uiZoomGestures="true"/>
 
-        <ImageButton
-            android:id="@+id/location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_margin="7dip"
-            android:background="@drawable/light_button_bg"
-            android:padding="5dip"
-            android:src="@drawable/ic_current_location"
-            android:visibility="gone" />
-
         <Button
             android:id="@+id/searchNearby"
             android:layout_width="wrap_content"

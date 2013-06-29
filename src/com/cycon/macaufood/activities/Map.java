@@ -2,20 +2,18 @@ package com.cycon.macaufood.activities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +21,6 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -38,20 +35,23 @@ import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvView;
-import com.cycon.macaufood.widget.MyItemizedOverlay;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.LatLngBoundsCreator;
+import com.google.android.gms.maps.model.LatLngBounds.Builder;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.OverlayItem;
 
 /**
  * A list view that demonstrates the use of setEmptyView. This example alos uses
@@ -66,22 +66,10 @@ public class Map extends SherlockFragmentActivity {
 	private static final double LONG_MAX = 113.60;
 	private static final double LAT_DEFAULT = 22.19971287;
 	private static final double LONG_DEFAULT = 113.54500506;
-//	private static final long DISMISS_LOC_TIME = 60000;
-//	private static final int MIN_DIST_RELOC = 20;
 	private static LatLngBounds mMapBounds = new LatLngBounds(new LatLng(LAT_MIN, LONG_MIN), new LatLng(LAT_MAX, LONG_MAX));
-//	private ImageButton location;
-	// private MapView mapView;
-//	private MyItemizedOverlay itemizedoverlay;
-//	private MyItemizedOverlay selectRestOverlay;
-//	private MyItemizedOverlay curLocationOverlay;
-//	private LocationManager locationManager;
-//	private LocationListener locationListener;
 	private String name;
 	private String selectedCafeId;
 	private Button searchNearby;
-//	private boolean shownNearby;
-//	private long curLocationTimeStamp;
-//	private int zoomlevel;
 	private com.actionbarsherlock.view.MenuItem mShowListMenuItem;
 	private AdvView smallBanner;
 	private View listLayout;
@@ -101,6 +89,11 @@ public class Map extends SherlockFragmentActivity {
 	private TextView displaySearchQuery;
 	private boolean needPopulateMarkers;
 	private GoogleMap mMap;
+	private Marker mPreviousMarker;
+	private HashMap<Marker, String> mMarkersHashMap = new HashMap<Marker, String>();
+	private BitmapDescriptor greenBitmap;
+	private BitmapDescriptor lightBlueBitmap;
+	private BitmapDescriptor blueBitmap;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -234,11 +227,61 @@ public class Map extends SherlockFragmentActivity {
 	}
 
 	private void setUpMap() {
+		greenBitmap = BitmapDescriptorFactory.defaultMarker(90);
+		lightBlueBitmap = BitmapDescriptorFactory.defaultMarker(180);
+		blueBitmap = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
 		mMap.setMyLocationEnabled(true);
+		mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+			
+			public View getInfoWindow(Marker marker) {
+				View view = Map.this.getLayoutInflater().inflate(R.layout.balloon_overlay, null);
+				TextView title = (TextView) view.findViewById(R.id.balloon_item_title);
+				TextView snippet = (TextView) view.findViewById(R.id.balloon_item_snippet);
+				title.setText(marker.getTitle());
+				snippet.setText(marker.getSnippet());
+				return view;
+			}
+			
+			public View getInfoContents(Marker marker) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
+		mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+			
+			public boolean onMarkerClick(Marker marker) {
+				marker.setIcon(lightBlueBitmap);
+				if (mPreviousMarker != null) {
+					mPreviousMarker.setIcon(greenBitmap);
+				}
+				mPreviousMarker = marker;
+				return false;
+			}
+		});
+		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+			
+			public void onInfoWindowClick(Marker marker) {
+				String cafeId = mMarkersHashMap.get(marker);
+				Intent i = new Intent(Map.this, Details.class);
+				i.putExtra("id", cafeId);
+				startActivity(i);
+			}
+		});
+		//use location client to get last location
+//		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude()), 16));
+		mMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener() {
+			
+			public void onMyLocationChange(Location location) {
+				//maybe use location client in the future
+//				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16));
+			}
+		});
 		mMap.setOnMapClickListener(new OnMapClickListener() {
 			
 			public void onMapClick(LatLng point) {
-				Log.e("ZZZ", point.latitude + " " + point.longitude);
+				if (mPreviousMarker != null) {
+					mPreviousMarker.setIcon(greenBitmap);
+				}
 			}
 		});
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
@@ -261,7 +304,7 @@ public class Map extends SherlockFragmentActivity {
 			mMap.addMarker(new MarkerOptions()
             .position(selectedLatLng)
             .title(name));
-			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 15));
+			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 16));
 		}
 
 		searchNearby = (Button) findViewById(R.id.searchNearby);
@@ -340,6 +383,8 @@ public class Map extends SherlockFragmentActivity {
 		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>();
 		
 		mMap.clear();
+		mMarkersHashMap.clear();
+		mPreviousMarker = null;
 		
 		LatLng mapCenter = mMap.getCameraPosition().target;
 		LatLngBounds currentBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
@@ -351,6 +396,7 @@ public class Map extends SherlockFragmentActivity {
 				queue.add(cafe);
 			}
 		}
+		Builder boundsBuilder = new LatLngBounds.Builder();
 		int displayNumber = 50;
 		for (int i = 0; i < displayNumber && queue.size() > 0; i++) {
 			Cafe cafe = queue.poll();
@@ -361,13 +407,21 @@ public class Map extends SherlockFragmentActivity {
 			MFConfig.getInstance().getSearchResultList().add(cafe);
 			if (cafe.getId().equals(selectedCafeId))
 				continue;
-			mMap.addMarker(new MarkerOptions()
-            .position(getLatLngFromCafe(cafe))
+			
+			LatLng cafeLatLng = getLatLngFromCafe(cafe);
+			boundsBuilder.include(cafeLatLng);
+			Marker marker = mMap.addMarker(new MarkerOptions()
+            .position(cafeLatLng)
             .title(cafe.getName())
-            .snippet(cafe.getPhone().trim().length() == 0 ? null
-					: cafe.getPhone())
-            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+            .snippet(MFUtil.getDishesStringFromCafe(cafe))
+//            .snippet(cafe.getPhone().trim().length() == 0 ? null
+//					: cafe.getPhone())
+            .icon(blueBitmap));
+			
+			mMarkersHashMap.put(marker, cafe.getId());
 		}
+		if (mMap.getCameraPosition().zoom < 17 && MFConfig.getInstance().getSearchResultList().size() > 0)
+			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFUtil.getPixelsFromDip(50f, getResources())));
 
 		disableItemSelect = true;
 
@@ -409,15 +463,29 @@ public class Map extends SherlockFragmentActivity {
 	private void populateOverlayFromSearchList() {
 		
 		mMap.clear();
+		mMarkersHashMap.clear();
+		mPreviousMarker = null;
+		
+//		Builder boundsBuilder = new LatLngBounds.Builder();
 
 		for (Cafe cafe : MFConfig.getInstance().getSearchResultList()) {
-			mMap.addMarker(new MarkerOptions()
+//			boundsBuilder.include(getLatLngFromCafe(cafe));
+			Marker marker = mMap.addMarker(new MarkerOptions()
             .position(getLatLngFromCafe(cafe))
             .title(cafe.getName())
-            .snippet(cafe.getPhone().trim().length() == 0 ? null
-					: cafe.getPhone())
-            .icon(BitmapDescriptorFactory.defaultMarker(90)));
+            .snippet(MFUtil.getDishesStringFromCafe(cafe))
+//            .snippet(cafe.getPhone().trim().length() == 0 ? null
+//					: cafe.getPhone())
+            .icon(greenBitmap));
+			
+			mMarkersHashMap.put(marker, cafe.getId());
+			
+			
 		}
+//		LatLngBounds bounds = boundsBuilder.build();
+//		mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(50f, getResources())));
+//		Log.e("ZZZ", bounds.southwest.latitude + " " + bounds.southwest.longitude + "\n" 
+//				+ bounds.northeast.latitude + " " + bounds.northeast.longitude);
 	}
 
 	@Override

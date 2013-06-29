@@ -3,11 +3,11 @@
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
 	android:orientation="horizontal" 
-	android:paddingBottom="18dip"
+	android:paddingBottom="20dip"
 	android:paddingLeft="10dip" 
 	android:paddingRight="10dip" 
 	android:id="@+id/balloon_main_layout"
-	android:background="@drawable/balloon_bg" 
+	android:background="@drawable/balloon_overlay_bg_selector" 
 	android:paddingTop="0dip"
 	android:layout_marginRight="0dip">
 
@@ -21,14 +21,15 @@
 		<TextView android:layout_height="wrap_content"
 			android:layout_width="wrap_content" 
 			android:id="@+id/balloon_item_title"
+			android:text="balloon_item_title" 
 			android:textSize="16sp"
-			android:paddingBottom="2dp"
 			android:textColor="#FFFFFF"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:layout_width="wrap_content" 
 			android:id="@+id/balloon_item_snippet"
+			android:text="balloon_item_snippet" 
 			android:textSize="13sp"
-			android:textColor="#dddddd"></TextView>
+			android:textColor="#FFFFFF"></TextView>
 	</LinearLayout>
 	
 	<ImageView 
