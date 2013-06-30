@@ -86,6 +86,9 @@ public class AdvView extends ImageView {
 		if (cacheAdv != null && loadingAdv != null) loadingAdv.setVisibility(View.GONE); 
 		if (isSmallAdv)
 			setImageBitmap(cacheAdv);
+		
+//		if (cacheAdv )
+		
 		stopTask();
 		advTask = new FetchAdvTask();
 		AsyncTaskHelper.execute(advTask, isSmallAdv && cacheAdv != null);
@@ -108,7 +111,7 @@ public class AdvView extends ImageView {
 					Thread.sleep(REFRESH_TIME);
 				} catch (InterruptedException e1) {
 				}
-    		if (isCancelled()) return null;
+    		if (isCancelled() && cacheAdv != null) return null;
 
     		if (!MFConfig.isOnline(mContext)) return null;
     		
@@ -143,13 +146,13 @@ public class AdvView extends ImageView {
     		
     		String urlStr = "http://www.cycon.com.mo/appimages/adv_rotate_banner/" + tempLinkId + ".jpg";
             try {
-				HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-            	HttpGet request = new HttpGet(urlStr);
-            	HttpResponse response = client.execute(request);
-            	InputStream is= response.getEntity().getContent();
-				return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
+            	Bitmap bitmap = MFRequestHelper.getBitmap(urlStr, null);
+            	
+	    		linkId = tempLinkId;
+				if (isSmallAdv)
+    				cacheAdv = bitmap;
+				
+				return bitmap;
 				
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -165,9 +168,7 @@ public class AdvView extends ImageView {
     	@Override
     	protected void onPostExecute(Bitmap result) {
     		super.onPostExecute(result);
-//    		ETLog.e(TAG, "getAdv");
     		setVisibility(View.VISIBLE);
-    		linkId = tempLinkId;
     		if (result == null) {
     			if (isSmallAdv && cacheAdv == null || !isSmallAdv  && getDrawable() == null) {
     				if (loadingAdv != null)
@@ -179,8 +180,6 @@ public class AdvView extends ImageView {
     			if (loadingAdv != null)
     				loadingAdv.setVisibility(View.GONE);
     			setImageBitmap(result);
-    			if (isSmallAdv)
-    				cacheAdv = result;
     		}
     		
     		advTask = new FetchAdvTask();

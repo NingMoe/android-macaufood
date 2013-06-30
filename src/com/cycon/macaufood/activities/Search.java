@@ -387,7 +387,7 @@ public class Search extends BaseActivity {
 			return;
 		}
 		
-		AdvancedSearchHelper.search(regionIndex, dishesId, servicesIndex);
+		AdvancedSearchHelper.search(regionIndex, dishesId, servicesIndex, MFConfig.getInstance().getSearchResultList());
 		
     	if (MFConfig.getInstance().getSearchResultList().size() > 0) {
 	    	Intent i = new Intent(this, Map.class);

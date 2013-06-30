@@ -8,9 +8,9 @@ import com.cycon.macaufood.bean.Cafe;
 
 public class AdvancedSearchHelper {
 
-	public static void search(int regionIndex, int dishesId, int servicesIndex) {
+	public static void search(int regionIndex, int dishesId, int servicesIndex, ArrayList<Cafe> storeList) {
 
-		MFConfig.getInstance().getSearchResultList().clear();
+		storeList.clear();
 		
 		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
 		
@@ -101,7 +101,7 @@ public class AdvancedSearchHelper {
 			
 			if (matchDishes && matchDistrict && matchServices) {
 				if (cafe.getPriority().equals("0")) {
-					MFConfig.getInstance().getSearchResultList().add(cafe);
+					storeList.add(cafe);
 				} else {
 					int priority = Integer.parseInt(cafe.getPriority());
 					if (priorityList.size() == 0) {
@@ -129,8 +129,7 @@ public class AdvancedSearchHelper {
 		}
 		
 
-//    	MFConfig.getInstance().getSearchResultList().clear();
-    	MFConfig.getInstance().getSearchResultList().addAll(0, priorityList);
+		storeList.addAll(0, priorityList);
 	}
 	
 }

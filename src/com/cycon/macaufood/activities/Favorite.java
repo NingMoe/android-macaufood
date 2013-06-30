@@ -29,6 +29,7 @@ public class Favorite extends BaseActivity {
 	private DDListView list;
 	private boolean isEditMode;
 	private TextView noFavoriteList;
+	private com.actionbarsherlock.view.MenuItem mMapMenuItem;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,8 @@ public class Favorite extends BaseActivity {
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
 		menu.add(0, EDIT_LIST_MENU_ID, 0, R.string.editList).setIcon(R.drawable.ic_edit).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add(0, DISPLAY_MAP_MENU_ID, 1, R.string.showMap).setIcon(R.drawable.map).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		mMapMenuItem = menu.add(0, DISPLAY_MAP_MENU_ID, 1, R.string.showMap).setIcon(R.drawable.map);
+		mMapMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -55,11 +57,13 @@ public class Favorite extends BaseActivity {
 		case EDIT_LIST_MENU_ID:
 			if (isEditMode) {
 				isEditMode = false;
+				mMapMenuItem.setVisible(true);
 				item.setIcon(R.drawable.ic_edit);
 				cafeAdapter.notifyDataSetChanged();
 		        list.setDropListener(null);
 			} else {
 				isEditMode = true;
+				mMapMenuItem.setVisible(false);
 				item.setIcon(R.drawable.ic_done);
 				cafeAdapter.notifyDataSetChanged();
 		        list.setDropListener(onDrop);
