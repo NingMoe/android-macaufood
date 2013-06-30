@@ -47,6 +47,8 @@ import com.cycon.macaufood.utilities.MFConfig;
 					cafe.setContent(tempValue.toString());
 				} else if (localName.equals("timeadded")) {
 					cafe.setTimeadded(tempValue.toString());
+				} else if (localName.equals("cafeid")) {
+					cafe.setCafeId(tempValue.toString());
 				} 
 			}
 		}

@@ -6,7 +6,14 @@ public class ParsedFoodNewsHolder {
 	private String subject;
 	private String timeadded;
 	private String content;
+	private String cafeId;
 	
+	public String getCafeId() {
+		return cafeId;
+	}
+	public void setCafeId(String cafeId) {
+		this.cafeId = cafeId;
+	}
 	public String getTimeadded() {
 		return timeadded;
 	}

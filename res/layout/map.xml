@@ -58,6 +58,22 @@
             android:text="@string/searchNearby"
             android:textColor="@color/green_text"
             android:textSize="15sp" />
+        
+        
+        <Button
+            android:id="@+id/navigateIsland"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="10dip"
+            android:layout_marginBottom="15dip"
+            android:paddingTop="17dip"
+            android:background="@drawable/map_arrow_down"
+            android:gravity="center_horizontal"
+            android:text="@string/macauIsland"
+            android:textColor="@color/light_gray_text"
+            android:textSize="14sp" />
+        
     </FrameLayout>
 
     <LinearLayout

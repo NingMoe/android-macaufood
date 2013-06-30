@@ -89,7 +89,9 @@
     <string name="totalResultsFound">共有%d間餐廳</string>
     <string name="mapCenterArea">地圖中心</string>
     <string name="displaySearchQuery">搜尋名字有%s的餐廳</string>
-    <string name="googleMap">Google地圖</string>
+    <string name="googleMap">顯示在Google地圖</string>
+    <string name="macauPeninsula">澳門\n半島</string>
+    <string name="macauIsland">離島</string>
 
 <!--  About -->
     <string name="disclaimer">免責聲明</string>
@@ -114,6 +116,7 @@
     
  <!-- Food News-->
     <string name="foodNews">美食追擊</string>
+    <string name="cafeDetails">餐廳資料</string>
     
  <!-- Dialog -->
  	<string name="exitProgramPrompt">你確定要退出程式嗎?</string>

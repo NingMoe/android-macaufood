@@ -1,6 +1,7 @@
 package com.cycon.macaufood.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,11 +12,13 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 
 public class FoodNewsImage extends BaseActivity {
 
 	private static final String TAG = FoodNewsImage.class.getName();
+	private static final int DETAILS_MENU_ID = 1;
 	private String foodnews_id;
 	private boolean isError;
 
@@ -72,9 +75,27 @@ public class FoodNewsImage extends BaseActivity {
 		});
 
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		menu.add(0, DETAILS_MENU_ID, 0, R.string.cafeDetails).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case DETAILS_MENU_ID:
+			Intent i = new Intent(FoodNewsImage.this, Details.class);
+			i.putExtra("id", getIntent().getStringExtra("cafe_id"));
+			startActivity(i);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 
 	private String getUrl() {
-		Log.e("ZZZ", foodnews_id);
 		return "http://www.cycon.com.mo/appimages/article_content/"
 				+ foodnews_id + ".jpg";
 	}

@@ -76,6 +76,9 @@ public class Map extends SherlockFragmentActivity {
 	private static final double LONG_MAX = 113.60;
 	private static final double LAT_DEFAULT = 22.19971287;
 	private static final double LONG_DEFAULT = 113.54500506;
+	private static final double LAT_DEFAULT_ISLAND = 22.148;
+	private static final double LONG_DEFAULT_ISLAND = 113.559;
+	private static final double LAT_ISLAND_BOUNDARY = 22.1735;
 	private static LatLngBounds mMapBounds = new LatLngBounds(new LatLng(LAT_MIN, LONG_MIN), new LatLng(LAT_MAX, LONG_MAX));
 	private String selectedCafeId;
 	private Button searchNearby;
@@ -102,6 +105,7 @@ public class Map extends SherlockFragmentActivity {
 	private HashMap<Marker, String> mMarkersHashMap = new HashMap<Marker, String>();
 	private MarkerOptions mSelectedMarkerOptions;
 	private Marker mSelectedMarker;
+	private Button navigateIsland;
 	private BitmapDescriptor greenBitmap;
 	private BitmapDescriptor blueBitmap;;
 	private BitmapDescriptor favoriteBitmap;
@@ -129,6 +133,7 @@ public class Map extends SherlockFragmentActivity {
 		listMessage = (TextView) findViewById(R.id.listMessage);
 		mapFilterPanel = findViewById(R.id.mapFilterPanel);
 		displaySearchQuery = (TextView) findViewById(R.id.displaySearchQuery);
+		navigateIsland = (Button) findViewById(R.id.navigateIsland);
 		
 		setUpMapIfNeeded();
 
@@ -304,9 +309,7 @@ public class Map extends SherlockFragmentActivity {
 //		mMap.setOnMapClickListener(new OnMapClickListener() {
 //			
 //			public void onMapClick(LatLng point) {
-//				if (mPreviousMarker != null) {
-//					mPreviousMarker.setIcon(greenBitmap);
-//				}
+//				Log.e("ZZZ", point.latitude + " " + point.longitude);
 //			}
 //		});
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
@@ -314,8 +317,18 @@ public class Map extends SherlockFragmentActivity {
 			public void onCameraChange(CameraPosition position) {
 				if (mMapBounds.contains(position.target)) {
 					searchNearby.setText(R.string.searchNearby);
+					navigateIsland.setVisibility(View.VISIBLE);
 				} else {
 					searchNearby.setText(R.string.backToMacau);
+					navigateIsland.setVisibility(View.GONE);
+				}
+				
+				if (position.target.latitude < LAT_ISLAND_BOUNDARY) {
+					navigateIsland.setBackgroundResource(R.drawable.map_arrow_up);
+					navigateIsland.setText(R.string.macauPeninsula);
+				} else {
+					navigateIsland.setBackgroundResource(R.drawable.map_arrow_down);
+					navigateIsland.setText(R.string.macauIsland);
 				}
 			}
 		});
@@ -393,6 +406,17 @@ public class Map extends SherlockFragmentActivity {
 			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(70f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
 //			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFUtil.getPixelsFromDip(50f, getResources())));
 		}
+		
+		navigateIsland.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View arg0) {
+				if (navigateIsland.getText().toString().equals(getString(R.string.macauPeninsula))) {
+					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LAT_DEFAULT, LONG_DEFAULT), 14));
+				} else {
+					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LAT_DEFAULT_ISLAND, LONG_DEFAULT_ISLAND), 13.6f));
+				}
+			}
+		});
 		
 	}
 

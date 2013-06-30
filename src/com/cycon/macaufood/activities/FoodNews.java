@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.FoodNewsListAdapter;
 import com.cycon.macaufood.bean.ImageType;
@@ -103,9 +104,11 @@ public class FoodNews extends SherlockFragment {
 			
 			String foodnews_id = MFConfig.getInstance().getFoodNewsList().get(position).getId();
 			String foodnews_name = MFConfig.getInstance().getFoodNewsList().get(position).getSubject();
+			String cafe_id = MFConfig.getInstance().getFoodNewsList().get(position).getCafeId();
 			Intent i = new Intent(mContext, FoodNewsImage.class);
 			i.putExtra("foodnews_id", foodnews_id);
 			i.putExtra("foodnews_name", foodnews_name);
+			i.putExtra("cafe_id", cafe_id);
 			startActivity(i);
 			
 		}
@@ -159,7 +162,6 @@ public class FoodNews extends SherlockFragment {
 		}
 	}
     
-	@SuppressLint("NewApi")
 	public void refresh() {
 		if (MFConfig.isOnline(mContext)) {
 			((Home)getActivity()).refresh();
