@@ -178,7 +178,6 @@ public class Recommend extends SherlockFragment {
 		}
 	}
     
-	@SuppressLint("NewApi")
 	public void refresh() {
 		if (MFConfig.isOnline(mContext)) {
 			((Home)getActivity()).refresh();

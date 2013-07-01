@@ -2,6 +2,8 @@ package com.cycon.macaufood.activities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -317,7 +319,11 @@ public class Map extends SherlockFragmentActivity {
 			public void onCameraChange(CameraPosition position) {
 				if (mMapBounds.contains(position.target)) {
 					searchNearby.setText(R.string.searchNearby);
-					navigateIsland.setVisibility(View.VISIBLE);
+					if (position.zoom > 13) {
+						navigateIsland.setVisibility(View.VISIBLE);
+					} else {
+						navigateIsland.setVisibility(View.GONE);
+					}
 				} else {
 					searchNearby.setText(R.string.backToMacau);
 					navigateIsland.setVisibility(View.GONE);
@@ -505,6 +511,7 @@ public class Map extends SherlockFragmentActivity {
 			}
 		}
 		Builder boundsBuilder = new LatLngBounds.Builder();
+		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
 		int displayNumber = 50;
 		for (int i = 0; i < displayNumber && queue.size() > 0; i++) {
 			Cafe cafe = queue.poll();
@@ -512,9 +519,16 @@ public class Map extends SherlockFragmentActivity {
 				displayNumber++;
 				continue;
 			}
-			searchResultCafes.add(cafe);
-			if (cafe.getId().equals(selectedCafeId))
+			if (cafe.getId().equals(selectedCafeId)) {
+				displayNumber++;
 				continue;
+			}
+			
+			if (cafe.getPriority().equals("0")) {
+				searchResultCafes.add(cafe);
+			} else {
+				priorityList.add(cafe);
+			}
 			
 			LatLng cafeLatLng = getLatLngFromCafe(cafe);
 			boundsBuilder.include(cafeLatLng);
@@ -528,6 +542,18 @@ public class Map extends SherlockFragmentActivity {
 			
 			mMarkersHashMap.put(marker, cafe.getId());
 		}
+		
+		Collections.sort(priorityList, new Comparator<Cafe>() {
+			public int compare(Cafe cafe1, Cafe cafe2) {
+				
+				return Integer.parseInt(cafe2.getPriority()) - Integer.parseInt(cafe1.getPriority());
+			};
+			
+		});
+		
+		searchResultCafes.addAll(0, priorityList);
+		
+		
 		if (mMap.getCameraPosition().zoom < 17 && searchResultCafes.size() > 0)
 			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFUtil.getPixelsFromDip(50f, getResources())));
 

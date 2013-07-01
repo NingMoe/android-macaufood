@@ -1,6 +1,8 @@
 package com.cycon.macaufood.utilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.util.Log;
 
@@ -99,36 +101,25 @@ public class AdvancedSearchHelper {
 					matchServices = false;
 			}
 			
+			
 			if (matchDishes && matchDistrict && matchServices) {
 				if (cafe.getPriority().equals("0")) {
 					storeList.add(cafe);
 				} else {
-					int priority = Integer.parseInt(cafe.getPriority());
-					if (priorityList.size() == 0) {
-						priorityList.add(cafe);
-					} else {
-						boolean added = false;
-						for (int i = 0; i < priorityList.size(); i++) {
-							if (Integer.parseInt(priorityList.get(i).getPriority())
-									< priority) {
-								priorityList.add(i, cafe);
-								added = true;
-								break;
-							}
-						}
-						if (!added) {
-							priorityList.add(cafe);
-						}
-						
-					}
+					priorityList.add(cafe);
 				}
 			}
 			
-			
-			
 		}
 		
-
+		Collections.sort(priorityList, new Comparator<Cafe>() {
+			public int compare(Cafe cafe1, Cafe cafe2) {
+				
+				return Integer.parseInt(cafe2.getPriority()) - Integer.parseInt(cafe1.getPriority());
+			};
+			
+		});
+		
 		storeList.addAll(0, priorityList);
 	}
 	

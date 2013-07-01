@@ -106,6 +106,9 @@ public class Details extends BaseActivity {
 		
 		setTitle(cafe.getName());
 		name.setText(cafe.getName());
+		if (cafe.getName().length() >= 19) {
+			name.setTextSize(20f);
+		}
 		addr.setText(cafe.getAddress());
 		phone.setText(cafe.getPhone());
 		final String websiteStr = cafe.getWebsite().trim();

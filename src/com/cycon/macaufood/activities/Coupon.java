@@ -442,7 +442,6 @@ public class Coupon extends SherlockFragment {
 		}
 	}
 
-	@SuppressLint("NewApi")
 	public void refresh() {
 		if (MFConfig.isOnline(mContext)) {
 			((Home) getActivity()).refresh();
