@@ -53,8 +53,8 @@ public class Home extends SherlockFragmentActivity {
 		if (MFConfig.getInstance().getCafeLists().size() == 0) {
 			Intent i = new Intent(this, SplashScreen.class);
 			startActivity(i);
-			android.os.Process.killProcess(android.os.Process.myPid());
 			finish();
+			android.os.Process.killProcess(android.os.Process.myPid());
 			return;
 		} 
 
@@ -189,6 +189,7 @@ public class Home extends SherlockFragmentActivity {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
+									finish();
 									Process.killProcess(Process.myPid());
 								}
 

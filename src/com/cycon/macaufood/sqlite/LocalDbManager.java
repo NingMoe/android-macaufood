@@ -106,6 +106,8 @@ public class LocalDbManager {
 	}
 
 	public synchronized void getCafeListFromDB() {
+		MFConfig.getInstance().getCafeLists().clear();
+		
 		String getCafeEntriesSql = context
 				.getString(R.string.getCafeEntriesSql);
 

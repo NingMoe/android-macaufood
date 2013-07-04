@@ -21,12 +21,13 @@ public abstract class BaseActivity extends SherlockActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		if (MFConfig.getInstance().getCafeLists().size() == 0) {
-			android.os.Process.killProcess(android.os.Process.myPid());
+			//this order is critical, dont change
 			finish();
+			android.os.Process.killProcess(android.os.Process.myPid());
 			return;
 		} 
-		super.onCreate(savedInstanceState);
 		
 		setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		mActionBar = getSupportActionBar();

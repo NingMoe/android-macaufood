@@ -115,14 +115,15 @@ public class Map extends SherlockFragmentActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// use same logic as in BaseActivity
-		if (MFConfig.getInstance().getCafeLists().size() == 0) {
-			Process.killProcess(Process.myPid());
-			finish();
-			return;
-		}
 
 		super.onCreate(savedInstanceState);
+
+		// use same logic as in BaseActivity
+		if (MFConfig.getInstance().getCafeLists().size() == 0) {
+			finish();
+			Process.killProcess(Process.myPid());
+			return;
+		}
 		
 		searchResultCafes = new ArrayList<Cafe>(MFConfig.getInstance().getSearchResultList());
 		MFConfig.getInstance().getSearchResultList().clear();
