@@ -19,6 +19,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.FeedBackDialogHelper;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.DDListView;
 
 public class Favorite extends BaseActivity {
@@ -148,16 +149,12 @@ public class Favorite extends BaseActivity {
 					MFConfig.getInstance().getFavoriteLists().remove(position);
 					notifyDataSetChanged();
 					
-					SharedPreferences prefs = getSharedPreferences(
-							"macaufood.preferences", 0);
-					Editor prefsPrivateEditor = prefs.edit();
-					
-					String str = ""; 
+					StringBuilder sb = new StringBuilder();
 					for (String id : MFConfig.getInstance().getFavoriteLists()) {
-						str += id + ",";
+						sb.append(id);
+						sb.append(',');
 					}
-					prefsPrivateEditor.putString("favorites", str);
-					prefsPrivateEditor.commit();
+					PreferenceHelper.savePreferencesStr(Favorite.this, "favorites", sb.toString());
 				}
 			});
 

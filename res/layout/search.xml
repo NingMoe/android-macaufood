@@ -90,6 +90,41 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_centerHorizontal="true"/>
+				
+			<LinearLayout 
+			    android:id="@+id/historyLayout"
+			    android:orientation="vertical"
+			    android:layout_width="fill_parent"
+			    android:layout_height="fill_parent"
+			  	android:visibility="gone">
+			  		  
+			    <TextView
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:text="@string/searchHistory"
+			        android:textColor="@color/light_gray_text"
+			        android:drawableLeft="@drawable/ic_history"
+			        android:textSize="13sp"
+			        android:paddingLeft="16dp"
+			        android:paddingBottom="4dp"
+			        android:paddingTop="4dp"
+			        android:gravity="center_vertical"
+			        />
+			   <View
+                android:layout_width="fill_parent"
+                android:layout_height="1px"
+                android:background="@android:drawable/divider_horizontal_bright"
+                />
+			    
+			    <ListView 
+			  	android:id="@+id/historyList"
+			  	android:requiresFadingEdge="vertical"
+			  	android:layout_width="fill_parent"
+			  	android:layout_height="fill_parent"
+			  	android:cacheColorHint="#00000000"
+			/>	 
+			    
+			</LinearLayout>
 	  		  	
 	  		
 	  		<ListView 

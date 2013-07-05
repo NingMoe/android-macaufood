@@ -38,6 +38,7 @@ import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.PhoneUtils;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 
 public class Details extends BaseActivity {
 	
@@ -353,10 +354,6 @@ public class Details extends BaseActivity {
 	}
 	
 	private void toggleAddFavorite(MenuItem item) {
-
-			SharedPreferences prefs = getSharedPreferences(
-					"macaufood.preferences", 0);
-			Editor prefsPrivateEditor = prefs.edit();
 		
 			if (isFavorite) {
 				isFavorite = false;
@@ -369,12 +366,12 @@ public class Details extends BaseActivity {
 				MFConfig.getInstance().getFavoriteLists().add(cafe.getId());
 				Toast.makeText(Details.this, getString(R.string.alreadyInFavorite), Toast.LENGTH_SHORT).show();
 			}
-			String str = ""; 
+			StringBuilder sb = new StringBuilder();
 			for (String id : MFConfig.getInstance().getFavoriteLists()) {
-				str += id + ",";
+				sb.append(id);
+				sb.append(',');
 			}
-			prefsPrivateEditor.putString("favorites", str);
-			prefsPrivateEditor.commit();
+			PreferenceHelper.savePreferencesStr(this, "favorites", sb.toString());
 	}
 	
 	private class FetchImageTask extends AsyncTask<Void, Void, Bitmap> {

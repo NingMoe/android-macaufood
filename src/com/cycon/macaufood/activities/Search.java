@@ -1,6 +1,7 @@
 package com.cycon.macaufood.activities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kankan.wheel.widget.OnWheelChangedListener;
 import kankan.wheel.widget.WheelView;
@@ -10,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -24,7 +26,9 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,6 +45,7 @@ import com.cycon.macaufood.utilities.AdvancedSearchHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvViewPager;
 import com.cycon.macaufood.widget.DirectSearchLayout;
 import com.cycon.macaufood.widget.GalleryNavigator;
@@ -57,6 +62,7 @@ public class Search extends BaseActivity {
 	private View clearBtn;
 	private Button searchBtn;
 	private ListView searchList;
+	private ListView historyList;
 	private TextView regionTitle;
 	private WheelView region;
 	private WheelView dishesType;
@@ -67,9 +73,11 @@ public class Search extends BaseActivity {
 	
 	private ArrayList<Cafe> searchCafes = new ArrayList<Cafe>();
 	private SearchAdapter searchAdapter;
+	private ArrayList<String> historyStrings = new ArrayList<String>();
+	private HistoryAdapter historyAdapter;
+	private View historyLayout;
+	private boolean isShrink;
 	
-	
-	private int fromWhichSearch; //1 = direct search, 2 = advanced search 
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +103,7 @@ public class Search extends BaseActivity {
         searchList = (ListView) findViewById(R.id.searchList);
         searchAdapter = new SearchAdapter(searchCafes);
         searchList.setAdapter(searchAdapter);
-        searchList.setOnItemClickListener(itemClickListener);
+        searchList.setOnItemClickListener(searchAdapter);
         searchList.setOnTouchListener(new OnTouchListener() {
 			
 			public boolean onTouch(View v, MotionEvent event) {
@@ -105,6 +113,32 @@ public class Search extends BaseActivity {
 				return false;
 			}
 		});
+        
+        historyLayout = findViewById(R.id.historyLayout);
+        historyList = (ListView) findViewById(R.id.historyList);
+        TextView footer = new TextView(this);
+        footer.setText("123");
+        historyList.addFooterView(footer);
+        String historyStr = PreferenceHelper.getPreferenceValueStr(this, "searchHistoryStr", "");
+        if (historyStr.contains("||")) {
+        	String strArray[] = historyStr.split("\\|\\|");
+            for (String str : strArray) {
+            	historyStrings.add(str);
+            }
+		}
+        
+        historyAdapter = new HistoryAdapter(this, 0, historyStrings);
+        historyList.setAdapter(historyAdapter);
+        historyList.setOnItemClickListener(historyAdapter);
+        historyList.setOnTouchListener(new OnTouchListener() {
+					
+					public boolean onTouch(View v, MotionEvent event) {
+						if (event.getAction() == MotionEvent.ACTION_DOWN) {
+							hideKeyboard();
+						}
+						return false;
+					}
+				});
         
 		navi = (GalleryNavigator) findViewById(R.id.navi);
 		advViewPager = (AdvViewPager) findViewById(R.id.gallery);
@@ -118,7 +152,6 @@ public class Search extends BaseActivity {
 			
 			public void onClick(View v) {
 				doAdvancedSearch();
-				fromWhichSearch = 2;
 			}
 		});
         
@@ -129,6 +162,7 @@ public class Search extends BaseActivity {
 				searchTextBox.setText("");
 				clearBtn.setVisibility(View.GONE);
 				searchCafes.clear();
+				searchAdapter.notifyDataSetChanged();
 				shrink();
 				showKeyboard(searchTextBox);
 			}
@@ -150,6 +184,12 @@ public class Search extends BaseActivity {
 			
 			public void onClick(View v) {
 					shrink();
+					if (searchTextBox.getText().toString().trim().length() == 0) {
+						historyLayout.setVisibility(View.VISIBLE);
+					}
+
+					navi.setVisibility(View.GONE);
+					advViewPager.setVisibility(View.GONE);
 //					clearBtn.setVisibility(View.VISIBLE);
 			}
 		});
@@ -160,8 +200,6 @@ public class Search extends BaseActivity {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
 					hideKeyboard(v);
 					doPostDirectSearch();
-//					expand();
-					fromWhichSearch = 1;
 					return true;
 				}
 				return false;
@@ -176,8 +214,6 @@ public class Search extends BaseActivity {
 					case KeyEvent.KEYCODE_ENTER:
 						hideKeyboard(v);
 						doPostDirectSearch();
-//						expand();
-						fromWhichSearch = 1;
 						return true;
 					}
 				}
@@ -188,19 +224,26 @@ public class Search extends BaseActivity {
         searchTextBox.addTextChangedListener(new TextWatcher() {
 			
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				Log.e("ZZZ", "text changed");
 				if (s.toString().trim().length() == 0) {
+					Log.e("ZZZ", "text changed 0");
 					searchList.setVisibility(View.GONE);
 					clearBtn.setVisibility(View.GONE);
 					searchCafes.clear();
-					advViewPager.setVisibility(View.VISIBLE);
-					navi.setVisibility(View.VISIBLE);
+					searchAdapter.notifyDataSetChanged();
+//					advViewPager.setVisibility(View.VISIBLE);
+//					navi.setVisibility(View.VISIBLE);
+					
+					historyLayout.setVisibility(View.VISIBLE);
 //					banner.startTask();
 				} else {
 					clearBtn.setVisibility(View.VISIBLE);
 					searchList.setVisibility(View.VISIBLE);
 					doDirectSearch(s.toString());
-					navi.setVisibility(View.GONE);
-					advViewPager.setVisibility(View.GONE);
+//					navi.setVisibility(View.GONE);
+//					advViewPager.setVisibility(View.GONE);
+
+					historyLayout.setVisibility(View.GONE);
 //					banner.stopTask();
 				}
 			}
@@ -279,13 +322,26 @@ public class Search extends BaseActivity {
         	Intent i = new Intent(Search.this, Details.class);
     		i.putExtra("id", searchCafes.get(0).getId());
     		startActivity(i);
+        	historyStrings.remove(searchCafes.get(0).getName());
+        	historyStrings.add(0, searchCafes.get(0).getName());
     	} else if (searchCafes.size() > 1) {
 	    	MFConfig.getInstance().getSearchResultList().clear();
 	    	MFConfig.getInstance().getSearchResultList().addAll(searchCafes);
 	    	Intent i = new Intent(this, Map.class);
-	    	i.putExtra("querySearch", searchTextBox.getText().toString().trim());
+	    	String queryText = searchTextBox.getText().toString().trim();
+	    	i.putExtra("querySearch", queryText);
 	    	startActivity(i);
+	    	historyStrings.remove(queryText);
+	    	historyStrings.add(0, queryText);
     	}
+    	
+		StringBuilder sb = new StringBuilder();
+		for (String str : historyStrings) {
+			sb.append(str);
+			sb.append("||");
+		}
+		PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", sb.toString().substring(0, sb.length() - 2));
+		historyAdapter.notifyDataSetChanged();
     }
     
     @Override
@@ -320,13 +376,24 @@ public class Search extends BaseActivity {
     
     public void shrink() {
     	mActionBar.hide();
+    	isShrink = true;
     }
     
     public void expand() {
     	mActionBar.show();
+    	isShrink = false;
     	if (searchTextBox.getText().toString().equals("")) {
     		clearBtn.setVisibility(View.GONE);
     	}
+    }
+    
+    @Override
+    public void onBackPressed() {
+    	if (isShrink) {
+			expand();
+		} else {
+			super.onBackPressed();
+		}
     }
     
 	private void doDirectSearch(String query) {
@@ -407,18 +474,8 @@ public class Search extends BaseActivity {
 							}).show();
     	}
 	}
-	
-    AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
-		public void onItemClick(AdapterView<?> parent, View view,
-				int position, long id) {
-    		
-			Intent i = new Intent(Search.this, Details.class);
-			i.putExtra("id", searchCafes.get(position).getId());
-			startActivity(i);
-    	};
-    };
     
-	class SearchAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
+	private class SearchAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
 
         private final ArrayList<Cafe> cafes;
 
@@ -469,8 +526,69 @@ public class Search extends BaseActivity {
 			Intent i = new Intent(Search.this, Details.class);
 			i.putExtra("id", cafes.get(position).getId());
 			startActivity(i);
+			historyStrings.remove(cafes.get(position).getName());
+			historyStrings.add(0, cafes.get(position).getName());
+			StringBuilder sb = new StringBuilder();
+			for (String str : historyStrings) {
+				sb.append(str);
+				sb.append("||");
+			}
+			PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", sb.toString().substring(0, sb.length() - 2));
+			historyAdapter.notifyDataSetChanged();
         }
     }
+	
+	private class HistoryAdapter extends ArrayAdapter<String> implements AdapterView.OnItemClickListener {
+
+		public HistoryAdapter(Context context, int textViewResourceId,
+				List<String> objects) {
+			super(context, textViewResourceId, objects);
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			String str = getItem(position);
+        	
+            TextView text;
+            
+            if (convertView == null) {
+                text = new TextView(Search.this);
+                text.setTextColor(getResources().getColor(R.color.tab_gray_text));
+                text.setTextSize(16f);
+                int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
+                int topPadding = MFUtil.getPixelsFromDip(5, getResources());
+                text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
+            } else {
+                text = (TextView)convertView;
+            }
+            
+            text.setText(str);
+
+            return text;
+		}
+
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			
+			String name = getItem(position);
+			
+			for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
+				
+				if (name.equals(cafe.getName())) {
+					Intent i = new Intent(Search.this, Details.class);
+					i.putExtra("id", cafe.getId());
+					startActivity(i);
+					return;
+				}
+			}
+			
+			searchTextBox.setText(name);
+			searchAdapter.notifyDataSetChanged();
+			
+		}
+		
+		
+		
+	}
 	
 	private class TabsAdapter implements ActionBar.TabListener {
 

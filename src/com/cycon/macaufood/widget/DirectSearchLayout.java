@@ -40,19 +40,19 @@ public class DirectSearchLayout extends LinearLayout {
 		this.activity = activity;
 	}
 	
-	@Override
-	public boolean dispatchKeyEventPreIme(KeyEvent event) {
-		
-		InputMethodManager imm = (InputMethodManager) activity
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-
-            if (imm.isActive() && event.getAction() == KeyEvent.ACTION_DOWN &&  
-            		event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            
-            	activity.expand();
-            }
-		return super.dispatchKeyEventPreIme(event);
-	}
+//	@Override
+//	public boolean dispatchKeyEventPreIme(KeyEvent event) {
+//		
+//		InputMethodManager imm = (InputMethodManager) activity
+//                .getSystemService(Context.INPUT_METHOD_SERVICE);
+//
+//            if (imm.isActive() && event.getAction() == KeyEvent.ACTION_DOWN &&  
+//            		event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+//            
+//            	activity.expand();
+//            }
+//		return super.dispatchKeyEventPreIme(event);
+//	}
 	
 }
 	
