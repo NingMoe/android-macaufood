@@ -22,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -76,6 +77,7 @@ public class Search extends BaseActivity {
 	private ArrayList<String> historyStrings = new ArrayList<String>();
 	private HistoryAdapter historyAdapter;
 	private View historyLayout;
+//	private TextView footer;
 	private boolean isShrink;
 	
 	
@@ -104,30 +106,56 @@ public class Search extends BaseActivity {
         searchAdapter = new SearchAdapter(searchCafes);
         searchList.setAdapter(searchAdapter);
         searchList.setOnItemClickListener(searchAdapter);
-        searchList.setOnTouchListener(new OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					hideKeyboard();
-				}
-				return false;
-			}
-		});
+//        searchList.setOnTouchListener(new OnTouchListener() {
+//			
+//			public boolean onTouch(View v, MotionEvent event) {
+//				if (event.getAction() == MotionEvent.ACTION_UP) {
+//					hideKeyboard(v);
+//				}
+//				return false;
+//			}
+//		});
         
         historyLayout = findViewById(R.id.historyLayout);
         historyList = (ListView) findViewById(R.id.historyList);
-        TextView footer = new TextView(this);
-        footer.setText("123");
-        historyList.addFooterView(footer);
+        
         String historyStr = PreferenceHelper.getPreferenceValueStr(this, "searchHistoryStr", "");
+        Log.e("ZZZ", "history str = " + historyStr);
         if (historyStr.contains("||")) {
         	String strArray[] = historyStr.split("\\|\\|");
             for (String str : strArray) {
             	historyStrings.add(str);
             }
+		} else if (!historyStr.equals("")) {
+			historyStrings.add(historyStr);
 		}
         
-        historyAdapter = new HistoryAdapter(this, 0, historyStrings);
+//        footer = new TextView(this);
+//        footer.setBackgroundResource(R.drawable.transparent_selector_bg);
+//        footer.setTextColor(getResources().getColor(R.color.light_gray_text));
+//        footer.setTextSize(16f);
+//        int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
+//        int topPadding = MFUtil.getPixelsFromDip(5, getResources());
+//        footer.setPadding(leftPadding, topPadding, leftPadding, topPadding);
+//        footer.setText(R.string.clearHistory);
+//        footer.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_clear_history, 0, 0, 0);
+//        footer.setOnClickListener(new OnClickListener() {
+//			
+//			public void onClick(View arg0) {
+//				historyStrings.clear();
+//				historyAdapter.notifyDataSetChanged();
+//				PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", "");
+//				historyList.removeFooterView(footer);
+//			}
+//		});
+//
+//		historyList.addFooterView(footer);
+//        
+//        if (historyStrings.size() > 0) {
+//			historyList.addFooterView(footer);
+//		}
+        
+        historyAdapter = new HistoryAdapter();
         historyList.setAdapter(historyAdapter);
         historyList.setOnItemClickListener(historyAdapter);
         historyList.setOnTouchListener(new OnTouchListener() {
@@ -139,6 +167,7 @@ public class Search extends BaseActivity {
 						return false;
 					}
 				});
+        
         
 		navi = (GalleryNavigator) findViewById(R.id.navi);
 		advViewPager = (AdvViewPager) findViewById(R.id.gallery);
@@ -174,7 +203,6 @@ public class Search extends BaseActivity {
 //			
 //			public void onFocusChange(View v, boolean hasFocus) {
 //				if (!hasFocus) {
-//					expand();
 //					hideKeyboard(v);
 //				} 
 //			}
@@ -224,9 +252,7 @@ public class Search extends BaseActivity {
         searchTextBox.addTextChangedListener(new TextWatcher() {
 			
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				Log.e("ZZZ", "text changed");
 				if (s.toString().trim().length() == 0) {
-					Log.e("ZZZ", "text changed 0");
 					searchList.setVisibility(View.GONE);
 					clearBtn.setVisibility(View.GONE);
 					searchCafes.clear();
@@ -235,7 +261,6 @@ public class Search extends BaseActivity {
 //					navi.setVisibility(View.VISIBLE);
 					
 					historyLayout.setVisibility(View.VISIBLE);
-//					banner.startTask();
 				} else {
 					clearBtn.setVisibility(View.VISIBLE);
 					searchList.setVisibility(View.VISIBLE);
@@ -244,7 +269,6 @@ public class Search extends BaseActivity {
 //					advViewPager.setVisibility(View.GONE);
 
 					historyLayout.setVisibility(View.GONE);
-//					banner.stopTask();
 				}
 			}
 			
@@ -289,6 +313,7 @@ public class Search extends BaseActivity {
         mActionBar.addTab(tab2);
     }
     
+    
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
@@ -322,8 +347,7 @@ public class Search extends BaseActivity {
         	Intent i = new Intent(Search.this, Details.class);
     		i.putExtra("id", searchCafes.get(0).getId());
     		startActivity(i);
-        	historyStrings.remove(searchCafes.get(0).getName());
-        	historyStrings.add(0, searchCafes.get(0).getName());
+    		addToHistoryAndUpdate(searchCafes.get(0).getName());
     	} else if (searchCafes.size() > 1) {
 	    	MFConfig.getInstance().getSearchResultList().clear();
 	    	MFConfig.getInstance().getSearchResultList().addAll(searchCafes);
@@ -331,17 +355,8 @@ public class Search extends BaseActivity {
 	    	String queryText = searchTextBox.getText().toString().trim();
 	    	i.putExtra("querySearch", queryText);
 	    	startActivity(i);
-	    	historyStrings.remove(queryText);
-	    	historyStrings.add(0, queryText);
+	    	addToHistoryAndUpdate(queryText);
     	}
-    	
-		StringBuilder sb = new StringBuilder();
-		for (String str : historyStrings) {
-			sb.append(str);
-			sb.append("||");
-		}
-		PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", sb.toString().substring(0, sb.length() - 2));
-		historyAdapter.notifyDataSetChanged();
     }
     
     @Override
@@ -523,53 +538,74 @@ public class Search extends BaseActivity {
 
 
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        	hideKeyboard();
 			Intent i = new Intent(Search.this, Details.class);
 			i.putExtra("id", cafes.get(position).getId());
 			startActivity(i);
-			historyStrings.remove(cafes.get(position).getName());
-			historyStrings.add(0, cafes.get(position).getName());
-			StringBuilder sb = new StringBuilder();
-			for (String str : historyStrings) {
-				sb.append(str);
-				sb.append("||");
-			}
-			PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", sb.toString().substring(0, sb.length() - 2));
-			historyAdapter.notifyDataSetChanged();
+	    	addToHistoryAndUpdate(cafes.get(position).getName());
         }
     }
 	
-	private class HistoryAdapter extends ArrayAdapter<String> implements AdapterView.OnItemClickListener {
+	private class HistoryAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
 
-		public HistoryAdapter(Context context, int textViewResourceId,
-				List<String> objects) {
-			super(context, textViewResourceId, objects);
-		}
 		
-		@Override
+        public int getCount() {
+            return historyStrings.size() == 0 ? 0 : historyStrings.size() + 1;
+        }
+
+        public Object getItem(int position) {
+            return position;
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+		
 		public View getView(int position, View convertView, ViewGroup parent) {
-			String str = getItem(position);
+			if (position == getCount() - 1) {
+				TextView clearTv = new TextView(Search.this);
+				clearTv.setTextColor(getResources().getColor(R.color.light_gray_text));
+				clearTv.setTextSize(16f);
+				clearTv.setText(R.string.clearHistory);
+				clearTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_clear_history, 0, 0, 0);
+                int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
+                int topPadding = MFUtil.getPixelsFromDip(4, getResources());
+                clearTv.setPadding(leftPadding, topPadding, leftPadding, topPadding);
+                return clearTv;
+			}
+			
+			String str = historyStrings.get(position);
         	
             TextView text;
             
             if (convertView == null) {
                 text = new TextView(Search.this);
-                text.setTextColor(getResources().getColor(R.color.tab_gray_text));
-                text.setTextSize(16f);
-                int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
-                int topPadding = MFUtil.getPixelsFromDip(5, getResources());
-                text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
             } else {
                 text = (TextView)convertView;
             }
             
             text.setText(str);
+            text.setTextSize(17f);
+            int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
+            int topPadding = MFUtil.getPixelsFromDip(5, getResources());
+            text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
+            text.setTextColor(getResources().getColor(R.color.tab_gray_text));
+            text.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
             return text;
 		}
 
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			if (position == getCount() - 1) {
+				historyStrings.clear();
+				historyAdapter.notifyDataSetChanged();
+				PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", "");
+//				historyList.removeFooterView(footer);
+				return;
+			}
 			
-			String name = getItem(position);
+			
+			String name = historyStrings.get(position);
 			
 			for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
 				
@@ -577,18 +613,45 @@ public class Search extends BaseActivity {
 					Intent i = new Intent(Search.this, Details.class);
 					i.putExtra("id", cafe.getId());
 					startActivity(i);
+					addToHistoryAndUpdate(name);
 					return;
 				}
 			}
 			
 			searchTextBox.setText(name);
 			searchAdapter.notifyDataSetChanged();
+			addToHistoryAndUpdate(name);
 			
 		}
 		
-		
+	}
+	
+	private void addToHistoryAndUpdate(String name) {
+		historyStrings.remove(name);
+		historyStrings.add(0, name);
+		StringBuilder sb = new StringBuilder();
+		for (String str : historyStrings) {
+			sb.append(str);
+			sb.append("||");
+		}
+		PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", sb.toString().substring(0, sb.length() - 2));
 		
 	}
+	
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+//		if (historyStrings.size() > 0) {
+//			Log.e("ZZZ", "addfooterview");
+////			historyList.addFooterView(footer);
+//			footer.setVisibility(View.VISIBLE);
+//		} else {
+////			historyList.removeFooterView(footer);
+//			footer.setVisibility(View.GONE);
+//		}
+		historyAdapter.notifyDataSetChanged();
+	}
+	
 	
 	private class TabsAdapter implements ActionBar.TabListener {
 
