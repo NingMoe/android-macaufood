@@ -31,6 +31,7 @@ public class Favorite extends BaseActivity {
 	private boolean isEditMode;
 	private TextView noFavoriteList;
 	private com.actionbarsherlock.view.MenuItem mMapMenuItem;
+	private com.actionbarsherlock.view.MenuItem mEditMenuItem;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,8 @@ public class Favorite extends BaseActivity {
     
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-		menu.add(0, EDIT_LIST_MENU_ID, 0, R.string.editList).setIcon(R.drawable.ic_edit).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		mEditMenuItem = menu.add(0, EDIT_LIST_MENU_ID, 0, R.string.editList).setIcon(R.drawable.ic_edit);
+		mEditMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		mMapMenuItem = menu.add(0, DISPLAY_MAP_MENU_ID, 1, R.string.showMap).setIcon(R.drawable.map);
 		mMapMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return super.onCreateOptionsMenu(menu);
@@ -59,13 +61,13 @@ public class Favorite extends BaseActivity {
 			if (isEditMode) {
 				isEditMode = false;
 				mMapMenuItem.setVisible(true);
-				item.setIcon(R.drawable.ic_edit);
+				mEditMenuItem.setIcon(R.drawable.ic_edit);
 				cafeAdapter.notifyDataSetChanged();
 		        list.setDropListener(null);
 			} else {
 				isEditMode = true;
 				mMapMenuItem.setVisible(false);
-				item.setIcon(R.drawable.ic_done);
+				mEditMenuItem.setIcon(R.drawable.ic_done);
 				cafeAdapter.notifyDataSetChanged();
 		        list.setDropListener(onDrop);
 			}
@@ -108,6 +110,8 @@ public class Favorite extends BaseActivity {
         } else {
         	noFavoriteList.setVisibility(View.GONE);
         }
+        if (mEditMenuItem != null)
+        	mEditMenuItem.setIcon(R.drawable.ic_edit);
 		isEditMode = false;
         list.setDropListener(null);
     	cafeAdapter.notifyDataSetChanged();

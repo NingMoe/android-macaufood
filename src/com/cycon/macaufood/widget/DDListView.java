@@ -22,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -302,8 +303,9 @@ public class DDListView extends ListView {
     
     private void stopDragging() {
         if (mDragView != null) {
-//            WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
+            WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
 //            wm.removeView(mDragView);
+            wm.removeViewImmediate(mDragView);
             mDragView.setImageDrawable(null);
             mDragView = null;
         }

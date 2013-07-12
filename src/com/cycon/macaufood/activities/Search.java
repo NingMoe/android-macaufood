@@ -78,6 +78,7 @@ public class Search extends BaseActivity {
 	private HistoryAdapter historyAdapter;
 	private View historyLayout;
 //	private TextView footer;
+	private TextView clearTv;
 	private boolean isShrink;
 	
 	
@@ -130,6 +131,21 @@ public class Search extends BaseActivity {
 			historyStrings.add(historyStr);
 		}
         
+        clearTv = (TextView) findViewById(R.id.clearHistory);
+        clearTv.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View arg0) {
+				historyStrings.clear();
+				historyAdapter.notifyDataSetChanged();
+				PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", "");
+				clearTv.setVisibility(View.GONE);
+			}
+		});
+        
+        if (historyStrings.size() == 0) {
+        	clearTv.setVisibility(View.GONE);
+		}
+        
 //        footer = new TextView(this);
 //        footer.setBackgroundResource(R.drawable.transparent_selector_bg);
 //        footer.setTextColor(getResources().getColor(R.color.light_gray_text));
@@ -155,7 +171,7 @@ public class Search extends BaseActivity {
 //			historyList.addFooterView(footer);
 //		}
         
-        historyAdapter = new HistoryAdapter();
+        historyAdapter = new HistoryAdapter(this, 0, historyStrings);
         historyList.setAdapter(historyAdapter);
         historyList.setOnItemClickListener(historyAdapter);
         historyList.setOnTouchListener(new OnTouchListener() {
@@ -546,66 +562,38 @@ public class Search extends BaseActivity {
         }
     }
 	
-	private class HistoryAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
+	private class HistoryAdapter extends ArrayAdapter<String> implements AdapterView.OnItemClickListener {
 
+		public HistoryAdapter(Context context, int textViewResourceId,
+				List<String> objects) {
+			super(context, textViewResourceId, objects);
+		}
 		
-        public int getCount() {
-            return historyStrings.size() == 0 ? 0 : historyStrings.size() + 1;
-        }
-
-        public Object getItem(int position) {
-            return position;
-        }
-
-        public long getItemId(int position) {
-            return position;
-        }
-		
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			if (position == getCount() - 1) {
-				TextView clearTv = new TextView(Search.this);
-				clearTv.setTextColor(getResources().getColor(R.color.light_gray_text));
-				clearTv.setTextSize(16f);
-				clearTv.setText(R.string.clearHistory);
-				clearTv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_clear_history, 0, 0, 0);
-                int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
-                int topPadding = MFUtil.getPixelsFromDip(4, getResources());
-                clearTv.setPadding(leftPadding, topPadding, leftPadding, topPadding);
-                return clearTv;
-			}
-			
-			String str = historyStrings.get(position);
+			String str = getItem(position);
         	
             TextView text;
             
             if (convertView == null) {
                 text = new TextView(Search.this);
+                text.setTextColor(getResources().getColor(R.color.tab_gray_text));
+                text.setTextSize(17f);
+                int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
+                int topPadding = MFUtil.getPixelsFromDip(5, getResources());
+                text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
             } else {
                 text = (TextView)convertView;
             }
             
             text.setText(str);
-            text.setTextSize(17f);
-            int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
-            int topPadding = MFUtil.getPixelsFromDip(5, getResources());
-            text.setPadding(leftPadding, topPadding, leftPadding, topPadding);
-            text.setTextColor(getResources().getColor(R.color.tab_gray_text));
-            text.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
             return text;
 		}
 
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			if (position == getCount() - 1) {
-				historyStrings.clear();
-				historyAdapter.notifyDataSetChanged();
-				PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", "");
-//				historyList.removeFooterView(footer);
-				return;
-			}
 			
-			
-			String name = historyStrings.get(position);
+			String name = getItem(position);
 			
 			for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
 				
@@ -619,8 +607,8 @@ public class Search extends BaseActivity {
 			}
 			
 			searchTextBox.setText(name);
-			searchAdapter.notifyDataSetChanged();
 			addToHistoryAndUpdate(name);
+			searchAdapter.notifyDataSetChanged();
 			
 		}
 		
@@ -641,14 +629,14 @@ public class Search extends BaseActivity {
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-//		if (historyStrings.size() > 0) {
-//			Log.e("ZZZ", "addfooterview");
-////			historyList.addFooterView(footer);
-//			footer.setVisibility(View.VISIBLE);
-//		} else {
-////			historyList.removeFooterView(footer);
-//			footer.setVisibility(View.GONE);
-//		}
+		if (historyStrings.size() > 0) {
+			Log.e("ZZZ", "addfooterview");
+//			historyList.addFooterView(footer);
+			clearTv.setVisibility(View.VISIBLE);
+		} else {
+//			historyList.removeFooterView(footer);
+			clearTv.setVisibility(View.GONE);
+		}
 		historyAdapter.notifyDataSetChanged();
 	}
 	

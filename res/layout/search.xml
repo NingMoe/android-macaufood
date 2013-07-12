@@ -104,8 +104,9 @@
 			        android:orientation="horizontal">
 			  		  
 			    <TextView
-			        android:layout_width="wrap_content"
+			        android:layout_width="0dip"
 			        android:layout_height="wrap_content"
+			        android:layout_weight="1"
 			        android:text="@string/searchHistory"
 			        android:textColor="@color/light_gray_text"
 			        android:drawableLeft="@drawable/ic_history"
@@ -117,16 +118,17 @@
 			        />
 			    
 			    <TextView
+			        android:id="@+id/clearHistory"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:text="@string/clearHistory"
+			        android:text="@string/clear"
 			        android:textColor="@color/light_gray_text"
-			        android:drawableLeft="@drawable/ic_history"
 			        android:textSize="13sp"
-			        android:paddingLeft="16dp"
+			        android:paddingRight="16dp"
 			        android:paddingBottom="4dp"
 			        android:paddingTop="4dp"
 			        android:gravity="center_vertical"
+			        android:layout_gravity="right"
 			        />
 			    
 			    </LinearLayout>

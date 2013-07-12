@@ -41,6 +41,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.AdvancedSearchHelper;
+import com.cycon.macaufood.utilities.LatLngBoundHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
@@ -112,6 +113,7 @@ public class Map extends SherlockFragmentActivity {
 	private BitmapDescriptor blueBitmap;;
 	private BitmapDescriptor favoriteBitmap;
 	private ArrayList<Cafe> searchResultCafes;
+	private boolean isFirstPopulateFromSearch;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -213,6 +215,7 @@ public class Map extends SherlockFragmentActivity {
 			smallBanner.startTask();
 			mapLayout.setVisibility(View.GONE);
 			setTitle(R.string.searchResults);
+			isFirstPopulateFromSearch = true;
 		}
 
 		String queryText = getIntent().getStringExtra("querySearch");
@@ -251,6 +254,7 @@ public class Map extends SherlockFragmentActivity {
 	}
 
 	private void setUpMap() {
+		Log.e("ZZZ", "setupmap");
 		greenBitmap = BitmapDescriptorFactory.fromResource(R.drawable.green_pin);
 		blueBitmap = BitmapDescriptorFactory.fromResource(R.drawable.blue_pin);
 		favoriteBitmap = BitmapDescriptorFactory.fromResource(R.drawable.favorite_heart_pin);
@@ -392,7 +396,7 @@ public class Map extends SherlockFragmentActivity {
 				}
 			}
 			if (MFConfig.getInstance().getFavoriteLists().size() > 1) {
-				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(70f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
+				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(96f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
 			}
 		} else if (getIntent().getBooleanExtra("fromBranch", false)) {
 			searchNearby.setVisibility(View.GONE);
@@ -410,8 +414,13 @@ public class Map extends SherlockFragmentActivity {
 				
 				mMarkersHashMap.put(marker, cafe.getId());
 			}
-			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(70f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
+			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(96f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
 //			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFUtil.getPixelsFromDip(50f, getResources())));
+		}
+		
+		if (needPopulateMarkers) {
+			needPopulateMarkers = false;
+			populateOverlayFromSearchList();
 		}
 		
 		navigateIsland.setOnClickListener(new OnClickListener() {
@@ -597,6 +606,7 @@ public class Map extends SherlockFragmentActivity {
 
 	private void populateOverlayFromSearchList() {
 		
+		
 		mMap.clear();
 		mMarkersHashMap.clear();
 
@@ -605,27 +615,72 @@ public class Map extends SherlockFragmentActivity {
 			mSelectedMarker = mMap.addMarker(mSelectedMarkerOptions);
 		}
 		
-//		Builder boundsBuilder = new LatLngBounds.Builder();
+		Builder boundsBuilder = new LatLngBounds.Builder();
 
 		for (Cafe cafe : searchResultCafes) {
-//			boundsBuilder.include(getLatLngFromCafe(cafe));
 			if (cafe.getId().equals(selectedCafeId)) continue;
 			
 			Marker marker = mMap.addMarker(new MarkerOptions()
             .position(getLatLngFromCafe(cafe))
             .title(cafe.getName())
             .snippet(MFUtil.getDishesStringFromCafe(cafe))
-//            .snippet(cafe.getPhone().trim().length() == 0 ? null
-//					: cafe.getPhone())
             .icon(greenBitmap));
 			
 			mMarkersHashMap.put(marker, cafe.getId());
 			
+			//TODO temp
+			if (cafe.getId().equals("1943") || cafe.getId().equals("163") || cafe.getId().equals("1977") || cafe.getId().equals("750")|| cafe.getId().equals("172") || cafe.getId().equals("35")) continue;
+			boundsBuilder.include(getLatLngFromCafe(cafe));
+			
 		}
-//		LatLngBounds bounds = boundsBuilder.build();
-//		mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(50f, getResources())));
-//		Log.e("ZZZ", bounds.southwest.latitude + " " + bounds.southwest.longitude + "\n" 
-//				+ bounds.northeast.latitude + " " + bounds.northeast.longitude);
+		
+		if (regionSpinner.getSelectedItemPosition() == 0) return;
+		
+		if (searchResultCafes.size() == 0) {
+			LatLngBounds bounds = LatLngBoundHelper.regionBounds[regionSpinner.getSelectedItemPosition()];
+			Log.e("ZZZ", "bounds = " + bounds.northeast.longitude);
+			if (bounds != null) {
+				if (isFirstPopulateFromSearch) {
+					isFirstPopulateFromSearch = false;
+					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFConfig.deviceWidth , list.getHeight() + smallBanner.getHeight(), MFUtil.getPixelsFromDip(00f, getResources())));
+				} else {
+					mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(00f, getResources())));
+				}
+			}
+			return;
+		}
+		if (searchResultCafes.size() == 1) {
+			if (isFirstPopulateFromSearch) {
+				isFirstPopulateFromSearch = false;
+				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getLatLngFromCafe(searchResultCafes.get(0)), 17));
+			} else {
+				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getLatLngFromCafe(searchResultCafes.get(0)), 17));
+			}
+			return;
+		}
+		
+		if (searchResultCafes.size() == 2) {
+			LatLng cafe1LatLng = getLatLngFromCafe(searchResultCafes.get(0));
+			LatLng cafe2LatLng = getLatLngFromCafe(searchResultCafes.get(1));
+			double dist = Math.hypot(cafe1LatLng.latitude - cafe2LatLng.latitude, cafe1LatLng.longitude - cafe2LatLng.longitude);
+			if (dist < 0.002) {
+				if (isFirstPopulateFromSearch) {
+					isFirstPopulateFromSearch = false;
+					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((cafe1LatLng.latitude + cafe2LatLng.latitude) / 2, (cafe1LatLng.longitude + cafe2LatLng.longitude) / 2), 17));
+				} else {
+					mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((cafe1LatLng.latitude + cafe2LatLng.latitude) / 2, (cafe1LatLng.longitude + cafe2LatLng.longitude) / 2), 17));
+				}
+				return;
+			}
+		}
+		
+		LatLngBounds bounds = boundsBuilder.build();Log.e("ZZZ", bounds.northeast.longitude + "");
+		if (isFirstPopulateFromSearch) {
+			isFirstPopulateFromSearch = false;
+			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFConfig.deviceWidth , list.getHeight() + smallBanner.getHeight(), MFUtil.getPixelsFromDip(50f, getResources())));
+		} else {
+			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(50f, getResources())));
+		}
 	}
 
 	@Override
@@ -681,16 +736,16 @@ public class Map extends SherlockFragmentActivity {
 		switch (item.getItemId()) {
 		case SHOW_LIST_MENU_ID:
 			if (listLayout.isShown()) {
-				if (needPopulateMarkers) {
-					needPopulateMarkers = false;
-					populateOverlayFromSearchList();
-				}
 				listLayout.setVisibility(View.GONE);
 				smallBanner.stopTask();
 				mapLayout.setVisibility(View.VISIBLE);
 				item.setIcon(R.drawable.ic_action_list).setTitle(
 						R.string.showList);
 				setTitle(R.string.map_search);
+				if (needPopulateMarkers) {
+					needPopulateMarkers = false;
+					populateOverlayFromSearchList();
+				}
 			} else {
 				listLayout.setVisibility(View.VISIBLE);
 				smallBanner.startTask();

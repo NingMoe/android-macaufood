@@ -61,7 +61,6 @@
 <!--  Search -->
     <string name="search">搜尋</string>
     <string name="searchHistory">搜尋記錄</string>
-    <string name="clearHistory">清除記錄</string>
     <string name="directSearch">直接搜尋</string>
     <string name="advancedSearch">進階搜尋</string>
     <string name="cancel">取消</string>
