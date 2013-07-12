@@ -24,7 +24,7 @@
 		  		android:layout_weight="1"
 		  		android:textColor="#FFFFFF"
 		  		android:text="@string/normalCoupon"
-		  		android:textSize="15sp"
+		  		android:textSize="14sp"
 		  		android:gravity="center"
 		  		android:background="@drawable/tab_normal_coupon_selected"/>
 		  		
@@ -40,7 +40,7 @@
 		  		android:layout_weight="1"
 		  		android:textColor="#40C28a"
 		  		android:text="@string/creditCoupon"
-		  		android:textSize="15sp"
+		  		android:textSize="14sp"
 		  		android:gravity="center"
 		  		android:background="@drawable/tab_credit_coupon_unselected"/>
 		  		
@@ -57,7 +57,7 @@
 			  		android:singleLine="true"
 			  		android:textColor="#EF6666"
 			  		android:text="@string/vipCoupon"
-			  		android:textSize="15sp"
+			  		android:textSize="14sp"
 			  		android:gravity="center"
 			  		android:background="@drawable/tab_vip_coupon_unselected"
 			  		android:paddingRight="5dip"/>
