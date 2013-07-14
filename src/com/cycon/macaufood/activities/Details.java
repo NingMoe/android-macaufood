@@ -208,16 +208,6 @@ public class Details extends BaseActivity {
 				public void onClick(View v) {
 					if (getIntent().getBooleanExtra("fromMap", false)) {
 						finish();
-//					} else if (getIntent().getBooleanExtra("fromMapList", false)) {
-//						Log.e("ZZZ", "frommmaplist");
-////						Intent i = new Intent(Details.this, Map.class);
-////						i.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-////						i.putExtra("id", cafe.getId());
-////						startActivity(i);
-//						Intent i = new Intent();
-//						i.putExtra("id", cafe.getId());
-//						setResult(RESULT_OK, i);
-//						finish();
 					} else {
 						Intent i = new Intent(Details.this, Map.class);
 						i.putExtra("coordx", cafe.getCoordx());

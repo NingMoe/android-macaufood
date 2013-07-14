@@ -38,7 +38,7 @@
 	    android:layout_below="@id/name"
 	    android:layout_toRightOf="@id/imageView"
 	    android:paddingLeft="7dip"
-	    android:paddingRight="0dip"
+	    android:paddingRight="7dip"
 	    android:maxLines="2"
 	    />
   		

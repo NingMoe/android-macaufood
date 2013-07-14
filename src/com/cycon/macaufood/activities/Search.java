@@ -121,7 +121,6 @@ public class Search extends BaseActivity {
         historyList = (ListView) findViewById(R.id.historyList);
         
         String historyStr = PreferenceHelper.getPreferenceValueStr(this, "searchHistoryStr", "");
-        Log.e("ZZZ", "history str = " + historyStr);
         if (historyStr.contains("||")) {
         	String strArray[] = historyStr.split("\\|\\|");
             for (String str : strArray) {
@@ -630,11 +629,8 @@ public class Search extends BaseActivity {
 	protected void onRestart() {
 		super.onRestart();
 		if (historyStrings.size() > 0) {
-			Log.e("ZZZ", "addfooterview");
-//			historyList.addFooterView(footer);
 			clearTv.setVisibility(View.VISIBLE);
 		} else {
-//			historyList.removeFooterView(footer);
 			clearTv.setVisibility(View.GONE);
 		}
 		historyAdapter.notifyDataSetChanged();

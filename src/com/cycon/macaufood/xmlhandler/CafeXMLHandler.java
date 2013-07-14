@@ -33,12 +33,8 @@ import com.cycon.macaufood.utilities.MFConfig;
 			
 			if (localName.equals("cafe")) {
 				MFConfig.getInstance().getCafeLists().add(cafe);
-//				LocalDaoManager.getInstance().addCafeEntry(cafe.getId() == null ? "" : cafe.getId(), 
-//						cafe.getName() == null ? "" : cafe.getName(), cafe.getAddress() == null ? "" : cafe.getAddress());
-//				ETLog.e("ZZZ", "set " + cafe.getId());
 			} else {
 				try {
-//					Log.e(localName, tempValue.toString());
 					cafe.setAnyField(localName, tempValue.toString());
 				} catch (Exception e) {
 					Log.e("CafeXMLHandler", "setFieldException " + e.getMessage());
@@ -51,18 +47,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 		public void characters(char[] ch, int start, int length)
 		throws SAXException {
 			
-//		if (currentElement) {
-//			if (length == 0) {
-//				currentValue = "";
-//			} else {
 				tempValue.append(ch, start, length); // append to buffer
-//				currentValue = new String(ch, start, length);
-//				Log.e("length", new String(ch) + " " + start + " " + length);
-//				currentElement = false;
-//			}
-//		} else {
-//			currentValue = "";
-//		}
 
 		}
 	}

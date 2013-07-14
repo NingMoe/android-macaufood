@@ -254,7 +254,6 @@ public class Map extends SherlockFragmentActivity {
 	}
 
 	private void setUpMap() {
-		Log.e("ZZZ", "setupmap");
 		greenBitmap = BitmapDescriptorFactory.fromResource(R.drawable.green_pin);
 		blueBitmap = BitmapDescriptorFactory.fromResource(R.drawable.blue_pin);
 		favoriteBitmap = BitmapDescriptorFactory.fromResource(R.drawable.favorite_heart_pin);
@@ -638,13 +637,12 @@ public class Map extends SherlockFragmentActivity {
 		
 		if (searchResultCafes.size() == 0) {
 			LatLngBounds bounds = LatLngBoundHelper.regionBounds[regionSpinner.getSelectedItemPosition()];
-			Log.e("ZZZ", "bounds = " + bounds.northeast.longitude);
 			if (bounds != null) {
 				if (isFirstPopulateFromSearch) {
 					isFirstPopulateFromSearch = false;
-					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFConfig.deviceWidth , list.getHeight() + smallBanner.getHeight(), MFUtil.getPixelsFromDip(00f, getResources())));
+					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFConfig.deviceWidth , list.getHeight() + smallBanner.getHeight(), MFUtil.getPixelsFromDip(50f, getResources())));
 				} else {
-					mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(00f, getResources())));
+					mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(50f, getResources())));
 				}
 			}
 			return;
@@ -674,7 +672,7 @@ public class Map extends SherlockFragmentActivity {
 			}
 		}
 		
-		LatLngBounds bounds = boundsBuilder.build();Log.e("ZZZ", bounds.northeast.longitude + "");
+		LatLngBounds bounds = boundsBuilder.build();
 		if (isFirstPopulateFromSearch) {
 			isFirstPopulateFromSearch = false;
 			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFConfig.deviceWidth , list.getHeight() + smallBanner.getHeight(), MFUtil.getPixelsFromDip(50f, getResources())));
@@ -787,35 +785,6 @@ public class Map extends SherlockFragmentActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-//	@Override
-//	protected void onNewIntent(Intent intent) {
-//		Log.e("ZZZ", "onnewintent");
-//		super.onNewIntent(intent);
-//	}
-	
-//	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		if (requestCode == SHOW_MAP_REQUEST_CODE) {
-//			if (resultCode == RESULT_OK) {
-//				if (needPopulateMarkers) {
-//					needPopulateMarkers = false;
-//					populateOverlayFromSearchList();
-//				}
-//				listLayout.setVisibility(View.GONE);
-//				mapLayout.setVisibility(View.VISIBLE);
-//				mOptionsItem.setIcon(R.drawable.ic_action_list).setTitle(
-//						R.string.showList);
-//				setTitle(R.string.map_search);
-//				for (Marker marker : mMarkersHashMap.keySet()) {
-//					if (mMarkersHashMap.get(marker).equals(data.getStringExtra("id"))) {
-//						marker.showInfoWindow();
-//						mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
-//						break;
-//					}
-//				}
-//			}
-//		}
-//	};
 
 	AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView<?> parent, View view, int position,
