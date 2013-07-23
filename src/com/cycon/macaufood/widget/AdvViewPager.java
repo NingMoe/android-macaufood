@@ -333,7 +333,7 @@ public class AdvViewPager extends ViewPager {
 				
 				public void onClick(View arg0) {
 					if (linkIdList.size() != 0) {
-						String url = "http://www.cycon.com.mo/xml_advclick.php?id= " + linkIdList.get(pos) + "&code=" + MFConfig.DEVICE_ID;
+						String url = "http://www.cycon.com.mo/xml_advclick.php?id=" + linkIdList.get(pos) + "&code=" + MFConfig.DEVICE_ID;
 						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 						mContext.startActivity(myIntent);
 					}
