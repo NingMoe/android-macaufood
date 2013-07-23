@@ -627,8 +627,8 @@ public class Map extends SherlockFragmentActivity {
 			
 			mMarkersHashMap.put(marker, cafe.getId());
 			
-			//TODO temp
-			if (cafe.getId().equals("1943") || cafe.getId().equals("163") || cafe.getId().equals("1977") || cafe.getId().equals("750")|| cafe.getId().equals("172") || cafe.getId().equals("35")) continue;
+//			//TODO temp
+//			if (cafe.getId().equals("1943") || cafe.getId().equals("163") || cafe.getId().equals("1977") || cafe.getId().equals("750")|| cafe.getId().equals("172") || cafe.getId().equals("35")) continue;
 			boundsBuilder.include(getLatLngFromCafe(cafe));
 			
 		}

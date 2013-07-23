@@ -51,6 +51,7 @@ public class Favorite extends BaseActivity {
 		mEditMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		mMapMenuItem = menu.add(0, DISPLAY_MAP_MENU_ID, 1, R.string.showMap).setIcon(R.drawable.map);
 		mMapMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        updateMapMenuItem();
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -64,6 +65,7 @@ public class Favorite extends BaseActivity {
 				mEditMenuItem.setIcon(R.drawable.ic_edit);
 				cafeAdapter.notifyDataSetChanged();
 		        list.setDropListener(null);
+		        updateMapMenuItem();
 			} else {
 				isEditMode = true;
 				mMapMenuItem.setVisible(false);
@@ -102,14 +104,32 @@ public class Favorite extends BaseActivity {
 				prefsPrivateEditor.commit();
 		}
 	};
-    
-    protected void onResume() {
-    	super.onResume();
+	
+	private void updateMapMenuItem() {
+		
         if (MFConfig.getInstance().getFavoriteLists().size() == 0) {
         	noFavoriteList.setVisibility(View.VISIBLE);
         } else {
         	noFavoriteList.setVisibility(View.GONE);
         }
+		
+		if (mMapMenuItem == null) {
+			return;
+		}
+		
+		if (MFConfig.getInstance().getFavoriteLists().size() == 0) {
+			mMapMenuItem.setVisible(false);
+			mEditMenuItem.setVisible(false);
+		} else {
+			mMapMenuItem.setVisible(true);
+			mEditMenuItem.setVisible(true);
+		}
+	}
+    
+    protected void onResume() {
+    	super.onResume();
+
+        updateMapMenuItem();
         if (mEditMenuItem != null)
         	mEditMenuItem.setIcon(R.drawable.ic_edit);
 		isEditMode = false;
