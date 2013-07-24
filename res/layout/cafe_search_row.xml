@@ -23,9 +23,9 @@
 	    android:paddingLeft="9dip"
 	    android:paddingRight="7dip"
 	    android:singleLine="true"
-	    android:shadowDy="2"
+	    android:shadowDy="@integer/shadow_dy"
 	    android:shadowColor="#999999"
-	    android:shadowRadius="2"
+	    android:shadowRadius="1"
 	    android:ellipsize="marquee"
 	    />
 	    

@@ -607,6 +607,7 @@ int id websiteRow 0x7f07005f
 int id websiteRowSep 0x7f070061
 int id wrap_content 0x7f070005
 int integer abs__max_action_buttons 0x7f0b0000
+int integer shadow_dy 0x7f0b0001
 int layout about 0x7f030000
 int layout abs__action_bar_home 0x7f030001
 int layout abs__action_bar_tab 0x7f030002
