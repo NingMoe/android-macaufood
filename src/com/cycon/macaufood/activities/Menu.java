@@ -103,7 +103,7 @@ public class Menu extends BaseActivity {
 		AlertDialog dialog = new AlertDialog.Builder(Menu.this)
 		.setTitle("撥打電話")
 		.setMessage(number1)
-		.setPositiveButton(number2 == null ? "撥打" : "打電話1",
+		.setNeutralButton(number2 == null ? "撥打" : "打電話1",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,	int whichButton) {
 						Intent intent = new Intent(Intent.ACTION_DIAL);
@@ -122,7 +122,7 @@ public class Menu extends BaseActivity {
 		
 		if (number2 != null) {
 			dialog.setMessage("電話1:  " + number1 + "\n" + "電話2:  " + number2);
-			dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "打電話2", 
+			dialog.setButton(AlertDialog.BUTTON_POSITIVE, "打電話2", 
 					new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					Intent intent = new Intent(Intent.ACTION_DIAL);
