@@ -1,19 +1,29 @@
 package com.cycon.macaufood.activities;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Process;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -25,6 +35,9 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
+import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
@@ -45,6 +58,7 @@ public class Home extends SherlockFragmentActivity {
 	private ProgressDialog pDialog;
 	private long dataTimeStamp;
 	private boolean isShowingDisclaimer;
+	private static boolean showFrontPage = true;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -119,7 +133,33 @@ public class Home extends SherlockFragmentActivity {
 		
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY, 0);
         
+        if (showFrontPage) {
+			new Handler().postDelayed(new Runnable() {
+				public void run() {
+					FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
+					File f = fileCache.getFile("1");
+					Bitmap bitmap = decodeFile(f);
+					if (bitmap != null) {
+						Intent i = new Intent(Home.this, FrontPage.class);
+						startActivity(i);
+						overridePendingTransition(R.anim.front_page_fade_in, 0);
+						showFrontPage = false;
+					}
+					//fetch new front page after show front page
+					MFRequestHelper.fetchFrontPage(getApplicationContext());
+				}
+			}, 2000);
+        }
 	}
+	
+    private Bitmap decodeFile(File f){
+        try {
+            return BitmapFactory.decodeStream(new FileInputStream(f));
+        } catch (FileNotFoundException e) {
+        	Log.e(TAG, "filenotfounde");
+        }
+        return null;
+    }
 	
 	private void showDisclaimerDialog() {
 		AlertDialog dialog = new AlertDialog.Builder(this)
@@ -156,8 +196,8 @@ public class Home extends SherlockFragmentActivity {
 	}
 	
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 		if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD && !isShowingDisclaimer)
 			refresh();
 		if (banner != null)
@@ -165,8 +205,8 @@ public class Home extends SherlockFragmentActivity {
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
+	protected void onStop() {
+		super.onStop();
 		if (banner != null)
 			banner.stopTask();
 	}

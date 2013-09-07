@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.nio.MappedByteBuffer;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,6 +28,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import com.cycon.macaufood.activities.BaseActivity;
+import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.xmlhandler.UpdateXMLHandler;
 
@@ -36,6 +38,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
 
 public class MFRequestHelper {
 	
@@ -76,6 +79,13 @@ public class MFRequestHelper {
 		}
 	}
 	
+	public static void fetchFrontPage(Context c) {
+		appContext = c;
+		if (MFConfig.isOnline(appContext)) {
+			AsyncTaskHelper.executeWithResultBitmap(new FetchFrontPageTask());
+		}
+	}
+	
 	private static InputStream executeRequest(String url) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
 		HttpParams httpParams = client.getParams();
@@ -93,9 +103,11 @@ public class MFRequestHelper {
 			return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
 		}
 
+		Log.e("ZZZ", "fetch is");
 		OutputStream os = new FileOutputStream(cacheFile);
 		MFUtil.CopyStream(is, os);
 		os.close();
+		Log.e("ZZZ", "copied");
 
 		FileInputStream fis = new FileInputStream(cacheFile);
 		return BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis));
@@ -131,6 +143,30 @@ public class MFRequestHelper {
 		rd.close();
 		return sb.toString().trim();
 	}
+	
+    public static class FetchFrontPageTask extends AsyncTask<Void, Void, Bitmap> {
+    	
+    	@Override
+    	protected Bitmap doInBackground(Void... params) {
+
+    		String urlStr = "http://www.cycon.com.mo/appimages/front_page/1.jpg"; 
+    		
+            try {
+            	FileCache fileCache = new FileCache(appContext, ImageType.FRONTPAGE);
+				File f = fileCache.getFile("1");
+				return MFRequestHelper.getBitmap(urlStr, f);
+				
+			} catch (MalformedURLException e) {
+				Log.e(TAG, "malformed url exception");
+				e.printStackTrace();
+			} catch (IOException e) {
+				Log.e(TAG, "io exception");
+				e.printStackTrace();
+			} 
+    		
+    		return null;
+    	}
+    }
 	
 	
     public static class FetchUpdateTask extends AsyncTask<Void, Void, Void> {

@@ -21,6 +21,7 @@ import com.cycon.macaufood.activities.Intro.FetchPageTask;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFRequestHelper;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 
 public class SplashScreen extends Activity {

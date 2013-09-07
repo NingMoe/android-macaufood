@@ -33,7 +33,8 @@
         android:theme="@style/MFTheme" >
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAakgxwAfweyriTfcvC7SObXrF741B2UC0" />
+            android:value="AIzaSyBX6QnBM5orc8D0E0nX5e8KFtP4S8sPUok" />
+            <!-- android:value="AIzaSyAakgxwAfweyriTfcvC7SObXrF741B2UC0" -->
 
         <activity
             android:name=".activities.SplashScreen"
@@ -44,6 +45,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.FrontPage"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".activities.Home"
             android:screenOrientation="portrait"
