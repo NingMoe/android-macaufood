@@ -51,19 +51,16 @@ public class MFFetchListHelper {
 			isFetching = true;
 
 			homeActivity.showProgressDialog();
-			FetchListInfo recommendInfo = new FetchListInfo(MFConstants.RECOMMEND_URL, MFConstants.RECOMMEND_XML_FILE_NAME, ImageType.RECOMMEND, MFConfig.tempParsedRecommendCafeList, MFConfig.getInstance().getRecommendCafeList());
-			FetchListInfo normalCouponInfo = new FetchListInfo(MFConstants.NORMAL_COUPON_URL, MFConstants.NORMAL_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedNormalCouponCafeList, MFConfig.getInstance().getNormalCouponCafeList());
-			FetchListInfo creditCouponInfo = new FetchListInfo(MFConstants.CREDIT_COUPON_URL, MFConstants.CREDIT_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedCreditCouponCafeList, MFConfig.getInstance().getCreditCouponCafeList());
-			FetchListInfo vipCouponInfo = new FetchListInfo(MFConstants.VIP_COUPON_URL, MFConstants.VIP_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedVipCouponCafeList, MFConfig.getInstance().getVipCouponCafeList());
-			FetchListInfo foodNewsInfo = new FetchListInfo(MFConstants.FOOD_NEWS_URL, MFConstants.FOODNEWS_XML_FILE_NAME, ImageType.FOODNEWS, MFConfig.tempParsedFoodNewsList, MFConfig.getInstance().getFoodNewsList());
+			FetchListInfo recommendInfo = new FetchListInfo(MFURL.RECOMMEND_LIST, MFConstants.RECOMMEND_XML_FILE_NAME, ImageType.RECOMMEND, MFConfig.tempParsedRecommendCafeList, MFConfig.getInstance().getRecommendCafeList());
+			FetchListInfo normalCouponInfo = new FetchListInfo(MFURL.NORMAL_COUPON_LIST, MFConstants.NORMAL_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedNormalCouponCafeList, MFConfig.getInstance().getNormalCouponCafeList());
+			FetchListInfo creditVipCouponInfo = new FetchListInfo(MFURL.CREDIT_VIP_COUPON_LIST, MFConstants.CREDIT_VIP_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedCreditVipCouponCafeList, MFConfig.getInstance().getCreditVipCouponCafeList());
+			FetchListInfo foodNewsInfo = new FetchListInfo(MFURL.FOOD_NEWS_LIST, MFConstants.FOODNEWS_XML_FILE_NAME, ImageType.FOODNEWS, MFConfig.tempParsedFoodNewsList, MFConfig.getInstance().getFoodNewsList());
 			AsyncTaskHelper.execute(new FetchXmlTask(recommendInfo,
 					homeActivity));
 			AsyncTaskHelper.execute(new FetchXmlTask(
 					normalCouponInfo, homeActivity));
 			AsyncTaskHelper.execute(new FetchXmlTask(
-					creditCouponInfo, homeActivity));
-			AsyncTaskHelper.execute(new FetchXmlTask(vipCouponInfo,
-					homeActivity));
+					creditVipCouponInfo, homeActivity));
 			AsyncTaskHelper.execute(new FetchXmlTask(foodNewsInfo,
 					homeActivity));
 		}
@@ -169,9 +166,9 @@ public class MFFetchListHelper {
 				
 			} else if (info.imageType == ImageType.COUPON && couponFragment != null) {
 				int type = 0;
-				if (info.cacheFileName.equals(MFConstants.CREDIT_COUPON_XML_FILE_NAME)) {
+				if (info.cacheFileName.equals(MFConstants.CREDIT_VIP_COUPON_XML_FILE_NAME)) {
 					type = 1;
-				} else if (info.cacheFileName.equals(MFConstants.VIP_COUPON_XML_FILE_NAME)) {
+				} else if (info.cacheFileName.equals(MFConstants.CREDIT_VIP_COUPON_XML_FILE_NAME)) {
 					type = 2;
 				}
 				if (couponFragment.mIsVisible && couponFragment.couponType == type) {

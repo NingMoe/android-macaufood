@@ -102,7 +102,7 @@ public class FeedBackDialogHelper {
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			String urlStr = "http://www.cycon.com.mo/xml_submitmsg2.php?key=cafecafe&udid=android-"
+			String urlStr = MFURL.SUBMIT_FEEDBACK
 					+ MFConfig.DEVICE_ID
 					+ "&cafeid="
 					+ cafeId

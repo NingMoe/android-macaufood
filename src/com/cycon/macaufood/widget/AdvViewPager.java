@@ -37,7 +37,8 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.utilities.MFRequestHelper;
+import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 
 public class AdvViewPager extends ViewPager {
@@ -82,14 +83,10 @@ public class AdvViewPager extends ViewPager {
 		
 		fileCache = new FileCache(mContext, ImageType.ADV);
 		
-		boolean cacheError = false;
 		
-		try {
-			File f = fileCache.getFile(ADV_ID_LIST);
-			FileInputStream fis = new FileInputStream(f);
-			BufferedReader rd = new BufferedReader(new InputStreamReader(fis));
-			String advListStr = rd.readLine().trim();
-			
+		String advListStr = MFUtil.getStringFromCache(fileCache, ADV_ID_LIST);
+		
+		if (advListStr != null) {
 			String[] advIdList = advListStr.split(",");
         	for (String id : advIdList) {
 
@@ -107,16 +104,13 @@ public class AdvViewPager extends ViewPager {
         	}
         	
         	for (int i = 0; i < linkIdList.size(); i++) {
-				f = fileCache.getFile(linkIdList.get(i));
-				fis = new FileInputStream(f);
-				imageList.add(BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis)));
+        		Bitmap bm = MFUtil.getBitmapFromCache(fileCache, linkIdList.get(i));
+        		if (bm != null) {
+        			imageList.add(bm);
+        		}
 			}
-        	
-        	
-		} catch (Exception e) {
-			cacheError = true;
 		}
-		
+        	
 		if (imageList.size() > 0) {
 			isUsingCache = true;
     		
@@ -162,13 +156,10 @@ public class AdvViewPager extends ViewPager {
     		if (isCancelled()) return null;
 
     		if (!MFConfig.isOnline(mContext)) return null;
-    		
-    		String linkIdUrl = "http://www.cycon.com.mo/xml_adv2.php?code=android-" + MFConfig.DEVICE_ID + 
-    				"&type=b";
 
             try {
             	File f = fileCache.getFile(ADV_ID_LIST);
-            	String advListStr = MFRequestHelper.getString(linkIdUrl, f);
+            	String advListStr = MFService.getString(MFURL.NEW_BIG_ADV, f);
             	
             	String[] advIdList = advListStr.split(",");
             	for (String id : advIdList) {
@@ -228,10 +219,9 @@ public class AdvViewPager extends ViewPager {
 
    		if (!MFConfig.isOnline(mContext)) return null;
 
-    		String urlStr = "http://www.cycon.com.mo/appimages/adv_rotate_banner/" + id + ".jpg";
             try {
             	File f = fileCache.getFile(id);
-            	return MFRequestHelper.getBitmap(urlStr, f);
+            	return MFService.getBitmap(MFURL.getImageUrl(ImageType.ADV, id), f);
 				
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -333,8 +323,7 @@ public class AdvViewPager extends ViewPager {
 				
 				public void onClick(View arg0) {
 					if (linkIdList.size() != 0) {
-						String url = "http://www.cycon.com.mo/xml_advclick.php?id=" + linkIdList.get(pos) + "&code=" + MFConfig.DEVICE_ID;
-						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MFURL.getAdvClickUrl(linkIdList.get(pos))));
 						mContext.startActivity(myIntent);
 					}
 				}

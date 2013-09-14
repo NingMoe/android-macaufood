@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.MFURL;
 
 public class FoodNewsImage extends BaseActivity {
 
@@ -37,7 +39,7 @@ public class FoodNewsImage extends BaseActivity {
 		webView = (WebView) findViewById(R.id.webView);
 		progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-		webView.loadUrl(getUrl());
+		webView.loadUrl(MFURL.getImageUrl(ImageType.FOODNEWSIMAGE, foodnews_id));
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 		webView.getSettings().setUseWideViewPort(true) ; 
@@ -93,11 +95,6 @@ public class FoodNewsImage extends BaseActivity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-	}
-
-	private String getUrl() {
-		return "http://www.cycon.com.mo/appimages/article_content/"
-				+ foodnews_id + ".jpg";
 	}
 
 }

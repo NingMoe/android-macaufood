@@ -40,9 +40,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 
-public class MFRequestHelper {
+public class MFService {
 	
-	private static final String TAG = MFRequestHelper.class.getName();
+	private static final String TAG = MFService.class.getName();
 
 	public static boolean updateSuccessfully;
 	private static long updateCafeListTimeStamp;
@@ -66,10 +66,7 @@ public class MFRequestHelper {
 			sb.append(idValue + ",");
 		}
 		
-		String urlStr = "http://www.cycon.com.mo/xml_favouritelog.php?key=cafecafe&udid=android-" + 
-				MFConfig.DEVICE_ID + "&cafeid=" + sb.toString();
-		
-		sendRequest(urlStr, c);
+		sendRequest(MFURL.FAVORITE_LOG + sb.toString(), c);
 	}
 	
 	public static void sendRequest(String url, Context c) {
@@ -149,12 +146,10 @@ public class MFRequestHelper {
     	@Override
     	protected Bitmap doInBackground(Void... params) {
 
-    		String urlStr = "http://www.cycon.com.mo/appimages/front_page/1.jpg"; 
-    		
             try {
             	FileCache fileCache = new FileCache(appContext, ImageType.FRONTPAGE);
 				File f = fileCache.getFile("1");
-				return MFRequestHelper.getBitmap(urlStr, f);
+				return MFService.getBitmap(MFURL.getImageUrl(ImageType.FRONTPAGE, "1"), f);
 				
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -175,18 +170,16 @@ public class MFRequestHelper {
     	protected Void doInBackground(Void... params) {
     		if (isUpdating) return null; 
     		isUpdating = true;
-    		String urlStr = "http://www.cycon.com.mo/xml_updatelogandroid.php?key=cafecafe&lastupdatetime=" + MFConfig.cafe_version_update;
             try {
-            	InputStream is = executeRequest(urlStr);
+            	InputStream is = executeRequest(MFURL.UPDATE_CAFE_LOG + MFConfig.cafe_version_update);
             	LocalDbManager.getInstance(appContext).beginWritableDb();
             	parseUpdateXml(is);
             	LocalDbManager.getInstance(appContext).endWritableDb();
             	if (updateSuccessfully) {
             		Log.e("BaseActivity", "update success");
             		
-            		urlStr = "http://www.cycon.com.mo/cafe_version_update.txt";
 				    try {
-				    	is = executeRequest(urlStr);
+				    	is = executeRequest(MFURL.CAFE_VERSION_UPDATE);
 				        
 				    	BufferedReader rd = new BufferedReader(new InputStreamReader(is
 								));

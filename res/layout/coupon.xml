@@ -18,12 +18,12 @@
 		    android:layout_width="fill_parent">
 		  		
 		  	<TextView 
-		  		android:id="@+id/normalCoupon"
+		  		android:id="@+id/mainCoupon"
 		    	android:layout_height="35dip"
 		  		android:layout_width="0dip" 
 		  		android:layout_weight="1"
 		  		android:textColor="#FFFFFF"
-		  		android:text="@string/normalCoupon"
+		  		android:text="@string/mainCoupon"
 		  		android:textSize="14sp"
 		  		android:gravity="center"
 		  		android:background="@drawable/tab_normal_coupon_selected"/>
@@ -34,12 +34,12 @@
 		  		android:background="#777777"/>
 		  	
 		  	<TextView 
-		  		android:id="@+id/creditCoupon"
+		  		android:id="@+id/normalCoupon"
 		    	android:layout_height="35dip"
 		  		android:layout_width="0dip" 
 		  		android:layout_weight="1"
 		  		android:textColor="#40C28a"
-		  		android:text="@string/creditCoupon"
+		  		android:text="@string/normalCoupon"
 		  		android:textSize="14sp"
 		  		android:gravity="center"
 		  		android:background="@drawable/tab_credit_coupon_unselected"/>
@@ -50,13 +50,13 @@
 			  		android:background="#777777"/>
 			  	
 			  	<TextView 
-			  		android:id="@+id/vipCoupon"
+			  		android:id="@+id/creditVipCoupon"
 			    	android:layout_height="35dip"
 			  		android:layout_width="0dip" 
-			  		android:layout_weight="1"
+			  		android:layout_weight="1.5"
 			  		android:singleLine="true"
 			  		android:textColor="#EF6666"
-			  		android:text="@string/vipCoupon"
+			  		android:text="@string/creditVipCoupon"
 			  		android:textSize="14sp"
 			  		android:gravity="center"
 			  		android:background="@drawable/tab_vip_coupon_unselected"
@@ -81,19 +81,24 @@
   		android:layout_weight="1"
   		>
   
-  <ListView
-  	  android:id="@+id/normalCouponList"
+  <ScrollView
+  	  android:id="@+id/mainCouponScrollView"
 	  android:layout_width="fill_parent"
 	  android:layout_height="fill_parent"
-	  />
+	  >
+      <ImageView
+          android:id="@+id/mainCouponImage"
+          android:layout_width="fill_parent"
+	      android:layout_height="wrap_content" />
+  </ScrollView>
   <ListView
-  	  android:id="@+id/creditCouponList"
+  	  android:id="@+id/normalCouponList"
 	  android:layout_width="fill_parent"
 	  android:layout_height="fill_parent"
 	  android:visibility="gone"
 	  />
   <ListView
-  	  android:id="@+id/vipCouponList"
+  	  android:id="@+id/creditVipCouponList"
 	  android:layout_width="fill_parent"
 	  android:layout_height="fill_parent"
 	  android:visibility="gone"

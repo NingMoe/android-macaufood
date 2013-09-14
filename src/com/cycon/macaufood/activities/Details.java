@@ -36,7 +36,9 @@ import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FeedBackDialogHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.utilities.MFRequestHelper;
+import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFURL;
+import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PhoneUtils;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 
@@ -135,8 +137,7 @@ public class Details extends BaseActivity {
 		
 
         fileCache=new FileCache(this, ImageType.REGULAR);
-        File f=fileCache.getFile(cafe.getId());
-        Bitmap bitmap = decodeFile(f);
+        Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, cafe.getId());
         if(bitmap!=null) {
             imageView.setImageBitmap(bitmap);
         } else {
@@ -304,10 +305,10 @@ public class Details extends BaseActivity {
 
 		int idValue = Integer.parseInt(cafe.getId()) - 1;
 		
-		String urlStr = "http://www.cycon.com.mo/xml_detaillog2.php?key=cafecafe&udid=android-" + 
+		String urlStr = MFURL.CAFE_DETAILS_LOG + 
 				MFConfig.DEVICE_ID + "&cafeid=" + idValue + "&source=&type0=" + cafe.getType0() + 
 				"&type1=" + cafe.getType1() + "&type2=" + cafe.getType2() + "&district=" + cafe.getDistrict();
-		MFRequestHelper.sendRequest(urlStr, getApplicationContext());
+		MFService.sendRequest(urlStr, getApplicationContext());
 	}
 	
 	@Override
@@ -374,9 +375,8 @@ public class Details extends BaseActivity {
 	        //from web
 	        try {
 
-				String urlStr = "http://www.cycon.com.mo/appimages/cafephoto/" + cafe.getId() + ".jpg";
 	            File f=fileCache.getFile(cafe.getId());
-	            return MFRequestHelper.getBitmap(urlStr, f);
+	            return MFService.getBitmap(MFURL.getImageUrl(ImageType.REGULAR, cafe.getId()), f);
 	            
 	        } catch (FileNotFoundException ex){
 	        	Log.e(TAG, "no photo");
@@ -400,18 +400,7 @@ public class Details extends BaseActivity {
 				} 
 			}
 		}
-		
-		
 	}
-	
-    private Bitmap decodeFile(File f){
-        try {
-            return BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-        	Log.e(TAG, "filenotfounde");
-        }
-        return null;
-    }
 	
 	
 	private class PaymentAdapter extends BaseAdapter {

@@ -41,7 +41,8 @@ import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
-import com.cycon.macaufood.utilities.MFRequestHelper;
+import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvView;
 
@@ -129,37 +130,29 @@ public class Home extends SherlockFragmentActivity {
 
 		}
 
-		MFRequestHelper.sendFavoriteLog(getApplicationContext());
+		MFService.sendFavoriteLog(getApplicationContext());
 		
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY, 0);
         
         if (showFrontPage) {
-			new Handler().postDelayed(new Runnable() {
-				public void run() {
-					FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
-					File f = fileCache.getFile("1");
-					Bitmap bitmap = decodeFile(f);
-					if (bitmap != null) {
-						Intent i = new Intent(Home.this, FrontPage.class);
-						startActivity(i);
-						overridePendingTransition(R.anim.front_page_fade_in, 0);
-						showFrontPage = false;
+			FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
+			Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
+			if (bitmap != null) {
+				new Handler().postDelayed(new Runnable() {
+					public void run() {
+							Intent i = new Intent(Home.this, FrontPage.class);
+							startActivity(i);
+							overridePendingTransition(R.anim.front_page_fade_in, 0);
+							showFrontPage = false;
+							//fetch new front page after show front page
+							MFService.fetchFrontPage(getApplicationContext());
 					}
-					//fetch new front page after show front page
-					MFRequestHelper.fetchFrontPage(getApplicationContext());
-				}
-			}, 2000);
+				}, 2000);
+			} else {
+				MFService.fetchFrontPage(getApplicationContext());
+			}
         }
 	}
-	
-    private Bitmap decodeFile(File f){
-        try {
-            return BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-        	Log.e(TAG, "filenotfounde");
-        }
-        return null;
-    }
 	
 	private void showDisclaimerDialog() {
 		AlertDialog dialog = new AlertDialog.Builder(this)
@@ -306,7 +299,7 @@ public class Home extends SherlockFragmentActivity {
 	public void refresh() {
 		if (MFConfig.isOnline(this)) {
 			MFFetchListHelper.fetchAllList(this);
-			MFRequestHelper.checkUpdate(getApplicationContext());
+			MFService.checkUpdate(getApplicationContext());
 		} 
 	};
 

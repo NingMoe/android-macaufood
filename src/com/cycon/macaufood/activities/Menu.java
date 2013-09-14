@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.PhoneUtils;
 
 public class Menu extends BaseActivity {
@@ -52,7 +53,7 @@ public class Menu extends BaseActivity {
 		
 		setHeaderText();
 		
-		webView.loadUrl(getUrl());
+		webView.loadUrl(MFURL.getMenuUrl(menuid, currentPage));
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 		webView.getSettings().setUseWideViewPort(true) ; 
@@ -156,7 +157,7 @@ public class Menu extends BaseActivity {
 			if (currentPage == 1) currentPage = totalPages;
 			else currentPage--;
 			setHeaderText();
-			webView.loadUrl(getUrl());
+			webView.loadUrl(MFURL.getMenuUrl(menuid, currentPage));
 			return true;
 		case NEXT_PAGE_MENU_ID:
 			errorMsg.setVisibility(View.GONE);
@@ -164,7 +165,7 @@ public class Menu extends BaseActivity {
 			if (currentPage == totalPages) currentPage = 1;
 			else currentPage++;
 			setHeaderText();
-			webView.loadUrl(getUrl());
+			webView.loadUrl(MFURL.getMenuUrl(menuid, currentPage));
 			return true;
 		case PHONE_CALL_MENU_ID:
 			showPhoneCallDialog();
@@ -172,10 +173,6 @@ public class Menu extends BaseActivity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-	}
-	
-	private String getUrl() {
-		return "http://www.cycon.com.mo/xml_menu.php?id=" + menuid + "&page=" + currentPage + "&udid=android-" + MFConfig.DEVICE_ID;
 	}
 	
 	private void setHeaderText() {

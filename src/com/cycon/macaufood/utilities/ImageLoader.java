@@ -57,21 +57,13 @@ public class ImageLoader {
     
     private int lastVisibleRowIndex;
     
-    private String imageTypeUrl;
+    private ImageType imageType;
     
     private static final int MAX_TASKS_NUMBER = 7;
     
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
     	mContext = context;
-    	if (imageType == ImageType.RECOMMEND) {
-    		imageTypeUrl = "recommend_new";
-    	} else if (imageType == ImageType.COUPON) {
-    		imageTypeUrl = "coupon_new";
-    	} else if (imageType == ImageType.FOODNEWS){
-    		imageTypeUrl = "article_thumbnail";
-    	} else {
-    		imageTypeUrl = "cafephoto";
-    	} 
+    	this.imageType = imageType;
         fileCache=new FileCache(context, imageType);
         lastVisibleRowIndex = lastRowIndex;
         nophoto = context.getResources().getDrawable(R.drawable.nophoto);
@@ -115,10 +107,8 @@ public class ImageLoader {
         if(bitmap!=null)
             imageView.setImageBitmap(bitmap);
         else {
-            File f=fileCache.getFile(id);
-            
 //            from SD cache
-        	bitmap = decodeFile(f);
+        	bitmap = MFUtil.getBitmapFromCache(fileCache, id);
             
             if(bitmap!=null) {
                 imageView.setImageBitmap(bitmap);
@@ -153,10 +143,9 @@ public class ImageLoader {
 		        if(b !=null) {
 		        	continue;
 		        } else {
-		            File f=fileCache.getFile(pollId);
 		            
 //		            from SD cache
-		        	bitmap = decodeFile(f);
+		            bitmap = MFUtil.getBitmapFromCache(fileCache, pollId);
 		            
 		            if(bitmap!=null) {
 		                memoryCache.put(pollId, bitmap);
@@ -195,15 +184,6 @@ public class ImageLoader {
 			Log.e(TAG, "catchRejectedExecution");
 			e.printStackTrace();
 		}
-    }
-    
-    private Bitmap decodeFile(File f){
-        try {
-            return BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-//        	ETLog.e(TAG, "filenotfounde");
-        }
-        return null;
     }
     
     //Task for the queue
@@ -270,10 +250,8 @@ public class ImageLoader {
 			        if(bitmap!=null) {
 			        	continue;
 			        } else {
-			            File f=fileCache.getFile(id);
-			            
 //			            from SD cache
-			        	bitmap = decodeFile(f);
+			            bitmap = MFUtil.getBitmapFromCache(fileCache, id);
 			            
 			            if(bitmap!=null) {
 			                memoryCache.put(id, bitmap);
@@ -329,24 +307,10 @@ public class ImageLoader {
 		    {
 		        //from web
 		        try {
-		            Bitmap bitmap=null;
-
-					String urlStr = "http://www.cycon.com.mo/appimages/" + imageTypeUrl + "/" + id + ".jpg";
-					
-					HttpClient client = new DefaultHttpClient();
-	            	HttpParams httpParams = client.getParams();
-	            	HttpConnectionParams.setConnectionTimeout(httpParams, 20000);
-	            	HttpGet request = new HttpGet(urlStr);
-	            	HttpResponse response = client.execute(request);
-	            	InputStream is= response.getEntity().getContent();
-		            File f=fileCache.getFile(id);
-		            OutputStream os = new FileOutputStream(f);
-		            MFUtil.CopyStream(is, os);
-		            os.close();
-		            bitmap = decodeFile(f);
-
-		            if (bitmap == null) Log.e(TAG, "decode returns null");
-		            return bitmap;
+		        	
+		        	File f=fileCache.getFile(id);
+		            return MFService.getBitmap(MFURL.getImageUrl(imageType, id), f);
+		        	
 		        } catch (FileNotFoundException ex){
 		        	Log.e(TAG, "no photo");
 		           ex.printStackTrace();

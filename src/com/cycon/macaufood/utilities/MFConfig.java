@@ -44,14 +44,12 @@ public class MFConfig {
 	
 	private ArrayList<ParsedCafeHolder> recommendCafeList = new ArrayList<ParsedCafeHolder>(60);
 	private ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(60);
-	private ArrayList<ParsedCafeHolder> creditCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
-	private ArrayList<ParsedCafeHolder> vipCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
+	private ArrayList<ParsedCafeHolder> creditVipCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
 	private ArrayList<ParsedFoodNewsHolder> foodNewsList = new ArrayList<ParsedFoodNewsHolder>(20);
 	
 	public static List<ParsedCafeHolder> tempParsedRecommendCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(60));
 	public static List<ParsedCafeHolder> tempParsedNormalCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(60));
-	public static List<ParsedCafeHolder> tempParsedCreditCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(30));
-	public static List<ParsedCafeHolder> tempParsedVipCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(30));
+	public static List<ParsedCafeHolder> tempParsedCreditVipCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(40));
 	public static List<ParsedFoodNewsHolder> tempParsedFoodNewsList = Collections.synchronizedList(new ArrayList<ParsedFoodNewsHolder>(20));
 	
 	public static int deviceWidth;
@@ -77,11 +75,8 @@ public class MFConfig {
 	public ArrayList<ParsedCafeHolder> getNormalCouponCafeList() {
 		return normalCouponCafeList;
 	}
-	public ArrayList<ParsedCafeHolder> getCreditCouponCafeList() {
-		return creditCouponCafeList;
-	}
-	public ArrayList<ParsedCafeHolder> getVipCouponCafeList() {
-		return vipCouponCafeList;
+	public ArrayList<ParsedCafeHolder> getCreditVipCouponCafeList() {
+		return creditVipCouponCafeList;
 	}
 	public ArrayList<ParsedFoodNewsHolder> getFoodNewsList() {
 		return foodNewsList;

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
+import com.cycon.macaufood.utilities.MFUtil;
 
 public class FrontPage extends Activity {
 	
@@ -35,21 +36,9 @@ public class FrontPage extends Activity {
 		});
 		frontPage = (ImageView) findViewById(R.id.frontPage);
 		FileCache fileCache = new FileCache(this, ImageType.FRONTPAGE);
-		File f = fileCache.getFile("1");
-		Bitmap bitmap = decodeFile(f);
+		Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
 		if (bitmap != null) {
 			frontPage.setImageBitmap(bitmap);
 		}
-			
 	}
-	
-	
-    private Bitmap decodeFile(File f){
-        try {
-            return BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-        }
-        return null;
-    }
-
 }

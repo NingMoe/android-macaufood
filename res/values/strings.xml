@@ -17,10 +17,9 @@
     <string name="retryMsg">重試</string>
     
 <!--  Coupon  -->
+    <string name="mainCoupon">主優惠</string>
     <string name="normalCoupon">普通優惠</string>
-    <string name="creditCoupon">信用卡優惠</string>
-    <string name="vipCoupon">會員卡優惠</string>
-	
+    <string name="creditVipCoupon">信用卡/會員卡優惠</string>
     
 <!--  Details -->
     <string name="addr">地址</string>

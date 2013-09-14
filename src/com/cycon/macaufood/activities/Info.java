@@ -50,7 +50,8 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.utilities.MFRequestHelper;
+import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.GalleryNavigator;
@@ -198,11 +199,9 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 
 		@Override
 		protected String doInBackground(Void... params) {
-			String urlStr = "http://www.cycon.com.mo/detail_page.php?id="
-					+ infoid;
 			try {
 				File f = fileCache.getFile(infoid + "-page");
-				String pageStr = MFRequestHelper.getString(urlStr, f);
+				String pageStr = MFService.getString(MFURL.getIntroPageUrl(infoid), f);
 
 				try {
 					serverTotalPages = Integer.parseInt(pageStr);
@@ -253,12 +252,9 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 		@Override
 		protected String doInBackground(Void... params) {
 
-			String urlStr = "http://www.cycon.com.mo/detail_text.php?id="
-					+ infoid + "&page=" + page;
-
 			try {
 				File f = fileCache.getFile(infoid + "-" + page + "-text");
-				return MFRequestHelper.getString(urlStr, f);
+				return MFService.getString(MFURL.getIntroTextUrl(infoid, page), f);
 
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -313,11 +309,9 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 		@Override
 		protected Bitmap doInBackground(Void... params) {
 
-			String urlStr = "http://www.cycon.com.mo/appimages/intro/" + infoid
-					+ "-" + page + ".jpg";
 			try {
 				File f = fileCache.getFile(infoid + "-" + page + "-image");
-				return MFRequestHelper.getBitmap(urlStr, f);
+				return MFService.getBitmap(MFURL.getImageUrl(ImageType.INFO, infoid + "-" + page), f);
 
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");

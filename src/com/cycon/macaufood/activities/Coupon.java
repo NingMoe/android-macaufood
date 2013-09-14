@@ -36,19 +36,17 @@ public class Coupon extends SherlockFragment {
 	private View retryLayout;
 	private Button retryButton;
 	private ListView normalCouponList;
-	private ListView creditCouponList;
-	private ListView vipCouponList;
+	private ListView creditVipCouponList;
+	private View mainCouponScrollView;
 	private CafeListAdapter normalCouponAdapter;
-	private CafeListAdapter creditCouponAdapter;
-	private CafeListAdapter vipCouponAdapter;
+	private CafeListAdapter creditVipCouponAdapter;
 	private SwingBottomInAnimationAdapter animNormalCouponAdapter;
-	private SwingBottomInAnimationAdapter animCreditCouponAdapter;
-	private SwingBottomInAnimationAdapter animVipCouponAdapter;
+	private SwingBottomInAnimationAdapter animCreditVipCouponAdapter;
 	private FileCache fileCache;
 	private TextView normalCoupon;
-	private TextView creditCoupon;
-	private TextView vipCoupon;
-	public int couponType = 0; // 0 = normal, 1 = credit, 2 = vip
+	private TextView creditVipCoupon;
+	private TextView mainCoupon;
+	public int couponType = 2; // 0 = normal, 1 = credit, 2 = main coupon
 
 	private Context mContext;
 	private View mView;
@@ -69,16 +67,14 @@ public class Coupon extends SherlockFragment {
 	private void initView() {
 
 		retryLayout = mView.findViewById(R.id.retryLayout);
+		mainCouponScrollView = mView.findViewById(R.id.mainCouponScrollView);
 
 		normalCouponList = (ListView) mView.findViewById(R.id.normalCouponList);
-		creditCouponList = (ListView) mView.findViewById(R.id.creditCouponList);
-		vipCouponList = (ListView) mView.findViewById(R.id.vipCouponList);
+		creditVipCouponList = (ListView) mView.findViewById(R.id.creditVipCouponList);
 		normalCouponAdapter = new CafeListAdapter(mContext, MFConfig
 				.getInstance().getNormalCouponCafeList(), ImageType.COUPON);
-		creditCouponAdapter = new CafeListAdapter(mContext, MFConfig
-				.getInstance().getCreditCouponCafeList(), ImageType.COUPON);
-		vipCouponAdapter = new CafeListAdapter(mContext, MFConfig.getInstance()
-				.getVipCouponCafeList(), ImageType.COUPON);
+		creditVipCouponAdapter = new CafeListAdapter(mContext, MFConfig
+				.getInstance().getCreditVipCouponCafeList(), ImageType.COUPON);
 
 		animNormalCouponAdapter = new SwingBottomInAnimationAdapter(
 				normalCouponAdapter);
@@ -88,25 +84,16 @@ public class Coupon extends SherlockFragment {
 		}
 		normalCouponList.setAdapter(animNormalCouponAdapter);
 
-		animCreditCouponAdapter = new SwingBottomInAnimationAdapter(
-				creditCouponAdapter);
-		animCreditCouponAdapter.setListView(creditCouponList);
+		animCreditVipCouponAdapter = new SwingBottomInAnimationAdapter(
+				creditVipCouponAdapter);
+		animCreditVipCouponAdapter.setListView(creditVipCouponList);
         if (MFFetchListHelper.isFetching) {
-        	animCreditCouponAdapter.setAnimationEnabled(false);
+        	animCreditVipCouponAdapter.setAnimationEnabled(false);
 		}
-		creditCouponList.setAdapter(animCreditCouponAdapter);
-
-		animVipCouponAdapter = new SwingBottomInAnimationAdapter(
-				vipCouponAdapter);
-		animVipCouponAdapter.setListView(vipCouponList);
-        if (MFFetchListHelper.isFetching) {
-        	animVipCouponAdapter.setAnimationEnabled(false);
-		}
-		vipCouponList.setAdapter(animVipCouponAdapter);
+		creditVipCouponList.setAdapter(animCreditVipCouponAdapter);
 
 		normalCouponList.setOnItemClickListener(itemClickListener);
-		creditCouponList.setOnItemClickListener(itemClickListener);
-		vipCouponList.setOnItemClickListener(itemClickListener);
+		creditVipCouponList.setOnItemClickListener(itemClickListener);
 
 		normalCoupon = (TextView) mView.findViewById(R.id.normalCoupon);
 		normalCoupon.setOnClickListener(new OnClickListener() {
@@ -115,9 +102,9 @@ public class Coupon extends SherlockFragment {
 				if (couponType != 0) {
 					setNormalCouponTab(true);
 					if (couponType == 1)
-						setCreditCouponTab(false);
+						setCreditVipCouponTab(false);
 					if (couponType == 2)
-						setVipCouponTab(false);
+						setMainCouponTab(false);
 					couponType = 0;
 					retryLayout.setVisibility(View.GONE);
 					if (MFConfig.getInstance().getNormalCouponCafeList().size() == 0) {
@@ -127,41 +114,41 @@ public class Coupon extends SherlockFragment {
 				}
 			}
 		});
-		creditCoupon = (TextView) mView.findViewById(R.id.creditCoupon);
-		creditCoupon.setOnClickListener(new OnClickListener() {
+		creditVipCoupon = (TextView) mView.findViewById(R.id.creditVipCoupon);
+		creditVipCoupon.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				if (couponType != 1) {
-					setCreditCouponTab(true);
+					setCreditVipCouponTab(true);
 					if (couponType == 0)
 						setNormalCouponTab(false);
 					if (couponType == 2)
-						setVipCouponTab(false);
+						setMainCouponTab(false);
 					couponType = 1;
 					retryLayout.setVisibility(View.GONE);
-					if (MFConfig.getInstance().getCreditCouponCafeList().size() == 0) {
+					if (MFConfig.getInstance().getCreditVipCouponCafeList().size() == 0) {
 						preLoadFromFileCache();
 					}
 					populateListView(couponType);
 				}
 			}
 		});
-		vipCoupon = (TextView) mView.findViewById(R.id.vipCoupon);
-		vipCoupon.setOnClickListener(new OnClickListener() {
+		mainCoupon = (TextView) mView.findViewById(R.id.mainCoupon);
+		mainCoupon.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				if (couponType != 2) {
-					setVipCouponTab(true);
+					setMainCouponTab(true);
 					if (couponType == 0)
 						setNormalCouponTab(false);
 					if (couponType == 1)
-						setCreditCouponTab(false);
+						setCreditVipCouponTab(false);
 					couponType = 2;
 					retryLayout.setVisibility(View.GONE);
-					if (MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
-						preLoadFromFileCache();
-					}
-					populateListView(couponType);
+//					if (MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
+//						preLoadFromFileCache();
+//					}
+//					populateListView(couponType);
 				}
 			}
 		});
@@ -170,9 +157,9 @@ public class Coupon extends SherlockFragment {
 		if (couponType == 0
 				&& MFConfig.getInstance().getNormalCouponCafeList().size() == 0
 				|| couponType == 1
-				&& MFConfig.getInstance().getCreditCouponCafeList().size() == 0
-				|| couponType == 2
-				&& MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
+				&& MFConfig.getInstance().getCreditVipCouponCafeList().size() == 0
+				/*|| couponType == 2
+				&& MFConfig.getInstance().getVipCouponCafeList().size() == 0*/) {
 			if (!MFConfig.isOnline(mContext)) {
 				displayRetryLayout();
 			}
@@ -195,40 +182,40 @@ public class Coupon extends SherlockFragment {
 		if (select) {
 			normalCoupon.setTextColor(Color.parseColor("#FFFFFF"));
 			normalCoupon
-					.setBackgroundResource(R.drawable.tab_normal_coupon_selected);
+					.setBackgroundResource(R.drawable.tab_credit_coupon_selected);
 			normalCouponList.setVisibility(View.VISIBLE);
 		} else {
-			normalCoupon.setTextColor(Color.parseColor("#68A6E6"));
+			normalCoupon.setTextColor(Color.parseColor("#40C28a"));
 			normalCoupon
-					.setBackgroundResource(R.drawable.tab_normal_coupon_unselected);
+					.setBackgroundResource(R.drawable.tab_credit_coupon_unselected);
 			normalCouponList.setVisibility(View.GONE);
 		}
 	}
 
-	private void setCreditCouponTab(boolean select) {
+	private void setCreditVipCouponTab(boolean select) {
 		if (select) {
-			creditCoupon.setTextColor(Color.parseColor("#FFFFFF"));
-			creditCoupon
-					.setBackgroundResource(R.drawable.tab_credit_coupon_selected);
-			creditCouponList.setVisibility(View.VISIBLE);
+			creditVipCoupon.setTextColor(Color.parseColor("#FFFFFF"));
+			creditVipCoupon
+					.setBackgroundResource(R.drawable.tab_vip_coupon_selected);
+			creditVipCouponList.setVisibility(View.VISIBLE);
 		} else {
-			creditCoupon.setTextColor(Color.parseColor("#40C28a"));
-			creditCoupon
-					.setBackgroundResource(R.drawable.tab_credit_coupon_unselected);
-			creditCouponList.setVisibility(View.GONE);
+			creditVipCoupon.setTextColor(Color.parseColor("#EF6666"));
+			creditVipCoupon
+					.setBackgroundResource(R.drawable.tab_vip_coupon_unselected);
+			creditVipCouponList.setVisibility(View.GONE);
 		}
 	}
 
-	private void setVipCouponTab(boolean select) {
+	private void setMainCouponTab(boolean select) {
 		if (select) {
-			vipCoupon.setTextColor(Color.parseColor("#FFFFFF"));
-			vipCoupon.setBackgroundResource(R.drawable.tab_vip_coupon_selected);
-			vipCouponList.setVisibility(View.VISIBLE);
+			mainCoupon.setTextColor(Color.parseColor("#FFFFFF"));
+			mainCoupon.setBackgroundResource(R.drawable.tab_normal_coupon_selected);
+			mainCouponScrollView.setVisibility(View.VISIBLE);
 		} else {
-			vipCoupon.setTextColor(Color.parseColor("#EF6666"));
-			vipCoupon
-					.setBackgroundResource(R.drawable.tab_vip_coupon_unselected);
-			vipCouponList.setVisibility(View.GONE);
+			mainCoupon.setTextColor(Color.parseColor("#68A6E6"));
+			mainCoupon
+					.setBackgroundResource(R.drawable.tab_normal_coupon_unselected);
+			mainCouponScrollView.setVisibility(View.GONE);
 		}
 	}
 
@@ -246,15 +233,9 @@ public class Coupon extends SherlockFragment {
 						.get(position).getForward();
 			}
 			if (couponType == 1) {
-				cafeId = MFConfig.getInstance().getCreditCouponCafeList()
+				cafeId = MFConfig.getInstance().getCreditVipCouponCafeList()
 						.get(position).getCafeid();
-				forward = MFConfig.getInstance().getCreditCouponCafeList()
-						.get(position).getForward();
-			}
-			if (couponType == 2) {
-				cafeId = MFConfig.getInstance().getVipCouponCafeList()
-						.get(position).getCafeid();
-				forward = MFConfig.getInstance().getVipCouponCafeList()
+				forward = MFConfig.getInstance().getCreditVipCouponCafeList()
 						.get(position).getForward();
 			}
 
@@ -342,43 +323,24 @@ public class Coupon extends SherlockFragment {
 		} else if (couponType == 1 && type == 1) {
 
 			// if no internet and no data in File, show retry message
-			if (MFConfig.getInstance().getCreditCouponCafeList().size() == 0) {
+			if (MFConfig.getInstance().getCreditVipCouponCafeList().size() == 0) {
 				displayRetryLayout();
 			} else {
 				if (retryLayout != null)
 					retryLayout.setVisibility(View.GONE);
 			}
-			creditCouponAdapter.imageLoader.cleanup();
-			creditCouponAdapter.imageLoader
+			creditVipCouponAdapter.imageLoader.cleanup();
+			creditVipCouponAdapter.imageLoader
 					.setImagesToLoadFromParsedCafe(MFConfig.getInstance()
-							.getCreditCouponCafeList());
+							.getCreditVipCouponCafeList());
 			if (mIsVisible) {
-				animCreditCouponAdapter.reset();
+				animCreditVipCouponAdapter.reset();
 			} else {
-				animCreditCouponAdapter.setAnimationEnabled(true);
+				animCreditVipCouponAdapter.setAnimationEnabled(true);
 			}
-			creditCouponAdapter.notifyDataSetChanged();
+			creditVipCouponAdapter.notifyDataSetChanged();
 
-		} else if (couponType == 2 && type == 2) {
-
-			// if no internet and no data in File, show retry message
-			if (MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
-				displayRetryLayout();
-			} else {
-				if (retryLayout != null)
-					retryLayout.setVisibility(View.GONE);
-			}
-			vipCouponAdapter.imageLoader.cleanup();
-			vipCouponAdapter.imageLoader.setImagesToLoadFromParsedCafe(MFConfig
-					.getInstance().getVipCouponCafeList());
-			if (mIsVisible) {
-				animVipCouponAdapter.reset();
-			} else {
-				animVipCouponAdapter.setAnimationEnabled(true);
-			}
-			vipCouponAdapter.notifyDataSetChanged();
-			
-		}
+		} 
 	}
 
 	private void preLoadFromFileCache() {
@@ -393,18 +355,12 @@ public class Coupon extends SherlockFragment {
 						MFConfig.tempParsedNormalCouponCafeList, MFConfig
 								.getInstance().getNormalCouponCafeList());
 			} else if (couponType == 1) {
-				f = fileCache.getFile(MFConstants.CREDIT_COUPON_XML_FILE_NAME);
+				f = fileCache.getFile(MFConstants.CREDIT_VIP_COUPON_XML_FILE_NAME);
 				is = new FileInputStream(f);
 				MFFetchListHelper.parseXml(is,
-						MFConfig.tempParsedCreditCouponCafeList, MFConfig
-								.getInstance().getCreditCouponCafeList());
-			} else if (couponType == 2) {
-				f = fileCache.getFile(MFConstants.VIP_COUPON_XML_FILE_NAME);
-				is = new FileInputStream(f);
-				MFFetchListHelper.parseXml(is,
-						MFConfig.tempParsedVipCouponCafeList, MFConfig
-								.getInstance().getVipCouponCafeList());
-			}
+						MFConfig.tempParsedCreditVipCouponCafeList, MFConfig
+								.getInstance().getCreditVipCouponCafeList());
+			} 
 
 		} catch (FileNotFoundException e) {
 			Log.e(TAG, "FileNotFoundException");
@@ -414,8 +370,7 @@ public class Coupon extends SherlockFragment {
 		//refresh when file cache xml is deleted by user
 		if (!MFFetchListHelper.isFetching && !((Home)getActivity()).isShowingDisClaimer()) {
 	        if (MFConfig.getInstance().getNormalCouponCafeList().size() == 0 && couponType == 0 ||
-	        		MFConfig.getInstance().getCreditCouponCafeList().size() == 0 && couponType == 1 ||
-	        		MFConfig.getInstance().getVipCouponCafeList().size() == 0 && couponType == 2) {
+	        		MFConfig.getInstance().getCreditVipCouponCafeList().size() == 0 && couponType == 1) {
 	        	refresh();
 			}
 		}
@@ -430,16 +385,11 @@ public class Coupon extends SherlockFragment {
 				animNormalCouponAdapter.notifyDataSetChanged();
 			}
 		} else if (couponType == 1) {
-			if (animCreditCouponAdapter != null) {
-				animCreditCouponAdapter.reset();
-				animCreditCouponAdapter.notifyDataSetChanged();
+			if (animCreditVipCouponAdapter != null) {
+				animCreditVipCouponAdapter.reset();
+				animCreditVipCouponAdapter.notifyDataSetChanged();
 			}
-		} else if (couponType == 2) {
-			if (animVipCouponAdapter != null) {
-				animVipCouponAdapter.reset();
-				animVipCouponAdapter.notifyDataSetChanged();
-			}
-		}
+		} 
 	}
 
 	public void refresh() {

@@ -1,14 +1,19 @@
 package com.cycon.macaufood.utilities;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
-import java.util.List;
 
 import android.content.res.Resources;
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.TypedValue;
 
 import com.cycon.macaufood.bean.Cafe;
@@ -64,6 +69,34 @@ public class MFUtil {
     
     public static float getDipFromPixels(int pixel, Resources res) {
   	  return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixel, res.getDisplayMetrics());
+    }
+    
+    public static Bitmap getBitmapFromCache(FileCache fileCache, String imageId) {
+    	File f=fileCache.getFile(imageId);
+    	try {
+			return BitmapFactory.decodeStream(new FileInputStream(f));
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+    }
+    
+    public static String getStringFromCache(FileCache fileCache, String stringId) {
+    	String str = null;
+    	File f = fileCache.getFile(stringId);
+		FileInputStream fis;
+		try {
+			fis = new FileInputStream(f);
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+		BufferedReader rd = new BufferedReader(new InputStreamReader(fis));
+		try {
+			str = rd.readLine().trim();
+			rd.close();
+			return str;
+		} catch (IOException e) {
+			return null;
+		}
     }
     
     public static FlushedInputStream flushedInputStream(InputStream is) {

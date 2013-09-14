@@ -12,7 +12,7 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.utilities.MFRequestHelper;
+import com.cycon.macaufood.utilities.MFService;
 
 public abstract class BaseActivity extends SherlockActivity {
 	
@@ -46,7 +46,7 @@ public abstract class BaseActivity extends SherlockActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		MFRequestHelper.checkUpdate(getApplicationContext());
+		MFService.checkUpdate(getApplicationContext());
 	}
 
 	@Override

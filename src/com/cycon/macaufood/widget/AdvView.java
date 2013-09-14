@@ -27,9 +27,11 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.utilities.MFRequestHelper;
+import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 
 public class AdvView extends ImageView {
@@ -62,8 +64,7 @@ public class AdvView extends ImageView {
 			
 			public void onClick(View v) {
 				if (linkId == null || linkId == "") return;
-				String url = "http://www.cycon.com.mo/xml_advclick.php?id= " + linkId + "&code=" + MFConfig.DEVICE_ID;
-				Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+				Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MFURL.getAdvClickUrl(linkId)));
 				mContext.startActivity(myIntent);
 			}
 		});
@@ -86,8 +87,6 @@ public class AdvView extends ImageView {
 		if (cacheAdv != null && loadingAdv != null) loadingAdv.setVisibility(View.GONE); 
 		if (isSmallAdv)
 			setImageBitmap(cacheAdv);
-		
-//		if (cacheAdv )
 		
 		stopTask();
 		advTask = new FetchAdvTask();
@@ -114,12 +113,9 @@ public class AdvView extends ImageView {
     		if (isCancelled() && cacheAdv != null) return null;
 
     		if (!MFConfig.isOnline(mContext)) return null;
-    		
-    		String linkIdUrl = "http://www.cycon.com.mo/xml_adv.php?code=android-" + MFConfig.DEVICE_ID + 
-    				"&type=" + (isSmallAdv ? "s" : "b");
 
             try {
-            	tempLinkId = MFRequestHelper.getString(linkIdUrl, null);
+            	tempLinkId = MFService.getString(isSmallAdv ? MFURL.SMALL_ADV : MFURL.BIG_ADV , null);
 				if (tempLinkId == null || tempLinkId.equals("")) return null;
 				
 				try {
@@ -142,11 +138,9 @@ public class AdvView extends ImageView {
 				return null;
 			}
             
-            
     		
-    		String urlStr = "http://www.cycon.com.mo/appimages/adv_rotate_banner/" + tempLinkId + ".jpg";
             try {
-            	Bitmap bitmap = MFRequestHelper.getBitmap(urlStr, null);
+            	Bitmap bitmap = MFService.getBitmap(MFURL.getImageUrl(ImageType.ADV, tempLinkId), null);
             	
 	    		linkId = tempLinkId;
 				if (isSmallAdv)
