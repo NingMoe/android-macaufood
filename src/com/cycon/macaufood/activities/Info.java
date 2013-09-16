@@ -73,8 +73,7 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 	private ViewPager viewPager;
 	private boolean finishLoadingFirstImage;
 	private FileCache fileCache;
-	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 24 * 7; // 2
-																			// days
+	private static final long REFRESH_TIME_PERIOD = 3600 * 1000 * 24 * 4; // 4 days
 
 	private Hashtable<Integer, ImageView> imageViewsMap;
 
@@ -341,7 +340,7 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 				if (imageView != null) {
 					int height = MFConfig.deviceWidth * result.getHeight()
 							/ result.getWidth();
-					viewPager.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+					viewPager.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
 							height));
 					imageView.setImageBitmap(result);
 				}
@@ -401,7 +400,7 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 			}
 			int height = MFConfig.deviceWidth * bmp.getHeight()
 					/ bmp.getWidth();
-			viewPager.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+			viewPager.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT,
 					height));
 			imageView.setImageBitmap(bmp);
 			((ViewPager) container).addView(imageView, 0);

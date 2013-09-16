@@ -454,7 +454,7 @@ public class Map extends SherlockFragmentActivity {
 				regionSpinner.setSelection(regionIndex - 1);
 				return;
 			}
-		}
+		}	
 
 		listMessage.setVisibility(View.GONE);
 		list.setVisibility(View.VISIBLE);
@@ -605,6 +605,9 @@ public class Map extends SherlockFragmentActivity {
 
 	private void populateOverlayFromSearchList() {
 		
+		if (mMap == null) {
+			setUpMapIfNeeded(); //fix a crash report
+		}
 		
 		mMap.clear();
 		mMarkersHashMap.clear();

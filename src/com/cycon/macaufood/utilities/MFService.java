@@ -100,11 +100,9 @@ public class MFService {
 			return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
 		}
 
-		Log.e("ZZZ", "fetch is");
 		OutputStream os = new FileOutputStream(cacheFile);
 		MFUtil.CopyStream(is, os);
 		os.close();
-		Log.e("ZZZ", "copied");
 
 		FileInputStream fis = new FileInputStream(cacheFile);
 		return BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis));
@@ -123,6 +121,7 @@ public class MFService {
 				sb.append(line + "\n");
 			}
 			rd.close();
+
 			return sb.toString().trim();
 		}
 
@@ -140,6 +139,7 @@ public class MFService {
 		rd.close();
 		return sb.toString().trim();
 	}
+
 	
     public static class FetchFrontPageTask extends AsyncTask<Void, Void, Bitmap> {
     	

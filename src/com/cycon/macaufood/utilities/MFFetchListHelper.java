@@ -28,6 +28,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -63,6 +64,7 @@ public class MFFetchListHelper {
 					creditVipCouponInfo, homeActivity));
 			AsyncTaskHelper.execute(new FetchXmlTask(foodNewsInfo,
 					homeActivity));
+			AsyncTaskHelper.executeWithResultBitmap(new FetchMainCouponTask(homeActivity));
 		}
 	}
 
@@ -70,6 +72,7 @@ public class MFFetchListHelper {
 
 		private FetchListInfo info;
 		private Home homeActivity;
+		private ByteArrayOutputStream baos;
 
 		private FetchXmlTask(FetchListInfo i, Home h) {
 			info = i;
@@ -94,7 +97,7 @@ public class MFFetchListHelper {
 				HttpResponse response = client.execute(request);
 				InputStream is = response.getEntity().getContent();
 
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				baos = new ByteArrayOutputStream();
 				byte[] buffer = new byte[1024];
 				int len;
 				while ((len = is.read(buffer)) > 0) {
@@ -102,16 +105,6 @@ public class MFFetchListHelper {
 				}
 				baos.flush();
 
-				parseXml(new ByteArrayInputStream(baos.toByteArray()), info.tempParsedList, info.contentList);
-
-				if (info.tempParsedList.size() != 0) {
-					FileCache fileCache=new FileCache(homeActivity, info.imageType);
-					File f = fileCache.getFile(info.cacheFileName);
-					OutputStream os = new FileOutputStream(f);
-					os.write(baos.toByteArray());
-					os.close();
-				}
-				info.tempParsedList.clear();
 
 			} catch (MalformedURLException e) {
 				Log.e(TAG, "malformed url exception");
@@ -127,27 +120,20 @@ public class MFFetchListHelper {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-
-			Log.e(TAG, "onPostExecute");
 			
-//			homeActivity.decrementPDialogCount();
-//			if (homeActivity.getPDialogCount() <= 0) {
-//				homeActivity.hideProgressDialog();
-//				
-//				Fragment[] fragment = homeActivity.getFragments();
-//				Recommend recommendFragment = (Recommend)fragment[0];
-//				Coupon couponFragment = (Coupon)fragment[1];
-//				FoodNews foodNewsFragment = (FoodNews)fragment[2];
-//				if (recommendFragment != null) {
-//					recommendFragment.populateListView();
-//				} 
-//				if (couponFragment != null) {
-//					couponFragment.populateListView(0);
-//				}
-//				if (foodNewsFragment != null) {
-//					foodNewsFragment.populateListView();
-//				} 
-//			}
+			parseXml(new ByteArrayInputStream(baos.toByteArray()), info.tempParsedList, info.contentList);
+
+			try {
+				if (info.tempParsedList.size() != 0) {
+					FileCache fileCache=new FileCache(homeActivity, info.imageType);
+					File f = fileCache.getFile(info.cacheFileName);
+					OutputStream os = new FileOutputStream(f);
+					os.write(baos.toByteArray());
+					os.close();
+				}
+				info.tempParsedList.clear();
+			} catch (Exception e) {
+			}
 			
 			Fragment[] fragment = homeActivity.getFragments();
 			Recommend recommendFragment = (Recommend)fragment[0];
@@ -168,9 +154,7 @@ public class MFFetchListHelper {
 				int type = 0;
 				if (info.cacheFileName.equals(MFConstants.CREDIT_VIP_COUPON_XML_FILE_NAME)) {
 					type = 1;
-				} else if (info.cacheFileName.equals(MFConstants.CREDIT_VIP_COUPON_XML_FILE_NAME)) {
-					type = 2;
-				}
+				} 
 				if (couponFragment.mIsVisible && couponFragment.couponType == type) {
 					homeActivity.hideProgressDialog();
 				}
@@ -186,6 +170,64 @@ public class MFFetchListHelper {
 			
 		}
 	}
+	
+	
+    public static class FetchMainCouponTask extends AsyncTask<Void, Void, Bitmap> {
+    	
+    	private Home homeActivity;
+    	
+    	private FetchMainCouponTask(Home h) {
+    		homeActivity = h;
+    	}
+    	
+    	@Override
+    	protected Bitmap doInBackground(Void... params) {
+
+            try {
+        		FileCache fileCache = new FileCache(homeActivity, ImageType.MAINCOUPON); 
+        		File f = fileCache.getFile(MFConstants.MAIN_COUPON_INFO_STR);
+        		
+    			String infoStr = MFService.getString(MFURL.MAIN_COUPON, f);
+        		if (infoStr != null) {
+        			String[] tokens = infoStr.split("\\|\\|\\|");
+        			String couponId = tokens[0];
+    				Integer.parseInt(couponId);
+    				return MFService.getBitmap(MFURL.getImageUrl(ImageType.MAINCOUPON, couponId), fileCache.getFile(couponId));
+        		}
+				
+			} catch (MalformedURLException e) {
+				Log.e(TAG, "malformed url exception");
+				e.printStackTrace();
+			} catch (IOException e) {
+				Log.e(TAG, "io exception");
+				e.printStackTrace();
+			} catch (Exception e) {
+				
+			}
+    		
+    		return null;
+    	}
+    	
+    	
+    	@Override
+    	protected void onPostExecute(Bitmap result) {
+    		super.onPostExecute(result);
+    		
+			Fragment[] fragment = homeActivity.getFragments();
+			Coupon couponFragment = (Coupon)fragment[1];
+			if (couponFragment != null) {
+				if (couponFragment.mIsVisible && couponFragment.couponType == 2) {
+					homeActivity.hideProgressDialog();
+				}
+				if (result != null) {
+					couponFragment.populateMainCoupon();
+				}
+			} 
+			
+			isFetching = false;
+    	}
+    	
+    }
 
 	public static void parseXml(InputStream is, List tempParsedList, List contentList) {
 		tempParsedList.clear();

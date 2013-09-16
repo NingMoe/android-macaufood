@@ -37,7 +37,7 @@ public class MFURL {
 		else if (imageType == ImageType.FOODNEWS) dir = "article_thumbnail";
 		else if (imageType == ImageType.ADV) dir = "adv_rotate_banner";
 		else if (imageType == ImageType.FRONTPAGE) dir = "front_page";
-		else if (imageType == ImageType.COUPONCLICK) dir = "coupon_click";
+		else if (imageType == ImageType.MAINCOUPON) dir = "coupon_click";
 		else if (imageType == ImageType.FOODNEWSIMAGE) dir = "article_content";
 		
 		return APP_IMAGE + dir + "/" + id + ".jpg";

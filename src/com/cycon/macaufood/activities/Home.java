@@ -147,7 +147,7 @@ public class Home extends SherlockFragmentActivity {
 							//fetch new front page after show front page
 							MFService.fetchFrontPage(getApplicationContext());
 					}
-				}, 2000);
+				}, 1500);
 			} else {
 				MFService.fetchFrontPage(getApplicationContext());
 			}

@@ -96,10 +96,6 @@ public class Search extends BaseActivity {
         tab1.setTabListener(new TabsAdapter());
         tab2.setTabListener(new TabsAdapter());
 
-		if (savedInstanceState != null) {
-			mActionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
-		}
-		
         directSearchLayout = (DirectSearchLayout) findViewById(R.id.directSearchLayout);
         directSearchLayout.setActivity(this);
         advancedSearchLayout = findViewById(R.id.advancedSearchLayout);
@@ -326,6 +322,10 @@ public class Search extends BaseActivity {
 
         mActionBar.addTab(tab1);
         mActionBar.addTab(tab2);
+        
+//		if (savedInstanceState != null) {
+//			mActionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
+//		}
     }
     
     

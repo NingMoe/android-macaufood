@@ -21,6 +21,7 @@ import com.cycon.macaufood.activities.Intro.FetchPageTask;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 
@@ -46,6 +47,7 @@ public class SplashScreen extends Activity {
 			PreferenceHelper.savePreferencesBoolean(SplashScreen.this, "firstLaunch", true);
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "versionNo", getString(R.string.versionNo));
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "cafe_version_update", MFConfig.cafe_version_update);
+			PreferenceHelper.savePreferencesLong(SplashScreen.this, MFConstants.TIME_STAMP_PREF_KEY, 0); //refresh main page after update?
 		}
 		
 		MFConfig.cafe_version_update = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "cafe_version_update" ,MFConfig.cafe_version_update);

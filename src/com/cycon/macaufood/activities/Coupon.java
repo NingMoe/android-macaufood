@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +18,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -27,6 +32,8 @@ import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
+import com.cycon.macaufood.utilities.MFURL;
+import com.cycon.macaufood.utilities.MFUtil;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
 public class Coupon extends SherlockFragment {
@@ -43,9 +50,11 @@ public class Coupon extends SherlockFragment {
 	private SwingBottomInAnimationAdapter animNormalCouponAdapter;
 	private SwingBottomInAnimationAdapter animCreditVipCouponAdapter;
 	private FileCache fileCache;
+	private FileCache mainCouponFileCache;
 	private TextView normalCoupon;
 	private TextView creditVipCoupon;
 	private TextView mainCoupon;
+	private ImageView mainCouponImage;
 	public int couponType = 2; // 0 = normal, 1 = credit, 2 = main coupon
 
 	private Context mContext;
@@ -68,6 +77,7 @@ public class Coupon extends SherlockFragment {
 
 		retryLayout = mView.findViewById(R.id.retryLayout);
 		mainCouponScrollView = mView.findViewById(R.id.mainCouponScrollView);
+		mainCouponImage = (ImageView) mView.findViewById(R.id.mainCouponImage);
 
 		normalCouponList = (ListView) mView.findViewById(R.id.normalCouponList);
 		creditVipCouponList = (ListView) mView.findViewById(R.id.creditVipCouponList);
@@ -145,6 +155,7 @@ public class Coupon extends SherlockFragment {
 						setCreditVipCouponTab(false);
 					couponType = 2;
 					retryLayout.setVisibility(View.GONE);
+
 //					if (MFConfig.getInstance().getVipCouponCafeList().size() == 0) {
 //						preLoadFromFileCache();
 //					}
@@ -152,14 +163,14 @@ public class Coupon extends SherlockFragment {
 				}
 			}
 		});
+		
+		populateMainCoupon();
 
 		// if no internet and no data in File, show retry message
 		if (couponType == 0
 				&& MFConfig.getInstance().getNormalCouponCafeList().size() == 0
 				|| couponType == 1
-				&& MFConfig.getInstance().getCreditVipCouponCafeList().size() == 0
-				/*|| couponType == 2
-				&& MFConfig.getInstance().getVipCouponCafeList().size() == 0*/) {
+				&& MFConfig.getInstance().getCreditVipCouponCafeList().size() == 0) {
 			if (!MFConfig.isOnline(mContext)) {
 				displayRetryLayout();
 			}
@@ -172,6 +183,7 @@ public class Coupon extends SherlockFragment {
 		super.onCreate(savedInstanceState);
 		mContext = getActivity();
 		fileCache = new FileCache(mContext, ImageType.COUPON);
+		mainCouponFileCache = new FileCache(mContext, ImageType.MAINCOUPON);
 
 		preLoadFromFileCache();
 		// onResume will call fetch data
@@ -341,6 +353,67 @@ public class Coupon extends SherlockFragment {
 			creditVipCouponAdapter.notifyDataSetChanged();
 
 		} 
+	}
+	
+	public void populateMainCoupon() {
+		String couponInfoStr = MFUtil.getStringFromCache(mainCouponFileCache, MFConstants.MAIN_COUPON_INFO_STR);
+		if (couponInfoStr != null) {
+			try {
+				String[] tokens = couponInfoStr.split("\\|\\|\\|");
+				String couponId = tokens[0];
+				Integer.parseInt(couponId);
+				boolean isClickable = tokens[1].equals("1");
+				final String forward = tokens[2];
+				final String cafeId = tokens[3];
+				Bitmap bitmap = MFUtil.getBitmapFromCache(mainCouponFileCache, couponId);
+				if (bitmap != null) {
+					mainCouponImage.setImageBitmap(bitmap);
+					RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mainCouponImage.getLayoutParams();
+					int imageHeight = MFConfig.deviceWidth * bitmap.getHeight() / bitmap.getWidth();
+					params.height = imageHeight;
+					mainCouponImage.setLayoutParams(params);
+					if (isClickable) {
+						mainCouponImage.setOnClickListener(new OnClickListener() {
+							
+							public void onClick(View v) {
+								if (forward.equals("b")) {
+									String branch = cafeId;
+									if (!branch.equals("0")) {
+										Intent i = new Intent(mContext, Branch.class);
+										i.putExtra("branch", branch);
+										startActivity(i);
+									} else {
+										// in case that cafe is not added in cafelist yet, return
+										if (MFConfig.getInstance().getCafeLists().size() < Integer
+												.parseInt(cafeId))
+											return;
+										Intent i = new Intent(mContext, Details.class);
+										i.putExtra("id", cafeId);
+										startActivity(i);
+									}
+								} else if (forward.equals("w")) {
+									Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(cafeId));
+									startActivity(i);
+								} else {
+									// in case that cafe is not added in cafelist yet, return
+									if (MFConfig.getInstance().getCafeLists().size() < Integer
+											.parseInt(cafeId))
+										return;
+									Intent i = new Intent(mContext, Details.class);
+									i.putExtra("id", cafeId);
+									startActivity(i);
+								}
+							}
+						});
+
+					}
+				}
+
+				
+			} catch (Exception e) {
+				
+			}
+		}
 	}
 
 	private void preLoadFromFileCache() {

@@ -12,11 +12,11 @@ public class MFConstants {
 			"燒味", "火鍋", "酒家", "中國菜", "海鮮小炒", "燒烤", "煲仔飯", "日本菜", "韓國菜", "西餐",
 			"葡國菜", "法國菜", "意大利菜", "快餐", "素食", "台灣菜", "泰國菜", "越南菜", "緬甸菜",
 			"東南亞菜", "各式美食", "休閒Cafe", "小食", "甜品", "養生滋補", "私房菜", "飲品", "手信",
-			"餅店", "酒舖", "酒吧", "酒店餐廳", "酒店宴會", "商場餐廳" };
+			"餅店", "酒舖", "酒吧", "酒店餐廳", "酒店宴會", "商場餐廳", "凍肉" };
 
 	public static Integer[] dishesId = { 0, 39, 1, 2, 3, 4, 6, 9, 10, 8, 7, 5, 13,
 			14, 11, 12, 20, 21, 27, 32, 15, 16, 17, 18, 19, 28, 25, 22, 24, 29,
-			41, 23, 31, 30, 40, 26, 33, 34, 35 };
+			41, 23, 31, 30, 40, 26, 33, 34, 35, 42 };
 
 	public static String[] serviceType = { "全部", "外送", "訂枱", "宵夜", "到會",
 			"自助任食", "飲宴", "WIFI", "泊車" };
@@ -27,6 +27,7 @@ public class MFConstants {
 //	public static final String CREDIT_COUPON_XML_FILE_NAME = "credit_coupon_parsed_xml";
 //	public static final String VIP_COUPON_XML_FILE_NAME = "vip_coupon_parsed_xml";
 	public static final String FOODNEWS_XML_FILE_NAME = "foodnews_parsed_xml";
+	public static final String MAIN_COUPON_INFO_STR = "main_coupon_info_string";
 
 	public static final String TIME_STAMP_PREF_KEY = "listTimeStamp";
 	public static final String SHOW_DISCLAIMER_PREF_KEY = "disclaimerDialog";

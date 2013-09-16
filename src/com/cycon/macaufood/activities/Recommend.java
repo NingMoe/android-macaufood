@@ -191,7 +191,9 @@ public class Recommend extends SherlockFragment {
     public void onDestroy()
     {
     	Log.e(TAG, "onDestroy");
-    	list.setAdapter(null);
+    	if (list != null) {
+    		list.setAdapter(null);
+    	}
         super.onDestroy();
     }
     

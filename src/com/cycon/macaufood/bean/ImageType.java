@@ -1,7 +1,7 @@
 package com.cycon.macaufood.bean;
 
 public enum ImageType {
-	RECOMMEND("Recommend"), COUPON("Coupon"), REGULAR("Regular"), INTRO("Intro"), INFO("Info"), FOODNEWS("FoodNews"), ADV("Adv"), FRONTPAGE("FrontPage"), COUPONCLICK("CouponClick"),
+	RECOMMEND("Recommend"), COUPON("Coupon"), REGULAR("Regular"), INTRO("Intro"), INFO("Info"), FOODNEWS("FoodNews"), ADV("Adv"), FRONTPAGE("FrontPage"), MAINCOUPON("MainCoupon"),
 	/*this line is for non cache image*/ FOODNEWSIMAGE("FoodNewsImage");
 	
 	private final String value;
