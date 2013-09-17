@@ -144,8 +144,6 @@ public class Home extends SherlockFragmentActivity {
 							startActivity(i);
 							overridePendingTransition(R.anim.front_page_fade_in, 0);
 							showFrontPage = false;
-							//fetch new front page after show front page
-							MFService.fetchFrontPage(getApplicationContext());
 					}
 				}, 1500);
 			} else {

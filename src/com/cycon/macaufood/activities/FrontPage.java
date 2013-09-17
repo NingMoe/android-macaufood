@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
+import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFUtil;
 
 public class FrontPage extends Activity {
@@ -40,5 +41,7 @@ public class FrontPage extends Activity {
 		if (bitmap != null) {
 			frontPage.setImageBitmap(bitmap);
 		}
+		//fetch new front page after show front page
+		MFService.fetchFrontPage(getApplicationContext());
 	}
 }
