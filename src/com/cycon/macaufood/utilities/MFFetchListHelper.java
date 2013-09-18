@@ -31,7 +31,7 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 
 import com.cycon.macaufood.activities.Coupon;
 import com.cycon.macaufood.activities.FoodNews;
@@ -107,10 +107,10 @@ public class MFFetchListHelper {
 
 
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			}
 
@@ -196,10 +196,10 @@ public class MFFetchListHelper {
         		}
 				
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			} catch (Exception e) {
 				
@@ -244,16 +244,16 @@ public class MFFetchListHelper {
 			xr.setContentHandler(xmlHandler);
 			xr.parse(new InputSource(is));
 		} catch (FactoryConfigurationError e) {
-			Log.e(TAG, "FactoryConfigurationError");
+			MFLog.e(TAG, "FactoryConfigurationError");
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
-			Log.e(TAG, "ParserConfigurationException");
+			MFLog.e(TAG, "ParserConfigurationException");
 			e.printStackTrace();
 		} catch (SAXException e) {
-			Log.e(TAG, "SAXException");
+			MFLog.e(TAG, "SAXException");
 			e.printStackTrace();
 		} catch (IOException e) {
-			Log.e(TAG, "IOException");
+			MFLog.e(TAG, "IOException");
 			e.printStackTrace();
 		}
 

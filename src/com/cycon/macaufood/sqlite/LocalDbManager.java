@@ -148,7 +148,7 @@ public class LocalDbManager {
 				cafe.setOption_parking(c.getString(29));
 				cafe.setBranch(c.getString(30));
 				cafe.setPriority(c.getString(31));
-//				ETLog.e("localdao", cafe.getId());
+//				ETMFLog.e("localdao", cafe.getId());
 				MFConfig.getInstance().getCafeLists().add(cafe);
 				c.moveToNext();
 			}

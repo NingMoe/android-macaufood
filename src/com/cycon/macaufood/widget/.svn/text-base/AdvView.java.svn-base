@@ -114,7 +114,7 @@ public class AdvView extends ImageView {
     		String linkIdUrl = "http://www.cycon.com.mo/xml_adv.php?code=android-" + Config.DEVICE_ID + 
     				"&type=" + (isSmallAdv ? "s" : "b");
 
-			ETLog.e(TAG, "getting adv");
+			ETMFLog.e(TAG, "getting adv");
             try {
             	HttpClient client = new DefaultHttpClient();
             	HttpParams httpParams = client.getParams();
@@ -133,15 +133,15 @@ public class AdvView extends ImageView {
 				}
             	
 			} catch (MalformedURLException e) {
-				ETLog.e(TAG, "malformed url exception");
+				ETMFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 				return null;
 			} catch (IOException e) {
-				ETLog.e(TAG, "io exception");
+				ETMFLog.e(TAG, "io exception");
 				e.printStackTrace();
 				return null;
 			} catch (Exception e) {
-				ETLog.e(TAG, "exception");
+				ETMFLog.e(TAG, "exception");
 				e.printStackTrace();
 				return null;
 			}
@@ -159,10 +159,10 @@ public class AdvView extends ImageView {
 				return BitmapFactory.decodeStream(new FlushedInputStream(is));
 				
 			} catch (MalformedURLException e) {
-				ETLog.e(TAG, "malformed url exception");
+				ETMFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				ETLog.e(TAG, "io exception");
+				ETMFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			} 
     		
@@ -172,7 +172,7 @@ public class AdvView extends ImageView {
     	@Override
     	protected void onPostExecute(Bitmap result) {
     		super.onPostExecute(result);
-//    		ETLog.e(TAG, "getAdv");
+//    		ETMFLog.e(TAG, "getAdv");
     		setVisibility(View.VISIBLE);
     		linkId = tempLinkId;
     		if (result == null) {

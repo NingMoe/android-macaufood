@@ -8,7 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -87,7 +87,7 @@ public class FoodNews extends SherlockFragment {
 			FileInputStream is = new FileInputStream(f);
 			MFFetchListHelper.parseXml(is, MFConfig.tempParsedFoodNewsList, MFConfig.getInstance().getFoodNewsList());
 		} catch (FileNotFoundException e) {
-	    	Log.e(TAG, "FileNotFoundException");
+	    	MFLog.e(TAG, "FileNotFoundException");
 			e.printStackTrace();
 		} 
 
@@ -174,7 +174,7 @@ public class FoodNews extends SherlockFragment {
     @Override
     public void onDestroy()
     {
-    	Log.e(TAG, "onDestroy");
+    	MFLog.e(TAG, "onDestroy");
     	if (list != null) {
     		list.setAdapter(null);
     	}

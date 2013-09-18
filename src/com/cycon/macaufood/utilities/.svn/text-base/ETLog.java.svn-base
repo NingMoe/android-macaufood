@@ -1,18 +1,18 @@
 package com.cycon.macaufood.utilities;
 
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 
 public class ETLog {
 	public static  boolean LOG = false;
 	
 	 public static final void e(String tag, String msg, Throwable ex){
 	    	if( LOG )
-	    	    Log.e(tag, msg, ex);
+	    	    MFLog.e(tag, msg, ex);
 	    }
 	 
     public static final void e(String tag, String msg){
     	if( LOG )
-    	    Log.e(tag, msg);
+    	    MFLog.e(tag, msg);
     }
     public static final void i(String tag, String msg){
     	if( LOG )

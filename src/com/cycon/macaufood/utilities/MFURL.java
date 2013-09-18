@@ -1,6 +1,6 @@
 package com.cycon.macaufood.utilities;
 
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 
 import com.cycon.macaufood.bean.ImageType;
 

@@ -10,7 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
@@ -104,7 +104,7 @@ import com.cycon.macaufood.utilities.MFService;
 					MFConfig.getInstance().getCafeLists().get(index).setAnyField(field, details);
 					LocalDbManager.getInstance(mContext.getApplicationContext()).updateCafeField(field, details, id);
 				} catch (Exception e) {
-//					ETLog.e("Update", "Exception");
+//					ETMFLog.e("Update", "Exception");
 					e.printStackTrace();
 				}
 			} else if (type.equals("a")) {
@@ -126,7 +126,7 @@ import com.cycon.macaufood.utilities.MFService;
 						try {
 							cafe.setAnyField(fieldStr, valueStr);
 						} catch (Exception e) {
-	//						ETLog.e("Update", "Exception");
+	//						ETMFLog.e("Update", "Exception");
 							e.printStackTrace();
 						}
 					}
@@ -143,7 +143,7 @@ import com.cycon.macaufood.utilities.MFService;
 					MFConfig.getInstance().getCafeLists().get(index).setStatus("0");
 					LocalDbManager.getInstance(mContext.getApplicationContext()).updateCafeField("status", "0", id);
 				} catch (Exception e) {
-//					ETLog.e("Update", "Exception");
+//					ETMFLog.e("Update", "Exception");
 					e.printStackTrace();
 				}
 			} else if (type.equals("i")) {

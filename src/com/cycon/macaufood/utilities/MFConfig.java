@@ -20,7 +20,7 @@ import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -34,7 +34,7 @@ public class MFConfig {
 	
 	public static String DEVICE_ID;
 	
-	public static String cafe_version_update = "1378812892";
+	public static String cafe_version_update = "1379313920";
 
 	private List<Cafe> cafeLists = Collections.synchronizedList(new ArrayList<Cafe>(2500));
 	
@@ -104,19 +104,19 @@ public class MFConfig {
 				xr.setContentHandler(myXMLHandler);
 				xr.parse(new InputSource(res.openRawResource(R.raw.cafe_output)));
 			} catch (NotFoundException e) {
-				Log.e("Config", "NotFoundexception");
+				MFLog.e("Config", "NotFoundexception");
 				e.printStackTrace();
 			} catch (FactoryConfigurationError e) {
-				Log.e("Config", "factoryconfiexception");
+				MFLog.e("Config", "factoryconfiexception");
 				e.printStackTrace();
 			} catch (ParserConfigurationException e) {
-				Log.e("Config", "parseconfexception");
+				MFLog.e("Config", "parseconfexception");
 				e.printStackTrace();
 			} catch (SAXException e) {
-				Log.e("Config", "saxexception");
+				MFLog.e("Config", "saxexception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e("Config", "ioexception");
+				MFLog.e("Config", "ioexception");
 				e.printStackTrace();
 			}
 	}

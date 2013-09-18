@@ -25,7 +25,7 @@ import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,7 +164,7 @@ public class AdvViewPager extends ViewPager {
             	String[] advIdList = advListStr.split(",");
             	for (String id : advIdList) {
 
-    				Log.e(TAG, id);
+    				MFLog.e(TAG, id);
             		if (!id.equals("")) {
             			Integer.parseInt(id);
             			idList.add(id);
@@ -172,15 +172,15 @@ public class AdvViewPager extends ViewPager {
             	}
             	
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 				return null;
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 				return null;
 			} catch (Exception e) {
-				Log.e(TAG, "exception");
+				MFLog.e(TAG, "exception");
 				e.printStackTrace();
 				return null;
 			}
@@ -224,10 +224,10 @@ public class AdvViewPager extends ViewPager {
             	return MFService.getBitmap(MFURL.getImageUrl(ImageType.ADV, id), f);
 				
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			} 
     		

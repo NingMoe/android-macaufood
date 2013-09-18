@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 
 import com.cycon.macaufood.bean.Cafe;
 

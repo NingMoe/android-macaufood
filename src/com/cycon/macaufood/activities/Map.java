@@ -23,7 +23,7 @@ import android.os.Process;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -315,7 +315,7 @@ public class Map extends SherlockFragmentActivity {
 //		mMap.setOnMapClickListener(new OnMapClickListener() {
 //			
 //			public void onMapClick(LatLng point) {
-//				Log.e("ZZZ", point.latitude + " " + point.longitude);
+//				MFLog.e("ZZZ", point.latitude + " " + point.longitude);
 //			}
 //		});
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {

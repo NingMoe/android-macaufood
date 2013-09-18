@@ -17,7 +17,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -86,7 +86,7 @@ public class Search extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        Log.e(getClass().getSimpleName(), "---onCreate");
+        MFLog.e(getClass().getSimpleName(), "---onCreate");
 
         setContentView(R.layout.search);
 
@@ -668,7 +668,7 @@ public class Search extends BaseActivity {
     @Override
     public void onDestroy() {
     	super.onDestroy();
-    	Log.e(getClass().getSimpleName(), "---onDestroy");
+    	MFLog.e(getClass().getSimpleName(), "---onDestroy");
     }
     
     

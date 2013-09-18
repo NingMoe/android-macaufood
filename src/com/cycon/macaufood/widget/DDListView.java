@@ -22,7 +22,7 @@ import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;

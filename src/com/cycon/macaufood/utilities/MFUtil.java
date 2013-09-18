@@ -14,7 +14,7 @@ import java.util.Arrays;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.util.TypedValue;
 
 import com.cycon.macaufood.bean.Cafe;

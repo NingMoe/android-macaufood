@@ -27,7 +27,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -213,10 +213,10 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 				}
             	
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			} catch (Exception e) {
 				
@@ -257,10 +257,10 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 				return MFService.getString(MFURL.getIntroTextUrl(introid, page), f);
                 
 				} catch (MalformedURLException e) {
-					Log.e(TAG, "malformed url exception");
+					MFLog.e(TAG, "malformed url exception");
 					e.printStackTrace();
 				} catch (IOException e) {
-					Log.e(TAG, "io exception");
+					MFLog.e(TAG, "io exception");
 					e.printStackTrace();
 				} catch (Exception e) {
 					
@@ -312,10 +312,10 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 				return MFService.getBitmap(MFURL.getImageUrl(ImageType.INTRO, introid + "-" + page), f);
 				
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			} 
     		

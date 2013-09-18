@@ -4,7 +4,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
@@ -37,7 +37,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 				try {
 					cafe.setAnyField(localName, tempValue.toString());
 				} catch (Exception e) {
-					Log.e("CafeXMLHandler", "setFieldException " + e.getMessage());
+					MFLog.e("CafeXMLHandler", "setFieldException " + e.getMessage());
 					e.printStackTrace();
 				}
 			}

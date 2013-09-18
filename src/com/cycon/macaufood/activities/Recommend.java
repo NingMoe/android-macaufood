@@ -8,7 +8,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,7 +86,7 @@ public class Recommend extends SherlockFragment {
 			FileInputStream is = new FileInputStream(f);
 			MFFetchListHelper.parseXml(is, MFConfig.tempParsedRecommendCafeList, MFConfig.getInstance().getRecommendCafeList());
 		} catch (FileNotFoundException e) {
-	    	Log.e(TAG, "FileNotFoundException");
+	    	MFLog.e(TAG, "FileNotFoundException");
 			e.printStackTrace();
 		} 
 		//refresh when file cache xml is deleted by user
@@ -106,7 +106,7 @@ public class Recommend extends SherlockFragment {
 			
 			if (forward.equals("b")) {
 				String branch = cafeId;
-				Log.e("branch", branch);
+				MFLog.e("branch", branch);
 				if (!branch.equals("0")) {
 					Intent i = new Intent(mContext, Branch.class);
 					i.putExtra("branch", branch);
@@ -190,7 +190,7 @@ public class Recommend extends SherlockFragment {
     @Override
     public void onDestroy()
     {
-    	Log.e(TAG, "onDestroy");
+    	MFLog.e(TAG, "onDestroy");
     	if (list != null) {
     		list.setAdapter(null);
     	}

@@ -150,19 +150,19 @@ public class Config {
 				xr.setContentHandler(myXMLHandler);
 				xr.parse(new InputSource(res.openRawResource(R.raw.cafe_output)));
 			} catch (NotFoundException e) {
-				ETLog.e("Config", "NotFoundexception");
+				ETMFLog.e("Config", "NotFoundexception");
 				e.printStackTrace();
 			} catch (FactoryConfigurationError e) {
-				ETLog.e("Config", "factoryconfiexception");
+				ETMFLog.e("Config", "factoryconfiexception");
 				e.printStackTrace();
 			} catch (ParserConfigurationException e) {
-				ETLog.e("Config", "parseconfexception");
+				ETMFLog.e("Config", "parseconfexception");
 				e.printStackTrace();
 			} catch (SAXException e) {
-				ETLog.e("Config", "saxexception");
+				ETMFLog.e("Config", "saxexception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				ETLog.e("Config", "ioexception");
+				ETMFLog.e("Config", "ioexception");
 				e.printStackTrace();
 			}
 	}

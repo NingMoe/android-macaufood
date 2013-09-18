@@ -48,7 +48,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 //					Config.getInstance().getRecommendCafeList().add(cafe);
 //				}
 			} else {
-//					Log.e(localName, tempValue.toString());
+//					MFLog.e(localName, tempValue.toString());
 				if (localName.equals("id")) {
 					cafe.setId(tempValue.toString());
 				} else if (localName.equals("cafeid")) {
@@ -73,7 +73,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 //			} else {
 				tempValue.append(ch, start, length); // append to buffer
 //				currentValue = new String(ch, start, length);
-//				Log.e("length", new String(ch) + " " + start + " " + length);
+//				MFLog.e("length", new String(ch) + " " + start + " " + length);
 //				currentElement = false;
 //			}
 //		} else {

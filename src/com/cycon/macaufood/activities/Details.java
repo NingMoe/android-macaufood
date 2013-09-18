@@ -16,7 +16,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -379,13 +379,13 @@ public class Details extends BaseActivity {
 	            return MFService.getBitmap(MFURL.getImageUrl(ImageType.REGULAR, cafe.getId()), f);
 	            
 	        } catch (FileNotFoundException ex){
-	        	Log.e(TAG, "no photo");
+	        	MFLog.e(TAG, "no photo");
 	           ex.printStackTrace();
 	        	   return null;
 	        } catch (Exception e) {
 	        	noConnection = true;
 	        	//socket error here
-	        	Log.e(TAG, "error = " + e.getMessage());
+	        	MFLog.e(TAG, "error = " + e.getMessage());
 	        	return null;
 	        }
 		}

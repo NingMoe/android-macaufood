@@ -22,7 +22,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -125,15 +125,15 @@ public class AdvView extends ImageView {
 				}
             	
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 				return null;
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 				return null;
 			} catch (Exception e) {
-				Log.e(TAG, "exception");
+				MFLog.e(TAG, "exception");
 				e.printStackTrace();
 				return null;
 			}
@@ -149,10 +149,10 @@ public class AdvView extends ImageView {
 				return bitmap;
 				
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			} 
     		

@@ -17,7 +17,7 @@ package kankan.wheel.widget.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -240,7 +240,7 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
                 text = (TextView) view.findViewById(textResource);
             }
         } catch (ClassCastException e) {
-            Log.e("AbstractWheelAdapter", "You must supply a resource ID for a TextView");
+            MFLog.e("AbstractWheelAdapter", "You must supply a resource ID for a TextView");
             throw new IllegalStateException(
                     "AbstractWheelAdapter requires the resource ID to be a TextView", e);
         }

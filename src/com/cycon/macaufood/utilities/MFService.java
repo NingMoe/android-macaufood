@@ -37,7 +37,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.View;
 
 public class MFService {
@@ -152,10 +152,10 @@ public class MFService {
 				return MFService.getBitmap(MFURL.getImageUrl(ImageType.FRONTPAGE, "1"), f);
 				
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			} 
     		
@@ -176,7 +176,7 @@ public class MFService {
             	parseUpdateXml(is);
             	LocalDbManager.getInstance(appContext).endWritableDb();
             	if (updateSuccessfully) {
-            		Log.e("BaseActivity", "update success");
+            		MFLog.e("BaseActivity", "update success");
             		
 				    try {
 				    	is = executeRequest(MFURL.CAFE_VERSION_UPDATE);
@@ -187,16 +187,16 @@ public class MFService {
 				    	Integer.parseInt(str);
 				    	MFConfig.cafe_version_update = str;
 				    	PreferenceHelper.savePreferencesStr(appContext, "cafe_version_update", str);
-				    	Log.e("cafe_version_update", MFConfig.cafe_version_update);
+				    	MFLog.e("cafe_version_update", MFConfig.cafe_version_update);
 				        
 					} catch (MalformedURLException e) {
-						Log.e(TAG, "malformed url exception");
+						MFLog.e(TAG, "malformed url exception");
 						e.printStackTrace();
 					} catch (IOException e) {
-						Log.e(TAG, "io exception");
+						MFLog.e(TAG, "io exception");
 						e.printStackTrace();
 					} catch (Exception e) {
-						Log.e(TAG, "EXCEPTION" + e.getMessage());
+						MFLog.e(TAG, "EXCEPTION" + e.getMessage());
 					}
 					updateCafeListTimeStamp = System.currentTimeMillis();
     	            updateSuccessfully = false;
@@ -204,10 +204,10 @@ public class MFService {
 				
 				
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 			} 
     		
@@ -232,18 +232,18 @@ public class MFService {
 			xr.setContentHandler(myXMLHandler);
 			xr.parse(new InputSource(is));	
 		} catch (FactoryConfigurationError e) {
-			Log.e(TAG, "FactoryConfigurationError");
+			MFLog.e(TAG, "FactoryConfigurationError");
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
-			Log.e(TAG, "ParserConfigurationException");
+			MFLog.e(TAG, "ParserConfigurationException");
 			e.printStackTrace();
 		} catch (SAXException e) {
-			Log.e(TAG, "SAXException");
+			MFLog.e(TAG, "SAXException");
 			// when it shows "1" in xml
 			updateCafeListTimeStamp = System.currentTimeMillis();
 			e.printStackTrace();
 		} catch (IOException e) {
-			Log.e(TAG, "IOException");
+			MFLog.e(TAG, "IOException");
 			e.printStackTrace();
 		}
     }
@@ -267,15 +267,15 @@ public class MFService {
             	client.execute(request);
             	
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 				return null;
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 				return null;
 			} catch (Exception e) {
-				Log.e(TAG, "exception");
+				MFLog.e(TAG, "exception");
 				e.printStackTrace();
 				return null;
 			}

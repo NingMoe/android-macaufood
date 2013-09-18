@@ -32,13 +32,13 @@ import com.cycon.macaufood.bean.Cafe;
 				Config.getInstance().getCafeLists().add(cafe);
 //				LocalDaoManager.getInstance().addCafeEntry(cafe.getId() == null ? "" : cafe.getId(), 
 //						cafe.getName() == null ? "" : cafe.getName(), cafe.getAddress() == null ? "" : cafe.getAddress());
-//				ETLog.e("ZZZ", "set " + cafe.getId());
+//				ETMFLog.e("ZZZ", "set " + cafe.getId());
 			} else {
 				try {
-//					Log.e(localName, tempValue.toString());
+//					MFLog.e(localName, tempValue.toString());
 					cafe.setAnyField(localName, tempValue.toString());
 				} catch (Exception e) {
-					ETLog.e("CafeXMLHandler", "setFieldException " + e.getMessage());
+					ETMFLog.e("CafeXMLHandler", "setFieldException " + e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -54,7 +54,7 @@ import com.cycon.macaufood.bean.Cafe;
 //			} else {
 				tempValue.append(ch, start, length); // append to buffer
 //				currentValue = new String(ch, start, length);
-//				Log.e("length", new String(ch) + " " + start + " " + length);
+//				MFLog.e("length", new String(ch) + " " + start + " " + length);
 //				currentElement = false;
 //			}
 //		} else {

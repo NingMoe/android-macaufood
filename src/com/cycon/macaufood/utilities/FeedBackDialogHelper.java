@@ -14,7 +14,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -121,15 +121,15 @@ public class FeedBackDialogHelper {
 				client.execute(request);
 
 			} catch (MalformedURLException e) {
-				Log.e(TAG, "malformed url exception");
+				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
 				return false;
 			} catch (IOException e) {
-				Log.e(TAG, "io exception");
+				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
 				return false;
 			} catch (Exception e) {
-				Log.e(TAG, "exception");
+				MFLog.e(TAG, "exception");
 				e.printStackTrace();
 				return false;
 			}

@@ -12,7 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.DisplayMetrics;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.KeyEvent;
 import android.view.Window;
 

@@ -28,7 +28,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
+import com.cycon.macaufood.utilities.MFLog;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -98,9 +98,9 @@ public class ImageLoader {
     public void displayImage(String id, ImageView imageView, int position)
     {
     	imagesToLoad.remove(id);
-//    	Log.e(TAG, "remove " + id);
+//    	MFLog.e(TAG, "remove " + id);
 //    	if (imagesToLoad.remove(id) == false) {
-//    		Log.e(TAG, "error....id in imagestoload does not exist");
+//    		MFLog.e(TAG, "error....id in imagestoload does not exist");
 //    	}
 		imageViews.put(imageView, id);
         Bitmap bitmap=memoryCache.get(id);
@@ -152,7 +152,7 @@ public class ImageLoader {
 		                continue;
 		            }
 		        }
-				Log.e(TAG, "poll id " + pollId);
+				MFLog.e(TAG, "poll id " + pollId);
 				loadImages(pollId, null);
 			}
         }
@@ -181,7 +181,7 @@ public class ImageLoader {
         try {
 			AsyncTaskHelper.executeWithResultBitmap(task);
 		} catch (RejectedExecutionException e) {
-			Log.e(TAG, "catchRejectedExecution");
+			MFLog.e(TAG, "catchRejectedExecution");
 			e.printStackTrace();
 		}
     }
@@ -211,7 +211,7 @@ public class ImageLoader {
 		protected Bitmap doInBackground(Void... params) {
             Bitmap bmp=getBitmap(p.id);
             if (bmp != null) {
-//            	ETLog.e(TAG, "load successful " + p.id + " max tasks no = " + imagesLoading.size());
+//            	ETMFLog.e(TAG, "load successful " + p.id + " max tasks no = " + imagesLoading.size());
             	memoryCache.put(p.id, bmp);
             }
             else {
@@ -228,7 +228,7 @@ public class ImageLoader {
         	if (p.imageView != null)
 				currentDisplayImages.remove(p.id);
         	
-            if (noConnection) {Log.e(TAG, "no connection");
+            if (noConnection) {MFLog.e(TAG, "no connection");
             	imagesToLoad.addFirst(p.id);
             	return null;
             }
@@ -258,7 +258,7 @@ public class ImageLoader {
 			                continue;
 			            }
 			        }
-//					ETLog.e(TAG, "poll id " + id);
+//					ETMFLog.e(TAG, "poll id " + id);
 					loadImages(id, null);
 				}
             }
@@ -269,9 +269,9 @@ public class ImageLoader {
 					for (ImageView view : imageViews.keySet()) {
 						String tag=imageViews.get(view);
 						if(tag!=null && tag.equals(p.id)){ 
-//							ETLog.e(TAG, "set photo after load " + p.id);
+//							ETMFLog.e(TAG, "set photo after load " + p.id);
 							if (result == null) {
-//								ETLog.e(TAG, "set nophoto id = " + p.id);
+//								ETMFLog.e(TAG, "set nophoto id = " + p.id);
 								view.setImageDrawable(nophoto);
 							} else {
 								view.setImageBitmap(result);
@@ -290,10 +290,10 @@ public class ImageLoader {
 						p.imageView.setImageDrawable(nointernet);
 					} else {
 						if (result == null) {
-							Log.e(TAG, "set nophoto id = " + p.id);
+							MFLog.e(TAG, "set nophoto id = " + p.id);
 							p.imageView.setImageDrawable(nophoto);
 						} else {
-							Log.e(TAG, "set photo id = " + p.id);
+							MFLog.e(TAG, "set photo id = " + p.id);
 							p.imageView.setImageBitmap(result);
 							p.imageView.setAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
 						}
@@ -312,13 +312,13 @@ public class ImageLoader {
 		            return MFService.getBitmap(MFURL.getImageUrl(imageType, id), f);
 		        	
 		        } catch (FileNotFoundException ex){
-		        	Log.e(TAG, "no photo");
+		        	MFLog.e(TAG, "no photo");
 		           ex.printStackTrace();
 		        	   return null;
 		        } catch (Exception e) {
 		        	noConnection = true;
 		        	//socket error here
-		        	Log.e(TAG, "error = " + e.getMessage());
+		        	MFLog.e(TAG, "error = " + e.getMessage());
 		        	return null;
 		        }
 		    }

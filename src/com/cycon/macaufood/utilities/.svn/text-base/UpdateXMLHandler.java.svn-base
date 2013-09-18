@@ -97,7 +97,7 @@ import com.cycon.macaufood.bean.ImageType;
 					Config.getInstance().getCafeLists().get(index).setAnyField(field, details);
 					LocalDaoManager.getInstance().updateCafeField(field, details, id);
 				} catch (Exception e) {
-//					ETLog.e("Update", "Exception");
+//					ETMFLog.e("Update", "Exception");
 					e.printStackTrace();
 				}
 			} else if (type.equals("a")) {
@@ -117,7 +117,7 @@ import com.cycon.macaufood.bean.ImageType;
 						try {
 							cafe.setAnyField(fieldStr, valueStr);
 						} catch (Exception e) {
-	//						ETLog.e("Update", "Exception");
+	//						ETMFLog.e("Update", "Exception");
 							e.printStackTrace();
 						}
 					}
@@ -134,7 +134,7 @@ import com.cycon.macaufood.bean.ImageType;
 					Config.getInstance().getCafeLists().get(index).setStatus("0");
 					LocalDaoManager.getInstance().updateCafeField("status", "0", id);
 				} catch (Exception e) {
-//					ETLog.e("Update", "Exception");
+//					ETMFLog.e("Update", "Exception");
 					e.printStackTrace();
 				}
 			} else if (type.equals("i")) {
