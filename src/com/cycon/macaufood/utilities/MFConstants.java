@@ -30,5 +30,7 @@ public class MFConstants {
 	public static final String MAIN_COUPON_INFO_STR = "main_coupon_info_string";
 
 	public static final String TIME_STAMP_PREF_KEY = "listTimeStamp";
+	public static final String FRONT_PAGE_LINK_PREF_KEY = "frontPageLink";
+	public static final String FRONT_PAGE_STAMP_PREF_KEY = "frontPageTimeStamp";
 	public static final String SHOW_DISCLAIMER_PREF_KEY = "disclaimerDialog";
 }

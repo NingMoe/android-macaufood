@@ -1,12 +1,14 @@
 package com.cycon.macaufood.activities;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.apache.http.client.ClientProtocolException;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,9 +16,14 @@ import android.widget.ImageView;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
+import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.cycon.macaufood.utilities.PreferenceHelper;
 
 public class FrontPage extends Activity {
 	
@@ -40,8 +47,20 @@ public class FrontPage extends Activity {
 		Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
 		if (bitmap != null) {
 			frontPage.setImageBitmap(bitmap);
+			frontPage.setOnClickListener(new OnClickListener() {
+				
+				public void onClick(View arg0) {
+					String frontPageLink = PreferenceHelper.getPreferenceValueStr(FrontPage.this, MFConstants.FRONT_PAGE_LINK_PREF_KEY, "");
+					if (frontPageLink.length() > 10) {
+						Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(frontPageLink));
+						startActivity(i);
+					}
+				}
+			});
 		}
-		//fetch new front page after show front page
+		
 		MFService.fetchFrontPage(getApplicationContext());
+		
 	}
+	
 }

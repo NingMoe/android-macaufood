@@ -28,6 +28,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import com.cycon.macaufood.activities.BaseActivity;
+import com.cycon.macaufood.activities.FrontPage;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.xmlhandler.UpdateXMLHandler;
@@ -38,6 +39,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import com.cycon.macaufood.utilities.MFLog;
+
+import android.util.Log;
 import android.view.View;
 
 public class MFService {
@@ -79,7 +82,7 @@ public class MFService {
 	public static void fetchFrontPage(Context c) {
 		appContext = c;
 		if (MFConfig.isOnline(appContext)) {
-			AsyncTaskHelper.executeWithResultBitmap(new FetchFrontPageTask());
+			AsyncTaskHelper.execute(new FetchFrontPageTask());
 		}
 	}
 	
@@ -141,15 +144,29 @@ public class MFService {
 	}
 
 	
-    public static class FetchFrontPageTask extends AsyncTask<Void, Void, Bitmap> {
+    public static class FetchFrontPageTask extends AsyncTask<Void, Void, Void> {
     	
     	@Override
-    	protected Bitmap doInBackground(Void... params) {
+    	protected Void doInBackground(Void... params) {
 
-            try {
-            	FileCache fileCache = new FileCache(appContext, ImageType.FRONTPAGE);
-				File f = fileCache.getFile("1");
-				return MFService.getBitmap(MFURL.getImageUrl(ImageType.FRONTPAGE, "1"), f);
+    		try {
+				String timeStampStr = MFService.getString(MFURL.FRONT_PAGE_TIME, null);
+
+				long timeStamp = Long.parseLong(timeStampStr);
+				long currentFrontPageTime = PreferenceHelper.getPreferenceValueLong(appContext, MFConstants.FRONT_PAGE_STAMP_PREF_KEY, 0);
+				
+				Bitmap bitmap = null;
+				if (timeStamp > currentFrontPageTime) {
+					String frontPageLink = MFService.getString(MFURL.FRONT_PAGE_LINK_URL, null);
+					PreferenceHelper.savePreferencesStr(appContext, MFConstants.FRONT_PAGE_LINK_PREF_KEY, frontPageLink);
+					FileCache fileCache = new FileCache(appContext, ImageType.FRONTPAGE);
+					File f = fileCache.getFile("1");
+					bitmap = MFService.getBitmap(MFURL.getImageUrl(ImageType.FRONTPAGE, "1"), f);
+				}
+				
+				if (bitmap != null) {
+					PreferenceHelper.savePreferencesLong(appContext, MFConstants.FRONT_PAGE_STAMP_PREF_KEY, timeStamp);
+				}
 				
 			} catch (MalformedURLException e) {
 				MFLog.e(TAG, "malformed url exception");
@@ -157,7 +174,10 @@ public class MFService {
 			} catch (IOException e) {
 				MFLog.e(TAG, "io exception");
 				e.printStackTrace();
-			} 
+			} catch (NumberFormatException e) {
+				MFLog.e(TAG, "NumberFormatException");
+				e.printStackTrace();
+			}
     		
     		return null;
     	}

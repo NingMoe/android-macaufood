@@ -147,6 +147,7 @@ public class Home extends SherlockFragmentActivity {
 					}
 				}, 1500);
 			} else {
+				PreferenceHelper.savePreferencesLong(getApplicationContext(), MFConstants.FRONT_PAGE_STAMP_PREF_KEY, 0);
 				MFService.fetchFrontPage(getApplicationContext());
 			}
         }

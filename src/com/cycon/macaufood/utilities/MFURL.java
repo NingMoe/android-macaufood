@@ -20,6 +20,8 @@ public class MFURL {
 	public static final String CAFE_VERSION_UPDATE = "http://www.cycon.com.mo/cafe_version_update.txt";
 	public static final String CAFE_DETAILS_LOG = "http://www.cycon.com.mo/xml_detaillog2.php?key=cafecafe&udid=android-";//more params behind
 	public static final String SUBMIT_FEEDBACK = "http://www.cycon.com.mo/xml_submitmsg2.php?key=cafecafe&udid=android-";//more params behind
+	public static final String FRONT_PAGE_TIME = "http://www.cycon.com.mo/xml_get_config.php?key=cafecafe&type=front_page";
+	public static final String FRONT_PAGE_LINK_URL = "http://www.cycon.com.mo/xml_get_config.php?key=cafecafe&type=front_page_url";
 	
 	private static final String APP_IMAGE = "http://www.cycon.com.mo/appimages/";
 	private static final String INTRO_PAGE = "http://www.cycon.com.mo/detail_page.php?id=";
