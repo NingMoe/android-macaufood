@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -47,16 +48,23 @@ public class FrontPage extends Activity {
 		Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
 		if (bitmap != null) {
 			frontPage.setImageBitmap(bitmap);
-			frontPage.setOnClickListener(new OnClickListener() {
+			Handler handler = new Handler();
+			handler.postDelayed(new Runnable() {
 				
-				public void onClick(View arg0) {
-					String frontPageLink = PreferenceHelper.getPreferenceValueStr(FrontPage.this, MFConstants.FRONT_PAGE_LINK_PREF_KEY, "");
-					if (frontPageLink.length() > 10) {
-						Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(frontPageLink));
-						startActivity(i);
-					}
+				public void run() {
+					frontPage.setOnClickListener(new OnClickListener() {
+						
+						public void onClick(View arg0) {
+							String frontPageLink = PreferenceHelper.getPreferenceValueStr(FrontPage.this, MFConstants.FRONT_PAGE_LINK_PREF_KEY, "");
+							if (frontPageLink.length() > 10) {
+								Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(frontPageLink));
+								startActivity(i);
+							}
+						}
+					});
 				}
-			});
+			}, 1000);
+
 		}
 		
 		MFService.fetchFrontPage(getApplicationContext());
