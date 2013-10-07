@@ -22,6 +22,8 @@ public class MFURL {
 	public static final String SUBMIT_FEEDBACK = "http://www.cycon.com.mo/xml_submitmsg2.php?key=cafecafe&udid=android-";//more params behind
 	public static final String FRONT_PAGE_TIME = "http://www.cycon.com.mo/xml_get_config.php?key=cafecafe&type=front_page";
 	public static final String FRONT_PAGE_LINK_URL = "http://www.cycon.com.mo/xml_get_config.php?key=cafecafe&type=front_page_url";
+	public static final String PHOTOSHARE_HOT_LIST = "http://www.cycon.com.mo/photo_xml_gethot2.php?key=photo123456&iphone5=1";
+	public static final String PHOTOSHARE_HOT_IMAGE = "http://www.cycon.com.mo/displayimage.php?filename=";
 	
 	private static final String APP_IMAGE = "http://www.cycon.com.mo/appimages/";
 	private static final String INTRO_PAGE = "http://www.cycon.com.mo/detail_page.php?id=";
@@ -41,6 +43,7 @@ public class MFURL {
 		else if (imageType == ImageType.FRONTPAGE) dir = "front_page";
 		else if (imageType == ImageType.MAINCOUPON) dir = "coupon_click";
 		else if (imageType == ImageType.FOODNEWSIMAGE) dir = "article_content";
+		else if (imageType == ImageType.PHOTOSHARE_HOT) return PHOTOSHARE_HOT_IMAGE + id;
 		
 		return APP_IMAGE + dir + "/" + id + ".jpg";
 	}

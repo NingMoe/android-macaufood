@@ -1,54 +1,22 @@
 package com.cycon.macaufood.activities;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import com.cycon.macaufood.utilities.MFLog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
+import android.view.ViewGroup;
+import android.widget.GridView;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.adapters.FoodNewsListAdapter;
-import com.cycon.macaufood.bean.ImageType;
-import com.cycon.macaufood.utilities.FileCache;
+import com.cycon.macaufood.adapters.PSHotAdapter;
+import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.utilities.PreferenceHelper;
-import com.cycon.macaufood.widget.AdvView;
-import com.cycon.macaufood.xmlhandler.FoodNewsXMLHandler;
 
 public class PhotoShare extends SherlockFragment {
 
@@ -65,6 +33,14 @@ public class PhotoShare extends SherlockFragment {
 //	private long dataTimeStamp;
 	private Context mContext;
 	private View mView;
+	
+	private TextView mPsFriends;
+	private TextView mPsHot;
+	private View mPsCamera;
+	private View mPsSettings;
+	private GridView mHotLayoutGV;
+	private View mFriendsLayoutSV;
+	private int mCurrentTab = 1; //friends = 0, hot = 1;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -87,6 +63,52 @@ public class PhotoShare extends SherlockFragment {
 //		if (MFConfig.getInstance().getFoodNewsList().size() == 0) {
 //			displayRetryLayout();
 //		}
+		
+		
+		mHotLayoutGV = (GridView) mView.findViewById(R.id.hotLayoutGV);
+		
+		List<Cafe> list = new ArrayList<Cafe>();
+		for (int i = 0 ; i < 25; i++) {
+			list.add(MFConfig.getInstance().getCafeLists().get(i));
+		}
+		mHotLayoutGV.setAdapter(new PSHotAdapter(getActivity(), list));
+		mFriendsLayoutSV = mView.findViewById(R.id.friendsLayoutSV);
+		
+		mPsFriends = (TextView) mView.findViewById(R.id.psFriends);
+		mPsFriends.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				if (mCurrentTab == 0) return;
+				mPsHot.setSelected(false);
+				mPsFriends.setSelected(true);
+				mCurrentTab = 0;
+				mHotLayoutGV.setVisibility(View.GONE);
+				mFriendsLayoutSV.setVisibility(View.VISIBLE);
+			}
+		});
+		mPsHot = (TextView) mView.findViewById(R.id.psHot);
+		mPsHot.setSelected(true);
+		mPsHot.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				if (mCurrentTab == 1) return;
+				mPsHot.setSelected(true);
+				mPsFriends.setSelected(false);
+				mCurrentTab = 1;
+				mHotLayoutGV.setVisibility(View.VISIBLE);
+				mFriendsLayoutSV.setVisibility(View.GONE);
+			}
+		});
+		mPsCamera = mView.findViewById(R.id.psCamera);
+		mPsCamera.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		mPsSettings = mView.findViewById(R.id.psSettings);
+		
 	}
 	
     @Override

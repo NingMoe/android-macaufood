@@ -125,6 +125,9 @@
  	
  <!-- PhotoShare -->
  	<string name="photoShare">美食分享</string>
+ 	<string name="psHot">人氣相片</string>
+ 	<string name="psFriends">朋友更新</string>
+ 	<string name="psUpload">上載相片</string>
  	
  	
  	

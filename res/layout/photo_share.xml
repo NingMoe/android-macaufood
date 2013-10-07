@@ -3,13 +3,81 @@
     xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
     android:orientation="vertical" >
-    
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_construction"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="48dip"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/psFriends"
+            style="@style/MFGrayTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/tab_indicator"
+            android:gravity="center"
+            android:text="@string/psFriends" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/abs__list_divider_holo_light" />
+
+        <TextView
+            android:id="@+id/psHot"
+            style="@style/MFGrayTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/tab_indicator"
+            android:gravity="center"
+            android:text="@string/psHot" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/abs__list_divider_holo_light" />
+
+        <FrameLayout
+            android:id="@+id/psCamera"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="@drawable/tab_indicator" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_action_camera" />
+        </FrameLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/abs__list_divider_holo_light" />
+
+        <FrameLayout
+            android:id="@+id/psSettings"
+            android:layout_width="48dp"
+            android:layout_height="fill_parent"
+            android:background="@drawable/tab_indicator" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_action_gear" />
+        </FrameLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/retryLayout"
@@ -35,5 +103,68 @@
             android:text="@string/retryMsg" />
     </LinearLayout>
 
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+            
+         <GridView
+         	android:id="@+id/hotLayoutGV"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:numColumns="4"
+             android:verticalSpacing="10dp"
+             android:horizontalSpacing="10dp"
+              >
+         </GridView>
+
+        <ScrollView
+            android:id="@+id/friendsLayoutSV"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:id="@+id/friendsActivityLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Testing"
+                    android:padding="100dp"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Testing"
+                    android:padding="100dp"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Testing"
+                    android:padding="100dp"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Testing"
+                    android:padding="100dp"
+                    android:textSize="26sp" />
+
+
+            </LinearLayout>
+        </ScrollView>
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="4dip"
+            android:src="@drawable/tab_shadow" />
+    </FrameLayout>
 
 </LinearLayout>
