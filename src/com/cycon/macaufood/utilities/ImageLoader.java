@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -38,6 +39,7 @@ import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.bean.ParsedFoodNewsHolder;
+import com.cycon.macaufood.bean.ParsedPSHotHolder;
 
 public class ImageLoader {
 	
@@ -93,6 +95,13 @@ public class ImageLoader {
         for (ParsedFoodNewsHolder cafe : cafes) {
         	imagesToLoad.add(cafe.getId());
         }
+    }
+    
+    public void setImagesToLoadFromParsedPSHot(List<ParsedPSHotHolder> cafes) {
+//    	imagesToLoad.clear();
+//        for (ParsedFoodNewsHolder cafe : cafes) {
+//        	imagesToLoad.add(cafe.getId());
+//        }
     }
     
     public void displayImage(String id, ImageView imageView, int position)

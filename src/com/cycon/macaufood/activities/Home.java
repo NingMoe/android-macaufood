@@ -288,7 +288,7 @@ public class Home extends SherlockFragmentActivity {
 	}
 	
 	public Fragment[] getFragments() {
-		Fragment[] fragments = new Fragment[3];
+		Fragment[] fragments = new Fragment[mTabsAdapter.getCount()];
 		for (int i = 0; i < fragments.length; i++) {
 			fragments[i] = mTabsAdapter.getActiveFragment(mViewPager, i);
 		}

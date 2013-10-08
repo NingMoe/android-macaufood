@@ -14,20 +14,21 @@ import android.widget.TextView;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.bean.ParsedPSHotHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFUtil;
 
 public class PSHotAdapter extends BaseAdapter {
 
     public ImageLoader imageLoader; 
-    private List<Cafe> cafes;
+    private List<ParsedPSHotHolder> mHolderList;
     private Context mContext;
 
-    public PSHotAdapter(Context context, List<Cafe> cafes) {
-            this.cafes = cafes;
+    public PSHotAdapter(Context context, List<ParsedPSHotHolder> holderList) {
+            this.mHolderList = holderList;
             mContext = context;
         	imageLoader=new ImageLoader(context, 4, ImageType.PHOTOSHARE_HOT);
-//        	imageLoader.setImagesToLoadFromCafe(cafes);
+        	imageLoader.setImagesToLoadFromParsedPSHot(holderList);
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -39,15 +40,15 @@ public class PSHotAdapter extends BaseAdapter {
             	i = (ImageView) convertView;
             }
             
-            Cafe cafe = cafes.get(position);
-            if (cafe != null) {
-				imageLoader.displayImage(cafe.getId(), i, position);
+            ParsedPSHotHolder holder = mHolderList.get(position);
+            if (holder != null) {
+				imageLoader.displayImage(holder.getFilename(), i, position);
 			}
             return i;
     }
 
 	public int getCount() {
-		return cafes.size();
+		return mHolderList.size();
 	}
 
 	public Object getItem(int position) {

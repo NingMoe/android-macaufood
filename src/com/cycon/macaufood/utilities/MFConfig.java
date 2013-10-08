@@ -28,6 +28,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.bean.ParsedFoodNewsHolder;
+import com.cycon.macaufood.bean.ParsedPSHotHolder;
 import com.cycon.macaufood.xmlhandler.CafeXMLHandler;
 
 public class MFConfig {
@@ -46,11 +47,13 @@ public class MFConfig {
 	private ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(60);
 	private ArrayList<ParsedCafeHolder> creditVipCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
 	private ArrayList<ParsedFoodNewsHolder> foodNewsList = new ArrayList<ParsedFoodNewsHolder>(20);
+	private ArrayList<ParsedPSHotHolder> psHotList = new ArrayList<ParsedPSHotHolder>(26);
 	
 	public static List<ParsedCafeHolder> tempParsedRecommendCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(60));
 	public static List<ParsedCafeHolder> tempParsedNormalCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(60));
 	public static List<ParsedCafeHolder> tempParsedCreditVipCouponCafeList = Collections.synchronizedList(new ArrayList<ParsedCafeHolder>(40));
 	public static List<ParsedFoodNewsHolder> tempParsedFoodNewsList = Collections.synchronizedList(new ArrayList<ParsedFoodNewsHolder>(20));
+	public static List<ParsedPSHotHolder> tempParsedPSHotList = Collections.synchronizedList(new ArrayList<ParsedPSHotHolder>(26));
 	
 	public static int deviceWidth;
 	public static int deviceHeight;
@@ -80,6 +83,9 @@ public class MFConfig {
 	}
 	public ArrayList<ParsedFoodNewsHolder> getFoodNewsList() {
 		return foodNewsList;
+	}
+	public ArrayList<ParsedPSHotHolder> getPsHotList() {
+		return psHotList;
 	}
 	
 	public synchronized static MFConfig getInstance() {

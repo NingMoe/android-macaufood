@@ -36,10 +36,12 @@ import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.activities.Coupon;
 import com.cycon.macaufood.activities.FoodNews;
 import com.cycon.macaufood.activities.Home;
+import com.cycon.macaufood.activities.PhotoShare;
 import com.cycon.macaufood.activities.Recommend;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.xmlhandler.FoodNewsXMLHandler;
+import com.cycon.macaufood.xmlhandler.PSHotXMLHandler;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 
 public class MFFetchListHelper {
@@ -56,6 +58,7 @@ public class MFFetchListHelper {
 			FetchListInfo normalCouponInfo = new FetchListInfo(MFURL.NORMAL_COUPON_LIST, MFConstants.NORMAL_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedNormalCouponCafeList, MFConfig.getInstance().getNormalCouponCafeList());
 			FetchListInfo creditVipCouponInfo = new FetchListInfo(MFURL.CREDIT_VIP_COUPON_LIST, MFConstants.CREDIT_VIP_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedCreditVipCouponCafeList, MFConfig.getInstance().getCreditVipCouponCafeList());
 			FetchListInfo foodNewsInfo = new FetchListInfo(MFURL.FOOD_NEWS_LIST, MFConstants.FOODNEWS_XML_FILE_NAME, ImageType.FOODNEWS, MFConfig.tempParsedFoodNewsList, MFConfig.getInstance().getFoodNewsList());
+			FetchListInfo psHotInfo = new FetchListInfo(MFURL.PHOTOSHARE_HOT_LIST, MFConstants.PS_HOT_XML_FILE_NAME, ImageType.PHOTOSHARE_HOT, MFConfig.tempParsedPSHotList, MFConfig.getInstance().getPsHotList());
 			AsyncTaskHelper.execute(new FetchXmlTask(recommendInfo,
 					homeActivity));
 			AsyncTaskHelper.execute(new FetchXmlTask(
@@ -63,6 +66,8 @@ public class MFFetchListHelper {
 			AsyncTaskHelper.execute(new FetchXmlTask(
 					creditVipCouponInfo, homeActivity));
 			AsyncTaskHelper.execute(new FetchXmlTask(foodNewsInfo,
+					homeActivity));
+			AsyncTaskHelper.execute(new FetchXmlTask(psHotInfo,
 					homeActivity));
 			AsyncTaskHelper.executeWithResultBitmap(new FetchMainCouponTask(homeActivity));
 		}
@@ -139,6 +144,7 @@ public class MFFetchListHelper {
 			Recommend recommendFragment = (Recommend)fragment[0];
 			Coupon couponFragment = (Coupon)fragment[1];
 			FoodNews foodNewsFragment = (FoodNews)fragment[2];
+			PhotoShare photoShareFragment = (PhotoShare) fragment[3];
 			if (info.imageType == ImageType.RECOMMEND && recommendFragment != null) {
 				if (recommendFragment.mIsVisible) {
 					homeActivity.hideProgressDialog();
@@ -164,6 +170,11 @@ public class MFFetchListHelper {
 					homeActivity.hideProgressDialog();
 				}
 				foodNewsFragment.populateListView();
+			} else if (info.imageType == ImageType.PHOTOSHARE_HOT && photoShareFragment != null) {
+				if (photoShareFragment.mIsVisible) {
+					homeActivity.hideProgressDialog();
+				}
+				photoShareFragment.populateGridView();
 			} 
 			
 			isFetching = false;
@@ -238,8 +249,10 @@ public class MFFetchListHelper {
 			DefaultHandler xmlHandler;
 			if (tempParsedList == MFConfig.tempParsedFoodNewsList) {
 				xmlHandler = new FoodNewsXMLHandler(tempParsedList);
+			} else if (tempParsedList == MFConfig.tempParsedPSHotList){
+				xmlHandler = new PSHotXMLHandler(tempParsedList);
 			} else {
-				xmlHandler = new ServerCafeXMLHandler(tempParsedList);
+			 	xmlHandler = new ServerCafeXMLHandler(tempParsedList);
 			}
 			xr.setContentHandler(xmlHandler);
 			xr.parse(new InputSource(is));

@@ -14,10 +14,10 @@ import com.cycon.macaufood.utilities.MFConfig;
 
 		public static ParsedFoodNewsHolder cafe = null;
 		private StringBuffer tempValue = new StringBuffer();
-		private List tempParsedList;
+//		private List tempParsedList;
 		
 		public FoodNewsXMLHandler(List list) {
-			tempParsedList = list;
+//			tempParsedList = list;
 		}
 
 		@Override
