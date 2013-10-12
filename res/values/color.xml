@@ -13,6 +13,7 @@
     <color name="dark_green">#0c8f4d</color>
     <color name="gray_green">#dfe7dd</color>
     <color name="gray_bg">#bbbbbb</color>
+    <color name="light_gray_bg">#dddddd</color>
     <color name="dark_gray_green">#bbc2ba</color>
     
 </resources>

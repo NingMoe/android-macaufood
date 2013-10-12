@@ -105,15 +105,19 @@
 
     <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent" 
+        android:background="@color/light_gray_bg">
             
          <GridView
          	android:id="@+id/hotLayoutGV"
              android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
+             android:layout_height="fill_parent"
              android:numColumns="4"
-             android:verticalSpacing="10dp"
-             android:horizontalSpacing="10dp"
+             android:verticalSpacing="8dp"
+             android:horizontalSpacing="8dp"
+             android:scrollbarStyle="outsideOverlay"
+             android:padding="8dp"
+             android:clipToPadding="false"
               >
          </GridView>
 

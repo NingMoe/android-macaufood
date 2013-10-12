@@ -56,6 +56,7 @@ public class Home extends SherlockFragmentActivity {
 	private TabsAdapter mTabsAdapter;
 	private AdvView banner;
 	private View loadingAdv;
+	private View bannerLayout;
 	private ProgressDialog pDialog;
 	private long dataTimeStamp;
 	private boolean isShowingDisclaimer;
@@ -77,6 +78,7 @@ public class Home extends SherlockFragmentActivity {
 		setContentView(R.layout.home);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		loadingAdv = findViewById(R.id.loadingAdv);
+		bannerLayout = findViewById(R.id.bannerLayout);
 		banner = (AdvView) findViewById(R.id.banner);
 		banner.setLoadingAdv(loadingAdv);
 
@@ -201,6 +203,14 @@ public class Home extends SherlockFragmentActivity {
 		super.onStop();
 		if (banner != null)
 			banner.stopTask();
+	}
+	
+	public void hideBanner() {
+		bannerLayout.setVisibility(View.GONE);
+	}
+	
+	public void showBanner() {
+		bannerLayout.setVisibility(View.VISIBLE);
 	}
 	
 	public void showProgressDialog() {

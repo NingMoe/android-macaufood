@@ -25,7 +25,7 @@ public class CafeSearchListAdapter extends BaseAdapter {
     public CafeSearchListAdapter(Context context, ArrayList<Cafe> cafes) {
             this.cafes = cafes;
         	inflater = LayoutInflater.from(context);
-        	imageLoader=new ImageLoader(context, 4, ImageType.REGULAR);
+        	imageLoader=new ImageLoader(context, 5, ImageType.REGULAR);
 //        	imageLoader.setImagesToLoadFromCafe(cafes);
     }
 

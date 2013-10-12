@@ -61,7 +61,7 @@ public class ImageLoader {
     
     private ImageType imageType;
     
-    private static final int MAX_TASKS_NUMBER = 7;
+    private int maxTasksNumber = 7;
     
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
     	mContext = context;
@@ -97,11 +97,15 @@ public class ImageLoader {
         }
     }
     
+    public void setTaskMaxNumber(int number) {
+    	maxTasksNumber = number;
+    }
+    
     public void setImagesToLoadFromParsedPSHot(List<ParsedPSHotHolder> cafes) {
-//    	imagesToLoad.clear();
-//        for (ParsedFoodNewsHolder cafe : cafes) {
-//        	imagesToLoad.add(cafe.getId());
-//        }
+    	imagesToLoad.clear();
+        for (ParsedPSHotHolder cafe : cafes) {
+        	imagesToLoad.add(cafe.getFilename());
+        }
     }
     
     public void displayImage(String id, ImageView imageView, int position)
@@ -145,7 +149,7 @@ public class ImageLoader {
         }
         
         if (position == lastVisibleRowIndex && imagesLoading.isEmpty()) {
-			while (!imagesToLoad.isEmpty() && imagesLoading.size() <= MAX_TASKS_NUMBER) {
+			while (!imagesToLoad.isEmpty() && imagesLoading.size() <= maxTasksNumber) {
 				String pollId = imagesToLoad.poll();	
 				//check if poll id is in memoryCache or filecache;
 		        Bitmap b = memoryCache.get(pollId);
@@ -170,7 +174,7 @@ public class ImageLoader {
     public void loadImages(String id, ImageView imageView)
     {
     	
-    	if (imagesLoading.size() > MAX_TASKS_NUMBER) {
+    	if (imagesLoading.size() > maxTasksNumber) {
     		//scroll to specific position
     		if (imageView != null) {
 	    		imagesToLoad.addFirst(id);
@@ -251,7 +255,7 @@ public class ImageLoader {
 			if (noConnection) return;
             
             if (currentDisplayImages.isEmpty()) {
-				while (!imagesToLoad.isEmpty() && imagesLoading.size() <= MAX_TASKS_NUMBER) {
+				while (!imagesToLoad.isEmpty() && imagesLoading.size() <= maxTasksNumber) {
 					String id = imagesToLoad.poll();
 					
 					//check if poll id is in memoryCache or filecache;
@@ -316,7 +320,6 @@ public class ImageLoader {
 		    {
 		        //from web
 		        try {
-		        	
 		        	File f=fileCache.getFile(id);
 		            return MFService.getBitmap(MFURL.getImageUrl(imageType, id), f);
 		        	

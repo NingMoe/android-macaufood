@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import com.cycon.macaufood.utilities.MFLog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,7 +17,6 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.FoodNewsListAdapter;
 import com.cycon.macaufood.bean.ImageType;
@@ -26,6 +24,7 @@ import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
+import com.cycon.macaufood.utilities.MFLog;
 import com.haarman.listviewanimations.swinginadapters.prepared.ScaleInAnimationAdapter;
 
 public class FoodNews extends SherlockFragment {

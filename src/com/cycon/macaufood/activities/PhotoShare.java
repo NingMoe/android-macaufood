@@ -3,13 +3,11 @@ package com.cycon.macaufood.activities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.security.spec.MGF1ParameterSpec;
-import java.util.ArrayList;
-import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,9 +19,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.adapters.FoodNewsListAdapter;
 import com.cycon.macaufood.adapters.PSHotAdapter;
-import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
@@ -170,13 +166,30 @@ public class PhotoShare extends SherlockFragment {
 	@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
-
+		Home home = (Home)getActivity();
 		if (isVisibleToUser) {
 			mIsVisible = true;
+			if (home != null) {
+				home.hideBanner();
+			}
 		} else {
 			mIsVisible = false;
+			if (home != null) {
+				home.showBanner();
+			}
 		}
 
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+//		if (mIsVisible) {
+//			((Home)activity).hideBanner();
+//		} else {
+//			((Home)activity).showBanner();
+//		}
+		
 	}
 	
     public void populateGridView() {
@@ -188,6 +201,7 @@ public class PhotoShare extends SherlockFragment {
 				retryLayout.setVisibility(View.GONE);
 		}
 		mPsHotAdapter.imageLoader.cleanup();
+		mPsHotAdapter.imageLoader.setTaskMaxNumber(MFConfig.getInstance().getPsHotList().size());
 		mPsHotAdapter.imageLoader.setImagesToLoadFromParsedPSHot(MFConfig.getInstance().getPsHotList());
 		mPsHotAdapter.notifyDataSetChanged();
     }

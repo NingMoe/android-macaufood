@@ -12,6 +12,7 @@
         android:layout_weight="1" />
 
     <FrameLayout
+        android:id="@+id/bannerLayout"
         android:layout_width="fill_parent"
         android:layout_height="48dp" >
 
