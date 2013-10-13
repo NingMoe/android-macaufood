@@ -44,7 +44,7 @@ import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
-import com.cycon.macaufood.widget.AdvView;
+import com.cycon.macaufood.widget.BannerView;
 
 public class Home extends SherlockFragmentActivity {
 
@@ -54,9 +54,6 @@ public class Home extends SherlockFragmentActivity {
 
 	private ViewPager mViewPager;
 	private TabsAdapter mTabsAdapter;
-	private AdvView banner;
-	private View loadingAdv;
-	private View bannerLayout;
 	private ProgressDialog pDialog;
 	private long dataTimeStamp;
 	private boolean isShowingDisclaimer;
@@ -77,10 +74,6 @@ public class Home extends SherlockFragmentActivity {
 		getWindow().setWindowAnimations(android.R.style.Animation);
 		setContentView(R.layout.home);
 		mViewPager = (ViewPager) findViewById(R.id.pager);
-		loadingAdv = findViewById(R.id.loadingAdv);
-		bannerLayout = findViewById(R.id.bannerLayout);
-		banner = (AdvView) findViewById(R.id.banner);
-		banner.setLoadingAdv(loadingAdv);
 
 		final ActionBar bar = getSupportActionBar();
 		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -194,24 +187,20 @@ public class Home extends SherlockFragmentActivity {
 		super.onStart();
 		if (System.currentTimeMillis() - dataTimeStamp > REFRESH_TIME_PERIOD && !isShowingDisclaimer)
 			refresh();
-		if (banner != null)
-			banner.startTask();
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (banner != null)
-			banner.stopTask();
 	}
 	
-	public void hideBanner() {
-		bannerLayout.setVisibility(View.GONE);
-	}
-	
-	public void showBanner() {
-		bannerLayout.setVisibility(View.VISIBLE);
-	}
+//	public void hideBanner() {
+//		bannerLayout.setVisibility(View.GONE);
+//	}
+//	
+//	public void showBanner() {
+//		bannerLayout.setVisibility(View.VISIBLE);
+//	}
 	
 	public void showProgressDialog() {
 		pDialog = ProgressDialog.show(this, null,

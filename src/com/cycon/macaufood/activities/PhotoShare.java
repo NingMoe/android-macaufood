@@ -166,17 +166,10 @@ public class PhotoShare extends SherlockFragment {
 	@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
-		Home home = (Home)getActivity();
 		if (isVisibleToUser) {
 			mIsVisible = true;
-			if (home != null) {
-				home.hideBanner();
-			}
 		} else {
 			mIsVisible = false;
-			if (home != null) {
-				home.showBanner();
-			}
 		}
 
 	}

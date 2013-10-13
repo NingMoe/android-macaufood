@@ -1,64 +1,52 @@
 package com.cycon.macaufood.widget;
 
-import java.io.BufferedReader;
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
-import com.cycon.macaufood.utilities.MFLog;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
-import com.cycon.macaufood.utilities.MFUtil;
 
-public class AdvView extends ImageView {
+public class BannerView extends FrameLayout {
 	
-	private static final String TAG = AdvView.class.getName();
-	private static final long REFRESH_TIME = 7000;
+	private static final String TAG = BannerView.class.getName();
+	private static final long REFRESH_TIME = 2000;
 	private Context mContext;
-	private boolean isSmallAdv;
 	private static String linkId;
 	private FetchAdvTask advTask;
 	private static Bitmap cacheAdv;
 	private View loadingAdv;
+	private ImageView bannerImageView;
 	
-	public AdvView(Context context, AttributeSet attrs) {
+	public BannerView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.mContext = context;	
-//		setScaleType(ScaleType.FIT_XY);
-		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AdvView, 0, 0);
-		isSmallAdv = a.getBoolean(R.styleable.AdvView_small, true);
 		
-//		if (isSmallAdv && cacheAdv == null) setVisibility(View.GONE);
+		LayoutInflater inflater = (LayoutInflater)context.getSystemService
+			      (Context.LAYOUT_INFLATER_SERVICE);
+		inflater.inflate(R.layout.banner_layout, this, true);
+		bannerImageView = (ImageView) findViewById(R.id.bannerImageView);
+		loadingAdv = findViewById(R.id.loadingAdv);
 		
-		if (isSmallAdv)
-			setScaleType(ScaleType.FIT_XY);
-		else {
-			setScaleType(ScaleType.FIT_CENTER);
-		}
+		bannerImageView.setScaleType(ScaleType.FIT_XY);
 		
 		setOnClickListener(new OnClickListener() {
 			
@@ -70,27 +58,48 @@ public class AdvView extends ImageView {
 		});
 	}
 	
-	public void setLoadingAdv(View loadingAdv) {
-		this.loadingAdv = loadingAdv;
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		if (isShown()) {
+			startTask();
+		}
+	}
+	
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		stopTask();
+		unbind();
 	}
 	
 	public void unbind() {
-		setImageBitmap(null);
+		bannerImageView.setImageBitmap(null);
 	}
 	
 	public void stopTask() {
-		if (advTask != null)
+		if (advTask != null) {
 			advTask.cancel(true);
+		}
 	}
 	
 	public void startTask() {
 		if (cacheAdv != null && loadingAdv != null) loadingAdv.setVisibility(View.GONE); 
-		if (isSmallAdv)
-			setImageBitmap(cacheAdv);
+		bannerImageView.setImageBitmap(cacheAdv);
 		
 		stopTask();
 		advTask = new FetchAdvTask();
-		AsyncTaskHelper.execute(advTask, isSmallAdv && cacheAdv != null);
+		AsyncTaskHelper.execute(advTask, cacheAdv != null);
+	}
+	
+	@Override
+	protected void onVisibilityChanged(View changedView, int visibility) {
+		super.onVisibilityChanged(changedView, visibility);
+		if (visibility == View.VISIBLE) {
+			startTask();
+		} else {
+			stopTask();
+		}
 	}
 	
 	
@@ -115,7 +124,10 @@ public class AdvView extends ImageView {
     		if (!MFConfig.isOnline(mContext)) return null;
 
             try {
-            	tempLinkId = MFService.getString(isSmallAdv ? MFURL.SMALL_ADV : MFURL.BIG_ADV , null);
+            	Log.e("ZZZ", "send adv service");
+            	tempLinkId = MFService.getString(MFURL.SMALL_ADV, null);
+            	// no need fetch image if same id
+            	if (tempLinkId.equals(linkId)) return null;
 				if (tempLinkId == null || tempLinkId.equals("")) return null;
 				
 				try {
@@ -138,13 +150,14 @@ public class AdvView extends ImageView {
 				return null;
 			}
             
+            if (isCancelled()) return null;
     		
             try {
+            	Log.e("ZZZ", "fetch bitmap");
             	Bitmap bitmap = MFService.getBitmap(MFURL.getImageUrl(ImageType.ADV, tempLinkId), null);
             	
 	    		linkId = tempLinkId;
-				if (isSmallAdv)
-    				cacheAdv = bitmap;
+				cacheAdv = bitmap;
 				
 				return bitmap;
 				
@@ -164,16 +177,16 @@ public class AdvView extends ImageView {
     		super.onPostExecute(result);
     		setVisibility(View.VISIBLE);
     		if (result == null) {
-    			if (isSmallAdv && cacheAdv == null || !isSmallAdv  && getDrawable() == null) {
+    			if (cacheAdv == null) {
     				if (loadingAdv != null)
     					loadingAdv.setVisibility(View.GONE);
-    				setImageResource(isSmallAdv ? R.drawable.adv2 : R.drawable.searchadv);
+    				bannerImageView.setImageResource(R.drawable.adv2);
     			}
     		}
     		else {
     			if (loadingAdv != null)
     				loadingAdv.setVisibility(View.GONE);
-    			setImageBitmap(result);
+    			bannerImageView.setImageBitmap(result);
     		}
     		
     		advTask = new FetchAdvTask();

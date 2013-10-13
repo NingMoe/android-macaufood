@@ -13,5 +13,10 @@
         android:layout_height="0dip"
         android:layout_weight="1"
         android:smoothScrollbar="true" />
+    
+    <com.cycon.macaufood.widget.BannerView
+        android:id="@+id/bannerView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

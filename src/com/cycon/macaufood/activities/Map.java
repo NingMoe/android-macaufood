@@ -45,7 +45,7 @@ import com.cycon.macaufood.utilities.LatLngBoundHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
-import com.cycon.macaufood.widget.AdvView;
+import com.cycon.macaufood.widget.BannerView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -85,7 +85,7 @@ public class Map extends SherlockFragmentActivity {
 	private static LatLngBounds mMapBounds = new LatLngBounds(new LatLng(LAT_MIN, LONG_MIN), new LatLng(LAT_MAX, LONG_MAX));
 	private String selectedCafeId;
 	private Button searchNearby;
-	private AdvView smallBanner;
+	private BannerView smallBanner;
 	private View listLayout;
 	private View mapLayout;
 
@@ -133,7 +133,7 @@ public class Map extends SherlockFragmentActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.map);
 
-		smallBanner = (AdvView) findViewById(R.id.smallBanner);
+		smallBanner = (BannerView) findViewById(R.id.smallBanner);
 		list = (ListView) findViewById(R.id.list);
 		listMessage = (TextView) findViewById(R.id.listMessage);
 		mapFilterPanel = findViewById(R.id.mapFilterPanel);
@@ -212,7 +212,6 @@ public class Map extends SherlockFragmentActivity {
 		if (searchResultCafes.size() > 0) {
 			needPopulateMarkers = true;
 			listLayout.setVisibility(View.VISIBLE);
-			smallBanner.startTask();
 			mapLayout.setVisibility(View.GONE);
 			setTitle(R.string.searchResults);
 			isFirstPopulateFromSearch = true;
@@ -685,21 +684,6 @@ public class Map extends SherlockFragmentActivity {
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		smallBanner.stopTask();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		if (listLayout.isShown()) {
-			smallBanner.startTask();
-		}
-	}
-
-	@Override
 	protected void onDestroy() {
 //		MFConfig.getInstance().getSearchResultList().clear();
 		cafeAdapter.imageLoader.cleanup();
@@ -738,7 +722,6 @@ public class Map extends SherlockFragmentActivity {
 		case SHOW_LIST_MENU_ID:
 			if (listLayout.isShown()) {
 				listLayout.setVisibility(View.GONE);
-				smallBanner.stopTask();
 				mapLayout.setVisibility(View.VISIBLE);
 				item.setIcon(R.drawable.ic_action_list).setTitle(
 						R.string.showList);
@@ -749,7 +732,6 @@ public class Map extends SherlockFragmentActivity {
 				}
 			} else {
 				listLayout.setVisibility(View.VISIBLE);
-				smallBanner.startTask();
 				mapLayout.setVisibility(View.GONE);
 				item.setIcon(R.drawable.map).setTitle(R.string.showMap);
 				setTitle(R.string.searchResults);

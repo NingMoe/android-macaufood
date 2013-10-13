@@ -4,14 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import com.cycon.macaufood.utilities.MFLog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,8 +30,9 @@ import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
-import com.cycon.macaufood.utilities.MFURL;
+import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.cycon.macaufood.widget.BannerView;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
 public class Coupon extends SherlockFragment {
@@ -42,6 +41,7 @@ public class Coupon extends SherlockFragment {
 
 	private View retryLayout;
 	private Button retryButton;
+	private BannerView bannerView;
 	private ListView normalCouponList;
 	private ListView creditVipCouponList;
 	private View mainCouponScrollView;
@@ -76,6 +76,7 @@ public class Coupon extends SherlockFragment {
 	private void initView() {
 
 		retryLayout = mView.findViewById(R.id.retryLayout);
+		bannerView = (BannerView) mView.findViewById(R.id.bannerView);
 		mainCouponScrollView = mView.findViewById(R.id.mainCouponScrollView);
 		mainCouponImage = (ImageView) mView.findViewById(R.id.mainCouponImage);
 
@@ -223,11 +224,13 @@ public class Coupon extends SherlockFragment {
 			mainCoupon.setTextColor(Color.parseColor("#FFFFFF"));
 			mainCoupon.setBackgroundResource(R.drawable.tab_normal_coupon_selected);
 			mainCouponScrollView.setVisibility(View.VISIBLE);
+			bannerView.setVisibility(View.GONE);
 		} else {
 			mainCoupon.setTextColor(Color.parseColor("#68A6E6"));
 			mainCoupon
 					.setBackgroundResource(R.drawable.tab_normal_coupon_unselected);
 			mainCouponScrollView.setVisibility(View.GONE);
+			bannerView.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -298,13 +301,15 @@ public class Coupon extends SherlockFragment {
 
 		if (isVisibleToUser) {
 			mIsVisible = true;
-			normalCouponAdapter.imageLoader.cleanup();
-			normalCouponAdapter.imageLoader
-					.setImagesToLoadFromParsedCafe(MFConfig.getInstance()
-							.getNormalCouponCafeList());
-			normalCouponAdapter.notifyDataSetChanged();
+			if (bannerView != null && bannerView.isShown()) {
+				Log.e("ZZZ", "visible hint start task");
+				bannerView.startTask();
+			}
 		} else {
 			mIsVisible = false;
+			if (bannerView != null) {
+				bannerView.stopTask();
+			}
 		}
 
 	}

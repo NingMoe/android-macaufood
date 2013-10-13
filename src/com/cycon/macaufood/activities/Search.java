@@ -11,23 +11,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
-import com.cycon.macaufood.utilities.MFLog;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -45,17 +41,17 @@ import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.AdvancedSearchHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
+import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.AdvViewPager;
-import com.cycon.macaufood.widget.DirectSearchLayout;
 import com.cycon.macaufood.widget.GalleryNavigator;
 
 public class Search extends BaseActivity {
 	
 	private static final String TAG = "Search";
 
-	private DirectSearchLayout directSearchLayout;
+	private View directSearchLayout;
 	private View advancedSearchLayout;
 	private GalleryNavigator navi;
 	private AdvViewPager advViewPager;
@@ -96,8 +92,7 @@ public class Search extends BaseActivity {
         tab1.setTabListener(new TabsAdapter());
         tab2.setTabListener(new TabsAdapter());
 
-        directSearchLayout = (DirectSearchLayout) findViewById(R.id.directSearchLayout);
-        directSearchLayout.setActivity(this);
+        directSearchLayout = findViewById(R.id.directSearchLayout);
         advancedSearchLayout = findViewById(R.id.advancedSearchLayout);
         searchList = (ListView) findViewById(R.id.searchList);
         searchAdapter = new SearchAdapter(searchCafes);

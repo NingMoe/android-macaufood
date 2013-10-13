@@ -27,6 +27,7 @@ import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
+import com.cycon.macaufood.widget.BannerView;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingLeftInAnimationAdapter;
 
 public class Recommend extends SherlockFragment {
@@ -40,6 +41,7 @@ public class Recommend extends SherlockFragment {
 	private FileCache fileCache;
 	private Context mContext;
 	private View mView;
+	private BannerView banner;
 	private SwingLeftInAnimationAdapter swingLeftInAnimationAdapter;
 	public boolean mIsVisible;
 	
@@ -57,6 +59,7 @@ public class Recommend extends SherlockFragment {
 	
 	private void initView() {
         list = (ListView) mView.findViewById(R.id.list);
+        banner = (BannerView) mView.findViewById(R.id.bannerView);
         retryLayout = mView.findViewById(R.id.retryLayout);
         cafeAdapter = new CafeListAdapter(mContext, MFConfig.getInstance().getRecommendCafeList(), ImageType.RECOMMEND);
         
@@ -147,8 +150,13 @@ public class Recommend extends SherlockFragment {
 
 		if (isVisibleToUser) {
 			mIsVisible = true;
+			Log.e("ZZZ", "recommend visible hint start task");
+			if (banner != null)
+				banner.startTask();
 		} else {
 			mIsVisible = false;
+			if (banner != null)
+				banner.stopTask();
 		}
 
 	}

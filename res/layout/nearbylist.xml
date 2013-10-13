@@ -19,7 +19,7 @@
 	    android:layout_marginTop="34dip"
 		/>
 		
-	  <com.cycon.macaufood.widget.AdvView
+	  <com.cycon.macaufood.widget.BannerView
   		android:id="@+id/banner"
 	    android:layout_width="fill_parent"
 		android:layout_height="50dip"

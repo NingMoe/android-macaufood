@@ -14,6 +14,7 @@ public class MFURL {
 	public static final String SMALL_ADV = "http://www.cycon.com.mo/xml_adv.php?code=android-" + MFConfig.DEVICE_ID + "&type=s";
 	public static final String BIG_ADV = "http://www.cycon.com.mo/xml_adv.php?code=android-" + MFConfig.DEVICE_ID + "&type=b";
 	public static final String NEW_BIG_ADV = "http://www.cycon.com.mo/xml_adv2.php?code=android-" + MFConfig.DEVICE_ID + "&type=b";
+	public static final String NEW_SMALL_ADV = "http://www.cycon.com.mo/xml_adv2.php?code=android-" + MFConfig.DEVICE_ID + "&type=b";
 	public static final String FAVORITE_LOG = "http://www.cycon.com.mo/xml_favouritelog.php?key=cafecafe&udid=android-" + 
 			MFConfig.DEVICE_ID + "&cafeid=";
 	public static final String UPDATE_CAFE_LOG = "http://www.cycon.com.mo/xml_updatelogandroid.php?key=cafecafe&lastupdatetime=";

@@ -1,10 +1,7 @@
 package com.cycon.macaufood.widget;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +13,6 @@ import java.util.TimerTask;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -25,7 +21,7 @@ import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import com.cycon.macaufood.utilities.MFLog;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +33,7 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
@@ -50,8 +47,11 @@ public class AdvViewPager extends ViewPager {
 	
 	private ImageAdapter imageAdapter = new ImageAdapter();
 	private Context mContext;
-	private ArrayList<String> idList = new ArrayList<String>();
+	private List<String> idList;
+	private String fileAdvListStr;
 
+	private List<Bitmap> tempImageList;
+	private List<String> tempLinkIdList;
 	public List<Bitmap> imageList = Collections.synchronizedList(new ArrayList<Bitmap>());
 	public List<String> linkIdList = Collections.synchronizedList(new ArrayList<String>());
 	
@@ -79,15 +79,16 @@ public class AdvViewPager extends ViewPager {
 		mHandler = new Handler();
 		noadv = getContext().getResources().getDrawable(R.drawable.searchadv);
 		mContext = this.getContext();
+		setAdapter(imageAdapter);
 		setOnPageChangeListener(imageAdapter);
 		
 		fileCache = new FileCache(mContext, ImageType.ADV);
 		
 		
-		String advListStr = MFUtil.getStringFromCache(fileCache, ADV_ID_LIST);
+		fileAdvListStr = MFUtil.getStringFromCache(fileCache, ADV_ID_LIST);
 		
-		if (advListStr != null) {
-			String[] advIdList = advListStr.split(",");
+		if (fileAdvListStr != null) {
+			String[] advIdList = fileAdvListStr.split(",");
         	for (String id : advIdList) {
 
         		if (!id.equals("")) {
@@ -113,8 +114,8 @@ public class AdvViewPager extends ViewPager {
         	
 		if (imageList.size() > 0) {
 			isUsingCache = true;
-    		
-    		setAdapter(imageAdapter);
+    		imageAdapter.notifyDataSetChanged();
+//    		setAdapter(imageAdapter);
     		
     		startTimer();
 		}
@@ -124,7 +125,7 @@ public class AdvViewPager extends ViewPager {
 			AsyncTaskHelper.execute(new FetchAdvIdTask());
 		} else if (!isUsingCache){
 			imageList.add(((BitmapDrawable) noadv).getBitmap());
-			setAdapter(imageAdapter);
+    		imageAdapter.notifyDataSetChanged();
 		}
 	}
 	
@@ -160,7 +161,13 @@ public class AdvViewPager extends ViewPager {
             try {
             	File f = fileCache.getFile(ADV_ID_LIST);
             	String advListStr = MFService.getString(MFURL.NEW_BIG_ADV, f);
+            	if (advListStr.equals(fileAdvListStr)) {
+					return null;
+				}
             	
+            	idList = new ArrayList<String>();
+            	tempImageList = new ArrayList<Bitmap>();
+            	tempLinkIdList = new ArrayList<String>();
             	String[] advIdList = advListStr.split(",");
             	for (String id : advIdList) {
 
@@ -196,7 +203,8 @@ public class AdvViewPager extends ViewPager {
     		
     		if (idList.size() == 0 && !isUsingCache) {
 				imageList.add(((BitmapDrawable) noadv).getBitmap());
-				setAdapter(imageAdapter);
+//				setAdapter(imageAdapter);
+	    		imageAdapter.notifyDataSetChanged();
     		} else {
 	    		for (String id : idList) {
 	    			AsyncTaskHelper.executeWithResultBitmap(new FetchAdvTask(id));
@@ -237,31 +245,31 @@ public class AdvViewPager extends ViewPager {
     	@Override
     	protected void onPostExecute(Bitmap result) {
     		super.onPostExecute(result);
-    		if (result != null && !isUsingCache) {
+    		if (result != null) {
     			Random rand = new Random();
     			boolean randomValue = rand.nextBoolean();
     			if (randomValue) {
-	    			imageList.add(result);
-	    			linkIdList.add(id);
+    				tempImageList.add(result);
+    				tempLinkIdList.add(id);
     			} else {
-	    			imageList.add(0, result);
-	    			linkIdList.add(0, id);
+    				tempImageList.add(0, result);
+    				tempLinkIdList.add(0, id);
     			}
     		}
     		
-    		if (!isUsingCache) {
 	    		//populate after all images are load
-	    		if (imageList.size() == idList.size()) {
+    		if (tempImageList.size() == idList.size()) {
 
-	    			loadingLayout.setVisibility(View.GONE);
-		    		navi.setSize(idList.size());
-		    		navi.setVisibility(View.GONE);
-		    		navi.setVisibility(View.VISIBLE);
-		    		
-		    		setAdapter(imageAdapter);
-		    		
-		    		startTimer();
-	    		}
+    			loadingLayout.setVisibility(View.GONE);
+	    		navi.setSize(idList.size());
+	    		navi.setVisibility(View.GONE);
+	    		navi.setVisibility(View.VISIBLE);
+	    		
+	    		imageList = tempImageList;
+	    		linkIdList = tempLinkIdList;
+	    		setAdapter(imageAdapter);
+//	    		imageAdapter.notifyDataSetChanged();
+	    		startTimer();
     		}
             
     	}
@@ -278,7 +286,8 @@ public class AdvViewPager extends ViewPager {
         		} else {
 //            		setVisibility(View.VISIBLE);
         			imageList.add(((BitmapDrawable) noadv).getBitmap());
-        			setAdapter(imageAdapter);
+//        			setAdapter(imageAdapter);
+            		imageAdapter.notifyDataSetChanged();
         		}
         	} else {
 				int cur = getCurrentItem(); 

@@ -1,5 +1,5 @@
 <resources>
-	<declare-styleable name="AdvView">
+	<declare-styleable name="BannerView">
 		<attr name="small" format="boolean" />
 	</declare-styleable>
 </resources>

@@ -6,7 +6,7 @@
     android:layout_width="fill_parent"
     android:orientation="vertical">
     
-  <com.cycon.macaufood.widget.DirectSearchLayout
+  <LinearLayout
   		android:id="@+id/directSearchLayout"
 	  	android:layout_width="fill_parent"
 	  	android:layout_height="fill_parent"
@@ -161,7 +161,7 @@
 			
 			</RelativeLayout>
 	  	
-  	</com.cycon.macaufood.widget.DirectSearchLayout>
+  	</LinearLayout>
   	
   	
 	  <LinearLayout

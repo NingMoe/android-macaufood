@@ -3,21 +3,10 @@ package com.cycon.macaufood.activities;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.Hashtable;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -27,36 +16,27 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import com.cycon.macaufood.utilities.MFLog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.BaseAdapter;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.activities.Info.FetchImageTask;
-import com.cycon.macaufood.activities.Info.FetchTextTask;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.GalleryNavigator;
-import com.cycon.macaufood.widget.OneFlingGallery;
 
 public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 	

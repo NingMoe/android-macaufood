@@ -14,7 +14,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.widget.AdvView;
+import com.cycon.macaufood.widget.BannerView;
 
 public class Branch extends BaseActivity {
 	
@@ -22,7 +22,6 @@ public class Branch extends BaseActivity {
 
 	private static final String TAG = Branch.class.getName();
 	private ListView list;
-	private AdvView banner;
 	private CafeSearchListAdapter cafeAdapter;
 	private ArrayList<Cafe> branchList = new ArrayList<Cafe>();
 	
@@ -42,7 +41,6 @@ public class Branch extends BaseActivity {
         
         list = (ListView) findViewById(R.id.list);
         list.setOnItemClickListener(itemClickListener);
-        banner = (AdvView) findViewById(R.id.banner);
         
         cafeAdapter = new CafeSearchListAdapter(Branch.this, branchList);
         list.setAdapter(cafeAdapter);
@@ -79,23 +77,5 @@ public class Branch extends BaseActivity {
 			return super.onOptionsItemSelected(item);
     	}
     	
-    }
-    
-    protected void onResume() {
-    	super.onResume();
-		banner.startTask();
-    };
-    
-    @Override
-    protected void onPause() {
-    	super.onPause();
-		banner.stopTask();
-    }
-
-    
-    @Override
-    protected void onDestroy() {
-    	banner.unbind();
-    	super.onDestroy();
     }
 }
