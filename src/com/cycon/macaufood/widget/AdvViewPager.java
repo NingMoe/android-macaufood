@@ -12,6 +12,7 @@ import java.util.TimerTask;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -22,6 +23,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +43,7 @@ import com.cycon.macaufood.utilities.MFUtil;
 public class AdvViewPager extends ViewPager {
 	
 	private static final String TAG = "AdvFlingGallery";
-	private static final String ADV_ID_LIST = "adv_id_list";
+	private static String ADV_ID_LIST;
 
 	private static final long REFRESH_PERIOD = 6000;
 	
@@ -63,26 +65,38 @@ public class AdvViewPager extends ViewPager {
 	private FileCache fileCache;
 	private boolean isUsingCache;
 	private View loadingLayout;
+	private boolean isSmallAdv;
+	
 
 	public AdvViewPager(Context context) {
 		super(context);
-		init();
+		init(null);
 	}
 	
 	public AdvViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init();
+		init(attrs);
 	}
 	
-	private void init() {
+	private void init(AttributeSet attrs) {
+		
+		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AdvViewPager, 0, 0);
+		isSmallAdv = a.getBoolean(R.styleable.AdvViewPager_small, false);
+		a.recycle();
 		
 		mHandler = new Handler();
-		noadv = getContext().getResources().getDrawable(R.drawable.searchadv);
+		noadv = getContext().getResources().getDrawable(isSmallAdv ? R.drawable.adv2 : R.drawable.searchadv);
 		mContext = this.getContext();
 		setAdapter(imageAdapter);
 		setOnPageChangeListener(imageAdapter);
 		
 		fileCache = new FileCache(mContext, ImageType.ADV);
+		
+		if (isSmallAdv) {
+			ADV_ID_LIST = "small_adv_id_list";
+		} else {
+			ADV_ID_LIST = "adv_id_list";
+		}
 		
 		
 		fileAdvListStr = MFUtil.getStringFromCache(fileCache, ADV_ID_LIST);
@@ -117,7 +131,7 @@ public class AdvViewPager extends ViewPager {
     		imageAdapter.notifyDataSetChanged();
 //    		setAdapter(imageAdapter);
     		
-    		startTimer();
+//    		startTimer();
 		}
 		
 		
@@ -160,7 +174,7 @@ public class AdvViewPager extends ViewPager {
 
             try {
             	File f = fileCache.getFile(ADV_ID_LIST);
-            	String advListStr = MFService.getString(MFURL.NEW_BIG_ADV, f);
+            	String advListStr = MFService.getString(isSmallAdv ? MFURL.NEW_SMALL_ADV : MFURL.NEW_BIG_ADV, f);
             	if (advListStr.equals(fileAdvListStr)) {
 					return null;
 				}
@@ -200,6 +214,8 @@ public class AdvViewPager extends ViewPager {
     		super.onPostExecute(result);
     		
     		isFetchingId = false;
+    		
+    		if (idList == null) return;
     		
     		if (idList.size() == 0 && !isUsingCache) {
 				imageList.add(((BitmapDrawable) noadv).getBitmap());
@@ -259,11 +275,15 @@ public class AdvViewPager extends ViewPager {
     		
 	    		//populate after all images are load
     		if (tempImageList.size() == idList.size()) {
-
-    			loadingLayout.setVisibility(View.GONE);
-	    		navi.setSize(idList.size());
-	    		navi.setVisibility(View.GONE);
-	    		navi.setVisibility(View.VISIBLE);
+    			
+    			if (loadingLayout != null) {
+    				loadingLayout.setVisibility(View.GONE);
+    			}
+    			if (navi != null) {
+		    		navi.setSize(idList.size());
+		    		navi.setVisibility(View.GONE);
+		    		navi.setVisibility(View.VISIBLE);
+    			}
 	    		
 	    		imageList = tempImageList;
 	    		linkIdList = tempLinkIdList;
@@ -303,7 +323,8 @@ public class AdvViewPager extends ViewPager {
 		   stopTimer();
 	   } else if (event.getAction() == MotionEvent.ACTION_UP) {
 		   startTimer();
-	   }
+	   } 
+
 		return super.onTouchEvent(event);
    }
    
@@ -326,7 +347,7 @@ public class AdvViewPager extends ViewPager {
 	        Bitmap bmp = imageList.get(position);
 	        ImageView i = new ImageView(mContext);
 	        i.setImageBitmap(bmp);
-	        i.setScaleType(ScaleType.FIT_END);
+	        i.setScaleType(isSmallAdv ? ScaleType.FIT_XY : ScaleType.FIT_END);
 	        final int pos = position;
 	        i.setOnClickListener(new OnClickListener() {
 				
@@ -357,8 +378,10 @@ public class AdvViewPager extends ViewPager {
 	}
 
 	public void onPageSelected(int position) {
-		navi.setPosition(position);
-		navi.invalidate();
+		if (navi != null) {
+			navi.setPosition(position);
+			navi.invalidate();
+		}
 	}
 	
    }
@@ -381,6 +404,30 @@ public class AdvViewPager extends ViewPager {
 		   timer.cancel();
 	   }
    }
+   
+	@Override
+	protected void onAttachedToWindow() {
+		super.onAttachedToWindow();
+		if (isShown()) {
+			startTimer();
+		}
+	}
+	
+	@Override
+	protected void onDetachedFromWindow() {
+		super.onDetachedFromWindow();
+		stopTimer();
+	}
+	
+	@Override
+	protected void onVisibilityChanged(View changedView, int visibility) {
+		super.onVisibilityChanged(changedView, visibility);
+		if (visibility == View.VISIBLE) {
+			startTimer();
+		} else {
+			stopTimer();
+		}
+	}
 	
 	
 }

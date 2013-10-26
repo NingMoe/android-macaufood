@@ -374,13 +374,13 @@ public class Search extends BaseActivity {
     	super.onResume();
     	expand();
 
-    	advViewPager.startTimer();
+//    	advViewPager.startTimer();
     }
     
     @Override
     protected void onPause() {
     	super.onPause();
-    	advViewPager.stopTimer();
+//    	advViewPager.stopTimer();
     }
     
     public void hideKeyboard() {

@@ -1,5 +1,5 @@
 <resources>
-	<declare-styleable name="BannerView">
+	<declare-styleable name="AdvViewPager">
 		<attr name="small" format="boolean" />
 	</declare-styleable>
 </resources>

@@ -45,6 +45,7 @@ import com.cycon.macaufood.utilities.LatLngBoundHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.cycon.macaufood.widget.AdvViewPager;
 import com.cycon.macaufood.widget.BannerView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -85,7 +86,7 @@ public class Map extends SherlockFragmentActivity {
 	private static LatLngBounds mMapBounds = new LatLngBounds(new LatLng(LAT_MIN, LONG_MIN), new LatLng(LAT_MAX, LONG_MAX));
 	private String selectedCafeId;
 	private Button searchNearby;
-	private BannerView smallBanner;
+	private AdvViewPager smallBanner;
 	private View listLayout;
 	private View mapLayout;
 
@@ -133,7 +134,7 @@ public class Map extends SherlockFragmentActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.map);
 
-		smallBanner = (BannerView) findViewById(R.id.smallBanner);
+		smallBanner = (AdvViewPager) findViewById(R.id.viewPager);
 		list = (ListView) findViewById(R.id.list);
 		listMessage = (TextView) findViewById(R.id.listMessage);
 		mapFilterPanel = findViewById(R.id.mapFilterPanel);
@@ -687,7 +688,6 @@ public class Map extends SherlockFragmentActivity {
 	protected void onDestroy() {
 //		MFConfig.getInstance().getSearchResultList().clear();
 		cafeAdapter.imageLoader.cleanup();
-		smallBanner.unbind();
 
 		super.onDestroy();
 	}

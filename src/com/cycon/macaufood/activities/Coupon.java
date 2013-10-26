@@ -32,6 +32,7 @@ import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.cycon.macaufood.widget.AdvViewPager;
 import com.cycon.macaufood.widget.BannerView;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
@@ -41,7 +42,7 @@ public class Coupon extends SherlockFragment {
 
 	private View retryLayout;
 	private Button retryButton;
-	private BannerView bannerView;
+	private AdvViewPager advViewPager;
 	private ListView normalCouponList;
 	private ListView creditVipCouponList;
 	private View mainCouponScrollView;
@@ -76,7 +77,7 @@ public class Coupon extends SherlockFragment {
 	private void initView() {
 
 		retryLayout = mView.findViewById(R.id.retryLayout);
-		bannerView = (BannerView) mView.findViewById(R.id.bannerView);
+		advViewPager = (AdvViewPager) mView.findViewById(R.id.viewPager);
 		mainCouponScrollView = mView.findViewById(R.id.mainCouponScrollView);
 		mainCouponImage = (ImageView) mView.findViewById(R.id.mainCouponImage);
 
@@ -224,13 +225,13 @@ public class Coupon extends SherlockFragment {
 			mainCoupon.setTextColor(Color.parseColor("#FFFFFF"));
 			mainCoupon.setBackgroundResource(R.drawable.tab_normal_coupon_selected);
 			mainCouponScrollView.setVisibility(View.VISIBLE);
-			bannerView.setVisibility(View.GONE);
+			advViewPager.setVisibility(View.GONE);
 		} else {
 			mainCoupon.setTextColor(Color.parseColor("#68A6E6"));
 			mainCoupon
 					.setBackgroundResource(R.drawable.tab_normal_coupon_unselected);
 			mainCouponScrollView.setVisibility(View.GONE);
-			bannerView.setVisibility(View.VISIBLE);
+			advViewPager.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -301,15 +302,8 @@ public class Coupon extends SherlockFragment {
 
 		if (isVisibleToUser) {
 			mIsVisible = true;
-			if (bannerView != null && bannerView.isShown()) {
-				Log.e("ZZZ", "visible hint start task");
-				bannerView.startTask();
-			}
 		} else {
 			mIsVisible = false;
-			if (bannerView != null) {
-				bannerView.stopTask();
-			}
 		}
 
 	}

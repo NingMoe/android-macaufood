@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  	android:background="@color/default_bg_color">
-  
-	  <com.cycon.macaufood.widget.BannerView
-  		android:id="@+id/banner"
-	    android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_alignParentBottom="true"/>
-  
-  <ListView
-  	  android:id="@+id/list"
-	  android:layout_width="fill_parent"
-	  android:layout_height="fill_parent"
-	  android:layout_above="@id/banner"/>
-    
-</RelativeLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mf="http://schemas.android.com/apk/res/com.cycon.macaufood"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/default_bg_color"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.cycon.macaufood.widget.AdvViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"
+        mf:small="true" />
+
+</LinearLayout>

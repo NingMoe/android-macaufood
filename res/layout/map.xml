@@ -54,10 +54,11 @@
             android:fadingEdge="horizontal"
             android:headerDividersEnabled="true" />
 
-        <com.cycon.macaufood.widget.BannerView
-            android:id="@+id/smallBanner"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+    <com.cycon.macaufood.widget.AdvViewPager
+        android:id="@+id/viewPager"
+        mf:small="true"
+        android:layout_width="fill_parent"
+        android:layout_height="48dp"/>
     </LinearLayout>
     
         <FrameLayout

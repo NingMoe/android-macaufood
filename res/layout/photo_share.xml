@@ -113,10 +113,10 @@
              android:layout_width="fill_parent"
              android:layout_height="fill_parent"
              android:numColumns="4"
-             android:verticalSpacing="8dp"
-             android:horizontalSpacing="8dp"
+             android:verticalSpacing="4dp"
+             android:horizontalSpacing="4dp"
              android:scrollbarStyle="outsideOverlay"
-             android:padding="8dp"
+             android:listSelector="@android:color/transparent"
              android:clipToPadding="false"
               >
          </GridView>
