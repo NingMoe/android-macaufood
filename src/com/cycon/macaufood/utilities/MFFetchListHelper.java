@@ -96,7 +96,7 @@ public class MFFetchListHelper {
 			try {
 				HttpClient client = new DefaultHttpClient();
 				HttpParams httpParams = client.getParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, 8000);
+				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
 				HttpGet request = new HttpGet(urlStr);
 
 				HttpResponse response = client.execute(request);
@@ -125,6 +125,12 @@ public class MFFetchListHelper {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
+			
+			if (baos == null) {
+				homeActivity.hideProgressDialog();
+				isFetching = false;
+				return;
+			}
 			
 			parseXml(new ByteArrayInputStream(baos.toByteArray()), info.tempParsedList, info.contentList);
 
