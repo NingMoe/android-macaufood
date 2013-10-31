@@ -126,6 +126,7 @@ public class MFFetchListHelper {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			
+			//internet problem, request cannot finish in 10secs
 			if (baos == null) {
 				homeActivity.hideProgressDialog();
 				isFetching = false;

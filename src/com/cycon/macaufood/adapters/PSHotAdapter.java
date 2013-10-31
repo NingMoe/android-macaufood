@@ -2,18 +2,20 @@ package com.cycon.macaufood.adapters;
 
 import java.util.List;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
+import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.util.Xml;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
@@ -28,6 +30,7 @@ public class PSHotAdapter extends BaseAdapter {
     public ImageLoader imageLoader; 
     private List<ParsedPSHotHolder> mHolderList;
     private Context mContext;
+    private LayoutInflater mInflater;
     private final int imageWidth;
     public final static int SPACING_IN_DP = 4;
 
@@ -39,28 +42,31 @@ public class PSHotAdapter extends BaseAdapter {
         	imageLoader.setImagesToLoadFromParsedPSHot(holderList);
         	
         	imageWidth = (MFConfig.deviceWidth - MFUtil.getPixelsFromDip(SPACING_IN_DP, mContext.getResources()) * 5) / 4;
-            
+        	mInflater =  (LayoutInflater)context.getSystemService
+        		      (Context.LAYOUT_INFLATER_SERVICE);
     }
 
-	@SuppressLint("NewApi")
 	public View getView(int position, View convertView, ViewGroup parent) {
-    	final TouchImageView i;
-
+			ViewHolder holder;
             if (convertView == null) {
-            	i = new TouchImageView(mContext);
-                i.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                i.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
-                i.setCropToPadding(true);
-                i.setBackgroundResource(R.drawable.grid_image_bg);
+            	convertView = mInflater.inflate(R.layout.ps_image, null);
+            	holder = new ViewHolder();
+            	holder.image = (ImageView) convertView.findViewById(R.id.imageView);
+            	convertView.setTag(holder);
+            	convertView.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
             } else {
-            	i = (TouchImageView) convertView;
+            	holder = (ViewHolder) convertView.getTag();
             }
             
-            ParsedPSHotHolder holder = mHolderList.get(position);
+            ParsedPSHotHolder psHolder = mHolderList.get(position);
             if (holder != null) {
-				imageLoader.displayImage(holder.getFilename(), i, position);
+				imageLoader.displayImage(psHolder.getFilename(), holder.image, position);
 			}
-            return i;
+            return convertView;
+    }
+	
+    static class ViewHolder {
+        ImageView image;
     }
 
 	public int getCount() {

@@ -66,7 +66,8 @@ public class PhotoShare extends SherlockFragment {
 	private void initView() {
 		mHotGV = (GridView) mView.findViewById(R.id.hotLayoutGV);
 		int paddingInPx = MFUtil.getPixelsFromDip(PSHotAdapter.SPACING_IN_DP, getResources());
-		mHotGV.setPadding(paddingInPx + 6, paddingInPx + 12, paddingInPx + 6, paddingInPx);
+		int paddingForImageBg = MFUtil.getPixelsFromDip(2, getResources());
+		mHotGV.setPadding(paddingInPx + paddingForImageBg, paddingInPx + paddingForImageBg * 2, paddingInPx + paddingForImageBg, paddingInPx);
         retryLayout = mView.findViewById(R.id.retryLayout);
 		mPsHotAdapter = new PSHotAdapter(mContext, MFConfig.getInstance().getPsHotList());
 		mHotGV.setAdapter(mPsHotAdapter);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -34,7 +35,7 @@ public abstract class BaseActivity extends SherlockActivity {
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 	}
 	
-	private TextView getActionbarTitle() {
+	protected TextView getActionbarTitle() {
 
 	    TextView title = (TextView) findViewById(R.id.abs__action_bar_title);// for ActionBarSerlock
 	    if (title == null) title = (TextView) findViewById(Resources.getSystem()
@@ -53,9 +54,10 @@ public abstract class BaseActivity extends SherlockActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			Intent i = new Intent(this, Home.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
+			finish();
+//			Intent i = new Intent(this, Home.class);
+//			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//			startActivity(i);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

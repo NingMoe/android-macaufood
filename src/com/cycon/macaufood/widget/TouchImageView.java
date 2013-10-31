@@ -2,6 +2,7 @@ package com.cycon.macaufood.widget;
 
 import android.content.Context;
 import android.graphics.PorterDuffColorFilter;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,13 +12,14 @@ import android.widget.ImageView;
 
 import com.cycon.macaufood.R;
 
+@Deprecated
 public class TouchImageView extends ImageView implements OnTouchListener{
 	
 	private Runnable mSetColorFilterRunnable;
 	private Runnable mClearColorFilterRunnable;
 
-	public TouchImageView(Context context) {
-		super(context);
+	public TouchImageView(Context context, AttributeSet attrs) {
+		super(context, attrs);
 		setOnTouchListener(this);
 		
 		new TouchImageViewHelper(context.getApplicationContext());
