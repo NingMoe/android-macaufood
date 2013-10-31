@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -144,17 +145,9 @@ public class PhotoShare extends SherlockFragment {
 		public void onItemClick(AdapterView<?> parent, View view,
 				int position, long id) {
 			
-			Log.e("ZZZ", "CLICK!!!!!!!!!");
-			
-//			String foodnews_id = MFConfig.getInstance().getFoodNewsList().get(position).getId();
-//			String foodnews_name = MFConfig.getInstance().getFoodNewsList().get(position).getSubject();
-//			String cafe_id = MFConfig.getInstance().getFoodNewsList().get(position).getCafeId();
-//			Intent i = new Intent(mContext, FoodNewsImage.class);
-//			i.putExtra("foodnews_id", foodnews_id);
-//			i.putExtra("foodnews_name", foodnews_name);
-//			i.putExtra("cafe_id", cafe_id);
-//			startActivity(i);
-			
+			Intent i = new Intent(mContext, PSDetails.class);
+			i.putExtra("ps_hot_position", position);
+			startActivity(i);
 		}
     };
     
