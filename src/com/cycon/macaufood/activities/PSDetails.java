@@ -22,9 +22,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +65,7 @@ public class PSDetails extends BaseActivity {
 	
 	private ParsedPSHotHolder mPsHotInfo;
 	private ImageView profilePic;
+	private ImageView photoImage;
 	private TextView userName;
 	private TextView cafeName;
 	private TextView time;
@@ -88,6 +91,17 @@ public class PSDetails extends BaseActivity {
 		}
 		
 		profilePic = (ImageView) findViewById(R.id.profilePic);
+		photoImage = (ImageView) findViewById(R.id.photoImage);
+		int width = Integer.parseInt(mPsHotInfo.getImgwidth());
+		int height = Integer.parseInt(mPsHotInfo.getImgheight());
+		int padding = MFUtil.getPixelsFromDip(22, getResources());
+		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) photoImage.getLayoutParams();
+		int imageHeight = (MFConfig.deviceWidth - padding) * height / width;
+		params.height = imageHeight;
+		photoImage.setLayoutParams(params);
+		
+		MFService.loadImage(getApplicationContext(), ImageType.PHOTOSHARE_HOT, "image-" + mPsHotInfo.getPhotoid() + "-1.jpg", photoImage, true, false);
+		MFService.loadImage(getApplicationContext(), ImageType.PSLOCALAVATAR, mPsHotInfo.getMemberid(), profilePic, false, false);
 		userName = (TextView) findViewById(R.id.userName);
 		cafeName = (TextView) findViewById(R.id.cafeName);
 		time = (TextView) findViewById(R.id.time);

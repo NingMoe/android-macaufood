@@ -136,14 +136,8 @@ public class Details extends BaseActivity {
 				(cafe.getMessage().equals("") ? "" : ("\n" + cafe.getMessage())));
 		
 
-        fileCache=new FileCache(this, ImageType.REGULAR);
-        Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, cafe.getId());
-        if(bitmap!=null) {
-            imageView.setImageBitmap(bitmap);
-        } else {
-        	imageView.setImageResource(R.drawable.nophoto);
-        	AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask());
-        }
+		imageView.setImageResource(R.drawable.nophoto);
+        MFService.loadImage(getApplicationContext(), ImageType.REGULAR, cafe.getId(), imageView, true, false);
 		
 		
 		if (MFConfig.getInstance().getFavoriteLists().contains(cafe.getId())) {
@@ -363,43 +357,6 @@ public class Details extends BaseActivity {
 				sb.append(',');
 			}
 			PreferenceHelper.savePreferencesStr(this, "favorites", sb.toString());
-	}
-	
-	private class FetchImageTask extends AsyncTask<Void, Void, Bitmap> {
-
-		private boolean noConnection;
-		
-		@Override
-		protected Bitmap doInBackground(Void... arg0) {
-			
-	        //from web
-	        try {
-
-	            File f=fileCache.getFile(cafe.getId());
-	            return MFService.getBitmap(MFURL.getImageUrl(ImageType.REGULAR, cafe.getId()), f);
-	            
-	        } catch (FileNotFoundException ex){
-	        	MFLog.e(TAG, "no photo");
-	           ex.printStackTrace();
-	        	   return null;
-	        } catch (Exception e) {
-	        	noConnection = true;
-	        	//socket error here
-	        	MFLog.e(TAG, "error = " + e.getMessage());
-	        	return null;
-	        }
-		}
-		
-		@Override
-		protected void onPostExecute(Bitmap result) {
-			if (result != null) {
-				imageView.setImageBitmap(result);
-			} else {
-				if (noConnection) {
-					imageView.setImageResource(R.drawable.nointernet);
-				} 
-			}
-		}
 	}
 	
 	

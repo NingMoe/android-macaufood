@@ -27,6 +27,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import com.cycon.macaufood.R;
 import com.cycon.macaufood.activities.BaseActivity;
 import com.cycon.macaufood.activities.FrontPage;
 import com.cycon.macaufood.bean.ImageType;
@@ -42,6 +43,8 @@ import com.cycon.macaufood.utilities.MFLog;
 
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 public class MFService {
 	
@@ -53,6 +56,28 @@ public class MFService {
 	private static boolean isUpdating = false;
 	private static Context appContext;
 	private static final int TIMEOUT_PERIOD = 10000;
+	
+	public static void loadImage(Context c, ImageType imageType, String id,
+			ImageView imageView, final boolean useCache, boolean fadeInAnimation) {
+		appContext = c;
+		FileCache fileCache = null;
+		Bitmap bitmap = null;
+		if (useCache) {
+			fileCache = new FileCache(c, imageType);
+			bitmap = MFUtil.getBitmapFromCache(fileCache, id);
+		}
+		
+		if (bitmap != null) {
+			imageView.setImageBitmap(bitmap);
+		} else if (MFConfig.isOnline(appContext)) {
+			AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask(
+					imageView, MFURL.getImageUrl(imageType, id),
+					useCache ? fileCache.getFile(id) : null, fadeInAnimation));
+		} else {
+			// no connection
+		}
+
+	}
 
 	//check update everytime fresh launch as we did not save updatetimestamp in preferences
 	public static void checkUpdate(Context c) {
@@ -142,6 +167,57 @@ public class MFService {
 		rd.close();
 		return sb.toString().trim();
 	}
+	
+    public static class FetchImageTask extends AsyncTask<Void, Void, Bitmap> {
+    	
+    	private ImageView imageView;
+    	private String url;
+    	private File file;
+    	private boolean fadeInAnimation;
+    	
+    	private FetchImageTask(ImageView i, String u, File f, boolean anim) {
+    		imageView = i;
+    		url = u;
+    		file = f;
+    		fadeInAnimation = anim;
+    	}
+    	
+    	@Override
+    	protected Bitmap doInBackground(Void... params) {
+
+    		Bitmap bitmap = null;
+    		
+    		try {
+    			bitmap = MFService.getBitmap(url, file);
+				
+			} catch (MalformedURLException e) {
+				MFLog.e(TAG, "malformed url exception");
+				e.printStackTrace();
+			} catch (IOException e) {
+				MFLog.e(TAG, "io exception");
+				e.printStackTrace();
+			} catch (NumberFormatException e) {
+				MFLog.e(TAG, "NumberFormatException");
+				e.printStackTrace();
+			}
+    		
+    		return bitmap;
+    	}
+    	
+    	@Override
+    	protected void onPostExecute(Bitmap result) {
+    		super.onPostExecute(result);
+    		
+    		if (result != null) {
+    			imageView.setImageBitmap(result);
+    			if (fadeInAnimation) {
+    				imageView.setAnimation(AnimationUtils.loadAnimation(appContext, android.R.anim.fade_in));
+				}
+    		} else {
+    			//callback onFailure
+    		}
+    	}
+    }
 
 	
     public static class FetchFrontPageTask extends AsyncTask<Void, Void, Void> {
