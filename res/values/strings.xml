@@ -128,10 +128,9 @@
  	<string name="psHot">人氣相片</string>
  	<string name="psFriends">朋友更新</string>
  	<string name="psUpload">上載相片</string>
- 	
- 	
- 	
- 	<string name="construction">工程中</string>
+ 	<string name="pleaseLogin">請先登入</string>
+ 	<string name="facebookLogin">Facebook登入</string>
+ 	<string name="weiboLogin">微博登入</string>
  
 	<!--  SQL Queries -->
 	<string name="initCafeTableSql">CREATE TABLE IF NOT EXISTS CAFEENTRIES(

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/fbLogin"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:text="@string/facebookLogin"
+        android:textSize="18sp"
+        android:background="@drawable/transparent_selector_bg"
+        android:paddingLeft="16dp"
+        />
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@android:drawable/divider_horizontal_bright" />
+    
+    <TextView
+        android:id="@+id/weiboLogin"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:text="@string/weiboLogin"
+        android:background="@drawable/transparent_selector_bg"
+        android:paddingLeft="16dp"
+        android:textSize="18sp"
+        />
+
+</LinearLayout>

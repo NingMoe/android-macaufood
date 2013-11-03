@@ -5,10 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -110,11 +112,16 @@ public class PhotoShare extends SherlockFragment {
 		mPsCamera.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
+				checkLogin();
 			}
 		});
 		mPsSettings = mView.findViewById(R.id.psSettings);
+		mPsSettings.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				checkLogin();
+			}
+		});
 		
 	}
 	
@@ -205,6 +212,57 @@ public class PhotoShare extends SherlockFragment {
 			if (retryLayout != null)
 				retryLayout.setVisibility(View.GONE);
 		}
+	}
+	
+	private void checkLogin() {
+		boolean login = false;//TODO
+		if (login) {
+			
+		} else {
+			showLoginDialog();
+		}
+	}
+	
+	private void showLoginDialog() {
+		
+		View view = getActivity().getLayoutInflater().inflate(R.layout.login_dialog, null);
+		TextView fbTv = (TextView) view.findViewById(R.id.fbLogin);
+		TextView weiboTv = (TextView) view.findViewById(R.id.weiboLogin);
+		fbTv.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View arg0) {
+				
+			}
+		});
+		weiboTv.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View arg0) {
+				
+			}
+		});
+		
+		
+		AlertDialog dialog = new AlertDialog.Builder(mContext)
+		.setTitle(R.string.pleaseLogin)
+		.setCancelable(false)
+		.setView(view)
+		.setPositiveButton(getString(R.string.cancel),
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog,
+							int which) {
+						dialog.dismiss();
+					}
+				}).show();
+		
+//		.setPositiveButton(getString(R.string.agreeDisclaimer),
+//				new DialogInterface.OnClickListener() {
+//
+//					public void onClick(DialogInterface dialog,
+//							int which) {
+//						dialog.dismiss();
+//					}
+//				}).show();
 	}
 
     @Override
