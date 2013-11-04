@@ -32,9 +32,12 @@
         android:theme="@style/MFTheme" >
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            
-             android:value="AIzaSyAakgxwAfweyriTfcvC7SObXrF741B2UC0" />
+            android:value="AIzaSyAakgxwAfweyriTfcvC7SObXrF741B2UC0" />
             <!-- android:value="AIzaSyBX6QnBM5orc8D0E0nX5e8KFtP4S8sPUok" -->
+            
+        <meta-data 
+            android:value="@string/app_id" 
+            android:name="com.facebook.sdk.ApplicationId"/>
 
         <activity
             android:name=".activities.SplashScreen"
@@ -85,6 +88,8 @@
         <activity android:name=".activities.FoodNews" />
         <activity android:name=".activities.FoodNewsImage" />
         <activity android:name=".activities.PSDetails" />
+        <activity android:name="com.facebook.LoginActivity"/>
+        
     </application>
 
 </manifest>

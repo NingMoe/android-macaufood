@@ -45,6 +45,7 @@ import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.BannerView;
+import com.facebook.Session;
 
 public class Home extends SherlockFragmentActivity {
 

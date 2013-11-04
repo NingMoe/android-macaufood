@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!--  Main app string -->
+    <string name="app_id">539139189509748</string>
     <string name="app_name">食在澳門</string>
     <string name="homepage">主頁</string>
     <string name="recommend_tab">今期推介</string>
@@ -94,7 +95,7 @@
     <string name="macauPeninsula">澳門\n半島</string>
     <string name="macauIsland">離島</string>
 
-<!--  About -->
+<!--  About -->	
     <string name="disclaimer">免責聲明</string>
     <string name="versionNo">2.1</string>
     <string name="aboutUs">關於我們</string>
@@ -129,8 +130,8 @@
  	<string name="psFriends">朋友更新</string>
  	<string name="psUpload">上載相片</string>
  	<string name="pleaseLogin">請先登入</string>
- 	<string name="facebookLogin">Facebook登入</string>
- 	<string name="weiboLogin">微博登入</string>
+ 	<string name="facebookLogin">使用 Facebook 登入</string>
+ 	<string name="weiboLogin">使用微博登入</string>
  
 	<!--  SQL Queries -->
 	<string name="initCafeTableSql">CREATE TABLE IF NOT EXISTS CAFEENTRIES(
@@ -163,45 +164,5 @@
 	</string>
 	<string name="clearCafeTableSql">DELETE FROM CAFEENTRIES</string>
 	
-	<string name="initWatchListEntriesTblSql">CREATE TABLE IF NOT EXISTS WATCHLISTENTRIES(
-		EntryId INTEGER PRIMARY KEY AUTOINCREMENT, Symbol
-		TEXT NOT NULL, TypeCode TEXT)</string>
-	<string name="insertWatchListEntrySql">INSERT INTO WATCHLISTENTRIES(
-		Symbol, TypeCode) VALUES(?,?)
-	</string>
-	<string name="getWatchListEntriesSql">SELECT EntryId, Symbol, TypeCode FROM
-		WATCHLISTENTRIES WHERE Symbol = ? ORDER BY EntryId DESC</string>
-	<string name="getDefaultWatchListEntriesSql">SELECT EntryId, Symbol, TypeCode FROM
-		 WATCHLISTENTRIES</string>
-	
-	<!-- SQL for Recent Quotes -->
-    <string name="initRecentQuotesTblSql">CREATE TABLE IF NOT EXISTS RECENT_QUOTES(
-		RecentQuoteId INTEGER PRIMARY KEY AUTOINCREMENT, Symbol TEXT NOT
-		NULL, TypeCode TEXT NOT NULL, ExchangeCode TEXT,
-		ExchangeGroup TEXT )</string>
-    
-	<string name="insertRecentQuoteSql">INSERT INTO RECENT_QUOTES(
-		Symbol, TypeCode, ExchangeCode, ExchangeGroup) VALUES(?, ?, ?, ?)
-	</string>
-	 
-	<string name="getRecentQuotesSql">SELECT RecentQuoteId, Symbol, TypeCode FROM
-		RECENT_QUOTES ORDER BY RecentQuoteId DESC</string>
-	<string name="delRecentQuoteSql">DELETE FROM RECENT_QUOTES WHERE RecentQuoteId=?</string>
-	<string name="delRecentQuoteBySymbolSql">DELETE FROM RECENT_QUOTES WHERE Symbol=?</string> 
-    <string name="delRecentQuoteOldestSql">DELETE FROM RECENT_QUOTES WHERE RecentQuoteId = ( SELECT MIN(RecentQuoteId) FROM RECENT_QUOTES)</string> 
-    <string name="delRecentQuotesSql">DELETE FROM RECENT_QUOTES </string> 
-    <string name="delWatchListEntriesBySymbolSql">DELETE FROM WATCHLISTENTRIES WHERE Symbol=?</string>
-    <string name="delAllWatchListEntriesSql">DELETE FROM WATCHLISTENTRIES </string>
-    
-    <!--  SQL for RSS Feed -->
-    <string name="initRSSFeedSourceTblSQL">CREATE TABLE IF NOT EXISTS RSS_DATASOURCE(
-		FeedId  INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT
-		NULL, Link TEXT NOT NULL, Description TEXT, SelectedFlag INTEGER)</string>
-	<string name="insertRSSFeedSourceSql">INSERT INTO RSS_DATASOURCE (Title, Link, Description, SelectedFlag) 
-				VALUES(?,?,?,?) </string>
-	<string name="getRSSFeedSourceSql">SELECT FeedId, Title, Link, Description,SelectedFlag FROM
-		RSS_DATASOURCE ORDER BY FeedId</string>		
-	<string name="delRSSFeedSrcEntrySql">Delete from RSS_DATASOURCE WHERE Title=?</string>
-	<string name="delAllRSSFeedSrcEntriesSql">Delete from RSS_DATASOURCE</string>	
     
 </resources>

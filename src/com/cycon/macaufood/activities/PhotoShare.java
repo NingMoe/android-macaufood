@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +20,14 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.facebook.*;
+import com.facebook.Request.GraphUserCallback;
+import com.facebook.Session.StatusCallback;
+import com.facebook.model.*;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.LoginButton;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
@@ -50,9 +59,37 @@ public class PhotoShare extends SherlockFragment {
 	private View mFriendsLayoutSV;
 	private int mCurrentTab = 1; //friends = 0, hot = 1;
 	
+	private AlertDialog mLoginDialog;
 	
+	//FB
+	private LoginButton mLoginButton;
+	private GraphUser mUser;
+//	private UiLifecycleHelper uiHelper;
 	
 	public boolean mIsVisible;
+	
+    private enum PendingAction {
+        NONE,
+        FRIENDS,
+        CAMERA,
+        SETTINGS,
+    }
+    
+    private Session.StatusCallback callback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            onSessionStateChange(session, state, exception);
+        }
+    };
+
+    private FacebookDialog.Callback dialogCallback = new FacebookDialog.Callback() {
+        public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
+            Log.e("HelloFacebook", String.format("Error: %s", error.toString()));
+        }
+
+        public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
+            Log.e("HelloFacebook", "Success!");
+        }
+    };
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -128,6 +165,9 @@ public class PhotoShare extends SherlockFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+//        uiHelper = new UiLifecycleHelper(getActivity(), callback);
+//        uiHelper.onCreate(savedInstanceState);
 
         mContext = getActivity();
         
@@ -228,23 +268,61 @@ public class PhotoShare extends SherlockFragment {
 		View view = getActivity().getLayoutInflater().inflate(R.layout.login_dialog, null);
 		TextView fbTv = (TextView) view.findViewById(R.id.fbLogin);
 		TextView weiboTv = (TextView) view.findViewById(R.id.weiboLogin);
-		fbTv.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View arg0) {
-				
-			}
-		});
+		
+//		if (mLoginButton == null) {
+//			mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
+//			mLoginButton.setSessionStatusCallback(new StatusCallback() {
+//	
+//				public void call(Session session, SessionState state,
+//						Exception exception) {
+//					if (exception == null) {
+//					Log.e("ZZZ", "calls = ");
+//					} else {
+//						Log.e("ZZZ", "call" + exception.getMessage());
+//					}
+//					
+//					if (session.isOpened()) {
+//						mLoginDialog.dismiss();
+//					}
+//				}
+//				
+//			});
+//			mLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+//				
+//	            public void onUserInfoFetched(GraphUser user) {
+//	            	if (user == null) Log.e("ZZZ", "user is null");
+//	            	Log.e("ZZZ", "userinfo calls");
+//	            	mUser = user;
+//	            	if (user != null) {
+//	            		Toast.makeText(mContext, user.getFirstName(), Toast.LENGTH_LONG).show();
+//	            	}
+//	                handlePendingAction();
+//	            }
+//	        });
+//		}
+//		fbTv.setOnClickListener(new OnClickListener() {
+//			
+//			public void onClick(View arg0) {
+//				startFacebookLogin();
+//			}
+//		});
 		weiboTv.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View arg0) {
-				
+				 Session.openActiveSession(getActivity(), true, new Session.StatusCallback() {
+
+				      // callback when session changes state
+				      public void call(Session session, SessionState state, Exception exception) {
+				        if (session.isOpened()) {
+				        	Log.e("ZZZ", "isOpened!!!!!!!!!!!");
+				        }
+				      }
+				    });
 			}
 		});
 		
-		
-		AlertDialog dialog = new AlertDialog.Builder(mContext)
+		mLoginDialog = new AlertDialog.Builder(mContext)
 		.setTitle(R.string.pleaseLogin)
-		.setCancelable(false)
 		.setView(view)
 		.setPositiveButton(getString(R.string.cancel),
 				new DialogInterface.OnClickListener() {
@@ -254,16 +332,36 @@ public class PhotoShare extends SherlockFragment {
 						dialog.dismiss();
 					}
 				}).show();
-		
-//		.setPositiveButton(getString(R.string.agreeDisclaimer),
-//				new DialogInterface.OnClickListener() {
-//
-//					public void onClick(DialogInterface dialog,
-//							int which) {
-//						dialog.dismiss();
-//					}
-//				}).show();
 	}
+	
+	private void handlePendingAction() {
+		
+	}
+	
+    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+    	Log.e("ZZZ", "session state change");
+    	if (exception != null) Log.e("ZZZ", exception.getMessage());
+    	if (session.isOpened()) Log.e("ZZZ", "isopend");
+    }
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Session.getActiveSession().onActivityResult(getActivity(), requestCode, resultCode, data);
+//		uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+//		uiHelper.onResume();
+	}
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        uiHelper.onPause();
+    }
 
     @Override
     public void onDestroy()
@@ -273,6 +371,7 @@ public class PhotoShare extends SherlockFragment {
     		mHotGV.setAdapter(null);
     	}
         super.onDestroy();
+//        uiHelper.onDestroy();
     }
 
 

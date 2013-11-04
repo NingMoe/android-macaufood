@@ -13,12 +13,26 @@
         android:textSize="18sp"
         android:background="@drawable/transparent_selector_bg"
         android:paddingLeft="16dp"
+        android:visibility="gone"
         />
+    
+        <com.facebook.widget.LoginButton
+            xmlns:facebook="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            facebook:confirm_logout="true"
+            facebook:fetch_user_info="true"
+            facebook:login_text="@string/facebookLogin"
+            facebook:logout_text="LOG OUT"
+            />
     
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@android:drawable/divider_horizontal_bright" />
+        android:background="@android:drawable/divider_horizontal_bright"
+        android:visibility="gone" />
     
     <TextView
         android:id="@+id/weiboLogin"
