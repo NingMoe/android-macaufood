@@ -22,10 +22,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            facebook:confirm_logout="true"
+            facebook:confirm_logout="false"
             facebook:fetch_user_info="true"
             facebook:login_text="@string/facebookLogin"
-            facebook:logout_text="LOG OUT"
             />
     
     <View

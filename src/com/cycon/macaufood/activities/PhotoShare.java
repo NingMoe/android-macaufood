@@ -4,30 +4,27 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.LinearLayout;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.facebook.*;
-import com.facebook.Request.GraphUserCallback;
-import com.facebook.Session.StatusCallback;
-import com.facebook.model.*;
-import com.facebook.widget.FacebookDialog;
-import com.facebook.widget.LoginButton;
+import android.view.Menu;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
@@ -39,10 +36,22 @@ import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.LoginButton;
 
-public class PhotoShare extends SherlockFragment {
+@SuppressLint("NewApi")
+public class PhotoShare extends SherlockFragment implements OnMenuItemClickListener{
 
 	private static final String TAG = PhotoShare.class.getName();
+	
+	private static final int MENU_FIND_FRIENDS = 1;
+	private static final int MENU_LOGOUT = 2;
+	private static final int MENU_TAKE_PHOTO = 3;
+	private static final int MENU_USE_ALBUM = 4;
 	
 	private View retryLayout;
 	private Button retryButton;
@@ -60,36 +69,15 @@ public class PhotoShare extends SherlockFragment {
 	private int mCurrentTab = 1; //friends = 0, hot = 1;
 	
 	private AlertDialog mLoginDialog;
+	private PopupMenu mSettingsMenu;
+	private PopupMenu mCameraMenu;
 	
 	//FB
 	private LoginButton mLoginButton;
 	private GraphUser mUser;
-//	private UiLifecycleHelper uiHelper;
+	private UiLifecycleHelper uiHelper;
 	
 	public boolean mIsVisible;
-	
-    private enum PendingAction {
-        NONE,
-        FRIENDS,
-        CAMERA,
-        SETTINGS,
-    }
-    
-    private Session.StatusCallback callback = new Session.StatusCallback() {
-        public void call(Session session, SessionState state, Exception exception) {
-            onSessionStateChange(session, state, exception);
-        }
-    };
-
-    private FacebookDialog.Callback dialogCallback = new FacebookDialog.Callback() {
-        public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
-            Log.e("HelloFacebook", String.format("Error: %s", error.toString()));
-        }
-
-        public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
-            Log.e("HelloFacebook", "Success!");
-        }
-    };
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -149,25 +137,25 @@ public class PhotoShare extends SherlockFragment {
 		mPsCamera.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				checkLogin();
+				checkLogin(PendingAction.CAMERA);
 			}
 		});
 		mPsSettings = mView.findViewById(R.id.psSettings);
 		mPsSettings.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				checkLogin();
+				checkLogin(PendingAction.SETTINGS);
 			}
 		});
-		
+
 	}
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-//        uiHelper = new UiLifecycleHelper(getActivity(), callback);
-//        uiHelper.onCreate(savedInstanceState);
+        uiHelper = new UiLifecycleHelper(getActivity(), callback);
+        uiHelper.onCreate(savedInstanceState);
 
         mContext = getActivity();
         
@@ -254,52 +242,111 @@ public class PhotoShare extends SherlockFragment {
 		}
 	}
 	
-	private void checkLogin() {
-		boolean login = false;//TODO
+	private void checkLogin(PendingAction pa) {
+		Session session = Session.getActiveSession();
+		boolean login = session != null && session.isOpened();
 		if (login) {
-			
+			handlePendingAction(pa);
 		} else {
-			showLoginDialog();
+			showLoginDialog(pa);
 		}
 	}
 	
-	private void showLoginDialog() {
+	
+	@Override
+	public boolean onMenuItemClick(MenuItem item) {
+		switch (item.getItemId()) {
+		case MENU_FIND_FRIENDS:
+			break;
+		case MENU_LOGOUT:
+			callFacebookLogout();
+			break;
+		case MENU_TAKE_PHOTO:
+			break;
+		case MENU_USE_ALBUM:
+			break;
+		default:
+			break;
+		}
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	private void handlePendingAction(PendingAction pa) {
+		switch (pa) {
+		case SETTINGS:
+			if (mSettingsMenu == null) {
+				mSettingsMenu = new PopupMenu(mContext, mPsSettings);
+				mSettingsMenu.getMenu().add(Menu.NONE, MENU_FIND_FRIENDS, Menu.NONE, R.string.findFriends);
+				mSettingsMenu.getMenu().add(Menu.NONE, MENU_LOGOUT, Menu.NONE, R.string.logout);
+				mSettingsMenu.setOnMenuItemClickListener(this);
+			}
+			mSettingsMenu.show();
+			break;
+		case CAMERA:
+			// TODO
+			break;
+		default:
+		}
+	}
+	
+	//FB logic
+	
+    private enum PendingAction {
+        NONE,
+        FRIENDS,
+        CAMERA,
+        SETTINGS,
+    }
+    
+    private Session.StatusCallback callback = new Session.StatusCallback() {
+    	@Override
+        public void call(Session session, SessionState state, Exception exception) {
+            onSessionStateChange(session, state, exception);
+        }
+    };
+
+    private FacebookDialog.Callback dialogCallback = new FacebookDialog.Callback() {
+    	@Override
+        public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
+            Log.e("HelloFacebook", String.format("Error: %s", error.toString()));
+        }
+    	
+    	@Override
+        public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
+            Log.e("HelloFacebook", "Success!");
+        }
+    };
+	
+	private void showLoginDialog(final PendingAction pa) {
+		
+		Session session = Session.getActiveSession();
+		if (session == null) {
+			Log.e("ZZZ", "session null");
+		}
+		boolean enableButtons = (session != null && session.isOpened());
+		Log.e("ZZZ", "open " + enableButtons);
 		
 		View view = getActivity().getLayoutInflater().inflate(R.layout.login_dialog, null);
 		TextView fbTv = (TextView) view.findViewById(R.id.fbLogin);
 		TextView weiboTv = (TextView) view.findViewById(R.id.weiboLogin);
 		
-//		if (mLoginButton == null) {
-//			mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-//			mLoginButton.setSessionStatusCallback(new StatusCallback() {
-//	
-//				public void call(Session session, SessionState state,
-//						Exception exception) {
-//					if (exception == null) {
-//					Log.e("ZZZ", "calls = ");
-//					} else {
-//						Log.e("ZZZ", "call" + exception.getMessage());
-//					}
-//					
-//					if (session.isOpened()) {
-//						mLoginDialog.dismiss();
-//					}
-//				}
-//				
-//			});
-//			mLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
-//				
-//	            public void onUserInfoFetched(GraphUser user) {
-//	            	if (user == null) Log.e("ZZZ", "user is null");
-//	            	Log.e("ZZZ", "userinfo calls");
-//	            	mUser = user;
-//	            	if (user != null) {
-//	            		Toast.makeText(mContext, user.getFirstName(), Toast.LENGTH_LONG).show();
-//	            	}
-//	                handlePendingAction();
-//	            }
-//	        });
-//		}
+		if (mLoginButton == null) {
+			Log.e("ZZZ", "login button == null");
+			mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
+			mLoginButton.setFragment(this);
+			mLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+				
+				@Override
+	            public void onUserInfoFetched(GraphUser user) {
+	            	mUser = user;
+	            	if (user != null) {
+	            		Toast.makeText(mContext, getString(R.string.loginMessage, user.getFirstName()), Toast.LENGTH_LONG).show();
+	            	}
+	                handlePendingAction(pa);
+	            }
+	        });
+		}
 //		fbTv.setOnClickListener(new OnClickListener() {
 //			
 //			public void onClick(View arg0) {
@@ -309,15 +356,15 @@ public class PhotoShare extends SherlockFragment {
 		weiboTv.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View arg0) {
-				 Session.openActiveSession(getActivity(), true, new Session.StatusCallback() {
-
-				      // callback when session changes state
-				      public void call(Session session, SessionState state, Exception exception) {
-				        if (session.isOpened()) {
-				        	Log.e("ZZZ", "isOpened!!!!!!!!!!!");
-				        }
-				      }
-				    });
+//				 Session.openActiveSession(getActivity(), true, new Session.StatusCallback() {
+//
+//				      // callback when session changes state
+//				      public void call(Session session, SessionState state, Exception exception) {
+//				        if (session.isOpened()) {
+//				        	Log.e("ZZZ", "isOpened!!!!!!!!!!!");
+//				        }
+//				      }
+//				    });
 			}
 		});
 		
@@ -334,33 +381,41 @@ public class PhotoShare extends SherlockFragment {
 				}).show();
 	}
 	
-	private void handlePendingAction() {
-		
+	private void callFacebookLogout() {
+	    Session session = Session.getActiveSession();
+	    if (session != null && !session.isClosed()) {
+            session.closeAndClearTokenInformation();
+	    }
 	}
+
 	
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-    	Log.e("ZZZ", "session state change");
-    	if (exception != null) Log.e("ZZZ", exception.getMessage());
-    	if (session.isOpened()) Log.e("ZZZ", "isopend");
+		if (session.isOpened()) {
+			if (mLoginDialog != null) {
+				mLoginDialog.dismiss();
+			}
+		}
+    	if (exception != null) {
+    		Log.e("ZZZ", "exception= " + exception.getMessage());
+    	}
     }
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Session.getActiveSession().onActivityResult(getActivity(), requestCode, resultCode, data);
-//		uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+		uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-//		uiHelper.onResume();
+		uiHelper.onResume();
 	}
 
     @Override
     public void onPause() {
         super.onPause();
-//        uiHelper.onPause();
+        uiHelper.onPause();
     }
 
     @Override
@@ -371,7 +426,7 @@ public class PhotoShare extends SherlockFragment {
     		mHotGV.setAdapter(null);
     	}
         super.onDestroy();
-//        uiHelper.onDestroy();
+        uiHelper.onDestroy();
     }
 
 
