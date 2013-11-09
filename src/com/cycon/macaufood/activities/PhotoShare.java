@@ -11,9 +11,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,10 +21,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.Menu;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
@@ -36,12 +36,14 @@ import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.facebook.FacebookException;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.FacebookDialog;
 import com.facebook.widget.LoginButton;
+import com.facebook.widget.LoginButton.OnErrorListener;
 
 @SuppressLint("NewApi")
 public class PhotoShare extends SherlockFragment implements OnMenuItemClickListener{
@@ -320,33 +322,27 @@ public class PhotoShare extends SherlockFragment implements OnMenuItemClickListe
 	
 	private void showLoginDialog(final PendingAction pa) {
 		
-		Session session = Session.getActiveSession();
-		if (session == null) {
-			Log.e("ZZZ", "session null");
-		}
-		boolean enableButtons = (session != null && session.isOpened());
-		Log.e("ZZZ", "open " + enableButtons);
-		
 		View view = getActivity().getLayoutInflater().inflate(R.layout.login_dialog, null);
 		TextView fbTv = (TextView) view.findViewById(R.id.fbLogin);
 		TextView weiboTv = (TextView) view.findViewById(R.id.weiboLogin);
 		
-		if (mLoginButton == null) {
-			Log.e("ZZZ", "login button == null");
+//		if (mLoginButton == null) {
 			mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
+			
 			mLoginButton.setFragment(this);
 			mLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 				
 				@Override
 	            public void onUserInfoFetched(GraphUser user) {
+					Log.e("ZZZ", "userinfo");
 	            	mUser = user;
 	            	if (user != null) {
 	            		Toast.makeText(mContext, getString(R.string.loginMessage, user.getFirstName()), Toast.LENGTH_LONG).show();
+	            		handlePendingAction(pa);
 	            	}
-	                handlePendingAction(pa);
 	            }
 	        });
-		}
+//		}
 //		fbTv.setOnClickListener(new OnClickListener() {
 //			
 //			public void onClick(View arg0) {
@@ -390,6 +386,7 @@ public class PhotoShare extends SherlockFragment implements OnMenuItemClickListe
 
 	
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+    	
 		if (session.isOpened()) {
 			if (mLoginDialog != null) {
 				mLoginDialog.dismiss();
