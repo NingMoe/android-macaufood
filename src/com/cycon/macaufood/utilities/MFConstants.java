@@ -34,4 +34,6 @@ public class MFConstants {
 	public static final String FRONT_PAGE_LINK_PREF_KEY = "frontPageLink";
 	public static final String FRONT_PAGE_STAMP_PREF_KEY = "frontPageTimeStamp";
 	public static final String SHOW_DISCLAIMER_PREF_KEY = "disclaimerDialog";
+	public static final String PS_MEMBERID_PREF_KEY = "psMemberId";
+	public static final String PS_MEMBERNAME_PREF_KEY = "psMemberName";
 }

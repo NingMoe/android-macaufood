@@ -1889,7 +1889,7 @@ containing a value of this type.
         public static final int cash=0x7f080054;
         public static final int category=0x7f080079;
         public static final int clear=0x7f080074;
-        public static final int clearCafeTableSql=0x7f0800af;
+        public static final int clearCafeTableSql=0x7f0800b1;
         public static final int coloaneRegion=0x7f08009a;
         public static final int com_facebook_choose_friends=0x7f080029;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f08001a;
@@ -2023,7 +2023,7 @@ containing a value of this type.
         /**  Food News
          */
         public static final int foodNews=0x7f08009c;
-        public static final int getCafeEntriesSql=0x7f0800ae;
+        public static final int getCafeEntriesSql=0x7f0800b0;
         public static final int giveFeedBack=0x7f08005d;
         public static final int googleMap=0x7f08008a;
         public static final int homepage=0x7f080042;
@@ -2031,8 +2031,8 @@ containing a value of this type.
         public static final int information=0x7f08005a;
         /**   SQL Queries 
          */
-        public static final int initCafeTableSql=0x7f0800ac;
-        public static final int insertCafeSql=0x7f0800ad;
+        public static final int initCafeTableSql=0x7f0800ae;
+        public static final int insertCafeSql=0x7f0800af;
         public static final int intro=0x7f080058;
         /**  Latest 
          */
@@ -2096,7 +2096,9 @@ containing a value of this type.
         public static final int showList=0x7f080085;
         public static final int showMap=0x7f080086;
         public static final int taipaRegion=0x7f080099;
+        public static final int takePhoto=0x7f0800ad;
         public static final int totalResultsFound=0x7f080087;
+        public static final int useAlbum=0x7f0800ac;
         public static final int versionNo=0x7f08008e;
         public static final int website=0x7f080053;
         public static final int weiboLogin=0x7f0800a7;

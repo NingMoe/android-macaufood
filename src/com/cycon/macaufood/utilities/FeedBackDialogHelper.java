@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -117,7 +118,7 @@ public class FeedBackDialogHelper {
 				HttpClient client = new DefaultHttpClient();
 				HttpParams httpParams = client.getParams();
 				HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
-				HttpGet request = new HttpGet(urlStr);
+				HttpPost request = new HttpPost(urlStr);
 				client.execute(request);
 
 			} catch (MalformedURLException e) {

@@ -868,7 +868,7 @@ int string cancel 0x7f080073
 int string cash 0x7f080054
 int string category 0x7f080079
 int string clear 0x7f080074
-int string clearCafeTableSql 0x7f0800af
+int string clearCafeTableSql 0x7f0800b1
 int string coloaneRegion 0x7f08009a
 int string com_facebook_choose_friends 0x7f080029
 int string com_facebook_dialogloginactivity_ok_button 0x7f08001a
@@ -941,14 +941,14 @@ int string fbSubmit 0x7f080069
 int string feedBack 0x7f08005c
 int string findFriends 0x7f0800ab
 int string foodNews 0x7f08009c
-int string getCafeEntriesSql 0x7f0800ae
+int string getCafeEntriesSql 0x7f0800b0
 int string giveFeedBack 0x7f08005d
 int string googleMap 0x7f08008a
 int string homepage 0x7f080042
 int string info 0x7f080057
 int string information 0x7f08005a
-int string initCafeTableSql 0x7f0800ac
-int string insertCafeSql 0x7f0800ad
+int string initCafeTableSql 0x7f0800ae
+int string insertCafeSql 0x7f0800af
 int string intro 0x7f080058
 int string latestNews 0x7f08009b
 int string loadingAdv 0x7f08007e
@@ -998,7 +998,9 @@ int string sending 0x7f08006c
 int string showList 0x7f080085
 int string showMap 0x7f080086
 int string taipaRegion 0x7f080099
+int string takePhoto 0x7f0800ad
 int string totalResultsFound 0x7f080087
+int string useAlbum 0x7f0800ac
 int string versionNo 0x7f08008e
 int string website 0x7f080053
 int string weiboLogin 0x7f0800a7

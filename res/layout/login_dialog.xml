@@ -25,6 +25,7 @@
             facebook:confirm_logout="false"
             facebook:fetch_user_info="true"
             facebook:login_text="@string/facebookLogin"
+            facebook:logout_text="@string/facebookLogin"
             />
     
     <View
