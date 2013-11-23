@@ -106,7 +106,12 @@ public class AdvViewPager extends ViewPager {
         	for (String id : advIdList) {
 
         		if (!id.equals("")) {
-        			Integer.parseInt(id);
+        			try {
+						Integer.parseInt(id);
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+						continue;
+					}
         			//to make sure the adv is in random order
         			Random rand = new Random(); 
         			boolean randomValue = rand.nextBoolean();
@@ -175,7 +180,8 @@ public class AdvViewPager extends ViewPager {
             try {
             	File f = fileCache.getFile(ADV_ID_LIST);
             	String advListStr = MFService.getString(isSmallAdv ? MFURL.NEW_SMALL_ADV : MFURL.NEW_BIG_ADV, f);
-            	if (advListStr.equals(fileAdvListStr)) {
+            	//if id list same is cache file id list and image list size > 0, no need to download new ads 
+            	if (advListStr.equals(fileAdvListStr) && isUsingCache) {
 					return null;
 				}
             	
