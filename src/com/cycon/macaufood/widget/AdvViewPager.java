@@ -353,7 +353,7 @@ public class AdvViewPager extends ViewPager {
 				
 				public void onClick(View arg0) {
 					if (linkIdList.size() != 0) {
-						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MFURL.getAdvClickUrl(linkIdList.get(pos))));
+						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(MFURL.CLICK_ADV, linkIdList.get(pos), MFConfig.DEVICE_ID)));
 						mContext.startActivity(myIntent);
 					}
 				}

@@ -52,7 +52,7 @@ public class BannerView extends FrameLayout {
 			
 			public void onClick(View v) {
 				if (linkId == null || linkId == "") return;
-				Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MFURL.getAdvClickUrl(linkId)));
+				Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(MFURL.CLICK_ADV, linkId, MFConfig.DEVICE_ID)));
 				mContext.startActivity(myIntent);
 			}
 		});

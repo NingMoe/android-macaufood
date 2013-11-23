@@ -1,5 +1,7 @@
 package com.cycon.macaufood.utilities;
 
+import android.util.Log;
+
 import com.cycon.macaufood.utilities.MFLog;
 
 import com.cycon.macaufood.bean.ImageType;
@@ -26,12 +28,13 @@ public class MFURL {
 	public static final String PHOTOSHARE_HOT_LIST = "http://www.cycon.com.mo/photo_xml_gethot2.php?key=photo123456&iphone5=1";
 	public static final String PHOTOSHARE_HOT_IMAGE = "http://www.cycon.com.mo/displayimage.php?filename=";
 	public static final String PHOTOSHARE_REGISTER = "http://www.cycon.com.mo/photo_xml_memberlogin_socialnetwork.php?key=photo123456&logintype=";
+	public static final String PHOTOSHARE_FIND_FRIENDS = "http://www.cycon.com.mo/photo_xml_friends2.php?key=photo123456&memberid=";
 	
 	private static final String APP_IMAGE = "http://www.cycon.com.mo/appimages/";
 	private static final String INTRO_PAGE = "http://www.cycon.com.mo/detail_page.php?id=";
 	private static final String INTRO_TEXT = "http://www.cycon.com.mo/detail_text.php?id=";
-	private static final String MENU = "http://www.cycon.com.mo/xml_menu.php?id=";
-	private static final String CLICK_ADV = "http://www.cycon.com.mo/xml_advclick.php?id= ";
+	public static final String MENU = "http://www.cycon.com.mo/xml_menu.php?id=%s&page=%d&udid=android-%s";
+	public static final String CLICK_ADV = "http://www.cycon.com.mo/xml_advclick.php?id= %s&code=%s";
 
 	public static String getImageUrl(ImageType imageType, String id) {
 		String dir = null;
@@ -57,14 +60,6 @@ public class MFURL {
 	
 	public static String getIntroTextUrl(String id, int page) {
 		return INTRO_TEXT + id + "&page=" + page;
-	}
-	
-	public static String getMenuUrl(String id, int page) {
-		return MENU + id + "&page=" + page + "&udid=android-" + MFConfig.DEVICE_ID;
-	}
-	
-	public static String getAdvClickUrl(String id) {
-		return CLICK_ADV + id + "&code=" + MFConfig.DEVICE_ID;
 	}
 	
 }

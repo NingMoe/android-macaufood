@@ -92,7 +92,8 @@ public class MFUtil {
 		}
 		BufferedReader rd = new BufferedReader(new InputStreamReader(fis));
 		try {
-			str = rd.readLine().trim();
+			str = rd.readLine();
+			if (str != null) str = str.trim();
 			rd.close();
 			return str;
 		} catch (IOException e) {

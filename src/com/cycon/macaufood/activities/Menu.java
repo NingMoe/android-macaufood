@@ -53,7 +53,7 @@ public class Menu extends BaseActivity {
 		
 		setHeaderText();
 		
-		webView.loadUrl(MFURL.getMenuUrl(menuid, currentPage));
+		webView.loadUrl(String.format(MFURL.MENU, menuid, currentPage, MFConfig.DEVICE_ID));
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 		webView.getSettings().setUseWideViewPort(true) ; 
@@ -157,7 +157,7 @@ public class Menu extends BaseActivity {
 			if (currentPage == 1) currentPage = totalPages;
 			else currentPage--;
 			setHeaderText();
-			webView.loadUrl(MFURL.getMenuUrl(menuid, currentPage));
+			webView.loadUrl(String.format(MFURL.MENU, menuid, currentPage, MFConfig.DEVICE_ID));
 			return true;
 		case NEXT_PAGE_MENU_ID:
 			errorMsg.setVisibility(View.GONE);
@@ -165,7 +165,7 @@ public class Menu extends BaseActivity {
 			if (currentPage == totalPages) currentPage = 1;
 			else currentPage++;
 			setHeaderText();
-			webView.loadUrl(MFURL.getMenuUrl(menuid, currentPage));
+			webView.loadUrl(String.format(MFURL.MENU, menuid, currentPage, MFConfig.DEVICE_ID));
 			return true;
 		case PHONE_CALL_MENU_ID:
 			showPhoneCallDialog();
