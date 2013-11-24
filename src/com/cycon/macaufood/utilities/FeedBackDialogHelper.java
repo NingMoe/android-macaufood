@@ -14,8 +14,12 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import com.cycon.macaufood.utilities.MFLog;
+
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -41,7 +45,8 @@ public class FeedBackDialogHelper {
 		content = (TextView)view.findViewById(R.id.contentText);
 		
 		final AlertDialog dialog = new AlertDialog.Builder(context)
-				.setTitle(R.string.giveFeedBack)
+//				.setCustomTitle(title)
+//				.setTitle(R.string.giveFeedBack)
 				.setCancelable(false)
 				.setView(view)
 				.setPositiveButton(context.getString(R.string.fbSubmit), null)

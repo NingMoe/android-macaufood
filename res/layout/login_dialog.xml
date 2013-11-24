@@ -4,6 +4,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
     
+ <TextView 
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/pleaseLogin"
+        android:paddingLeft="16dp"
+        android:gravity="center_vertical"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:background="@drawable/actionbar_bg"/>
+    
     <TextView
         android:id="@+id/fbLogin"
         android:layout_width="match_parent"

@@ -31,6 +31,8 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+
 import com.cycon.macaufood.utilities.MFLog;
 
 import com.cycon.macaufood.activities.Coupon;
@@ -48,6 +50,10 @@ public class MFFetchListHelper {
 
 	private static final String TAG = MFFetchListHelper.class.getName();
 	public static boolean isFetching = false;
+	
+	public static void fetchList(String url, DefaultHandler xmlHandler, MFServiceCallBack callback) {
+		AsyncTaskHelper.execute(new FetchSingleXmlTask(url, xmlHandler, callback));
+	}
 
 	public static void fetchAllList(Home homeActivity) {
 		if (!isFetching) {
@@ -134,7 +140,7 @@ public class MFFetchListHelper {
 			}
 			
 			parseXml(new ByteArrayInputStream(baos.toByteArray()), info.tempParsedList, info.contentList);
-
+			
 			try {
 				if (info.tempParsedList.size() != 0) {
 					FileCache fileCache=new FileCache(homeActivity, info.imageType);
@@ -301,5 +307,108 @@ public class MFFetchListHelper {
 		}
 
 	}
+	
+	//-------------------Fetch One List---------------------
+	
+	public static boolean parseXml(InputStream is, DefaultHandler xmlHandler) {
+		try {
+			SAXParserFactory spf = SAXParserFactory.newInstance();
+			SAXParser sp = spf.newSAXParser();
+			XMLReader xr = sp.getXMLReader();
+			xr.setContentHandler(xmlHandler);
+			xr.parse(new InputSource(is));
+			return true;
+		} catch (FactoryConfigurationError e) {
+			MFLog.e(TAG, "FactoryConfigurationError");
+			e.printStackTrace();
+			return false;
+		} catch (ParserConfigurationException e) {
+			MFLog.e(TAG, "ParserConfigurationException");
+			e.printStackTrace();
+			return false;
+		} catch (SAXException e) {
+			MFLog.e(TAG, "SAXException");
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			MFLog.e(TAG, "IOException");
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
+	private static class FetchSingleXmlTask extends AsyncTask<Void, Void, Void> {
+
+		private String url;
+		private DefaultHandler xmlHandler;
+		private MFServiceCallBack callback;
+		private ByteArrayOutputStream baos;
+
+		private FetchSingleXmlTask(String url, DefaultHandler xmlHandler, MFServiceCallBack callback) {
+			this.url = url;
+			this.xmlHandler = xmlHandler;
+			this.callback = callback;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+
+			try {
+				HttpClient client = new DefaultHttpClient();
+				HttpParams httpParams = client.getParams();
+				HttpConnectionParams.setConnectionTimeout(httpParams, 8000);
+				HttpGet request = new HttpGet(url);
+
+				HttpResponse response = client.execute(request);
+				InputStream is = response.getEntity().getContent();
+
+				baos = new ByteArrayOutputStream();
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = is.read(buffer)) > 0) {
+					baos.write(buffer, 0, len);
+				}
+				baos.flush();
+
+
+			} catch (MalformedURLException e) {
+				MFLog.e(TAG, "malformed url exception");
+				e.printStackTrace();
+			} catch (IOException e) {
+				MFLog.e(TAG, "io exception");
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			
+			//internet problem, request cannot finish in 8secs
+			if (baos == null) {
+				callback.onLoadResultError();
+				return;
+			}
+			
+			boolean parseResult = parseXml(new ByteArrayInputStream(baos.toByteArray()), xmlHandler);
+			if (parseResult) {
+				callback.onLoadResultSuccess();
+			} else {
+				callback.onLoadResultError();
+			}
+			
+		}
+	}
+	
+	
+	
 
 }

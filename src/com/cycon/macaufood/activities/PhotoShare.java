@@ -55,6 +55,7 @@ import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
+import com.cycon.macaufood.widget.FindFriendsDialogView;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -102,6 +103,7 @@ public class PhotoShare extends SherlockFragment{
 		public boolean onMenuItemClick(MenuItem item) {
 			switch (item.getItemId()) {
 			case MENU_FIND_FRIENDS:
+				showFindFriendsDialog();
 				break;
 			case MENU_LOGOUT:
 				callFacebookLogout();
@@ -122,6 +124,7 @@ public class PhotoShare extends SherlockFragment{
 	public boolean onContextItemSelected(MenuItem item) {
 			switch (item.getItemId()) {
 			case MENU_FIND_FRIENDS:
+				showFindFriendsDialog();
 				break;
 			case MENU_LOGOUT:
 				callFacebookLogout();
@@ -434,7 +437,6 @@ public class PhotoShare extends SherlockFragment{
 		});
 		
 		mLoginDialog = new AlertDialog.Builder(mContext)
-		.setTitle(R.string.pleaseLogin)
 		.setView(view)
 		.setPositiveButton(getString(R.string.cancel),
 				new DialogInterface.OnClickListener() {
@@ -467,6 +469,24 @@ public class PhotoShare extends SherlockFragment{
     	if (exception != null) {
     		Log.e("ZZZ", "exception= " + exception.getMessage());
     	}
+    }
+    
+    private void showFindFriendsDialog() {
+//    	FindFriendsDialogView view = (FindFriendsDialogView) getActivity().getLayoutInflater().inflate(R.layout.find_friends_dialog, null);
+//    	view.init(getActivity());
+    	
+    	FindFriendsDialogView view = new FindFriendsDialogView(mContext);
+    	
+		AlertDialog dialog = new AlertDialog.Builder(mContext)
+		.setView(view)
+		.setPositiveButton(getString(R.string.confirmed),
+				new DialogInterface.OnClickListener() {
+
+					public void onClick(DialogInterface dialog,
+							int which) {
+						dialog.dismiss();
+					}
+				}).show();
     }
 	
 	@Override
@@ -522,7 +542,7 @@ public class PhotoShare extends SherlockFragment{
     			pairs.add(new BasicNameValuePair("fbtoken", Session.getActiveSession().getAccessToken()));
     			pairs.add(new BasicNameValuePair("fbexpire", Session.getActiveSession().getExpirationDate().toString()));
     			pairs.add(new BasicNameValuePair("pic_link", "https://graph.facebook.com/" + user.getId() + "/picture"));
-    			pairs.add(new BasicNameValuePair("devicetoken", "0"));
+    			pairs.add(new BasicNameValuePair("devicetoken", "0")); //this device token is for push notification
     			InputStream is = MFService.executeRequestWithHttpParams(MFURL.PHOTOSHARE_REGISTER + "f", pairs);
     			StringBuilder sb = new StringBuilder();
     			BufferedReader rd = new BufferedReader(new InputStreamReader(

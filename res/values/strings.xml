@@ -136,6 +136,7 @@
  	<string name="logoutMessage">成功登出</string>
  	<string name="logout">登出</string>
  	<string name="findFriends">尋找朋友</string>
+ 	<string name="findingFriends">尋找朋友中...</string>
  	<string name="useAlbum">從相簿選取</string>
  	<string name="takePhoto">拍照</string>
  
