@@ -400,7 +400,7 @@ public class MFFetchListHelper {
 			
 			boolean parseResult = parseXml(new ByteArrayInputStream(baos.toByteArray()), xmlHandler);
 			if (parseResult) {
-				callback.onLoadResultSuccess();
+				callback.onLoadResultSuccess(null);
 			} else {
 				callback.onLoadResultError();
 			}

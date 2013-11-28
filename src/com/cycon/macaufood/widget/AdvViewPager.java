@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -359,7 +360,7 @@ public class AdvViewPager extends ViewPager {
 				
 				public void onClick(View arg0) {
 					if (linkIdList.size() != 0) {
-						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(MFURL.CLICK_ADV, linkIdList.get(pos), MFConfig.DEVICE_ID)));
+						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(Locale.US, MFURL.CLICK_ADV, linkIdList.get(pos), MFConfig.DEVICE_ID)));
 						mContext.startActivity(myIntent);
 					}
 				}

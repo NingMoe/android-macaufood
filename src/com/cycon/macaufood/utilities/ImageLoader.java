@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,7 @@ import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.bean.ParsedFoodNewsHolder;
+import com.cycon.macaufood.bean.ParsedFriendsHolder;
 import com.cycon.macaufood.bean.ParsedPSHotHolder;
 
 public class ImageLoader {
@@ -49,13 +51,16 @@ public class ImageLoader {
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     private Drawable nophoto;
-    private Drawable loadingBlankPhoto;
+//    private Drawable loadingBlankPhoto;
     private Drawable nointernet;
     private Context mContext;
     
     private LinkedList<String> imagesToLoad;
     private ConcurrentLinkedQueue<FetchImageTask> imagesLoading;
     private HashSet<String> currentDisplayImages = new HashSet<String>(); 
+    
+    //for findfriends image, use it when imagetype == null
+    private Map<String, String> idUrlMap = Collections.synchronizedMap(new HashMap<String, String>());
     
     private int lastVisibleRowIndex;
     
@@ -66,10 +71,12 @@ public class ImageLoader {
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
     	mContext = context;
     	this.imageType = imageType;
-        fileCache=new FileCache(context, imageType);
+    	if (imageType != null) { //image type null means not using cache
+    		fileCache=new FileCache(context, imageType);
+//    		loadingBlankPhoto = context.getResources().getDrawable(imageType == ImageType.REGULAR ? R.drawable.light_green_gradient_bg : R.drawable.cafe_row_bg);
+    	}
         lastVisibleRowIndex = lastRowIndex;
         nophoto = context.getResources().getDrawable(R.drawable.nophoto);
-        loadingBlankPhoto = context.getResources().getDrawable(imageType == ImageType.REGULAR ? R.drawable.light_green_gradient_bg : R.drawable.cafe_row_bg);
         nointernet = context.getResources().getDrawable(R.drawable.nointernet);
         
         imagesLoading = new ConcurrentLinkedQueue<FetchImageTask>();
@@ -108,6 +115,14 @@ public class ImageLoader {
         }
     }
     
+    public void setImagesToLoadFromParsedFriendsList(List<ParsedFriendsHolder> holders) {
+    	imagesToLoad.clear();
+        for (ParsedFriendsHolder holder : holders) {
+        	imagesToLoad.add(holder.getId());
+        	idUrlMap.put(holder.getId(), holder.getPicLink());
+        }
+    }
+    
     public void displayImage(String id, ImageView imageView, int position)
     {
     	imagesToLoad.remove(id);
@@ -127,8 +142,8 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
                 memoryCache.put(id, bitmap);
             } else {
-//            	imageView.setVisibility(View.INVISIBLE);
-            	imageView.setImageDrawable(loadingBlankPhoto);
+//            	imageView.setImageDrawable(loadingBlankPhoto);
+            	imageView.setImageDrawable(null);
             	
             	boolean needLoad = true;
             	for (FetchImageTask task : imagesLoading) {
@@ -320,8 +335,18 @@ public class ImageLoader {
 		    {
 		        //from web
 		        try {
-		        	File f=fileCache.getFile(id);
-		            return MFService.getBitmap(MFURL.getImageUrl(imageType, id), f);
+		        	File f = null;
+		        	if (fileCache != null) {
+		        		f = fileCache.getFile(id);
+		        	}
+		        	String url = null;
+		        	if (imageType != null) {
+						url = MFURL.getImageUrl(imageType, id);
+					} else {
+						url = idUrlMap.get(id);
+					}
+		        	if (url == null) android.util.Log.e("ZZZ", "url NULL!!");
+		            return MFService.getBitmap(url, f);
 		        	
 		        } catch (FileNotFoundException ex){
 		        	MFLog.e(TAG, "no photo");
@@ -348,10 +373,10 @@ public class ImageLoader {
     	imageViews.clear();
     }
     
-    public void clearCache() {
-        memoryCache.clear();
-        fileCache.clear();
-    }
+//    public void clearCache() {
+//        memoryCache.clear();
+//        fileCache.clear();
+//    }
     
 
 }

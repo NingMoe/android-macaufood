@@ -115,6 +115,10 @@ public class MFService {
 		}
 	}
 	
+	public static void getString(String url, File cacheFile, MFServiceCallBack callback) {
+		AsyncTaskHelper.executeWithResultString(new FetchStringTask(url, cacheFile, callback));
+	}
+	
 	private static InputStream executeRequest(String url) throws ClientProtocolException, IOException {
 		HttpClient client = new DefaultHttpClient();
 		HttpParams httpParams = client.getParams();
@@ -394,6 +398,51 @@ public class MFService {
 			return null;
 		}
 	}
+	
+	
+    public static class FetchStringTask extends AsyncTask<Void, Void, String> {
+    	
+    	private MFServiceCallBack callback;
+    	private String url;
+    	private File file;
+    	
+    	private FetchStringTask(String url, File file, MFServiceCallBack callback) {
+    		this.callback = callback;
+    		this.url = url;
+    		this.file = file;
+    	}
+    	
+    	@Override
+    	protected String doInBackground(Void... params) {
+
+    		try {
+				return MFService.getString(url, file);
+				
+			} catch (MalformedURLException e) {
+				MFLog.e(TAG, "malformed url exception");
+				e.printStackTrace();
+			} catch (IOException e) {
+				MFLog.e(TAG, "io exception");
+				e.printStackTrace();
+			} catch (NumberFormatException e) {
+				MFLog.e(TAG, "NumberFormatException");
+				e.printStackTrace();
+			}
+    		
+    		return null;
+    	}
+    	
+    	@Override
+    	protected void onPostExecute(String result) {
+    		super.onPostExecute(result);
+    		
+    		if (result == null) {
+				callback.onLoadResultError();
+			} else {
+				callback.onLoadResultSuccess(result);
+			}
+    	}
+    }
 	
 	
 }

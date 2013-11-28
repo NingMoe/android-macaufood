@@ -35,7 +35,29 @@ import com.cycon.macaufood.utilities.MFConfig;
 		public void endElement(String uri, String localName, String qName)
 		throws SAXException {
 			
-			if (localName.equals("friends")) return;
+			if (localName.equals("friends")) {
+//				holder = new ParsedFriendsHolder();
+//				holder.setId("31");
+//				holder.setPicLink("https://graph.facebook.com/686125482/picture");
+//				tempParsedList.add(holder);
+//				holder = new ParsedFriendsHolder();
+//				holder.setId("312");
+//				holder.setPicLink("https://graph.facebook.com/686125482/picture");
+//				tempParsedList.add(holder);
+//				holder = new ParsedFriendsHolder();
+//				holder.setId("314");
+//				holder.setPicLink("https://graph.facebook.com/686125482/picture");
+//				tempParsedList.add(holder);
+//				holder = new ParsedFriendsHolder();
+//				holder.setId("315");
+//				holder.setPicLink("https://graph.facebook.com/686125482/picture");
+//				tempParsedList.add(holder);
+//				holder = new ParsedFriendsHolder();
+//				holder.setId("316");
+//				holder.setPicLink("https://graph.facebook.com/686125482/picture");
+//				tempParsedList.add(holder);
+				return;
+			}
 			
 			if (localName.equals("friend")) {
 				tempParsedList.add(holder);
@@ -51,7 +73,14 @@ import com.cycon.macaufood.utilities.MFConfig;
 			} else {
 //					MFLog.e(localName, tempValue.toString());
 				if (localName.equals("detail")) {
-					holder.setDetail(tempValue.toString());
+					String detailStr = tempValue.toString();
+					holder.setDetail(detailStr);
+					String[] tokens = detailStr.split("\\|\\|\\|");
+					holder.setId(tokens[0]);
+					holder.setName(tokens[1]);
+					holder.setPicLink(tokens[2]);
+					String followed = tokens[3];
+					if (followed.equals("1")) holder.setFollowed(true);
 				} 
 			}
 		}

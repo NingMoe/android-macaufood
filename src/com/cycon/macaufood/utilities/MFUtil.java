@@ -73,6 +73,7 @@ public class MFUtil {
     }
     
     public static Bitmap getBitmapFromCache(FileCache fileCache, String imageId) {
+    	if (fileCache == null) return null;
     	File f=fileCache.getFile(imageId);
     	try {
 			return BitmapFactory.decodeStream(new FileInputStream(f));

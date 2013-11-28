@@ -15,6 +15,7 @@
     
 <!--  Recommmend -->
     <string name="noInternetMsg">請連接網絡獲取資料</string>
+    <string name="errorMsg">網絡連接問題,請稍後重試</string>
     <string name="retryMsg">重試</string>
     
 <!--  Coupon  -->
@@ -136,9 +137,14 @@
  	<string name="logoutMessage">成功登出</string>
  	<string name="logout">登出</string>
  	<string name="findFriends">尋找朋友</string>
+ 	<string name="friendsList">朋友列表</string>
  	<string name="findingFriends">尋找朋友中...</string>
  	<string name="useAlbum">從相簿選取</string>
  	<string name="takePhoto">拍照</string>
+ 	<string name="noFriendsFound">你沒有朋友登入食在澳門</string>
+ 	<string name="follow">關注</string>
+ 	<string name="followAll">關注所有</string>
+ 	<string name="unfollow">取消關注</string>
  
 	<!--  SQL Queries -->
 	<string name="initCafeTableSql">CREATE TABLE IF NOT EXISTS CAFEENTRIES(

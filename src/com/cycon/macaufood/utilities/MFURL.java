@@ -29,6 +29,7 @@ public class MFURL {
 	public static final String PHOTOSHARE_HOT_IMAGE = "http://www.cycon.com.mo/displayimage.php?filename=";
 	public static final String PHOTOSHARE_REGISTER = "http://www.cycon.com.mo/photo_xml_memberlogin_socialnetwork.php?key=photo123456&logintype=";
 	public static final String PHOTOSHARE_FIND_FRIENDS = "http://www.cycon.com.mo/photo_xml_friends2.php?key=photo123456&memberid=";
+	public static final String PHOTOSHARE_FOLLOW_FRIENDS = "http://www.cycon.com.mo/photo_xml_changefollow2.php?key=photo123456&leader=%s&follower=%s&tag=%d";
 	
 	private static final String APP_IMAGE = "http://www.cycon.com.mo/appimages/";
 	private static final String INTRO_PAGE = "http://www.cycon.com.mo/detail_page.php?id=";
