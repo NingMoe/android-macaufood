@@ -144,6 +144,7 @@
  	<string name="noFriendsFound">你沒有朋友登入食在澳門</string>
  	<string name="follow">關注</string>
  	<string name="followAll">關注所有</string>
+ 	<string name="followAllSucceed">已關注所有朋友</string>
  	<string name="unfollow">取消關注</string>
  
 	<!--  SQL Queries -->

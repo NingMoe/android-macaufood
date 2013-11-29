@@ -406,7 +406,7 @@ public class MFService {
     	private String url;
     	private File file;
     	
-    	private FetchStringTask(String url, File file, MFServiceCallBack callback) {
+    	public FetchStringTask(String url, File file, MFServiceCallBack callback) {
     		this.callback = callback;
     		this.url = url;
     		this.file = file;

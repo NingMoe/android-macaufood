@@ -4,6 +4,7 @@
     <color name="default_bg_color">#e3e3e3</color>
     <color name="green_text">#629d2a</color>
     <color name="light_gray_text">#777777</color>
+    <color name="button_gray_text">#666666</color>
     <color name="actionbar_bottom_line">#47732a</color>
     <color name="holo_blue_light">#7733b5e5</color>
     <color name="tab_gray_text">#505050</color>
