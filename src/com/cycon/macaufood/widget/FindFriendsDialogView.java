@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedFriendsHolder;
-import com.cycon.macaufood.bean.ParsedPSHotHolder;
+import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
@@ -47,7 +47,6 @@ public class FindFriendsDialogView extends LinearLayout {
 	private List<ParsedFriendsHolder> mHolderList = new ArrayList<ParsedFriendsHolder>(); 
 	private LinkedList<ParsedFriendsHolder> mFollowAllList = new LinkedList<ParsedFriendsHolder>();
 	private FriendListAdapter mFriendListAdapter;
-	private String memberId;
 	private int mRequestCompleteCount;
 	private int mRequestTotalCount;
 	private boolean mFollowAllError;
@@ -79,8 +78,10 @@ public class FindFriendsDialogView extends LinearLayout {
 		});
 		mFriendListAdapter = new FriendListAdapter();
 		mListView.setAdapter(mFriendListAdapter);
-		memberId = PreferenceHelper.getPreferenceValueStr(context, MFConstants.PS_MEMBERID_PREF_KEY, "0");
-		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + memberId;
+		if (MFConfig.memberId == null) {
+			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(context, MFConstants.PS_MEMBERID_PREF_KEY, "0");
+		}
+		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + MFConfig.memberId;
 		DefaultHandler handler = new FriendListXMLHandler(mHolderList);
 		MFFetchListHelper.fetchList(url, handler, new MFServiceCallBack() {
 			
@@ -156,7 +157,7 @@ public class FindFriendsDialogView extends LinearLayout {
 //		mRequestTotalCount++;
 //		pHolder.setLoading(true);
 		
-		String url = String.format(Locale.US, MFURL.PHOTOSHARE_FOLLOW_FRIENDS, pHolder.getId(), memberId, 0);
+		String url = String.format(Locale.US, MFURL.PHOTOSHARE_FOLLOW_FRIENDS, pHolder.getId(), MFConfig.memberId, 0);
 		
 		MFService.getString(url, null, new MFServiceCallBack() {
 			
@@ -281,7 +282,7 @@ public class FindFriendsDialogView extends LinearLayout {
 					holder.followButton.setEnabled(false);
 					holder.pBar.setVisibility(View.VISIBLE);
 					holder.followButton.setText("");
-					String url = String.format(Locale.US, MFURL.PHOTOSHARE_FOLLOW_FRIENDS, pHolder.getId(), memberId, position);
+					String url = String.format(Locale.US, MFURL.PHOTOSHARE_FOLLOW_FRIENDS, pHolder.getId(), MFConfig.memberId, position);
 					MFService.getString(url, null, new MFServiceCallBack() {
 						
 						@Override

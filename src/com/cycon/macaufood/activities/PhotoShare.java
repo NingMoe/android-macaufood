@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.message.BasicNameValuePair;
+import org.xml.sax.helpers.DefaultHandler;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -36,6 +37,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
@@ -43,19 +45,25 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.adapters.PSFriendsActivityAdapter;
 import com.cycon.macaufood.adapters.PSHotAdapter;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
+import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFServiceCallBack;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.FindFriendsDialogView;
+import com.cycon.macaufood.xmlhandler.FriendListXMLHandler;
+import com.cycon.macaufood.xmlhandler.PSDetailXMLHandler;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -80,11 +88,14 @@ public class PhotoShare extends SherlockFragment{
 	private Context mContext;
 	private View mView;
 	
-	private TextView mPsFriends;
-	private TextView mPsHot;
-	private View mPsCamera;
-	private View mPsSettings;
-	private View mFriendsLayoutSV;
+	private TextView mPsFriendsTab;
+	private TextView mPsHotTab;
+	private View mPsCameraTab;
+	private View mPsSettingsTab;
+	
+	private ListView mFriendsActivityListView;
+	private PSFriendsActivityAdapter mFriendsActivityAdapter;
+	private List<ParsedPSHolder> mFriendsActivityInfo = new ArrayList<ParsedPSHolder>();
 	private int mCurrentTab = 1; //friends = 0, hot = 1;
 	
 	private AlertDialog mLoginDialog;
@@ -167,42 +178,50 @@ public class PhotoShare extends SherlockFragment{
         		displayRetryLayout();
         	}
 		}
-		mFriendsLayoutSV = mView.findViewById(R.id.friendsLayoutSV);
+		mFriendsActivityListView = (ListView) mView.findViewById(R.id.friendsActivityListView);
+		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, mFriendsActivityInfo);
+		mFriendsActivityListView.setAdapter(mFriendsActivityAdapter);
 		
-		mPsFriends = (TextView) mView.findViewById(R.id.psFriends);
-		mPsFriends.setOnClickListener(new OnClickListener() {
+		mPsFriendsTab = (TextView) mView.findViewById(R.id.psFriends);
+		mPsFriendsTab.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				if (mCurrentTab == 0) return;
-				mPsHot.setSelected(false);
-				mPsFriends.setSelected(true);
+				mPsHotTab.setSelected(false);
+				mPsFriendsTab.setSelected(true);
 				mCurrentTab = 0;
 				mHotGV.setVisibility(View.GONE);
-				mFriendsLayoutSV.setVisibility(View.VISIBLE);
+				mFriendsActivityListView.setVisibility(View.VISIBLE);
+				
+				//TODO check if data is there
+				boolean needLoad = true;
+				if (needLoad) {
+					loadFriendsActivity();
+				}
 			}
 		});
-		mPsHot = (TextView) mView.findViewById(R.id.psHot);
-		mPsHot.setSelected(true);
-		mPsHot.setOnClickListener(new OnClickListener() {
+		mPsHotTab = (TextView) mView.findViewById(R.id.psHot);
+		mPsHotTab.setSelected(true);
+		mPsHotTab.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				if (mCurrentTab == 1) return;
-				mPsHot.setSelected(true);
-				mPsFriends.setSelected(false);
+				mPsHotTab.setSelected(true);
+				mPsFriendsTab.setSelected(false);
 				mCurrentTab = 1;
 				mHotGV.setVisibility(View.VISIBLE);
-				mFriendsLayoutSV.setVisibility(View.GONE);
+				mFriendsActivityListView.setVisibility(View.GONE);
 			}
 		});
-		mPsCamera = mView.findViewById(R.id.psCamera);
-		mPsCamera.setOnClickListener(new OnClickListener() {
+		mPsCameraTab = mView.findViewById(R.id.psCamera);
+		mPsCameraTab.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				checkLogin(PendingAction.CAMERA);
 			}
 		});
-		mPsSettings = mView.findViewById(R.id.psSettings);
-		mPsSettings.setOnClickListener(new OnClickListener() {
+		mPsSettingsTab = mView.findViewById(R.id.psSettings);
+		mPsSettingsTab.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				checkLogin(PendingAction.SETTINGS);
@@ -210,8 +229,8 @@ public class PhotoShare extends SherlockFragment{
 		});
 		
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-			registerForContextMenu(mPsCamera);
-			registerForContextMenu(mPsSettings);
+			registerForContextMenu(mPsCameraTab);
+			registerForContextMenu(mPsSettingsTab);
 		}
 
 	}
@@ -220,10 +239,10 @@ public class PhotoShare extends SherlockFragment{
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		if (v == mPsCamera) {
+		if (v == mPsCameraTab) {
 			menu.add(Menu.NONE, MENU_USE_ALBUM, Menu.NONE, R.string.useAlbum);
 			menu.add(Menu.NONE, MENU_TAKE_PHOTO, Menu.NONE, R.string.takePhoto);
-		} else if (v == mPsSettings) {
+		} else if (v == mPsSettingsTab) {
 			menu.add(Menu.NONE, MENU_FIND_FRIENDS, Menu.NONE, R.string.findFriends);
 			menu.add(Menu.NONE, MENU_LOGOUT, Menu.NONE, R.string.logout);
 		}
@@ -298,6 +317,40 @@ public class PhotoShare extends SherlockFragment{
 		
 	}
 	
+	public void loadFriendsActivity() {
+		if (MFConfig.memberId == null) {
+			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, "0");
+		}
+		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + MFConfig.memberId;
+		DefaultHandler handler = new PSDetailXMLHandler(mFriendsActivityInfo);
+		MFFetchListHelper.fetchList(url, handler, new MFServiceCallBack() {
+			
+			@Override
+			public void onLoadResultSuccess(Object result) {
+				Log.e("ZZZ", "success");
+//				mLoadingProgressLayout.setVisibility(View.GONE);
+				if (mFriendsActivityInfo.size() > 0) {
+					Log.e("ZZZ", "success1");
+//					mListView.setVisibility(View.VISIBLE);
+//					mImageLoader=new ImageLoader(context, 6, null);
+//					mImageLoader.setImagesToLoadFromParsedFriendsList(mHolderList);
+					mFriendsActivityAdapter.notifyDataSetChanged();
+				} else {
+					Log.e("ZZZ", "success2");
+//					TextView tv = (TextView) findViewById(R.id.friendsListError);
+//					tv.setVisibility(View.VISIBLE);
+//					tv.setText(R.string.noFriendsFound);
+				}
+			}
+			
+			@Override
+			public void onLoadResultError() {
+//				mLoadingProgressLayout.setVisibility(View.GONE);
+//				findViewById(R.id.friendsListError).setVisibility(View.VISIBLE);
+			}
+		});
+	}
+	
     public void populateGridView() {
 		//if no internet and no data in File, show retry message
 		if (MFConfig.getInstance().getPsHotList().size() == 0) {
@@ -336,10 +389,10 @@ public class PhotoShare extends SherlockFragment{
 		switch (pa) {
 		case SETTINGS:
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-				getActivity().openContextMenu(mPsSettings);
+				getActivity().openContextMenu(mPsSettingsTab);
 			} else {
 				if (mSettingsMenu == null) {
-					mSettingsMenu = new PopupMenu(mContext, mPsSettings);
+					mSettingsMenu = new PopupMenu(mContext, mPsSettingsTab);
 					mSettingsMenu.getMenu().add(Menu.NONE, MENU_FIND_FRIENDS, Menu.NONE, R.string.findFriends);
 					mSettingsMenu.getMenu().add(Menu.NONE, MENU_LOGOUT, Menu.NONE, R.string.logout);
 					mSettingsMenu.setOnMenuItemClickListener(new MenuClickListener());
@@ -349,10 +402,10 @@ public class PhotoShare extends SherlockFragment{
 			break;
 		case CAMERA:
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-				getActivity().openContextMenu(mPsCamera);
+				getActivity().openContextMenu(mPsCameraTab);
 			} else {
 				if (mCameraMenu == null) {
-					mCameraMenu = new PopupMenu(mContext, mPsSettings);
+					mCameraMenu = new PopupMenu(mContext, mPsSettingsTab);
 					mCameraMenu.getMenu().add(Menu.NONE, MENU_USE_ALBUM, Menu.NONE, R.string.useAlbum);
 					mCameraMenu.getMenu().add(Menu.NONE, MENU_TAKE_PHOTO, Menu.NONE, R.string.takePhoto);
 					mCameraMenu.setOnMenuItemClickListener(new MenuClickListener());
@@ -569,9 +622,9 @@ public class PhotoShare extends SherlockFragment{
     	protected void onPostExecute(String result) {
     		super.onPostExecute(result);
     		
+    		MFConfig.memberId = result;
     		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, result);
     		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, user.getName());
-    		Log.e("ZZZ", "result = " + result);
     		
     	}
     	

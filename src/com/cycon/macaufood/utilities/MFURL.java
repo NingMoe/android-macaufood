@@ -30,6 +30,9 @@ public class MFURL {
 	public static final String PHOTOSHARE_REGISTER = "http://www.cycon.com.mo/photo_xml_memberlogin_socialnetwork.php?key=photo123456&logintype=";
 	public static final String PHOTOSHARE_FIND_FRIENDS = "http://www.cycon.com.mo/photo_xml_friends2.php?key=photo123456&memberid=";
 	public static final String PHOTOSHARE_FOLLOW_FRIENDS = "http://www.cycon.com.mo/photo_xml_changefollow2.php?key=photo123456&leader=%s&follower=%s&tag=%d";
+	public static final String PHOTOSHARE_SHOW_PHOTOS = "http://www.cycon.com.mo/photo_xml_showphotos.php?key=photo123456&onlyme=0&memberid=";
+	public static final String PHOTOSHARE_LIKE = "http://www.cycon.com.mo/photo_xml_like.php?key=photo123456&memberid=%s&photoid=%s";
+	public static final String PHOTOSHARE_UNLIKE = "http://www.cycon.com.mo/photo_xml_unlike.php?key=photo123456&memberid=%s&photoid=%s";
 	
 	private static final String APP_IMAGE = "http://www.cycon.com.mo/appimages/";
 	private static final String INTRO_PAGE = "http://www.cycon.com.mo/detail_page.php?id=";

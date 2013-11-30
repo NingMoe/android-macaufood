@@ -1,6 +1,6 @@
 package com.cycon.macaufood.bean;
 
-public class ParsedPSHotHolder {
+public class ParsedPSHolder {
 	
 	private String photoid;
 	private String memberid;
@@ -27,7 +27,7 @@ public class ParsedPSHotHolder {
 	public void setPhotoid(String photoid) {
 		this.photoid = photoid;
 	}
-	public String getMemberid() {
+	public String getMemberid() {	
 		return memberid;
 	}
 	public void setMemberid(String memberid) {

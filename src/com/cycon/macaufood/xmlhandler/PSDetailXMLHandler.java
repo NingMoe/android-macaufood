@@ -7,18 +7,18 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.cycon.macaufood.bean.ParsedFoodNewsHolder;
-import com.cycon.macaufood.bean.ParsedPSHotHolder;
+import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.MFConfig;
 
 
-	public class PSHotXMLHandler extends DefaultHandler{
+	public class PSDetailXMLHandler extends DefaultHandler{
 
-		public static ParsedPSHotHolder holder = null;
+		public static ParsedPSHolder holder = null;
 		private StringBuffer tempValue = new StringBuffer();
-//		private List tempParsedList;
+		private List<ParsedPSHolder> tempParsedList;
 		
-		public PSHotXMLHandler(List list) {
-//			tempParsedList = list;
+		public PSDetailXMLHandler(List<ParsedPSHolder> list) {
+			tempParsedList = list;
 		}
 
 		@Override
@@ -27,7 +27,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 			tempValue.setLength(0);  //clear buffer
 			
 			if (localName.equals("photo")) {
-				holder = new ParsedPSHotHolder();
+				holder = new ParsedPSHolder();
 			}
 		}
 
@@ -38,7 +38,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 			if (localName.equals("photos")) return;
 			
 			if (localName.equals("photo")) {
-				MFConfig.tempParsedPSHotList.add(holder);
+				tempParsedList.add(holder);
 			} else {
 				if (localName.equals("photoid")) {
 					holder.setPhotoid(tempValue.toString());

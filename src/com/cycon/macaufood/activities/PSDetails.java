@@ -34,7 +34,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
-import com.cycon.macaufood.bean.ParsedPSHotHolder;
+import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FeedBackDialogHelper;
 import com.cycon.macaufood.utilities.FileCache;
@@ -63,7 +63,7 @@ public class PSDetails extends BaseActivity {
 //	private FileCache fileCache;
 //	private boolean isFavorite;
 	
-	private ParsedPSHotHolder mPsHotInfo;
+	private ParsedPSHolder mPsHotInfo;
 	private ImageView profilePic;
 	private ImageView photoImage;
 	private TextView userName;
@@ -110,89 +110,6 @@ public class PSDetails extends BaseActivity {
 		cafeName.setText(mPsHotInfo.getPlace());
 		time.setText(mPsHotInfo.getUploaddate());
 		
-
-//        fileCache=new FileCache(this, ImageType.REGULAR);
-//        Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, cafe.getId());
-//        if(bitmap!=null) {
-//            imageView.setImageBitmap(bitmap);
-//        } else {
-//        	imageView.setImageResource(R.drawable.nophoto);
-//        	AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask());
-//        }
-        
 	}
-		
-		
-	
-//	@Override
-//	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-//		menu.add(0, FAVORITE_MENU_ID, 1, R.string.addFavorite).setIcon(isFavorite ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_empty).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-//		if (!cafe.getBranch().equals("0")) {
-//			menu.add(0, BRANCH_MENU_ID, 2, R.string.branch).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);;
-//		}
-//		menu.add(0, FEEDBACK_MENU_ID, 3, R.string.feedBack).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);;
-//		return super.onCreateOptionsMenu(menu);
-//	}
-//	
-//	@Override
-//	public boolean onOptionsItemSelected(MenuItem item) {
-//		switch (item.getItemId()) {
-//		case FAVORITE_MENU_ID:
-//			toggleAddFavorite(item);
-//			return true;
-//		case BRANCH_MENU_ID:
-//			if (getIntent().getBooleanExtra("fromBranch", false)) {
-//				finish();
-//			} else {
-//				Intent i = new Intent(PSDetails.this, Branch.class);
-//				i.putExtra("branch", cafe.getBranch());
-//				startActivity(i);
-//			}
-//			return true;
-//		case FEEDBACK_MENU_ID:
-//			FeedBackDialogHelper.showFeedBackDialog(this, getLayoutInflater(), getIntent().getStringExtra("id"));
-//			return true;
-//		default:
-//			return super.onOptionsItemSelected(item);
-//		}
-//	}
-	
-	
-//	private class FetchImageTask extends AsyncTask<Void, Void, Bitmap> {
-//
-//		private boolean noConnection;
-//		
-//		@Override
-//		protected Bitmap doInBackground(Void... arg0) {
-//			
-//	        //from web
-//	        try {
-//
-//	            File f=fileCache.getFile(cafe.getId());
-//	            return MFService.getBitmap(MFURL.getImageUrl(ImageType.REGULAR, cafe.getId()), f);
-//	            
-//	        } catch (FileNotFoundException ex){
-//	        	MFLog.e(TAG, "no photo");
-//	           ex.printStackTrace();
-//	        	   return null;
-//	        } catch (Exception e) {
-//	        	noConnection = true;
-//	        	//socket error here
-//	        	MFLog.e(TAG, "error = " + e.getMessage());
-//	        	return null;
-//	        }
-//		}
-//		
-//		@Override
-//		protected void onPostExecute(Bitmap result) {
-//			if (result != null) {
-//				imageView.setImageBitmap(result);
-//			} else {
-//				if (noConnection) {
-//					imageView.setImageResource(R.drawable.nointernet);
-//				} 
-//			}
-//		}
-//	}
 	
 }

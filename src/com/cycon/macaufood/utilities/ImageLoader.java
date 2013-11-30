@@ -41,7 +41,7 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.bean.ParsedFoodNewsHolder;
 import com.cycon.macaufood.bean.ParsedFriendsHolder;
-import com.cycon.macaufood.bean.ParsedPSHotHolder;
+import com.cycon.macaufood.bean.ParsedPSHolder;
 
 public class ImageLoader {
 	
@@ -108,9 +108,9 @@ public class ImageLoader {
     	maxTasksNumber = number;
     }
     
-    public void setImagesToLoadFromParsedPSHot(List<ParsedPSHotHolder> cafes) {
+    public void setImagesToLoadFromParsedPSHot(List<ParsedPSHolder> cafes) {
     	imagesToLoad.clear();
-        for (ParsedPSHotHolder cafe : cafes) {
+        for (ParsedPSHolder cafe : cafes) {
         	imagesToLoad.add(cafe.getFilename());
         }
     }

@@ -121,49 +121,11 @@
               >
          </GridView>
 
-        <ScrollView
-            android:id="@+id/friendsLayoutSV"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" >
-
-            <LinearLayout
-                android:id="@+id/friendsActivityLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Testing"
-                    android:padding="100dp"
-                    android:textSize="26sp" />
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Testing"
-                    android:padding="100dp"
-                    android:textSize="26sp" />
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Testing"
-                    android:padding="100dp"
-                    android:textSize="26sp" />
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Testing"
-                    android:padding="100dp"
-                    android:textSize="26sp" />
-
-
-            </LinearLayout>
-        </ScrollView>
+          <ListView
+              android:id="@+id/friendsActivityListView"
+              android:visibility="gone"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content" />
 
         <ImageView
             android:layout_width="fill_parent"

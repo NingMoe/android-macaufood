@@ -43,7 +43,7 @@ import com.cycon.macaufood.activities.Recommend;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.xmlhandler.FoodNewsXMLHandler;
-import com.cycon.macaufood.xmlhandler.PSHotXMLHandler;
+import com.cycon.macaufood.xmlhandler.PSDetailXMLHandler;
 import com.cycon.macaufood.xmlhandler.ServerCafeXMLHandler;
 
 public class MFFetchListHelper {
@@ -263,7 +263,7 @@ public class MFFetchListHelper {
 			if (tempParsedList == MFConfig.tempParsedFoodNewsList) {
 				xmlHandler = new FoodNewsXMLHandler(tempParsedList);
 			} else if (tempParsedList == MFConfig.tempParsedPSHotList){
-				xmlHandler = new PSHotXMLHandler(tempParsedList);
+				xmlHandler = new PSDetailXMLHandler(tempParsedList);
 			} else {
 			 	xmlHandler = new ServerCafeXMLHandler(tempParsedList);
 			}
