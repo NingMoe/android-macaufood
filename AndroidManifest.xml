@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cycon.macaufood"
     android:installLocation="auto"
-    android:versionCode="8"
+    android:versionCode="9"
     android:versionName="@string/versionNo" >
 
     <supports-screens android:anyDensity="true" />

@@ -1,5 +1,6 @@
 package com.cycon.macaufood.activities;
 
+import java.io.File;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -12,6 +13,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.DisplayMetrics;
+import android.util.Log;
+
 import com.cycon.macaufood.utilities.MFLog;
 import android.view.KeyEvent;
 import android.view.Window;
@@ -48,6 +51,12 @@ public class SplashScreen extends Activity {
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "versionNo", getString(R.string.versionNo));
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "cafe_version_update", MFConfig.cafe_version_update);
 			PreferenceHelper.savePreferencesLong(SplashScreen.this, MFConstants.TIME_STAMP_PREF_KEY, 0); //refresh main page after update?
+			
+			int versionHeadNumber = originalVersion.charAt(0) - '0';
+	    	//clear in ext file / cache file for version below 3.0
+			if (versionHeadNumber < 3) {
+				clearFileInSd();
+			}
 		}
 		
 		MFConfig.cafe_version_update = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "cafe_version_update" ,MFConfig.cafe_version_update);
@@ -60,6 +69,28 @@ public class SplashScreen extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		MFConfig.deviceWidth = dm.widthPixels;
 		MFConfig.deviceHeight = dm.heightPixels;
+	}
+	
+	private void clearFileInSd() {
+		File rootDir = null;
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+        	rootDir=new File(android.os.Environment.getExternalStorageDirectory(),"MacauFood");
+        	deleteRecursive(rootDir);
+        } else {
+        	rootDir = getFilesDir();
+        	deleteRecursive(rootDir);
+        }
+        if (rootDir != null) {
+        	rootDir.delete();
+        }
+	}
+	
+	private void deleteRecursive(File fileOrDirectory) {
+	    if (fileOrDirectory.isDirectory())
+	        for (File child : fileOrDirectory.listFiles())
+	        	deleteRecursive(child);
+
+	    fileOrDirectory.delete();
 	}
 	
 	private void parseFavoriteList() {

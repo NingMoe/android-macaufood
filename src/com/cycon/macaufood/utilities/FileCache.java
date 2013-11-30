@@ -15,10 +15,10 @@ public class FileCache {
     public FileCache(Context context, ImageType imageType){
     	this.imageType = imageType;
         //Find the dir to save cached images
-        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
-        	rootDir=new File(android.os.Environment.getExternalStorageDirectory(),"MacauFood");
-        else
-        	rootDir=context.getCacheDir();
+    	
+    	//should not save it in ext file, should save in file dir, wont clear when uninstall
+        rootDir = context.getFilesDir();
+        
         if(!rootDir.exists())
         	rootDir.mkdirs();
         
