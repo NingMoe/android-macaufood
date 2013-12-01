@@ -64,7 +64,7 @@ public class MFFetchListHelper {
 			FetchListInfo normalCouponInfo = new FetchListInfo(MFURL.NORMAL_COUPON_LIST, MFConstants.NORMAL_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedNormalCouponCafeList, MFConfig.getInstance().getNormalCouponCafeList());
 			FetchListInfo creditVipCouponInfo = new FetchListInfo(MFURL.CREDIT_VIP_COUPON_LIST, MFConstants.CREDIT_VIP_COUPON_XML_FILE_NAME, ImageType.COUPON, MFConfig.tempParsedCreditVipCouponCafeList, MFConfig.getInstance().getCreditVipCouponCafeList());
 			FetchListInfo foodNewsInfo = new FetchListInfo(MFURL.FOOD_NEWS_LIST, MFConstants.FOODNEWS_XML_FILE_NAME, ImageType.FOODNEWS, MFConfig.tempParsedFoodNewsList, MFConfig.getInstance().getFoodNewsList());
-			FetchListInfo psHotInfo = new FetchListInfo(MFURL.PHOTOSHARE_HOT_LIST, MFConstants.PS_HOT_XML_FILE_NAME, ImageType.PHOTOSHARE_HOT, MFConfig.tempParsedPSHotList, MFConfig.getInstance().getPsHotList());
+			FetchListInfo psHotInfo = new FetchListInfo(MFURL.PHOTOSHARE_HOT_LIST, MFConstants.PS_HOT_XML_FILE_NAME, ImageType.PHOTOSHARE, MFConfig.tempParsedPSHotList, MFConfig.getInstance().getPsHotList());
 			AsyncTaskHelper.execute(new FetchXmlTask(recommendInfo,
 					homeActivity));
 			AsyncTaskHelper.execute(new FetchXmlTask(
@@ -183,7 +183,7 @@ public class MFFetchListHelper {
 					homeActivity.hideProgressDialog();
 				}
 				foodNewsFragment.populateListView();
-			} else if (info.imageType == ImageType.PHOTOSHARE_HOT && photoShareFragment != null) {
+			} else if (info.imageType == ImageType.PHOTOSHARE && photoShareFragment != null) {
 				if (photoShareFragment.mIsVisible) {
 					homeActivity.hideProgressDialog();
 				}

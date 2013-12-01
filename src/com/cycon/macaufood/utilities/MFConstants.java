@@ -28,6 +28,7 @@ public class MFConstants {
 //	public static final String VIP_COUPON_XML_FILE_NAME = "vip_coupon_parsed_xml";
 	public static final String FOODNEWS_XML_FILE_NAME = "foodnews_parsed_xml";
 	public static final String PS_HOT_XML_FILE_NAME = "photo_share_hot_parsed_xml";
+	public static final String PS_FRIENDS_ACTIVITY_XML_FILE_NAME = "photo_share_friends_activity_parsed_xml";
 	public static final String MAIN_COUPON_INFO_STR = "main_coupon_info_string";
 
 	public static final String TIME_STAMP_PREF_KEY = "listTimeStamp";

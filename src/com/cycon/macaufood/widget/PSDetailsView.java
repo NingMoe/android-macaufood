@@ -93,7 +93,7 @@ public class PSDetailsView extends LinearLayout {
 		params.height = imageHeight;
 		holder.photoImage.setLayoutParams(params);
 		
-		MFService.loadImage(getContext().getApplicationContext(), ImageType.PHOTOSHARE_HOT, "image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, true, false);
+		MFService.loadImage(getContext().getApplicationContext(), ImageType.PHOTOSHARE, "image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, true, false);
 		MFService.loadImage(getContext().getApplicationContext(), ImageType.PSLOCALAVATAR, pInfo.getMemberid(), holder.profilePic, false, false);
 		
 		holder.userName.setText(pInfo.getName());

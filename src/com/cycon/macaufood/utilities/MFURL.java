@@ -53,7 +53,7 @@ public class MFURL {
 		else if (imageType == ImageType.MAINCOUPON) dir = "coupon_click";
 		else if (imageType == ImageType.FOODNEWSIMAGE) dir = "article_content";
 		else if (imageType == ImageType.PSLOCALAVATAR) dir = "pslocalavatar";
-		else if (imageType == ImageType.PHOTOSHARE_HOT) return PHOTOSHARE_HOT_IMAGE + id;
+		else if (imageType == ImageType.PHOTOSHARE) return PHOTOSHARE_HOT_IMAGE + id;
 		
 		return APP_IMAGE + dir + "/" + id + ".jpg";
 	}

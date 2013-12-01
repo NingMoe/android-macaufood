@@ -287,7 +287,7 @@ public class PhotoShare extends SherlockFragment{
 
         mContext = getActivity();
         
-        fileCache=new FileCache(mContext, ImageType.PHOTOSHARE_HOT);
+        fileCache=new FileCache(mContext, ImageType.PHOTOSHARE);
         File f=fileCache.getFile(MFConstants.PS_HOT_XML_FILE_NAME);
 		try {
 			FileInputStream is = new FileInputStream(f);

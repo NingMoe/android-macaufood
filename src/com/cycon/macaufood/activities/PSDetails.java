@@ -100,7 +100,7 @@ public class PSDetails extends BaseActivity {
 		params.height = imageHeight;
 		photoImage.setLayoutParams(params);
 		
-		MFService.loadImage(getApplicationContext(), ImageType.PHOTOSHARE_HOT, "image-" + mPsHotInfo.getPhotoid() + "-1.jpg", photoImage, true, false);
+		MFService.loadImage(getApplicationContext(), ImageType.PHOTOSHARE, "image-" + mPsHotInfo.getPhotoid() + "-1.jpg", photoImage, true, false);
 		MFService.loadImage(getApplicationContext(), ImageType.PSLOCALAVATAR, mPsHotInfo.getMemberid(), profilePic, false, false);
 		userName = (TextView) findViewById(R.id.userName);
 		cafeName = (TextView) findViewById(R.id.cafeName);

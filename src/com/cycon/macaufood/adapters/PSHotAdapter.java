@@ -37,7 +37,7 @@ public class PSHotAdapter extends BaseAdapter {
     public PSHotAdapter(Context context, List<ParsedPSHolder> holderList) {
             this.mHolderList = holderList;
             mContext = context;
-        	imageLoader=new ImageLoader(context, holderList.size(), ImageType.PHOTOSHARE_HOT);
+        	imageLoader=new ImageLoader(context, holderList.size(), ImageType.PHOTOSHARE);
         	imageLoader.setTaskMaxNumber(holderList.size());
         	imageLoader.setImagesToLoadFromParsedPSHot(holderList);
         	
