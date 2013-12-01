@@ -1542,7 +1542,7 @@ containing a value of this type.
         public static final int abs__up=0x7f070011;
         public static final int addr=0x7f070078;
         public static final int addrRow=0x7f070077;
-        public static final int advancedSearchLayout=0x7f0700c8;
+        public static final int advancedSearchLayout=0x7f0700cc;
         public static final int alreadyInFavorite=0x7f0700b2;
         public static final int arrow=0x7f070045;
         public static final int balloon_inner_layout=0x7f070042;
@@ -1557,13 +1557,13 @@ containing a value of this type.
         public static final int branch=0x7f0700b0;
         public static final int buffet=0x7f070052;
         public static final int businessHours=0x7f070080;
-        public static final int cafeName=0x7f0700bf;
+        public static final int cafeName=0x7f0700c3;
         public static final int callUs1=0x7f07001c;
         public static final int callUs2=0x7f07001d;
         public static final int cash=0x7f07007e;
         public static final int categorySpinner=0x7f0700ad;
-        public static final int clearBtn=0x7f0700c2;
-        public static final int clearHistory=0x7f0700c5;
+        public static final int clearBtn=0x7f0700c6;
+        public static final int clearHistory=0x7f0700c9;
         public static final int com_facebook_login_activity_progress_bar=0x7f070056;
         public static final int com_facebook_picker_activity_circle=0x7f070055;
         public static final int com_facebook_picker_checkbox=0x7f070058;
@@ -1591,7 +1591,7 @@ containing a value of this type.
         public static final int cross=0x7f07009c;
         public static final int delete_btn=0x7f070086;
         public static final int delivery=0x7f07004e;
-        public static final int directSearchLayout=0x7f0700c0;
+        public static final int directSearchLayout=0x7f0700c4;
         public static final int disableHome=0x7f07000f;
         public static final int dishesSpinner=0x7f0700ac;
         public static final int displaySearchQuery=0x7f0700a4;
@@ -1603,18 +1603,22 @@ containing a value of this type.
         public static final int faxUs=0x7f07001e;
         public static final int fbLogin=0x7f0700a0;
         public static final int feedBackBtn=0x7f0700b3;
+        public static final int findFriendsButton=0x7f0700bd;
         public static final int fling=0x7f070016;
         public static final int followAll=0x7f07008e;
         public static final int followTv=0x7f070099;
-        public static final int foodType=0x7f0700cb;
+        public static final int foodType=0x7f0700cf;
         public static final int friendlistView=0x7f07008f;
-        public static final int friendsActivityListView=0x7f0700bb;
+        public static final int friendsActivityError=0x7f0700be;
+        public static final int friendsActivityLayout=0x7f0700bb;
+        public static final int friendsActivityListView=0x7f0700bc;
+        public static final int friendsActivityProgressBar=0x7f0700bf;
         public static final int friendsListError=0x7f070090;
         public static final int frontPage=0x7f07009b;
-        public static final int gallery=0x7f0700c3;
+        public static final int gallery=0x7f0700c7;
         public static final int header=0x7f070082;
-        public static final int historyLayout=0x7f0700c4;
-        public static final int historyList=0x7f0700c6;
+        public static final int historyLayout=0x7f0700c8;
+        public static final int historyList=0x7f0700ca;
         public static final int homeAsUp=0x7f07000c;
         public static final int hotLayoutGV=0x7f0700ba;
         public static final int hybrid=0x7f070004;
@@ -1627,7 +1631,7 @@ containing a value of this type.
         public static final int intro=0x7f070073;
         public static final int label=0x7f070087;
         public static final int large=0x7f070006;
-        public static final int layout=0x7f0700cf;
+        public static final int layout=0x7f0700d3;
         public static final int linearLayout1=0x7f070088;
         public static final int linearLayout2=0x7f07008a;
         public static final int linearLayout3=0x7f07008c;
@@ -1648,13 +1652,13 @@ containing a value of this type.
         public static final int mapFilterPanel=0x7f0700a3;
         public static final int mapLayout=0x7f0700a7;
         public static final int menu=0x7f070075;
-        public static final int menu_about=0x7f0700d6;
-        public static final int menu_disclaimer=0x7f0700d5;
-        public static final int menu_favorite_list=0x7f0700d2;
-        public static final int menu_map=0x7f0700d1;
-        public static final int menu_refresh=0x7f0700d3;
-        public static final int menu_search=0x7f0700d0;
-        public static final int menu_wifi=0x7f0700d4;
+        public static final int menu_about=0x7f0700da;
+        public static final int menu_disclaimer=0x7f0700d9;
+        public static final int menu_favorite_list=0x7f0700d6;
+        public static final int menu_map=0x7f0700d5;
+        public static final int menu_refresh=0x7f0700d7;
+        public static final int menu_search=0x7f0700d4;
+        public static final int menu_wifi=0x7f0700d8;
         public static final int midnight=0x7f070050;
         public static final int name=0x7f07004c;
         public static final int nameText=0x7f070089;
@@ -1672,27 +1676,27 @@ containing a value of this type.
         public static final int paymentGrid=0x7f07007f;
         public static final int phone=0x7f07007a;
         public static final int phoneRow=0x7f070079;
-        public static final int photoImage=0x7f0700bc;
+        public static final int photoImage=0x7f0700c0;
         public static final int picker_subtitle=0x7f070063;
-        public static final int profilePic=0x7f0700bd;
+        public static final int profilePic=0x7f0700c1;
         public static final int progressBar=0x7f070095;
         public static final int psCamera=0x7f0700b6;
         public static final int psFriends=0x7f0700b4;
         public static final int psHot=0x7f0700b5;
         public static final int psSettings=0x7f0700b7;
-        public static final int region=0x7f0700ca;
+        public static final int region=0x7f0700ce;
         public static final int regionSpinner=0x7f0700ab;
-        public static final int regionTitle=0x7f0700c9;
-        public static final int restType=0x7f0700cc;
+        public static final int regionTitle=0x7f0700cd;
+        public static final int restType=0x7f0700d0;
         public static final int retryButton=0x7f0700b9;
         public static final int retryLayout=0x7f0700b8;
         public static final int satellite=0x7f070002;
-        public static final int searchBtn=0x7f0700cd;
-        public static final int searchList=0x7f0700c7;
+        public static final int searchBtn=0x7f0700d1;
+        public static final int searchList=0x7f0700cb;
         public static final int searchNearby=0x7f0700a9;
         public static final int searchResultsNumber=0x7f0700ae;
-        public static final int searchText=0x7f0700ce;
-        public static final int searchTextBox=0x7f0700c1;
+        public static final int searchText=0x7f0700d2;
+        public static final int searchTextBox=0x7f0700c5;
         public static final int showCustom=0x7f07000e;
         public static final int showHome=0x7f07000b;
         public static final int showTitle=0x7f07000d;
@@ -1708,7 +1712,7 @@ containing a value of this type.
         public static final int text=0x7f070083;
         public static final int time=0x7f070098;
         public static final int useLogo=0x7f07000a;
-        public static final int userName=0x7f0700be;
+        public static final int userName=0x7f0700c2;
         public static final int viewPager=0x7f07004a;
         public static final int webView=0x7f070093;
         public static final int website=0x7f07007c;
@@ -1899,7 +1903,7 @@ containing a value of this type.
         public static final int cash=0x7f080055;
         public static final int category=0x7f08007a;
         public static final int clear=0x7f080075;
-        public static final int clearCafeTableSql=0x7f0800b9;
+        public static final int clearCafeTableSql=0x7f0800bd;
         public static final int coloaneRegion=0x7f08009b;
         public static final int com_facebook_choose_friends=0x7f080029;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f08001a;
@@ -2019,7 +2023,7 @@ containing a value of this type.
         /**  Dialog 
          */
         public static final int exitProgramPrompt=0x7f08009f;
-        public static final int facebookLogin=0x7f0800a7;
+        public static final int facebookLogin=0x7f0800a8;
         public static final int favorite_list=0x7f080047;
         public static final int faxUs=0x7f080097;
         public static final int fbContent=0x7f080069;
@@ -2030,16 +2034,18 @@ containing a value of this type.
         public static final int fbName=0x7f080066;
         public static final int fbSubmit=0x7f08006a;
         public static final int feedBack=0x7f08005d;
-        public static final int findFriends=0x7f0800ac;
-        public static final int findingFriends=0x7f0800ae;
-        public static final int follow=0x7f0800b2;
-        public static final int followAll=0x7f0800b3;
-        public static final int followAllSucceed=0x7f0800b4;
+        public static final int findFriends=0x7f0800ad;
+        public static final int findLoginedFriends=0x7f0800b3;
+        public static final int findingFriends=0x7f0800af;
+        public static final int firstShowFriendsActivityMsg=0x7f0800b9;
+        public static final int follow=0x7f0800b5;
+        public static final int followAll=0x7f0800b6;
+        public static final int followAllSucceed=0x7f0800b7;
         /**  Food News
          */
         public static final int foodNews=0x7f08009d;
-        public static final int friendsList=0x7f0800ad;
-        public static final int getCafeEntriesSql=0x7f0800b8;
+        public static final int friendsList=0x7f0800ae;
+        public static final int getCafeEntriesSql=0x7f0800bc;
         public static final int giveFeedBack=0x7f08005e;
         public static final int googleMap=0x7f08008b;
         public static final int homepage=0x7f080042;
@@ -2047,8 +2053,8 @@ containing a value of this type.
         public static final int information=0x7f08005b;
         /**   SQL Queries 
          */
-        public static final int initCafeTableSql=0x7f0800b6;
-        public static final int insertCafeSql=0x7f0800b7;
+        public static final int initCafeTableSql=0x7f0800ba;
+        public static final int insertCafeSql=0x7f0800bb;
         public static final int intro=0x7f080059;
         /**  Latest 
          */
@@ -2057,9 +2063,10 @@ containing a value of this type.
         public static final int loadingContent=0x7f08004a;
         public static final int loadingInfo=0x7f080049;
         public static final int loadingMainCoupon=0x7f080051;
-        public static final int loginMessage=0x7f0800a9;
-        public static final int logout=0x7f0800ab;
-        public static final int logoutMessage=0x7f0800aa;
+        public static final int loginMessage=0x7f0800aa;
+        public static final int loginProcess=0x7f0800a7;
+        public static final int logout=0x7f0800ac;
+        public static final int logoutMessage=0x7f0800ab;
         public static final int macauIsland=0x7f08008d;
         public static final int macauPeninsula=0x7f08008c;
         public static final int macauRegion=0x7f080099;
@@ -2074,7 +2081,8 @@ containing a value of this type.
          */
         public static final int nextPage=0x7f080063;
         public static final int noFavoriteList=0x7f080082;
-        public static final int noFriendsFound=0x7f0800b1;
+        public static final int noFriendsActivityFound=0x7f0800b4;
+        public static final int noFriendsFound=0x7f0800b2;
         /**   Recommmend 
          */
         public static final int noInternetMsg=0x7f08004b;
@@ -2113,13 +2121,13 @@ containing a value of this type.
         public static final int showList=0x7f080086;
         public static final int showMap=0x7f080087;
         public static final int taipaRegion=0x7f08009a;
-        public static final int takePhoto=0x7f0800b0;
+        public static final int takePhoto=0x7f0800b1;
         public static final int totalResultsFound=0x7f080088;
-        public static final int unfollow=0x7f0800b5;
-        public static final int useAlbum=0x7f0800af;
+        public static final int unfollow=0x7f0800b8;
+        public static final int useAlbum=0x7f0800b0;
         public static final int versionNo=0x7f08008f;
         public static final int website=0x7f080054;
-        public static final int weiboLogin=0x7f0800a8;
+        public static final int weiboLogin=0x7f0800a9;
     }
     public static final class style {
         public static final int MFActionBarStyle=0x7f0b005c;

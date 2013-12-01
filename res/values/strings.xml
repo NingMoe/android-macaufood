@@ -131,6 +131,7 @@
  	<string name="psFriends">朋友上載</string>
  	<string name="psUpload">上載相片</string>
  	<string name="pleaseLogin">請先登入</string>
+ 	<string name="loginProcess">正在登入中...</string>
  	<string name="facebookLogin">使用 Facebook 登入</string>
  	<string name="weiboLogin">使用微博登入</string>
  	<string name="loginMessage">你已登入為%s, 歡迎發佈照片</string>
@@ -141,11 +142,14 @@
  	<string name="findingFriends">尋找朋友中...</string>
  	<string name="useAlbum">從相簿選取</string>
  	<string name="takePhoto">拍照</string>
- 	<string name="noFriendsFound">你沒有朋友登入食在澳門</string>
+ 	<string name="noFriendsFound">沒有朋友登入食在澳門</string>
+ 	<string name="findLoginedFriends">尋找登入食在澳門的朋友</string>
+ 	<string name="noFriendsActivityFound">沒有被你關注的朋友上載相片</string>
  	<string name="follow">關注</string>
  	<string name="followAll">關注所有</string>
  	<string name="followAllSucceed">已關注所有朋友</string>
  	<string name="unfollow">取消關注</string>
+ 	<string name="firstShowFriendsActivityMsg">%s你好! 歡迎登入食在澳門\n\n你可透過關注朋友在這裡顯示朋友及自己上傳美食相片的動態</string>
  
 	<!--  SQL Queries -->
 	<string name="initCafeTableSql">CREATE TABLE IF NOT EXISTS CAFEENTRIES(

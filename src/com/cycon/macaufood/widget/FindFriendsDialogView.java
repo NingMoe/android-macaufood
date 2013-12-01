@@ -50,6 +50,7 @@ public class FindFriendsDialogView extends LinearLayout {
 	private int mRequestCompleteCount;
 	private int mRequestTotalCount;
 	private boolean mFollowAllError;
+	private boolean mModified;
 	private Context mContext;
 	
 	public FindFriendsDialogView(Context context) {
@@ -79,7 +80,7 @@ public class FindFriendsDialogView extends LinearLayout {
 		mFriendListAdapter = new FriendListAdapter();
 		mListView.setAdapter(mFriendListAdapter);
 		if (MFConfig.memberId == null) {
-			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(context, MFConstants.PS_MEMBERID_PREF_KEY, "0");
+			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(context, MFConstants.PS_MEMBERID_PREF_KEY, null);
 		}
 		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + MFConfig.memberId;
 		DefaultHandler handler = new FriendListXMLHandler(mHolderList);
@@ -104,7 +105,9 @@ public class FindFriendsDialogView extends LinearLayout {
 			@Override
 			public void onLoadResultError() {
 				mLoadingProgressLayout.setVisibility(View.GONE);
-				findViewById(R.id.friendsListError).setVisibility(View.VISIBLE);
+				TextView tv = (TextView) findViewById(R.id.friendsListError);
+				tv.setVisibility(View.VISIBLE);
+				tv.setText(R.string.errorMsg);
 			}
 		});
 	}
@@ -163,6 +166,7 @@ public class FindFriendsDialogView extends LinearLayout {
 			
 			@Override
 			public void onLoadResultSuccess(Object result) {
+				mModified = true;
 				pHolder.setLoading(false);
 				
 				try {
@@ -223,6 +227,10 @@ public class FindFriendsDialogView extends LinearLayout {
 			button.setBackgroundResource(R.drawable.button_green_selector);
 			button.setTextColor(Color.WHITE);
 		}
+    }
+    
+    public boolean isModified() {
+    	return mModified;
     }
 	
 	private class FriendListAdapter extends BaseAdapter {
@@ -289,6 +297,7 @@ public class FindFriendsDialogView extends LinearLayout {
 						public void onLoadResultSuccess(Object result) {
 							// TODO Auto-generated method stub
 
+							mModified = true;
 							pHolder.setLoading(false);
 							holder.pBar.setVisibility(View.GONE);
 							holder.followButton.setEnabled(true);

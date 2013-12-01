@@ -19,6 +19,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -75,6 +76,8 @@ public class PhotoShare extends SherlockFragment{
 
 	private static final String TAG = PhotoShare.class.getName();
 	
+	private static final long REFRESH_FRIENDS_ACTIVITY_TIME_PERIOD = 3600 * 1000 * 1; // 1 hour
+	
 	private static final int MENU_FIND_FRIENDS = 1;
 	private static final int MENU_LOGOUT = 2;
 	private static final int MENU_TAKE_PHOTO = 3;
@@ -93,14 +96,23 @@ public class PhotoShare extends SherlockFragment{
 	private View mPsCameraTab;
 	private View mPsSettingsTab;
 	
+	private long mFriendsActivityTimeStamp;
+	private boolean mFirstShowFriendsActivity;
+	private View mFriendsActivityLayout;
+	private View mFriendsActivityProgressBar;
+	private Button mFriendsActivityFindFriendsButton;
+	private TextView mFriendsActivityError;
 	private ListView mFriendsActivityListView;
 	private PSFriendsActivityAdapter mFriendsActivityAdapter;
 	private List<ParsedPSHolder> mFriendsActivityInfo = new ArrayList<ParsedPSHolder>();
+	
 	private int mCurrentTab = 1; //friends = 0, hot = 1;
 	
 	private AlertDialog mLoginDialog;
 	private PopupMenu mSettingsMenu;
 	private PopupMenu mCameraMenu;
+
+	private ProgressDialog pDialog;
 	
 	//FB
 	private LoginButton mLoginButton;
@@ -117,7 +129,7 @@ public class PhotoShare extends SherlockFragment{
 				showFindFriendsDialog();
 				break;
 			case MENU_LOGOUT:
-				callFacebookLogout();
+				callFacebookLogout(true);
 				break;
 			case MENU_TAKE_PHOTO:
 				break;
@@ -138,7 +150,7 @@ public class PhotoShare extends SherlockFragment{
 				showFindFriendsDialog();
 				break;
 			case MENU_LOGOUT:
-				callFacebookLogout();
+				callFacebookLogout(true);
 				break;
 			case MENU_TAKE_PHOTO:
 				break;
@@ -178,26 +190,27 @@ public class PhotoShare extends SherlockFragment{
         		displayRetryLayout();
         	}
 		}
+		mFriendsActivityLayout = mView.findViewById(R.id.friendsActivityLayout);
+		mFriendsActivityFindFriendsButton = (Button) mView.findViewById(R.id.findFriendsButton);
+		mFriendsActivityProgressBar = mView.findViewById(R.id.friendsActivityProgressBar);
+		mFriendsActivityError = (TextView) mView.findViewById(R.id.friendsActivityError);
 		mFriendsActivityListView = (ListView) mView.findViewById(R.id.friendsActivityListView);
 		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, mFriendsActivityInfo);
 		mFriendsActivityListView.setAdapter(mFriendsActivityAdapter);
+		
+		mFriendsActivityFindFriendsButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				showFindFriendsDialog();
+			}
+		});
 		
 		mPsFriendsTab = (TextView) mView.findViewById(R.id.psFriends);
 		mPsFriendsTab.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				if (mCurrentTab == 0) return;
-				mPsHotTab.setSelected(false);
-				mPsFriendsTab.setSelected(true);
-				mCurrentTab = 0;
-				mHotGV.setVisibility(View.GONE);
-				mFriendsActivityListView.setVisibility(View.VISIBLE);
-				
-				//TODO check if data is there
-				boolean needLoad = true;
-				if (needLoad) {
-					loadFriendsActivity();
-				}
+				checkLogin(PendingAction.FRIENDS);
 			}
 		});
 		mPsHotTab = (TextView) mView.findViewById(R.id.psHot);
@@ -205,12 +218,7 @@ public class PhotoShare extends SherlockFragment{
 		mPsHotTab.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				if (mCurrentTab == 1) return;
-				mPsHotTab.setSelected(true);
-				mPsFriendsTab.setSelected(false);
-				mCurrentTab = 1;
-				mHotGV.setVisibility(View.VISIBLE);
-				mFriendsActivityListView.setVisibility(View.GONE);
+				switchToHotTab();
 			}
 		});
 		mPsCameraTab = mView.findViewById(R.id.psCamera);
@@ -233,6 +241,28 @@ public class PhotoShare extends SherlockFragment{
 			registerForContextMenu(mPsSettingsTab);
 		}
 
+	}
+	
+	private void switchToHotTab() {
+		if (mCurrentTab == 1) return;
+		mPsHotTab.setSelected(true);
+		mPsFriendsTab.setSelected(false);
+		mCurrentTab = 1;
+		mHotGV.setVisibility(View.VISIBLE);
+		mFriendsActivityLayout.setVisibility(View.GONE);
+	}
+	
+	private void switchToFriendsTab() {
+		if (mCurrentTab == 0) return;
+		mPsHotTab.setSelected(false);
+		mPsFriendsTab.setSelected(true);
+		mCurrentTab = 0;
+		mHotGV.setVisibility(View.GONE);
+		mFriendsActivityLayout.setVisibility(View.VISIBLE);
+
+		if (System.currentTimeMillis() - mFriendsActivityTimeStamp > REFRESH_FRIENDS_ACTIVITY_TIME_PERIOD) {
+			loadFriendsActivity();
+		}
 	}
 	
 	@Override
@@ -270,6 +300,13 @@ public class PhotoShare extends SherlockFragment{
 		//refresh when file cache xml is deleted by user
         if (MFConfig.getInstance().getPsHotList().size() == 0 && !MFFetchListHelper.isFetching && !((Home)getActivity()).isShowingDisClaimer()) {
         	refresh();
+		}
+        
+		if (MFConfig.memberId == null) {
+			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
+			if (MFConfig.memberId == null) {
+				callFacebookLogout(false);
+			}
 		}
         
     }
@@ -318,8 +355,14 @@ public class PhotoShare extends SherlockFragment{
 	}
 	
 	public void loadFriendsActivity() {
+
+		mFriendsActivityInfo.clear();
+		mFriendsActivityError.setVisibility(View.GONE);
+		mFriendsActivityFindFriendsButton.setVisibility(View.INVISIBLE);
+		mFriendsActivityProgressBar.setVisibility(View.VISIBLE);
+		
 		if (MFConfig.memberId == null) {
-			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, "0");
+			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
 		}
 		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + MFConfig.memberId;
 		DefaultHandler handler = new PSDetailXMLHandler(mFriendsActivityInfo);
@@ -327,26 +370,33 @@ public class PhotoShare extends SherlockFragment{
 			
 			@Override
 			public void onLoadResultSuccess(Object result) {
-				Log.e("ZZZ", "success");
-//				mLoadingProgressLayout.setVisibility(View.GONE);
+				mFriendsActivityProgressBar.setVisibility(View.GONE);
+				mFriendsActivityTimeStamp = System.currentTimeMillis();
 				if (mFriendsActivityInfo.size() > 0) {
-					Log.e("ZZZ", "success1");
 //					mListView.setVisibility(View.VISIBLE);
 //					mImageLoader=new ImageLoader(context, 6, null);
 //					mImageLoader.setImagesToLoadFromParsedFriendsList(mHolderList);
 					mFriendsActivityAdapter.notifyDataSetChanged();
 				} else {
-					Log.e("ZZZ", "success2");
-//					TextView tv = (TextView) findViewById(R.id.friendsListError);
-//					tv.setVisibility(View.VISIBLE);
-//					tv.setText(R.string.noFriendsFound);
+					mFriendsActivityError.setVisibility(View.VISIBLE);
+					mFriendsActivityFindFriendsButton.setVisibility(View.VISIBLE);
+					Log.e("ZZZ", "show friens activity " + mFirstShowFriendsActivity);
+					if (mFirstShowFriendsActivity) {
+						String userName = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, "");
+						String msg = mContext.getString(R.string.firstShowFriendsActivityMsg, userName);
+						mFriendsActivityError.setText(msg);
+					} else {
+						mFriendsActivityError.setText(R.string.noFriendsActivityFound);
+					}
 				}
+				mFirstShowFriendsActivity = false;
 			}
 			
 			@Override
 			public void onLoadResultError() {
-//				mLoadingProgressLayout.setVisibility(View.GONE);
-//				findViewById(R.id.friendsListError).setVisibility(View.VISIBLE);
+				mFriendsActivityError.setVisibility(View.VISIBLE);
+				mFriendsActivityError.setText(R.string.errorMsg);
+				mFriendsActivityProgressBar.setVisibility(View.GONE);
 			}
 		});
 	}
@@ -413,6 +463,9 @@ public class PhotoShare extends SherlockFragment{
 				mCameraMenu.show();
 			}
 			break;
+		case FRIENDS:
+			switchToFriendsTab();
+			break;
 		default:
 		}
 	}
@@ -461,9 +514,7 @@ public class PhotoShare extends SherlockFragment{
 	            public void onUserInfoFetched(GraphUser user) {
 					Log.e("ZZZ", "userinfo");
 	            	if (user != null) {
-	            		Toast.makeText(mContext, getString(R.string.loginMessage, user.getName()), Toast.LENGTH_SHORT).show();
-	            		AsyncTaskHelper.executeWithResultString(new RegisterPS(user));
-	            		handlePendingAction(pa);
+	            		AsyncTaskHelper.executeWithResultString(new RegisterPS(user, pa));
 	            	}
 	            }
 	        });
@@ -501,24 +552,33 @@ public class PhotoShare extends SherlockFragment{
 				}).show();
 	}
 	
-	private void callFacebookLogout() {
+	private void callFacebookLogout(boolean showToast) {
 	    Session session = Session.getActiveSession();
 	    if (session != null && !session.isClosed()) {
             session.closeAndClearTokenInformation();
-            Toast.makeText(mContext, R.string.logoutMessage, Toast.LENGTH_SHORT).show();
+            if (showToast) {
+            	Toast.makeText(mContext, R.string.logoutMessage, Toast.LENGTH_SHORT).show();
+			}
 	    }
+	    switchToHotTab();
 	}
 
 	
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-    	Log.e("ZZZ", "token = " + session.getAccessToken());
-		Log.e("ZZZ", "expire tmie = " + session.getExpirationDate());
+    	Log.e("ZZZ", "state = " + state.name());
+    	if (state == SessionState.OPENING) {
+    		pDialog = ProgressDialog.show(mContext, null,
+    				getString(R.string.loginProcess), false, false);
+    	} else if (state == SessionState.CLOSED_LOGIN_FAILED){
+    		if (pDialog != null) {
+    			pDialog.dismiss();
+    		}
+    	}
 		if (session.isOpened()) {
-			
 			if (mLoginDialog != null) {
 				mLoginDialog.dismiss();
 			}
-		}
+		} 
     	if (exception != null) {
     		Log.e("ZZZ", "exception= " + exception.getMessage());
     	}
@@ -528,16 +588,24 @@ public class PhotoShare extends SherlockFragment{
 //    	FindFriendsDialogView view = (FindFriendsDialogView) getActivity().getLayoutInflater().inflate(R.layout.find_friends_dialog, null);
 //    	view.init(getActivity());
     	
-    	FindFriendsDialogView view = new FindFriendsDialogView(mContext);
+    	final FindFriendsDialogView view = new FindFriendsDialogView(mContext);
     	
 		AlertDialog dialog = new AlertDialog.Builder(mContext)
 		.setView(view)
+		.setCancelable(false)
 		.setPositiveButton(getString(R.string.confirmed),
 				new DialogInterface.OnClickListener() {
 
 					public void onClick(DialogInterface dialog,
 							int which) {
 						dialog.dismiss();
+						if (view.isModified()) {
+							if (mCurrentTab == 0) {
+								loadFriendsActivity();
+							} else {
+								mFriendsActivityTimeStamp = 0;
+							}
+						}
 					}
 				}).show();
     }
@@ -574,10 +642,17 @@ public class PhotoShare extends SherlockFragment{
     private class RegisterPS extends AsyncTask<Void, Void, String> {
     	
     	private GraphUser user;
+    	private PendingAction pa;
     	
-    	public RegisterPS(GraphUser user) {
+    	public RegisterPS(GraphUser user, PendingAction pa) {
     		this.user = user;
+    		this.pa = pa;
 		}
+    	
+    	@Override
+    	protected void onPreExecute() {
+    		super.onPreExecute();
+    	}
     	
     	@Override
     	protected String doInBackground(Void... params) {
@@ -605,8 +680,11 @@ public class PhotoShare extends SherlockFragment{
     				sb.append(line + "\n");
     			}
     			rd.close();
-
-    			return sb.toString().trim();
+    			
+    			String returnMemberId = sb.toString().trim();
+    			Integer.parseInt(returnMemberId);
+    			
+    			return returnMemberId;
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -621,11 +699,23 @@ public class PhotoShare extends SherlockFragment{
     	@Override
     	protected void onPostExecute(String result) {
     		super.onPostExecute(result);
+    		Log.e("ZZZ", "result" + result);
+    		pDialog.dismiss();
+    		if (result == null) {
+    			callFacebookLogout(false);
+    			Toast.makeText(mContext, getString(R.string.errorMsg, user.getName()), Toast.LENGTH_SHORT).show();
+    			return;
+    		}
     		
+    		Toast.makeText(mContext, getString(R.string.loginMessage, user.getName()), Toast.LENGTH_SHORT).show();
+    		
+    		mFirstShowFriendsActivity = true;
+    		mFriendsActivityTimeStamp = 0;
     		MFConfig.memberId = result;
     		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, result);
     		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, user.getName());
     		
+    		handlePendingAction(pa);
     	}
     	
     }

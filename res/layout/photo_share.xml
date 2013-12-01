@@ -120,12 +120,53 @@
              android:clipToPadding="false"
               >
          </GridView>
+         
+         <RelativeLayout
+            android:id="@+id/friendsActivityLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/default_bg_color" 
+            android:visibility="gone">
 
-          <ListView
-              android:id="@+id/friendsActivityListView"
-              android:visibility="gone"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content" />
+            <ListView
+                android:id="@+id/friendsActivityListView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"/>
+            
+        	  <Button
+			 	android:id="@+id/findFriendsButton"
+			 	android:layout_width="wrap_content"
+			 	android:layout_height="45dip"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+			 	android:textSize="16sp"
+			 	android:text="@string/findLoginedFriends"
+			 	android:textColor="#FFFFFF"
+			 	android:background="@drawable/button_green_selector"
+                android:visibility="invisible"
+			 	/>
+
+            <TextView
+                android:id="@+id/friendsActivityError"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_above="@id/findFriendsButton"
+                android:textColor="@color/tab_gray_text"
+                android:textSize="17sp"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/friendsActivityProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+        </RelativeLayout>
 
         <ImageView
             android:layout_width="fill_parent"

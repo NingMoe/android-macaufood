@@ -52,10 +52,12 @@ public class SplashScreen extends Activity {
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "cafe_version_update", MFConfig.cafe_version_update);
 			PreferenceHelper.savePreferencesLong(SplashScreen.this, MFConstants.TIME_STAMP_PREF_KEY, 0); //refresh main page after update?
 			
-			int versionHeadNumber = originalVersion.charAt(0) - '0';
-	    	//clear in ext file / cache file for version below 3.0
-			if (versionHeadNumber < 3) {
-				clearFileInSd();
+			if (originalVersion.length() > 0) {
+				int versionHeadNumber = originalVersion.charAt(0) - '0';
+		    	//clear in ext file / cache file for version below 3.0
+				if (versionHeadNumber < 3) {
+					clearFileInSd();
+				}
 			}
 		}
 		
