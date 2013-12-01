@@ -355,18 +355,33 @@ public class PhotoShare extends SherlockFragment{
 	}
 	
 	public void loadFriendsActivity() {
-
-		mFriendsActivityInfo.clear();
+		File f=fileCache.getFile(MFConstants.PS_FRIENDS_ACTIVITY_XML_FILE_NAME);
+		DefaultHandler handler = new PSDetailXMLHandler(mFriendsActivityInfo);
+		mFriendsActivityInfo.clear();		
 		mFriendsActivityError.setVisibility(View.GONE);
 		mFriendsActivityFindFriendsButton.setVisibility(View.INVISIBLE);
+		
+		if (!MFConfig.isOnline(mContext)) {
+			try {
+				FileInputStream is = new FileInputStream(f);
+				MFFetchListHelper.parseXml(is, handler);
+			} catch (FileNotFoundException e) {
+		    	MFLog.e(TAG, "FileNotFoundException");
+				e.printStackTrace();
+			} 
+			mFriendsActivityAdapter.notifyDataSetChanged();
+			return;
+		}
+
 		mFriendsActivityProgressBar.setVisibility(View.VISIBLE);
 		
 		if (MFConfig.memberId == null) {
 			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
 		}
-		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + MFConfig.memberId;
-		DefaultHandler handler = new PSDetailXMLHandler(mFriendsActivityInfo);
-		MFFetchListHelper.fetchList(url, handler, new MFServiceCallBack() {
+//		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + MFConfig.memberId;
+		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + "29";
+		
+		MFFetchListHelper.fetchList(url, handler, f, new MFServiceCallBack() {
 			
 			@Override
 			public void onLoadResultSuccess(Object result) {
@@ -380,7 +395,6 @@ public class PhotoShare extends SherlockFragment{
 				} else {
 					mFriendsActivityError.setVisibility(View.VISIBLE);
 					mFriendsActivityFindFriendsButton.setVisibility(View.VISIBLE);
-					Log.e("ZZZ", "show friens activity " + mFirstShowFriendsActivity);
 					if (mFirstShowFriendsActivity) {
 						String userName = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, "");
 						String msg = mContext.getString(R.string.firstShowFriendsActivityMsg, userName);

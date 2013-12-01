@@ -3,6 +3,7 @@ package com.cycon.macaufood.utilities;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,8 +52,8 @@ public class MFFetchListHelper {
 	private static final String TAG = MFFetchListHelper.class.getName();
 	public static boolean isFetching = false;
 	
-	public static void fetchList(String url, DefaultHandler xmlHandler, MFServiceCallBack callback) {
-		AsyncTaskHelper.execute(new FetchSingleXmlTask(url, xmlHandler, callback));
+	public static void fetchList(String url, DefaultHandler xmlHandler, File cacheFile, MFServiceCallBack callback) {
+		AsyncTaskHelper.execute(new FetchSingleXmlTask(url, xmlHandler, cacheFile, callback));
 	}
 
 	public static void fetchAllList(Home homeActivity) {
@@ -143,6 +144,7 @@ public class MFFetchListHelper {
 			
 			try {
 				if (info.tempParsedList.size() != 0) {
+					//write in file cache to prevent junk data is written
 					FileCache fileCache=new FileCache(homeActivity, info.imageType);
 					File f = fileCache.getFile(info.cacheFileName);
 					OutputStream os = new FileOutputStream(f);
@@ -344,11 +346,13 @@ public class MFFetchListHelper {
 		private DefaultHandler xmlHandler;
 		private MFServiceCallBack callback;
 		private ByteArrayOutputStream baos;
+		private File cacheFile;
 
-		private FetchSingleXmlTask(String url, DefaultHandler xmlHandler, MFServiceCallBack callback) {
+		private FetchSingleXmlTask(String url, DefaultHandler xmlHandler, File cacheFile, MFServiceCallBack callback) {
 			this.url = url;
 			this.xmlHandler = xmlHandler;
 			this.callback = callback;
+			this.cacheFile = cacheFile;
 		}
 
 		@Override
@@ -376,7 +380,6 @@ public class MFFetchListHelper {
 				}
 				baos.flush();
 
-
 			} catch (MalformedURLException e) {
 				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
@@ -401,6 +404,20 @@ public class MFFetchListHelper {
 			boolean parseResult = parseXml(new ByteArrayInputStream(baos.toByteArray()), xmlHandler);
 			if (parseResult) {
 				callback.onLoadResultSuccess(null);
+				
+				if (cacheFile != null) {
+					try {
+						OutputStream os = new FileOutputStream(cacheFile);
+						os.write(baos.toByteArray());
+						os.close();
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			} else {
 				callback.onLoadResultError();
 			}

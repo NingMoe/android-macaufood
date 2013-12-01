@@ -82,9 +82,10 @@ public class FindFriendsDialogView extends LinearLayout {
 		if (MFConfig.memberId == null) {
 			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(context, MFConstants.PS_MEMBERID_PREF_KEY, null);
 		}
-		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + MFConfig.memberId;
+//		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + MFConfig.memberId;
+		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + "29";
 		DefaultHandler handler = new FriendListXMLHandler(mHolderList);
-		MFFetchListHelper.fetchList(url, handler, new MFServiceCallBack() {
+		MFFetchListHelper.fetchList(url, handler, null, new MFServiceCallBack() {
 			
 			@Override
 			public void onLoadResultSuccess(Object result) {
