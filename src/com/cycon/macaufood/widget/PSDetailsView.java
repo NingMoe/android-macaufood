@@ -41,6 +41,7 @@ import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FeedBackDialogHelper;
 import com.cycon.macaufood.utilities.FileCache;
+import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
@@ -51,28 +52,25 @@ import com.cycon.macaufood.utilities.PreferenceHelper;
 public class PSDetailsView extends LinearLayout {
 	
 	private int mCafeId;
+	public ImageLoader imageLoader; 
 	
 	public PSDetailsView(Context context) {
 		super(context);
-		init();
+		init(context);
 	}
 	
 	public PSDetailsView(Context context, AttributeSet attrSet) {
 		super(context, attrSet);
-		init();
+		init(context);
 	}
 	
-	private void init() {
-		
+	private void init(Context context) {
+		imageLoader=new ImageLoader(context, 2, ImageType.PHOTOSHARE);
 	}
 	
 	public ViewHolder initView() {
 		ViewHolder holder = new ViewHolder();
-    	holder.profilePic = (ImageView) findViewById(R.id.profilePic);
     	holder.photoImage = (ImageView) findViewById(R.id.photoImage);
-    	holder.userName = (TextView) findViewById(R.id.userName);
-    	holder.cafeName = (TextView) findViewById(R.id.cafeName);
-    	holder.time = (TextView) findViewById(R.id.time);
 		return holder;
 	}
 	
@@ -93,20 +91,12 @@ public class PSDetailsView extends LinearLayout {
 		params.height = imageHeight;
 		holder.photoImage.setLayoutParams(params);
 		
-		MFService.loadImage(getContext().getApplicationContext(), ImageType.PHOTOSHARE, "image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, true, false);
-		MFService.loadImage(getContext().getApplicationContext(), ImageType.PSLOCALAVATAR, pInfo.getMemberid(), holder.profilePic, false, false);
-		
-		holder.userName.setText(pInfo.getName());
-		holder.cafeName.setText(pInfo.getPlace());
-		holder.time.setText(pInfo.getUploaddate());
+//		MFService.loadImage(getContext().getApplicationContext(), ImageType.PHOTOSHARE, "image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, true, false);
+		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, 0);
 	}
 	
     public static class ViewHolder {
-    	ImageView profilePic;
     	ImageView photoImage;
-    	TextView userName;
-    	TextView cafeName;
-    	TextView time;
     }
 	
 }

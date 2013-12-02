@@ -31,6 +31,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import com.cycon.macaufood.utilities.MFLog;
+
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -132,8 +134,10 @@ public class ImageLoader {
 //    	}
 		imageViews.put(imageView, id);
         Bitmap bitmap=memoryCache.get(id);
-        if(bitmap!=null)
+        if(bitmap!=null) {
+        	Log.e("ZZZ", "MEMORy cache");
             imageView.setImageBitmap(bitmap);
+        }
         else {
 //            from SD cache
         	bitmap = MFUtil.getBitmapFromCache(fileCache, id);

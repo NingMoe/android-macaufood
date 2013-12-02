@@ -16,6 +16,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.helpers.DefaultHandler;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -102,7 +104,7 @@ public class PhotoShare extends SherlockFragment{
 	private View mFriendsActivityProgressBar;
 	private Button mFriendsActivityFindFriendsButton;
 	private TextView mFriendsActivityError;
-	private ListView mFriendsActivityListView;
+	private StickyListHeadersListView mFriendsActivityListView;
 	private PSFriendsActivityAdapter mFriendsActivityAdapter;
 	private List<ParsedPSHolder> mFriendsActivityInfo = new ArrayList<ParsedPSHolder>();
 	
@@ -194,7 +196,7 @@ public class PhotoShare extends SherlockFragment{
 		mFriendsActivityFindFriendsButton = (Button) mView.findViewById(R.id.findFriendsButton);
 		mFriendsActivityProgressBar = mView.findViewById(R.id.friendsActivityProgressBar);
 		mFriendsActivityError = (TextView) mView.findViewById(R.id.friendsActivityError);
-		mFriendsActivityListView = (ListView) mView.findViewById(R.id.friendsActivityListView);
+		mFriendsActivityListView = (StickyListHeadersListView) mView.findViewById(R.id.friendsActivityListView);
 		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, mFriendsActivityInfo);
 		mFriendsActivityListView.setAdapter(mFriendsActivityAdapter);
 		
