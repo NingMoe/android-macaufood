@@ -117,6 +117,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 			String pageStr = rd.readLine().trim();
 			
 			serverTotalPages = Integer.parseInt(pageStr);
+			imageAdapter.notifyDataSetChanged();
 			navi.setSize(serverTotalPages);
     		navi.setVisibility(View.GONE);
     		navi.setVisibility(View.VISIBLE);
