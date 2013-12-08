@@ -52,7 +52,6 @@ import com.cycon.macaufood.utilities.PreferenceHelper;
 public class PSDetailsView extends LinearLayout {
 	
 	private int mCafeId;
-	public ImageLoader imageLoader; 
 	
 	public PSDetailsView(Context context) {
 		super(context);
@@ -65,7 +64,6 @@ public class PSDetailsView extends LinearLayout {
 	}
 	
 	private void init(Context context) {
-		imageLoader=new ImageLoader(context, 2, ImageType.PHOTOSHARE);
 	}
 	
 	public ViewHolder initView() {
@@ -74,7 +72,7 @@ public class PSDetailsView extends LinearLayout {
 		return holder;
 	}
 	
-	public void loadInfo(ParsedPSHolder pInfo, ViewHolder holder) {
+	public void loadInfo(ParsedPSHolder pInfo, ViewHolder holder, ImageLoader imageLoader, int pos) {
 		
 		try {
 			mCafeId = Integer.parseInt(pInfo.getCafeid());
@@ -91,8 +89,7 @@ public class PSDetailsView extends LinearLayout {
 		params.height = imageHeight;
 		holder.photoImage.setLayoutParams(params);
 		
-//		MFService.loadImage(getContext().getApplicationContext(), ImageType.PHOTOSHARE, "image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, true, false);
-		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, 0);
+		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, pos);
 	}
 	
     public static class ViewHolder {

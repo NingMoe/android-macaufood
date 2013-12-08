@@ -82,8 +82,8 @@ public class FindFriendsDialogView extends LinearLayout {
 		if (MFConfig.memberId == null) {
 			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(context, MFConstants.PS_MEMBERID_PREF_KEY, null);
 		}
-//		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + MFConfig.memberId;
-		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + "29";
+		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + MFConfig.memberId;
+//		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + "29";
 		DefaultHandler handler = new FriendListXMLHandler(mHolderList);
 		MFFetchListHelper.fetchList(url, handler, null, new MFServiceCallBack() {
 			
@@ -92,7 +92,7 @@ public class FindFriendsDialogView extends LinearLayout {
 				mLoadingProgressLayout.setVisibility(View.GONE);
 				if (mHolderList.size() > 0) {
 					mListView.setVisibility(View.VISIBLE);
-					mImageLoader=new ImageLoader(context, 6, null);
+					mImageLoader=new ImageLoader(context, 6, ImageType.PSLOCALAVATAR);
 					mImageLoader.setImagesToLoadFromParsedFriendsList(mHolderList);
 					mFriendListAdapter.notifyDataSetChanged();
 					checkIfShowFollowAll();

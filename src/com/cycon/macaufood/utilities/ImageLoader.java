@@ -68,7 +68,9 @@ public class ImageLoader {
     
     private ImageType imageType;
     
-    private int maxTasksNumber = 7;
+    private int maxTasksNumber = 10;
+    
+    private boolean noAnimation;
     
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
     	mContext = context;
@@ -110,10 +112,24 @@ public class ImageLoader {
     	maxTasksNumber = number;
     }
     
-    public void setImagesToLoadFromParsedPSHot(List<ParsedPSHolder> cafes) {
+    public void setPSHotImagesToLoadFromParsedPS(List<ParsedPSHolder> cafes) {
     	imagesToLoad.clear();
         for (ParsedPSHolder cafe : cafes) {
         	imagesToLoad.add(cafe.getFilename());
+        }
+    }
+    
+    public void setPSDetailsImagesToLoadFromParsedPS(List<ParsedPSHolder> cafes) {
+    	imagesToLoad.clear();
+        for (ParsedPSHolder cafe : cafes) {
+        	imagesToLoad.add("image-" + cafe.getPhotoid() + "-1.jpg");
+        }
+    }
+    
+    public void setProfileImagesToLoadFromParsedPS(List<ParsedPSHolder> cafes) {
+    	imagesToLoad.clear();
+        for (ParsedPSHolder cafe : cafes) {
+        	imagesToLoad.add(cafe.getMemberid());
         }
     }
     
@@ -125,6 +141,10 @@ public class ImageLoader {
         }
     }
     
+    public void setNoAnim(boolean noAnim) {
+    	noAnimation = noAnim;
+    }
+    
     public void displayImage(String id, ImageView imageView, int position)
     {
     	imagesToLoad.remove(id);
@@ -133,9 +153,9 @@ public class ImageLoader {
 //    		MFLog.e(TAG, "error....id in imagestoload does not exist");
 //    	}
 		imageViews.put(imageView, id);
+		
         Bitmap bitmap=memoryCache.get(id);
         if(bitmap!=null) {
-        	Log.e("ZZZ", "MEMORy cache");
             imageView.setImageBitmap(bitmap);
         }
         else {
@@ -167,6 +187,8 @@ public class ImageLoader {
             }
         }
         
+        //start loading other images even displayImage not called when imagesLoading is empty(all dislpay images finish loaded.
+        //otherwise, dont load other images to speed up getView images first.
         if (position == lastVisibleRowIndex && imagesLoading.isEmpty()) {
 			while (!imagesToLoad.isEmpty() && imagesLoading.size() <= maxTasksNumber) {
 				String pollId = imagesToLoad.poll();	
@@ -184,7 +206,7 @@ public class ImageLoader {
 		                continue;
 		            }
 		        }
-				MFLog.e(TAG, "poll id " + pollId);
+				MFLog.e(TAG, "init poll id " + pollId);
 				loadImages(pollId, null);
 			}
         }
@@ -197,6 +219,7 @@ public class ImageLoader {
     		//scroll to specific position
     		if (imageView != null) {
 	    		imagesToLoad.addFirst(id);
+	    		Log.e("ZZZ", "add to images to load id = " + id);
 	    		return;
     		} 
     	}
@@ -273,9 +296,11 @@ public class ImageLoader {
 			
 			if (noConnection) return;
             
+			//make sure load all current display getView image first before load any other
             if (currentDisplayImages.isEmpty()) {
 				while (!imagesToLoad.isEmpty() && imagesLoading.size() <= maxTasksNumber) {
 					String id = imagesToLoad.poll();
+					Log.e(TAG, " imagesToLoad poll id " + id);
 					
 					//check if poll id is in memoryCache or filecache;
 			        Bitmap bitmap=memoryCache.get(id);
@@ -290,7 +315,7 @@ public class ImageLoader {
 			                continue;
 			            }
 			        }
-//					ETMFLog.e(TAG, "poll id " + id);
+					Log.e(TAG, "poll id " + id);
 					loadImages(id, null);
 				}
             }
@@ -306,8 +331,11 @@ public class ImageLoader {
 //								ETMFLog.e(TAG, "set nophoto id = " + p.id);
 								view.setImageDrawable(nophoto);
 							} else {
+								MFLog.e(TAG, "set iamge bitmap");
 								view.setImageBitmap(result);
-								view.setAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
+								if (!noAnimation) {
+									view.setAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
+								}
 								
 							}
 						}
@@ -327,7 +355,9 @@ public class ImageLoader {
 						} else {
 							MFLog.e(TAG, "set photo id = " + p.id);
 							p.imageView.setImageBitmap(result);
-							p.imageView.setAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
+							if (!noAnimation) {
+								p.imageView.setAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
+							}
 						}
 					}
 				}
@@ -344,12 +374,11 @@ public class ImageLoader {
 		        		f = fileCache.getFile(id);
 		        	}
 		        	String url = null;
-		        	if (imageType != null) {
-						url = MFURL.getImageUrl(imageType, id);
+		        	if (idUrlMap.size() > 0) {
+		        		url = idUrlMap.get(id);
 					} else {
-						url = idUrlMap.get(id);
+						url = MFURL.getImageUrl(imageType, id);
 					}
-		        	if (url == null) android.util.Log.e("ZZZ", "url NULL!!");
 		            return MFService.getBitmap(url, f);
 		        	
 		        } catch (FileNotFoundException ex){

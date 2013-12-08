@@ -11,12 +11,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import com.cycon.macaufood.utilities.MFLog;
+import android.util.Log;
 import android.util.TypedValue;
 
+import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
 
 public class MFUtil {
@@ -61,6 +63,31 @@ public class MFUtil {
     	
     	return sb.toString();
     	
+    }
+    
+    public static String getPastTime(long time, Context context) {
+    	long diffTime = System.currentTimeMillis() / 1000 - time;
+    	if (diffTime < 60) { //less than 1 min
+			if (diffTime <= 0) {
+				diffTime = 1;
+			}
+			return diffTime + context.getResources().getString(R.string.sec);
+			
+		} else if (diffTime < 60 * 60) { //less than 1 hour
+			int minutes = (int)Math.floor(diffTime / 60.0);
+			return minutes + context.getResources().getString(R.string.min);
+			
+		} else if (diffTime < 60 * 60 * 24) { //less than 1 day
+			int hour = (int)Math.floor(diffTime / (60.0 * 60));
+			return hour + context.getResources().getString(R.string.hour);
+			
+		} else if (diffTime < 60 * 60 * 24 * 30) { //less than 1 month
+			int day = (int)Math.floor(diffTime / (60.0 * 60 * 24));
+			return day + context.getResources().getString(R.string.day);
+		} else { //more than 1 month
+			int month = (int)Math.floor(diffTime / (60.0 * 60 * 24 * 30));
+			return month + context.getResources().getString(R.string.month);
+		}
     }
     
     

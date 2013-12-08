@@ -12,14 +12,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
+import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.widget.PSDetailsView;
 import com.cycon.macaufood.widget.PSHeaderView;
 
 public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
-    public ImageLoader imageLoader; 
+    public ImageLoader psDetailsImageLoader; 
+    public ImageLoader psHeaderImageLoader; 
     private List<ParsedPSHolder> mHolderList;
     private Context mContext;
     private LayoutInflater mInflater;
@@ -29,11 +32,14 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
     public PSFriendsActivityAdapter(Context context, List<ParsedPSHolder> holderList) {
             this.mHolderList = holderList;
             mContext = context;
-//        	imageLoader=new ImageLoader(context, holderList.size(), ImageType.PHOTOSHARE_HOT);
-//        	imageLoader.setTaskMaxNumber(holderList.size());
-//        	imageLoader.setImagesToLoadFromParsedPSHot(holderList);
-//        	
-//        	imageWidth = (MFConfig.deviceWidth - MFUtil.getPixelsFromDip(SPACING_IN_DP, mContext.getResources()) * 5) / 4;
+            psDetailsImageLoader=new ImageLoader(context, 0, ImageType.PHOTOSHARE);
+            psDetailsImageLoader.setTaskMaxNumber(2);
+            psDetailsImageLoader.setNoAnim(true);
+//            psDetailsImageLoader.setPSDetailsImagesToLoadFromParsedPS(holderList);
+
+            psHeaderImageLoader=new ImageLoader(context, holderList.size(), ImageType.PSLOCALAVATAR);
+//            psHeaderImageLoader.setProfileImagesToLoadFromParsedPS(holderList);
+            psHeaderImageLoader.setNoAnim(true);
         	mInflater =  (LayoutInflater)context.getSystemService
         		      (Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -49,14 +55,14 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
         	holder = psHeaderView.initView();
         	convertView = psHeaderView;
         	convertView.setTag(holder);
-        	Log.e("ZZZ", "header view null");
+        	MFService.loadImage(mContext.getApplicationContext(), ImageType.PSLOCALAVATAR, mHolderList.get(position).getMemberid(), holder.profilePic, false, false);
         } else {
         	psHeaderView = (PSHeaderView) convertView;
         	holder = (PSHeaderView.ViewHolder) convertView.getTag();
         	Log.e("ZZZ", "header view recycle");
         }
+        psHeaderView.loadInfo(mHolderList.get(position), holder, psHeaderImageLoader, position);
         
-        psHeaderView.loadInfo(mHolderList.get(position), holder);
         return convertView;
 	}
 	
@@ -75,7 +81,7 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
         	Log.e("ZZZ", "detail view recycle");
         }
         
-        psDetailsView.loadInfo(mHolderList.get(position), holder);
+        psDetailsView.loadInfo(mHolderList.get(position), holder, psDetailsImageLoader, position);
         return convertView;
 	}
 

@@ -2,12 +2,13 @@
 <view xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:background="#FF0000"
+    class="com.cycon.macaufood.widget.PSHeaderView"
+    android:background="#aae3e3e3"
     android:gravity="center_vertical"
-    android:orientation="horizontal"
-    class="com.cycon.macaufood.widget.PSHeaderView" >
+    android:paddingBottom="6dp"
+    android:paddingLeft="11dp"
+    android:paddingRight="11dp"
+    android:paddingTop="6dp" >
 
     <ImageView
         android:id="@+id/profilePic"
@@ -20,21 +21,30 @@
         android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/profilePic"
         android:maxLines="1"
-        android:paddingLeft="10dp" />
+        android:paddingLeft="10dp"
+        android:paddingRight="16dp"
+        android:textColor="@color/dark_gray_text" />
 
     <TextView
         android:id="@+id/cafeName"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:maxLines="1"
-        android:paddingLeft="16dp" />
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/userName"
+        android:background="@drawable/text_bg_selector"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLines="1" />
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:drawableLeft="@drawable/ic_history"
+        android:maxLines="1"
+        android:textColor="@color/light_gray_text" />
 
 </view>

@@ -39,7 +39,7 @@ public class PSHotAdapter extends BaseAdapter {
             mContext = context;
         	imageLoader=new ImageLoader(context, holderList.size(), ImageType.PHOTOSHARE);
         	imageLoader.setTaskMaxNumber(holderList.size());
-        	imageLoader.setImagesToLoadFromParsedPSHot(holderList);
+        	imageLoader.setPSHotImagesToLoadFromParsedPS(holderList);
         	
         	imageWidth = (MFConfig.deviceWidth - MFUtil.getPixelsFromDip(SPACING_IN_DP, mContext.getResources()) * 5) / 4;
         	mInflater =  (LayoutInflater)context.getSystemService

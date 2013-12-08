@@ -1345,7 +1345,7 @@ containing a value of this type.
         public static final int com_facebook_list_section_header_background=0x7f020092;
         public static final int com_facebook_loginbutton_silver=0x7f020093;
         public static final int com_facebook_logo=0x7f020094;
-        public static final int com_facebook_picker_default_separator_color=0x7f02013f;
+        public static final int com_facebook_picker_default_separator_color=0x7f020140;
         public static final int com_facebook_picker_item_background=0x7f020095;
         public static final int com_facebook_picker_list_focused=0x7f020096;
         public static final int com_facebook_picker_list_longpressed=0x7f020097;
@@ -1513,9 +1513,10 @@ containing a value of this type.
         public static final int tab_unselected_pressed_holo_red=0x7f020139;
         public static final int tab_vip_coupon_selected=0x7f02013a;
         public static final int tab_vip_coupon_unselected=0x7f02013b;
-        public static final int transparent_selector_bg=0x7f02013c;
-        public static final int wheel_bg=0x7f02013d;
-        public static final int wheel_val=0x7f02013e;
+        public static final int text_bg_selector=0x7f02013c;
+        public static final int transparent_selector_bg=0x7f02013d;
+        public static final int wheel_bg=0x7f02013e;
+        public static final int wheel_val=0x7f02013f;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f07002f;
@@ -1910,6 +1911,7 @@ containing a value of this type.
          */
         public static final int auth_client_using_bad_version_title=0x7f080014;
         public static final int backToMacau=0x7f080084;
+        public static final int before=0x7f0800bf;
         public static final int branch=0x7f080061;
         public static final int branchList=0x7f080062;
         public static final int businessHours=0x7f080057;
@@ -1921,7 +1923,7 @@ containing a value of this type.
         public static final int cash=0x7f080055;
         public static final int category=0x7f08007a;
         public static final int clear=0x7f080075;
-        public static final int clearCafeTableSql=0x7f0800bd;
+        public static final int clearCafeTableSql=0x7f0800c3;
         public static final int coloaneRegion=0x7f08009b;
         public static final int com_facebook_choose_friends=0x7f080029;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f08001a;
@@ -2023,6 +2025,7 @@ containing a value of this type.
         public static final int contentWordsTooShort=0x7f08006f;
         public static final int coupon_tab=0x7f080044;
         public static final int creditVipCoupon=0x7f080050;
+        public static final int day=0x7f0800bd;
         public static final int directSearch=0x7f080072;
         /**   About 
          */
@@ -2063,16 +2066,17 @@ containing a value of this type.
          */
         public static final int foodNews=0x7f08009d;
         public static final int friendsList=0x7f0800ae;
-        public static final int getCafeEntriesSql=0x7f0800bc;
+        public static final int getCafeEntriesSql=0x7f0800c2;
         public static final int giveFeedBack=0x7f08005e;
         public static final int googleMap=0x7f08008b;
         public static final int homepage=0x7f080042;
+        public static final int hour=0x7f0800bc;
         public static final int info=0x7f080058;
         public static final int information=0x7f08005b;
         /**   SQL Queries 
          */
-        public static final int initCafeTableSql=0x7f0800ba;
-        public static final int insertCafeSql=0x7f0800bb;
+        public static final int initCafeTableSql=0x7f0800c0;
+        public static final int insertCafeSql=0x7f0800c1;
         public static final int intro=0x7f080059;
         /**  Latest 
          */
@@ -2095,6 +2099,8 @@ containing a value of this type.
         public static final int mapCenterArea=0x7f080089;
         public static final int map_search=0x7f080046;
         public static final int menu=0x7f08005a;
+        public static final int min=0x7f0800bb;
+        public static final int month=0x7f0800be;
         /**  Menu 
          */
         public static final int nextPage=0x7f080063;
@@ -2132,6 +2138,9 @@ containing a value of this type.
          */
         public static final int searchNearby=0x7f080083;
         public static final int searchResults=0x7f08007b;
+        /**   Misc. 
+         */
+        public static final int sec=0x7f0800ba;
         public static final int selectOneItemPrompt=0x7f08007e;
         public static final int sendFailed=0x7f08006c;
         public static final int sendSucceed=0x7f08006b;

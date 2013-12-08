@@ -356,6 +356,8 @@ public class PhotoShare extends SherlockFragment{
 		
 	}
 	
+	
+	//reload friends activity and show progress bar when there is internet
 	public void loadFriendsActivity() {
 		File f=fileCache.getFile(MFConstants.PS_FRIENDS_ACTIVITY_XML_FILE_NAME);
 		DefaultHandler handler = new PSDetailXMLHandler(mFriendsActivityInfo);
@@ -390,9 +392,11 @@ public class PhotoShare extends SherlockFragment{
 				mFriendsActivityProgressBar.setVisibility(View.GONE);
 				mFriendsActivityTimeStamp = System.currentTimeMillis();
 				if (mFriendsActivityInfo.size() > 0) {
-//					mListView.setVisibility(View.VISIBLE);
-//					mImageLoader=new ImageLoader(context, 6, null);
-//					mImageLoader.setImagesToLoadFromParsedFriendsList(mHolderList);
+					mFriendsActivityAdapter.psDetailsImageLoader.cleanup();
+					mFriendsActivityAdapter.psDetailsImageLoader.setPSDetailsImagesToLoadFromParsedPS(mFriendsActivityInfo);
+					mFriendsActivityAdapter.psHeaderImageLoader.cleanup();
+					mFriendsActivityAdapter.psHeaderImageLoader.setProfileImagesToLoadFromParsedPS(mFriendsActivityInfo);
+					
 					mFriendsActivityAdapter.notifyDataSetChanged();
 				} else {
 					mFriendsActivityError.setVisibility(View.VISIBLE);
@@ -427,7 +431,7 @@ public class PhotoShare extends SherlockFragment{
 		}
 		mPsHotAdapter.imageLoader.cleanup();
 		mPsHotAdapter.imageLoader.setTaskMaxNumber(MFConfig.getInstance().getPsHotList().size());
-		mPsHotAdapter.imageLoader.setImagesToLoadFromParsedPSHot(MFConfig.getInstance().getPsHotList());
+		mPsHotAdapter.imageLoader.setPSHotImagesToLoadFromParsedPS(MFConfig.getInstance().getPsHotList());
 		mPsHotAdapter.notifyDataSetChanged();
     }
     

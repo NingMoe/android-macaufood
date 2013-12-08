@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,12 +36,14 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.activities.Details;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FeedBackDialogHelper;
 import com.cycon.macaufood.utilities.FileCache;
+import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
@@ -48,22 +51,23 @@ import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PhoneUtils;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 
-public class PSHeaderView extends LinearLayout {
+public class PSHeaderView extends RelativeLayout {
 	
 	private int mCafeId;
+	private Context mContext;
 	
 	public PSHeaderView(Context context) {
 		super(context);
-		init();
+		init(context);
 	}
 	
 	public PSHeaderView(Context context, AttributeSet attrSet) {
 		super(context, attrSet);
-		init();
+		init(context);
 	}
 	
-	private void init() {
-		
+	private void init(Context context) {
+		mContext = context;
 	}
 	
 	public ViewHolder initView() {
@@ -75,7 +79,7 @@ public class PSHeaderView extends LinearLayout {
 		return holder;
 	}
 	
-	public void loadInfo(ParsedPSHolder pInfo, ViewHolder holder) {
+	public void loadInfo(ParsedPSHolder pInfo, ViewHolder holder, ImageLoader imageLoader, int pos) {
 		
 		try {
 			mCafeId = Integer.parseInt(pInfo.getCafeid());
@@ -84,15 +88,46 @@ public class PSHeaderView extends LinearLayout {
 			e.printStackTrace();
 		}
 		
-		MFService.loadImage(getContext().getApplicationContext(), ImageType.PSLOCALAVATAR, pInfo.getMemberid(), holder.profilePic, false, false);
-		
 		holder.userName.setText(pInfo.getName());
-		holder.cafeName.setText(pInfo.getPlace());
-		holder.time.setText(pInfo.getUploaddate());
+		long time = Long.parseLong(pInfo.getUploaddate());
+		holder.time.setText(MFUtil.getPastTime(time, mContext) + mContext.getResources().getString(R.string.before));
+		
+		String cafeNameText = pInfo.getPlace();
+		if (cafeNameText.equals("(null)")) {
+			holder.cafeName.setVisibility(View.GONE);
+		} else {
+			holder.cafeName.setVisibility(View.VISIBLE);
+			holder.cafeName.setText(pInfo.getPlace());
+			holder.cafeName.setTextColor(mContext.getResources().getColor(R.color.dark_gray_text));
+			holder.cafeName.setTypeface(null, Typeface.NORMAL);
+			
+			final String cafeId = pInfo.getCafeid();
+			if (!cafeId.equals("0") && MFConfig.getInstance().getCafeLists().size() >= Integer.parseInt(cafeId)) {
+				try {
+					holder.cafeName.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View arg0) {
+							Intent i = new Intent(mContext, Details.class);
+							i.putExtra("id", cafeId);
+							mContext.startActivity(i);
+						}
+					});
+					
+					holder.cafeName.setTextColor(mContext.getResources().getColor(R.color.dark_green));
+					holder.cafeName.setTypeface(null, Typeface.BOLD);
+					
+				} catch (NumberFormatException e) {
+					e.printStackTrace();
+				}
+			} 
+		}
+		
+		imageLoader.displayImage(pInfo.getMemberid(), holder.profilePic, pos);
 	}
 	
     public static class ViewHolder {
-    	ImageView profilePic;
+    	public ImageView profilePic;
     	TextView userName;
     	TextView cafeName;
     	TextView time;

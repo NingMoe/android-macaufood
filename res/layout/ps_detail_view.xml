@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     class="com.cycon.macaufood.widget.PSDetailsView"
-    android:padding="8dp" >
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp" >
 
     <FrameLayout
         android:layout_width="match_parent"
