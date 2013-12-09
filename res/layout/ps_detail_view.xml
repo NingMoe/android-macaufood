@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     class="com.cycon.macaufood.widget.PSDetailsView"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp" >
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp" >
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -18,60 +18,121 @@
             android:layout_height="wrap_content"
             android:background="@color/pic_gray_bg" />
     </FrameLayout>
-
+    
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/caption"
+        android:layout_marginTop="6dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="HELLO"
-        android:textSize="30sp" />
-
+        android:textSize="16sp"
+        android:paddingLeft="10dp"
+        android:paddingRight="6dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        />
+    
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/like"
+        android:layout_marginTop="6dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="HELLO"
-        android:textSize="30sp" />
+        android:layout_marginLeft="5dp"
+        android:gravity="center_vertical"
+        android:drawableLeft="@drawable/ic_heart"
+        android:drawablePadding="3dp"
+        android:textSize="13sp"
+        android:textColor="@color/dark_green"
+        />
+    
+     <LinearLayout
+        android:id="@+id/comment"
+        android:layout_marginTop="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="HELLO"
-        android:textSize="30sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="HELLO"
-        android:textSize="30sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="HELLO"
-        android:textSize="30sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="HELLO"
-        android:textSize="30sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="HELLO"
-        android:textSize="30sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:orientation="horizontal">
 
     <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="Like"/>
+        android:id="@+id/likeButton"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:drawableLeft="@drawable/ic_big_heart"
+        android:drawablePadding="2dp"
+        android:paddingLeft="4dp"
+        android:text="@string/like"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/tab_gray_text"
+        android:maxLines="1"
+        android:ellipsize="marquee"
+        android:background="@drawable/button_gray_selector"/>
+
+    <Button
+        android:id="@+id/commentButton"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:drawableLeft="@drawable/ic_comment"
+        android:drawablePadding="2dp"
+        android:paddingLeft="4dp"
+        android:text="@string/comment"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/tab_gray_text"
+        android:background="@drawable/button_gray_selector"
+        android:maxLines="1"
+        android:ellipsize="marquee"
+        android:layout_marginLeft="10dp"/>
+
+    <Button
+        android:id="@+id/infoButton"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:drawableLeft="@drawable/ic_cafe"
+        android:drawablePadding="2dp"
+        android:paddingLeft="4dp"
+        android:text="@string/cafeInfo"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/tab_gray_text"
+        android:background="@drawable/button_gray_selector"
+        android:maxLines="1"
+        android:ellipsize="marquee"
+        android:layout_marginLeft="10dp"/>
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:drawableLeft="@drawable/ic_cafe"
+        android:drawablePadding="2dp"
+        android:paddingLeft="4dp"
+        android:text="@string/cafeInfo"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/tab_gray_text"
+        android:background="@drawable/button_gray_selector"
+        android:maxLines="1"
+        android:ellipsize="marquee"
+        android:layout_marginLeft="10dp"/>
+    
+    </LinearLayout>
+    
 
 </view>

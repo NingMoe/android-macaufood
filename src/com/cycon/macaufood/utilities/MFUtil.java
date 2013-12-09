@@ -81,7 +81,7 @@ public class MFUtil {
 			int hour = (int)Math.floor(diffTime / (60.0 * 60));
 			return hour + context.getResources().getString(R.string.hour);
 			
-		} else if (diffTime < 60 * 60 * 24 * 30) { //less than 1 month
+		} else if (diffTime < 60 * 60 * 24 * 30 * 2) { //less than 2 month
 			int day = (int)Math.floor(diffTime / (60.0 * 60 * 24));
 			return day + context.getResources().getString(R.string.day);
 		} else { //more than 1 month

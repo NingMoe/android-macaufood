@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     class="com.cycon.macaufood.widget.PSHeaderView"
-    android:background="#aae3e3e3"
+    android:background="#d0e3e3e3"
     android:gravity="center_vertical"
     android:paddingBottom="6dp"
-    android:paddingLeft="11dp"
-    android:paddingRight="11dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
     android:paddingTop="6dp" >
 
     <ImageView
@@ -43,7 +43,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:drawableLeft="@drawable/ic_history"
         android:maxLines="1"
         android:textColor="@color/light_gray_text" />
 

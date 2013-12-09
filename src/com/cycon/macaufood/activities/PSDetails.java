@@ -25,6 +25,10 @@ public class PSDetails extends BaseActivity {
 		int pos = getIntent().getIntExtra("ps_hot_position", 0);
 		ParsedPSHolder psHotInfo = MFConfig.getInstance().getPsHotList().get(pos);
 		
+		String title = psHotInfo.getCaption();
+		if (title.trim().length() == 0) title = getString(R.string.psHot);
+		setTitle(title);
+		
 		mFriendsActivityInfo.add(psHotInfo);
 		mFriendsActivityListView = (StickyListHeadersListView) findViewById(R.id.friendsActivityListView);
 		mFriendsActivityAdapter = new PSFriendsActivityAdapter(this, mFriendsActivityInfo);

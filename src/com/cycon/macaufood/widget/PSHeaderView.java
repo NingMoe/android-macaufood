@@ -53,7 +53,6 @@ import com.cycon.macaufood.utilities.PreferenceHelper;
 
 public class PSHeaderView extends RelativeLayout {
 	
-	private int mCafeId;
 	private Context mContext;
 	
 	public PSHeaderView(Context context) {
@@ -80,13 +79,6 @@ public class PSHeaderView extends RelativeLayout {
 	}
 	
 	public void loadInfo(ParsedPSHolder pInfo, ViewHolder holder, ImageLoader imageLoader, int pos) {
-		
-		try {
-			mCafeId = Integer.parseInt(pInfo.getCafeid());
-		} catch (NumberFormatException e) {
-			mCafeId = -1;
-			e.printStackTrace();
-		}
 		
 		holder.userName.setText(pInfo.getName());
 		long time = Long.parseLong(pInfo.getUploaddate());
