@@ -1,66 +1,34 @@
 package com.cycon.macaufood.widget;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import com.cycon.macaufood.utilities.MFLog;
-
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.activities.Details;
-import com.cycon.macaufood.bean.Cafe;
-import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedPSHolder;
-import com.cycon.macaufood.utilities.AsyncTaskHelper;
-import com.cycon.macaufood.utilities.FeedBackDialogHelper;
-import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.utilities.MFConstants;
-import com.cycon.macaufood.utilities.MFService;
-import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
-import com.cycon.macaufood.utilities.PhoneUtils;
-import com.cycon.macaufood.utilities.PreferenceHelper;
 
 public class PSDetailsView extends LinearLayout {
 
-	private final static int MAX_LIKE = 7;
+	private final static int MAX_LIKE = 6;
 	private Context mContext;
 	
 	public PSDetailsView(Context context) {
@@ -83,6 +51,8 @@ public class PSDetailsView extends LinearLayout {
     	holder.caption = (TextView) findViewById(R.id.caption);
     	holder.like = (TextView) findViewById(R.id.like);
     	holder.comment = (LinearLayout) findViewById(R.id.comment);
+    	holder.commentLayout = (LinearLayout) findViewById(R.id.commentLayout);
+    	holder.likeLayout = (LinearLayout) findViewById(R.id.likeLayout);
     	holder.likeButton = (Button) findViewById(R.id.likeButton);
     	holder.commentButton = (Button) findViewById(R.id.commentButton);
     	holder.infoButton = (Button) findViewById(R.id.infoButton);
@@ -90,9 +60,10 @@ public class PSDetailsView extends LinearLayout {
 		return holder;
 	}
 	
-	public void loadInfo(ParsedPSHolder pInfo, ViewHolder holder, ImageLoader imageLoader, int pos) {
+	public void loadInfo(final ParsedPSHolder pInfo, final ViewHolder holder, ImageLoader imageLoader, int pos) {
 		final String cafeId = pInfo.getCafeid();
-		
+
+		Log.e("ZZZ", "loadInfo");
 		int width = Integer.parseInt(pInfo.getImgwidth());
 		int height = Integer.parseInt(pInfo.getImgheight());
 		int padding = MFUtil.getPixelsFromDip(16, getResources());
@@ -111,76 +82,13 @@ public class PSDetailsView extends LinearLayout {
 			holder.caption.setVisibility(View.GONE);
 		}
 		
+		loadLikeInfo(pInfo, holder);
 		
-		//display like ------------------------------------
-		int numOfLike;
-		try {
-			numOfLike = Integer.parseInt(pInfo.getNumoflike());
-		} catch (NumberFormatException e1) {
-			numOfLike = 0;
-		}
-		if (numOfLike > MAX_LIKE) {
-			holder.like.setText(mContext.getResources().getString(R.string.peopleLikedThis, numOfLike));
-			holder.like.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-		} else {
-			List<PSLike> likeList = extractLikeList(pInfo.getLikes());
-			if (likeList.size() > 0) {
-				holder.like.setVisibility(View.VISIBLE);
-				StringBuilder sb = new StringBuilder();
-				int i;
-				for (i = 0; i < likeList.size(); i++) {
-					sb.append(likeList.get(i).name);
-					if (i != likeList.size() - 1) {
-						sb.append(',');
-					}
-					sb.append(' ');
-				}
-				
-				if (i > 1) {
-					sb.append(mContext.getResources().getString(R.string.alsoLikedThis));
-				} else {
-					sb.append(mContext.getResources().getString(R.string.likedThis));
-				}
-				holder.like.setText(sb.toString());
-			} else {
-				holder.like.setVisibility(View.GONE);
-			}
-		}
-		
-		
-		//display comment---------------------------------------
-		holder.comment.removeAllViews();
-		List<PSComment> commentList = extractCommentList(pInfo.getComments());
-		if (commentList.size() > 0) {
-			holder.comment.setVisibility(View.VISIBLE);
-			for (PSComment psComment : commentList) {
-				String displayStr = psComment.name + " " + psComment.comment;
-				SpannableString spannable = new SpannableString(displayStr);
-	            spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.green_text)), 0, psComment.name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-				TextView tv = new TextView(mContext);
-				tv.setText(spannable);
-				holder.comment.addView(tv);
-			}
-		} else {
-			holder.comment.setVisibility(View.GONE);
-		}
-		
-		
-		
+		loadCommentInfo(pInfo, holder);
 		
 		
 		
 		//buttons------------------------------------------------
-		
-		
-		
 		if (!cafeId.equals("0") && MFConfig.getInstance().getCafeLists().size() >= Integer.parseInt(cafeId)) {
 			try {
 				holder.infoButton.setOnClickListener(new OnClickListener() {
@@ -202,9 +110,23 @@ public class PSDetailsView extends LinearLayout {
 		}
 		
 		
-		if (MFConfig.memberId == null) {
-			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
-		}
+		holder.likeButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//TODO:check login status
+				//TODO: check internet and show toast
+				if (holder.likeButton.getText().equals(getResources().getString(R.id.like))) {
+					Log.e("ZZZ", "onclick");
+					pInfo.setLikes(pInfo.getLikes() + "@@@" + MFConfig.memberId + "|||" + MFConfig.memberName);
+				} else {
+					
+				}
+				loadLikeInfo(pInfo, holder);
+			}
+		});
+		
+
 		if (pInfo.getMemberid().equals(MFConfig.memberId)) {
 			holder.deleteButton.setVisibility(View.VISIBLE);
 		} else {
@@ -216,11 +138,90 @@ public class PSDetailsView extends LinearLayout {
     	ImageView photoImage;
     	TextView caption;
     	TextView like;
+    	LinearLayout likeLayout;
     	LinearLayout comment;
+    	LinearLayout commentLayout;
     	Button likeButton;
     	Button commentButton;
     	Button infoButton;
     	Button deleteButton;
+    }
+    
+    private void loadLikeInfo(final ParsedPSHolder pInfo, ViewHolder holder) {
+    	Log.e("ZZZ", "loadlike info");
+		setLikeButtonStatus(false, holder.likeButton);
+		holder.likeLayout.setVisibility(View.VISIBLE);
+		List<PSLike> likeList = extractLikeList(pInfo.getLikes());
+		
+		for (int i = likeList.size() - 1; i >= 0; i--) {
+			//check if user liked already
+			if (likeList.get(i).id.equals(MFConfig.memberId)) {
+				setLikeButtonStatus(true, holder.likeButton);
+				break;
+			} 
+		}
+		
+		if (likeList.size() > MAX_LIKE) {
+			holder.like.setText(mContext.getResources().getString(R.string.peopleLikedThis, likeList.size()));
+			holder.like.setTypeface(null, Typeface.BOLD);
+			holder.like.setBackgroundResource(R.drawable.text_bg_selector_thinner);
+			holder.like.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		} else if (likeList.size() > 0) {
+			StringBuilder sb = new StringBuilder();
+			int i;
+			for (i = likeList.size() - 1; i >= 0; i--) {
+				sb.append(likeList.get(i).name);
+				if (i != 0) {
+					sb.append(',');
+				}
+				sb.append(' ');
+			}
+			
+			sb.append(mContext.getResources().getString(i > 1 ? R.string.alsoLikedThis : R.string.likedThis));
+			SpannableString spannable = new SpannableString(sb.toString());
+			spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.button_gray_text)), sb.length() - (i > 1 ? 3 : 4), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			holder.like.setText(spannable);
+			holder.like.setTypeface(null, Typeface.NORMAL);
+			holder.like.setBackgroundDrawable(null);
+			holder.like.setOnClickListener(null);
+		} else {
+			holder.likeLayout.setVisibility(View.GONE);
+		}
+    }
+    
+    private void loadCommentInfo(final ParsedPSHolder pInfo, ViewHolder holder) {
+		holder.comment.removeAllViews();
+		List<PSComment> commentList = extractCommentList(pInfo.getComments());
+		if (commentList.size() > 0) {
+			holder.commentLayout.setVisibility(View.VISIBLE);
+			for (int i = 0; i < commentList.size(); i++) {
+				PSComment psComment = commentList.get(i);
+				String displayStr = psComment.name + " " + psComment.comment;
+				SpannableString spannable = new SpannableString(displayStr);
+	            spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.green_text)), 0, psComment.name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+	            spannable.setSpan(new RelativeSizeSpan(13f/14), 0, psComment.name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+				TextView tv = new TextView(mContext); 
+				tv.setText(spannable);
+				holder.comment.addView(tv);
+			}
+		} else {
+			holder.commentLayout.setVisibility(View.GONE);
+		}
+    }
+    
+    private void setLikeButtonStatus(boolean like, Button likeButton) {
+    	if (like) {
+			likeButton.setText(R.string.liked);
+		} else {
+			likeButton.setText(R.string.like);
+		}
     }
     
     private List<PSLike> extractLikeList(String str) {

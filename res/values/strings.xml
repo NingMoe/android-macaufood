@@ -150,10 +150,11 @@
  	<string name="followAllSucceed">已關注所有朋友</string>
  	<string name="unfollow">取消關注</string>
  	<string name="firstShowFriendsActivityMsg">%s你好! 歡迎登入食在澳門\n\n你可透過關注朋友在這裡顯示朋友及自己上傳美食相片的動態</string>
- 	<string name="peopleLikedThis">有%d個人讚好</string>
+ 	<string name="peopleLikedThis">有 %d 個人讚好</string>
  	<string name="likedThis">對此讚好</string>
  	<string name="alsoLikedThis">都讚好</string>
  	<string name="like">讚好</string>
+ 	<string name="liked">已讚</string>
  	<string name="comment">留言</string>
  	<string name="cafeInfo">資料</string>
  	

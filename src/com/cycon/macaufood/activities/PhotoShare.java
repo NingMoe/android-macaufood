@@ -310,6 +310,10 @@ public class PhotoShare extends SherlockFragment{
 				callFacebookLogout(false);
 			}
 		}
+		
+		if (MFConfig.memberName == null) {
+			MFConfig.memberName = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, null);
+		}
         
     }
     
@@ -379,9 +383,9 @@ public class PhotoShare extends SherlockFragment{
 
 		mFriendsActivityProgressBar.setVisibility(View.VISIBLE);
 		
-		if (MFConfig.memberId == null) {
-			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
-		}
+//		if (MFConfig.memberId == null) {
+//			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
+//		}
 //		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + MFConfig.memberId;
 		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + "29";
 		
@@ -579,6 +583,8 @@ public class PhotoShare extends SherlockFragment{
             if (showToast) {
             	Toast.makeText(mContext, R.string.logoutMessage, Toast.LENGTH_SHORT).show();
 			}
+            PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
+    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, null);
 	    }
 	    switchToHotTab();
 	}
@@ -732,6 +738,7 @@ public class PhotoShare extends SherlockFragment{
     		mFirstShowFriendsActivity = true;
     		mFriendsActivityTimeStamp = 0;
     		MFConfig.memberId = result;
+    		MFConfig.memberName = user.getName();
     		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, result);
     		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, user.getName());
     		

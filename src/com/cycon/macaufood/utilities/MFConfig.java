@@ -38,6 +38,7 @@ public class MFConfig {
 	public static String cafe_version_update = "1380093106";
 	
 	public static String memberId;
+	public static String memberName;
 
 	private List<Cafe> cafeLists = Collections.synchronizedList(new ArrayList<Cafe>(2500));
 	

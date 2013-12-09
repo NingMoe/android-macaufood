@@ -79,6 +79,7 @@ public class PSHeaderView extends RelativeLayout {
 	}
 	
 	public void loadInfo(ParsedPSHolder pInfo, ViewHolder holder, ImageLoader imageLoader, int pos) {
+		imageLoader.displayImage(pInfo.getMemberid(), holder.profilePic, pos);
 		
 		holder.userName.setText(pInfo.getName());
 		long time = Long.parseLong(pInfo.getUploaddate());
@@ -106,7 +107,7 @@ public class PSHeaderView extends RelativeLayout {
 						}
 					});
 					
-					holder.cafeName.setTextColor(mContext.getResources().getColor(R.color.dark_green));
+					holder.cafeName.setTextColor(mContext.getResources().getColor(R.color.green_text));
 					holder.cafeName.setTypeface(null, Typeface.BOLD);
 					
 				} catch (NumberFormatException e) {
@@ -115,7 +116,7 @@ public class PSHeaderView extends RelativeLayout {
 			} 
 		}
 		
-		imageLoader.displayImage(pInfo.getMemberid(), holder.profilePic, pos);
+		
 	}
 	
     public static class ViewHolder {
