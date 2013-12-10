@@ -82,7 +82,7 @@ public class PSDetailsView extends LinearLayout {
 			holder.caption.setVisibility(View.GONE);
 		}
 		
-		loadLikeInfo(pInfo, holder);
+		loadLikeInfo(pInfo, holder, false);
 		
 		loadCommentInfo(pInfo, holder);
 		
@@ -116,13 +116,12 @@ public class PSDetailsView extends LinearLayout {
 			public void onClick(View v) {
 				//TODO:check login status
 				//TODO: check internet and show toast
-				if (holder.likeButton.getText().equals(getResources().getString(R.id.like))) {
-					Log.e("ZZZ", "onclick");
-					pInfo.setLikes(pInfo.getLikes() + "@@@" + MFConfig.memberId + "|||" + MFConfig.memberName);
+				if (holder.likeButton.getText().equals(getResources().getString(R.string.like))) {
+					pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
+					loadLikeInfo(pInfo, holder, false);
 				} else {
-					
+					loadLikeInfo(pInfo, holder, true);
 				}
-				loadLikeInfo(pInfo, holder);
 			}
 		});
 		
@@ -147,19 +146,57 @@ public class PSDetailsView extends LinearLayout {
     	Button deleteButton;
     }
     
-    private void loadLikeInfo(final ParsedPSHolder pInfo, ViewHolder holder) {
-    	Log.e("ZZZ", "loadlike info");
+    private void loadLikeInfo(final ParsedPSHolder pInfo, ViewHolder holder, boolean cancelMyLike) {
 		setLikeButtonStatus(false, holder.likeButton);
 		holder.likeLayout.setVisibility(View.VISIBLE);
-		List<PSLike> likeList = extractLikeList(pInfo.getLikes());
+//		List<PSLike> likeList = extractLikeList(pInfo.getLikes());
 		
-		for (int i = likeList.size() - 1; i >= 0; i--) {
-			//check if user liked already
-			if (likeList.get(i).id.equals(MFConfig.memberId)) {
-				setLikeButtonStatus(true, holder.likeButton);
-				break;
-			} 
+		StringBuilder sb = new StringBuilder();
+    	List<PSLike> likeList = new ArrayList<PSLike>();
+    	String[] tokens = pInfo.getLikes().split("@@@");
+    	for (int i = tokens.length - 1; i >=0; i--) {
+    		String tokenStr = tokens[i];
+			String[] strArr = tokenStr.split("\\|\\|\\|");
+			if (strArr.length > 1) {
+				if (strArr[0].equals(MFConfig.memberId)) {
+					if (cancelMyLike) {
+						continue;
+					} else {
+						setLikeButtonStatus(true, holder.likeButton);
+					}
+				}
+				PSLike like = new PSLike();
+				like.id = strArr[0];
+				like.name = strArr[1];
+				likeList.add(like);
+				sb.append(like.name);
+				if (i != 0) {
+					sb.append(',');
+				}
+				sb.append(' ');
+			}
 		}
+
+    	if (cancelMyLike) {
+    		StringBuilder tempSb = new StringBuilder(); //for rewriting like str when cancel like
+			for (int i = likeList.size() - 1; i >=0; i--) {
+				tempSb.append(likeList.get(i).id);
+				tempSb.append("|||");
+				tempSb.append(likeList.get(i).name);
+				if (i != 0) {
+					tempSb.append("@@@");
+				}
+			}
+			pInfo.setLikes(tempSb.toString());
+		}
+		
+//		for (int i = likeList.size() - 1; i >= 0; i--) {
+//			//check if user liked already
+//			if (likeList.get(i).id.equals(MFConfig.memberId)) {
+//				setLikeButtonStatus(true, holder.likeButton);
+//				break;
+//			} 
+//		}
 		
 		if (likeList.size() > MAX_LIKE) {
 			holder.like.setText(mContext.getResources().getString(R.string.peopleLikedThis, likeList.size()));
@@ -174,19 +211,19 @@ public class PSDetailsView extends LinearLayout {
 				}
 			});
 		} else if (likeList.size() > 0) {
-			StringBuilder sb = new StringBuilder();
-			int i;
-			for (i = likeList.size() - 1; i >= 0; i--) {
-				sb.append(likeList.get(i).name);
-				if (i != 0) {
-					sb.append(',');
-				}
-				sb.append(' ');
-			}
+//			StringBuilder sb = new StringBuilder();
+//			int i;
+//			for (i = likeList.size() - 1; i >= 0; i--) {
+//				sb.append(likeList.get(i).name);
+//				if (i != 0) {
+//					sb.append(',');
+//				}
+//				sb.append(' ');
+//			}
 			
-			sb.append(mContext.getResources().getString(i > 1 ? R.string.alsoLikedThis : R.string.likedThis));
+			sb.append(mContext.getResources().getString(likeList.size() > 1 ? R.string.alsoLikedThis : R.string.likedThis));
 			SpannableString spannable = new SpannableString(sb.toString());
-			spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.button_gray_text)), sb.length() - (i > 1 ? 3 : 4), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+			spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.button_gray_text)), sb.length() - (likeList.size() > 1 ? 3 : 4), sb.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			holder.like.setText(spannable);
 			holder.like.setTypeface(null, Typeface.NORMAL);
 			holder.like.setBackgroundDrawable(null);
