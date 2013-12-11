@@ -2,6 +2,7 @@ package com.cycon.macaufood.widget;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,12 +19,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.activities.Details;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 
 public class PSDetailsView extends LinearLayout {
@@ -116,11 +120,17 @@ public class PSDetailsView extends LinearLayout {
 			public void onClick(View v) {
 				//TODO:check login status
 				//TODO: check internet and show toast
-				if (holder.likeButton.getText().equals(getResources().getString(R.string.like))) {
-					pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
-					loadLikeInfo(pInfo, holder, false);
+				if (!MFConfig.isOnline(mContext)) {
+					Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
 				} else {
-					loadLikeInfo(pInfo, holder, true);
+					if (holder.likeButton.getText().equals(getResources().getString(R.string.like))) {
+						pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
+						loadLikeInfo(pInfo, holder, false);
+						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_LIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+					} else {
+						loadLikeInfo(pInfo, holder, true);
+						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_UNLIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+					}
 				}
 			}
 		});
@@ -256,8 +266,10 @@ public class PSDetailsView extends LinearLayout {
     private void setLikeButtonStatus(boolean like, Button likeButton) {
     	if (like) {
 			likeButton.setText(R.string.liked);
+			likeButton.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_heart_red), null, null, null);
 		} else {
 			likeButton.setText(R.string.like);
+			likeButton.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_heart_grey), null, null, null);
 		}
     }
     
