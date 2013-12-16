@@ -1642,7 +1642,6 @@ containing a value of this type.
         public static final int friendsActivityError=0x7f0700be;
         public static final int friendsActivityLayout=0x7f0700bb;
         public static final int friendsActivityListView=0x7f0700bc;
-        public static final int friendsActivityProgressBar=0x7f0700bf;
         public static final int friendsListError=0x7f070090;
         public static final int frontPage=0x7f07009b;
         public static final int gallery=0x7f0700d0;
@@ -1717,6 +1716,7 @@ containing a value of this type.
         public static final int psCamera=0x7f0700b6;
         public static final int psFriends=0x7f0700b4;
         public static final int psHot=0x7f0700b5;
+        public static final int psProgressBar=0x7f0700bf;
         public static final int psSettings=0x7f0700b7;
         public static final int region=0x7f0700d7;
         public static final int regionSpinner=0x7f0700ab;
@@ -1818,29 +1818,31 @@ containing a value of this type.
         public static final int home=0x7f030036;
         public static final int infowindow_layout=0x7f030037;
         public static final int intro=0x7f030038;
-        public static final int loading_small_adv_layout=0x7f030039;
-        public static final int login_dialog=0x7f03003a;
-        public static final int macauwifi=0x7f03003b;
-        public static final int map=0x7f03003c;
-        public static final int map_filter_panel=0x7f03003d;
-        public static final int menu=0x7f03003e;
-        public static final int nearbylist=0x7f03003f;
-        public static final int old_details=0x7f030040;
-        public static final int old_details_qhd=0x7f030041;
-        public static final int photo_share=0x7f030042;
-        public static final int ps_detail=0x7f030043;
-        public static final int ps_detail_view=0x7f030044;
-        public static final int ps_header_view=0x7f030045;
-        public static final int ps_image=0x7f030046;
-        public static final int recommend=0x7f030047;
-        public static final int retry_layout=0x7f030048;
-        public static final int search=0x7f030049;
-        public static final int search_row=0x7f03004a;
-        public static final int sherlock_spinner_dropdown_item=0x7f03004b;
-        public static final int sherlock_spinner_item=0x7f03004c;
-        public static final int spinner_textview=0x7f03004d;
-        public static final int splash_screen=0x7f03004e;
-        public static final int wheel_text_item=0x7f03004f;
+        public static final int like_list_dialog=0x7f030039;
+        public static final int like_list_row=0x7f03003a;
+        public static final int loading_small_adv_layout=0x7f03003b;
+        public static final int login_dialog=0x7f03003c;
+        public static final int macauwifi=0x7f03003d;
+        public static final int map=0x7f03003e;
+        public static final int map_filter_panel=0x7f03003f;
+        public static final int menu=0x7f030040;
+        public static final int nearbylist=0x7f030041;
+        public static final int old_details=0x7f030042;
+        public static final int old_details_qhd=0x7f030043;
+        public static final int photo_share=0x7f030044;
+        public static final int ps_detail=0x7f030045;
+        public static final int ps_detail_view=0x7f030046;
+        public static final int ps_header_view=0x7f030047;
+        public static final int ps_image=0x7f030048;
+        public static final int recommend=0x7f030049;
+        public static final int retry_layout=0x7f03004a;
+        public static final int search=0x7f03004b;
+        public static final int search_row=0x7f03004c;
+        public static final int sherlock_spinner_dropdown_item=0x7f03004d;
+        public static final int sherlock_spinner_item=0x7f03004e;
+        public static final int spinner_textview=0x7f03004f;
+        public static final int splash_screen=0x7f030050;
+        public static final int wheel_text_item=0x7f030051;
     }
     public static final class menu {
         public static final int main_menu=0x7f0d0000;
@@ -1899,7 +1901,7 @@ containing a value of this type.
         public static final int all=0x7f080077;
         public static final int alreadyInFavorite=0x7f08005f;
         public static final int alreadyRemoveFromFavorite=0x7f080060;
-        public static final int alsoLikedThis=0x7f0800bc;
+        public static final int alsoLikedThis=0x7f0800bd;
         /**   Main app string 
          */
         public static final int app_id=0x7f080040;
@@ -1928,12 +1930,12 @@ containing a value of this type.
          */
         public static final int auth_client_using_bad_version_title=0x7f080014;
         public static final int backToMacau=0x7f080084;
-        public static final int before=0x7f0800c6;
+        public static final int before=0x7f0800c7;
         public static final int branch=0x7f080061;
         public static final int branchList=0x7f080062;
         public static final int businessHours=0x7f080057;
         public static final int cafeDetails=0x7f08009e;
-        public static final int cafeInfo=0x7f0800c0;
+        public static final int cafeInfo=0x7f0800c1;
         public static final int callPhone=0x7f080065;
         public static final int callUs1=0x7f080095;
         public static final int callUs2=0x7f080096;
@@ -1941,7 +1943,7 @@ containing a value of this type.
         public static final int cash=0x7f080055;
         public static final int category=0x7f08007a;
         public static final int clear=0x7f080075;
-        public static final int clearCafeTableSql=0x7f0800ca;
+        public static final int clearCafeTableSql=0x7f0800cb;
         public static final int coloaneRegion=0x7f08009b;
         public static final int com_facebook_choose_friends=0x7f080029;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f08001a;
@@ -1968,7 +1970,7 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_log_in_button=0x7f080022;
         public static final int com_facebook_usersettingsfragment_logged_in=0x7f080023;
         public static final int com_facebook_usersettingsfragment_not_logged_in=0x7f080024;
-        public static final int comment=0x7f0800bf;
+        public static final int comment=0x7f0800c0;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -2044,7 +2046,7 @@ containing a value of this type.
         public static final int contentWordsTooShort=0x7f08006f;
         public static final int coupon_tab=0x7f080044;
         public static final int creditVipCoupon=0x7f080050;
-        public static final int day=0x7f0800c4;
+        public static final int day=0x7f0800c5;
         public static final int directSearch=0x7f080072;
         /**   About 
          */
@@ -2085,24 +2087,24 @@ containing a value of this type.
          */
         public static final int foodNews=0x7f08009d;
         public static final int friendsList=0x7f0800ae;
-        public static final int getCafeEntriesSql=0x7f0800c9;
+        public static final int getCafeEntriesSql=0x7f0800ca;
         public static final int giveFeedBack=0x7f08005e;
         public static final int googleMap=0x7f08008b;
         public static final int homepage=0x7f080042;
-        public static final int hour=0x7f0800c3;
+        public static final int hour=0x7f0800c4;
         public static final int info=0x7f080058;
         public static final int information=0x7f08005b;
         /**   SQL Queries 
          */
-        public static final int initCafeTableSql=0x7f0800c7;
-        public static final int insertCafeSql=0x7f0800c8;
+        public static final int initCafeTableSql=0x7f0800c8;
+        public static final int insertCafeSql=0x7f0800c9;
         public static final int intro=0x7f080059;
         /**  Latest 
          */
         public static final int latestNews=0x7f08009c;
-        public static final int like=0x7f0800bd;
-        public static final int liked=0x7f0800be;
-        public static final int likedThis=0x7f0800bb;
+        public static final int like=0x7f0800be;
+        public static final int liked=0x7f0800bf;
+        public static final int likedThis=0x7f0800bc;
         public static final int loadingAdv=0x7f08007f;
         public static final int loadingContent=0x7f08004a;
         public static final int loadingInfo=0x7f080049;
@@ -2121,8 +2123,8 @@ containing a value of this type.
         public static final int mapCenterArea=0x7f080089;
         public static final int map_search=0x7f080046;
         public static final int menu=0x7f08005a;
-        public static final int min=0x7f0800c2;
-        public static final int month=0x7f0800c5;
+        public static final int min=0x7f0800c3;
+        public static final int month=0x7f0800c6;
         /**  Menu 
          */
         public static final int nextPage=0x7f080063;
@@ -2138,6 +2140,7 @@ containing a value of this type.
         public static final int ourWebsite=0x7f080093;
         public static final int paymentMethod=0x7f080056;
         public static final int peopleLikedThis=0x7f0800ba;
+        public static final int peopleListLikedThis=0x7f0800bb;
         public static final int phone=0x7f080053;
         /**  PhotoShare 
          */
@@ -2163,7 +2166,7 @@ containing a value of this type.
         public static final int searchResults=0x7f08007b;
         /**   Misc. 
          */
-        public static final int sec=0x7f0800c1;
+        public static final int sec=0x7f0800c2;
         public static final int selectOneItemPrompt=0x7f08007e;
         public static final int sendFailed=0x7f08006c;
         public static final int sendSucceed=0x7f08006b;

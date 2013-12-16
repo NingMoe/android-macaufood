@@ -28,13 +28,13 @@ import com.cycon.macaufood.widget.TouchImageView;
 public class PSHotAdapter extends BaseAdapter {
 
     public ImageLoader imageLoader; 
-    private List<ParsedPSHolder> mHolderList;
+    private List<String> mHolderList;
     private Context mContext;
     private LayoutInflater mInflater;
     private final int imageWidth;
     public final static int SPACING_IN_DP = 4;
 
-    public PSHotAdapter(Context context, List<ParsedPSHolder> holderList) {
+    public PSHotAdapter(Context context, List<String> holderList) {
             this.mHolderList = holderList;
             mContext = context;
         	imageLoader=new ImageLoader(context, holderList.size(), ImageType.PHOTOSHARE);
@@ -58,7 +58,7 @@ public class PSHotAdapter extends BaseAdapter {
             	holder = (ViewHolder) convertView.getTag();
             }
             
-            ParsedPSHolder psHolder = mHolderList.get(position);
+            ParsedPSHolder psHolder = MFConfig.getInstance().getPsInfoMap().get(mHolderList.get(position));
             if (holder != null) {
 				imageLoader.displayImage(psHolder.getFilename(), holder.image, position);
 			}

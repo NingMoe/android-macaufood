@@ -101,12 +101,11 @@ public class PhotoShare extends SherlockFragment{
 	private long mFriendsActivityTimeStamp;
 	private boolean mFirstShowFriendsActivity;
 	private View mFriendsActivityLayout;
-	private View mFriendsActivityProgressBar;
+	private View mProgressBar;
 	private Button mFriendsActivityFindFriendsButton;
 	private TextView mFriendsActivityError;
 	private StickyListHeadersListView mFriendsActivityListView;
 	private PSFriendsActivityAdapter mFriendsActivityAdapter;
-	private List<ParsedPSHolder> mFriendsActivityInfo = new ArrayList<ParsedPSHolder>();
 	
 	private int mCurrentTab = 1; //friends = 0, hot = 1;
 	
@@ -194,10 +193,14 @@ public class PhotoShare extends SherlockFragment{
 		}
 		mFriendsActivityLayout = mView.findViewById(R.id.friendsActivityLayout);
 		mFriendsActivityFindFriendsButton = (Button) mView.findViewById(R.id.findFriendsButton);
-		mFriendsActivityProgressBar = mView.findViewById(R.id.friendsActivityProgressBar);
+		mProgressBar = mView.findViewById(R.id.psProgressBar);
+		if (MFConfig.isOnline(mContext) && 
+				!MFConfig.hasAlreadyRefreshList) {
+			mProgressBar.setVisibility(View.VISIBLE);
+		}
 		mFriendsActivityError = (TextView) mView.findViewById(R.id.friendsActivityError);
 		mFriendsActivityListView = (StickyListHeadersListView) mView.findViewById(R.id.friendsActivityListView);
-		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, mFriendsActivityInfo);
+		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, MFConfig.getInstance().getFriendsActivityList());
 		mFriendsActivityListView.setAdapter(mFriendsActivityAdapter);
 		
 		mFriendsActivityFindFriendsButton.setOnClickListener(new OnClickListener() {
@@ -261,7 +264,7 @@ public class PhotoShare extends SherlockFragment{
 		mCurrentTab = 0;
 		mHotGV.setVisibility(View.GONE);
 		mFriendsActivityLayout.setVisibility(View.VISIBLE);
-
+		mFriendsActivityAdapter.notifyDataSetChanged();
 		if (System.currentTimeMillis() - mFriendsActivityTimeStamp > REFRESH_FRIENDS_ACTIVITY_TIME_PERIOD) {
 			loadFriendsActivity();
 		}
@@ -290,19 +293,27 @@ public class PhotoShare extends SherlockFragment{
         mContext = getActivity();
         
         fileCache=new FileCache(mContext, ImageType.PHOTOSHARE);
-        File f=fileCache.getFile(MFConstants.PS_HOT_XML_FILE_NAME);
-		try {
-			FileInputStream is = new FileInputStream(f);
-			MFFetchListHelper.parseXml(is, MFConfig.tempParsedPSHotList, MFConfig.getInstance().getPsHotList());
-		} catch (FileNotFoundException e) {
-	    	MFLog.e(TAG, "FileNotFoundException");
-			e.printStackTrace();
-		} 
-
-		//refresh when file cache xml is deleted by user
-        if (MFConfig.getInstance().getPsHotList().size() == 0 && !MFFetchListHelper.isFetching && !((Home)getActivity()).isShowingDisClaimer()) {
-        	refresh();
+        
+		if (MFConfig.isOnline(mContext) && 
+				!MFConfig.hasAlreadyRefreshList) { //need to fetch hot list again if already fetched all list
+			MFFetchListHelper.fetchPSHotList((Home)mContext);
+		} else { 
+	        File f=fileCache.getFile(MFConstants.PS_HOT_XML_FILE_NAME);
+			try {
+				FileInputStream is = new FileInputStream(f);
+				MFFetchListHelper.parseXml(is, MFConfig.tempParsedPSHotList, MFConfig.getInstance().getPsHotList());
+			} catch (FileNotFoundException e) {
+		    	MFLog.e(TAG, "FileNotFoundException");
+				e.printStackTrace();
+			} 
 		}
+
+//		//refresh when file cache xml is deleted by user
+//        if (MFConfig.getInstance().getPsHotList().size() == 0 && !MFFetchListHelper.isFetching && !((Home)getActivity()).isShowingDisClaimer()) {
+//        	refresh();
+//		}
+		
+
         
 		if (MFConfig.memberId == null) {
 			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
@@ -364,8 +375,8 @@ public class PhotoShare extends SherlockFragment{
 	//reload friends activity and show progress bar when there is internet
 	public void loadFriendsActivity() {
 		File f=fileCache.getFile(MFConstants.PS_FRIENDS_ACTIVITY_XML_FILE_NAME);
-		DefaultHandler handler = new PSDetailXMLHandler(mFriendsActivityInfo);
-		mFriendsActivityInfo.clear();		
+		DefaultHandler handler = new PSDetailXMLHandler(MFConfig.getInstance().getFriendsActivityList());
+		MFConfig.getInstance().getFriendsActivityList().clear();		
 		mFriendsActivityError.setVisibility(View.GONE);
 		mFriendsActivityFindFriendsButton.setVisibility(View.INVISIBLE);
 		
@@ -381,7 +392,7 @@ public class PhotoShare extends SherlockFragment{
 			return;
 		}
 
-		mFriendsActivityProgressBar.setVisibility(View.VISIBLE);
+		mProgressBar.setVisibility(View.VISIBLE);
 		
 //		if (MFConfig.memberId == null) {
 //			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
@@ -393,14 +404,15 @@ public class PhotoShare extends SherlockFragment{
 			
 			@Override
 			public void onLoadResultSuccess(Object result) {
-				mFriendsActivityProgressBar.setVisibility(View.GONE);
+				mProgressBar.setVisibility(View.GONE);
 				mFriendsActivityTimeStamp = System.currentTimeMillis();
-				if (mFriendsActivityInfo.size() > 0) {
+				ArrayList<String> infoList = MFConfig.getInstance().getFriendsActivityList();
+				if (infoList.size() > 0) {
 					mFriendsActivityAdapter.psDetailsImageLoader.cleanup();
-					mFriendsActivityAdapter.psDetailsImageLoader.setPSDetailsImagesToLoadFromParsedPS(mFriendsActivityInfo);
+					mFriendsActivityAdapter.psDetailsImageLoader.setPSDetailsImagesToLoadFromParsedPS(infoList);
 					mFriendsActivityAdapter.psHeaderImageLoader.cleanup();
-					mFriendsActivityAdapter.psHeaderImageLoader.setProfileImagesToLoadFromParsedPS(mFriendsActivityInfo);
-					
+					mFriendsActivityAdapter.psHeaderImageLoader.setProfileImagesToLoadFromParsedPS(infoList);
+//					MFUtil.syncPSList(MFConfig.getInstance().getPsHotList(), MFConfig.getInstance().getFriendsActivityList());
 					mFriendsActivityAdapter.notifyDataSetChanged();
 				} else {
 					mFriendsActivityError.setVisibility(View.VISIBLE);
@@ -420,12 +432,14 @@ public class PhotoShare extends SherlockFragment{
 			public void onLoadResultError() {
 				mFriendsActivityError.setVisibility(View.VISIBLE);
 				mFriendsActivityError.setText(R.string.errorMsg);
-				mFriendsActivityProgressBar.setVisibility(View.GONE);
+				mProgressBar.setVisibility(View.GONE);
 			}
 		});
 	}
 	
     public void populateGridView() {
+//    	MFUtil.syncPSList(MFConfig.getInstance().getPsHotList(), MFConfig.getInstance().getFriendsActivityList());
+    	mProgressBar.setVisibility(View.GONE);
 		//if no internet and no data in File, show retry message
 		if (MFConfig.getInstance().getPsHotList().size() == 0) {
 			displayRetryLayout();
@@ -437,6 +451,7 @@ public class PhotoShare extends SherlockFragment{
 		mPsHotAdapter.imageLoader.setTaskMaxNumber(MFConfig.getInstance().getPsHotList().size());
 		mPsHotAdapter.imageLoader.setPSHotImagesToLoadFromParsedPS(MFConfig.getInstance().getPsHotList());
 		mPsHotAdapter.notifyDataSetChanged();
+		mFriendsActivityAdapter.notifyDataSetChanged();
     }
     
 	public void refresh() {

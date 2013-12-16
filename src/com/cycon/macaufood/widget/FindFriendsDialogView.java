@@ -58,11 +58,6 @@ public class FindFriendsDialogView extends LinearLayout {
 		init(context);
 	}
 
-	public FindFriendsDialogView(Context context, AttributeSet attrSet) {
-		super(context, attrSet);
-		init(context);
-	}
-
 	public void init(final Context context) {
 		mContext = context;
 		mInflater = LayoutInflater.from(context);

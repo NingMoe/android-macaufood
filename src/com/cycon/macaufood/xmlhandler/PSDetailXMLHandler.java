@@ -15,9 +15,9 @@ import com.cycon.macaufood.utilities.MFConfig;
 
 		public static ParsedPSHolder holder = null;
 		private StringBuffer tempValue = new StringBuffer();
-		private List<ParsedPSHolder> tempParsedList;
+		private List<String> tempParsedList;
 		
-		public PSDetailXMLHandler(List<ParsedPSHolder> list) {
+		public PSDetailXMLHandler(List<String> list) {
 			tempParsedList = list;
 		}
 
@@ -38,9 +38,10 @@ import com.cycon.macaufood.utilities.MFConfig;
 			if (localName.equals("photos")) return;
 			
 			if (localName.equals("photo")) {
-				tempParsedList.add(holder);
+				MFConfig.getInstance().getPsInfoMap().put(holder.getPhotoid(), holder);
 			} else {
 				if (localName.equals("photoid")) {
+					tempParsedList.add(tempValue.toString());
 					holder.setPhotoid(tempValue.toString());
 				} else if (localName.equals("memberid")) {
 					holder.setMemberid(tempValue.toString());

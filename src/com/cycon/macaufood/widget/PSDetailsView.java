@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.text.Spannable;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.activities.Details;
+import com.cycon.macaufood.bean.PSCachedUserAction;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
@@ -32,7 +35,7 @@ import com.cycon.macaufood.utilities.MFUtil;
 
 public class PSDetailsView extends LinearLayout {
 
-	private final static int MAX_LIKE = 6;
+	private final static int MAX_LIKE = 7;
 	private Context mContext;
 	
 	public PSDetailsView(Context context) {
@@ -79,7 +82,7 @@ public class PSDetailsView extends LinearLayout {
 		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, pos);
 		
 		String captionText = pInfo.getCaption();
-		if (captionText.length() > 0) {
+		if (captionText.length() > 0 && !captionText.equals("(null)")) {
 			holder.caption.setText(pInfo.getCaption());
 			holder.caption.setVisibility(View.VISIBLE);
 		} else {
@@ -127,9 +130,11 @@ public class PSDetailsView extends LinearLayout {
 						pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
 						loadLikeInfo(pInfo, holder, false);
 						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_LIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+//						addLikeToActionMap(pInfo.getPhotoid(), true);
 					} else {
 						loadLikeInfo(pInfo, holder, true);
 						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_UNLIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+//						addLikeToActionMap(pInfo.getPhotoid(), false);
 					}
 				}
 			}
@@ -142,6 +147,25 @@ public class PSDetailsView extends LinearLayout {
 			holder.deleteButton.setVisibility(View.INVISIBLE);
 		}
 	}
+	
+	
+//	private void addLikeToActionMap(String photoId, boolean like) {
+//		PSCachedUserAction a = MFConfig.getInstance().getPsActionMap().get(photoId);
+//		if (a == null) {
+//			a = new PSCachedUserAction();
+//			MFConfig.getInstance().getPsActionMap().put(photoId, a);
+//		}
+//		a.like = like;
+//	}
+//	
+//	private void addCommentToActionMap(String photoId, String comment) {
+//		PSCachedUserAction a = MFConfig.getInstance().getPsActionMap().get(photoId);
+//		if (a == null) {
+//			a = new PSCachedUserAction();
+//			MFConfig.getInstance().getPsActionMap().put(photoId, a);
+//		}
+//		a.comments.add(comment);
+//	}
 	
     public static class ViewHolder {
     	ImageView photoImage;
@@ -162,7 +186,7 @@ public class PSDetailsView extends LinearLayout {
 //		List<PSLike> likeList = extractLikeList(pInfo.getLikes());
 		
 		StringBuilder sb = new StringBuilder();
-    	List<PSLike> likeList = new ArrayList<PSLike>();
+    	final List<PSLike> likeList = new ArrayList<PSLike>();
     	String[] tokens = pInfo.getLikes().split("@@@");
     	for (int i = tokens.length - 1; i >=0; i--) {
     		String tokenStr = tokens[i];
@@ -216,7 +240,20 @@ public class PSDetailsView extends LinearLayout {
 				
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
+					
+			    	final LikeListDialogView view = new LikeListDialogView(mContext, likeList);
+			    	
+					AlertDialog dialog = new AlertDialog.Builder(mContext)
+					.setView(view)
+					.setCancelable(false)
+					.setPositiveButton(mContext.getResources().getString(R.string.confirmed),
+							new DialogInterface.OnClickListener() {
+
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.dismiss();
+								}
+							}).show();
 					
 				}
 			});
@@ -305,16 +342,16 @@ public class PSDetailsView extends LinearLayout {
     	return commentList;
     }
     
-    private static class PSLike {
-    	String id;
-    	String name;
+    public static class PSLike {
+    	public String id;
+    	public String name;
     }
     
-    private static class PSComment {
-    	String comment;
-    	String id;
-    	String name;
-    	String timeStamp;
+    public static class PSComment {
+    	public String comment;
+    	public String id;
+    	public String name;
+    	public String timeStamp;
     }
 	
 }

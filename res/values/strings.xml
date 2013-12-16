@@ -151,6 +151,7 @@
  	<string name="unfollow">取消關注</string>
  	<string name="firstShowFriendsActivityMsg">%s你好! 歡迎登入食在澳門\n\n你可透過關注朋友在這裡顯示朋友及自己上傳美食相片的動態</string>
  	<string name="peopleLikedThis">有 %d 個人讚好</string>
+ 	<string name="peopleListLikedThis">對此讚好的朋友</string>
  	<string name="likedThis">對此讚好</string>
  	<string name="alsoLikedThis">都讚好</string>
  	<string name="like">讚好</string>
@@ -161,7 +162,7 @@
  	
  	<!--  Misc. -->
  	<string name="sec">秒</string>
- 	<string name="min">分</string>
+ 	<string name="min">分鐘</string>
  	<string name="hour">小時</string>
  	<string name="day">日</string>
  	<string name="month">個月</string>

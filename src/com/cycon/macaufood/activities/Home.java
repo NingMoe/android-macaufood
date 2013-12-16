@@ -209,7 +209,9 @@ public class Home extends SherlockFragmentActivity {
 	}
 	
 	public void hideProgressDialog() {
-		pDialog.dismiss();
+		if (pDialog != null) {
+			pDialog.dismiss();
+		}
 	}
 
 	@Override
@@ -297,6 +299,7 @@ public class Home extends SherlockFragmentActivity {
 
 	public void refresh() {
 		if (MFConfig.isOnline(this)) {
+			MFConfig.hasAlreadyRefreshList = true;
 			MFFetchListHelper.fetchAllList(this);
 			MFService.checkUpdate(getApplicationContext());
 		} 

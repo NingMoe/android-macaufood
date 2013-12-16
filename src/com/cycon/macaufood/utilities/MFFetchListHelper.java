@@ -79,6 +79,12 @@ public class MFFetchListHelper {
 			AsyncTaskHelper.executeWithResultBitmap(new FetchMainCouponTask(homeActivity));
 		}
 	}
+	
+	public static void fetchPSHotList(Home homeActivity) {
+		FetchListInfo psHotInfo = new FetchListInfo(MFURL.PHOTOSHARE_HOT_LIST, MFConstants.PS_HOT_XML_FILE_NAME, ImageType.PHOTOSHARE, MFConfig.tempParsedPSHotList, MFConfig.getInstance().getPsHotList());
+		AsyncTaskHelper.execute(new FetchXmlTask(psHotInfo,
+				homeActivity));
+	}
 
 	private static class FetchXmlTask extends AsyncTask<Void, Void, Void> {
 

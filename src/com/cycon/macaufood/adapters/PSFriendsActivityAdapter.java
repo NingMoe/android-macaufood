@@ -15,6 +15,7 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
+import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.widget.PSDetailsView;
 import com.cycon.macaufood.widget.PSHeaderView;
@@ -23,13 +24,13 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
 
     public ImageLoader psDetailsImageLoader; 
     public ImageLoader psHeaderImageLoader; 
-    private List<ParsedPSHolder> mHolderList;
+    private List<String> mHolderList;
     private Context mContext;
     private LayoutInflater mInflater;
 //    private final int imageWidth;
     public final static int SPACING_IN_DP = 4;
 
-    public PSFriendsActivityAdapter(Context context, List<ParsedPSHolder> holderList) {
+    public PSFriendsActivityAdapter(Context context, List<String> holderList) {
             this.mHolderList = holderList;
             mContext = context;
             psDetailsImageLoader=new ImageLoader(context, 0, ImageType.PHOTOSHARE);
@@ -50,18 +51,19 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
 	public View getHeaderView(int position, View convertView, ViewGroup parent) {
 		PSHeaderView.ViewHolder holder;
 		PSHeaderView psHeaderView;
+		ParsedPSHolder psHolder = MFConfig.getInstance().getPsInfoMap().get(mHolderList.get(position));
         if (convertView == null) {
         	psHeaderView = (PSHeaderView) mInflater.inflate(R.layout.ps_header_view, null);
         	holder = psHeaderView.initView();
         	convertView = psHeaderView;
         	convertView.setTag(holder);
-        	MFService.loadImage(mContext.getApplicationContext(), ImageType.PSLOCALAVATAR, mHolderList.get(position).getMemberid(), holder.profilePic, false, false);
+        	MFService.loadImage(mContext.getApplicationContext(), ImageType.PSLOCALAVATAR, psHolder.getMemberid(), holder.profilePic, false, false);
         } else {
         	psHeaderView = (PSHeaderView) convertView;
         	holder = (PSHeaderView.ViewHolder) convertView.getTag();
         	Log.e("ZZZ", "header view recycle");
         }
-        psHeaderView.loadInfo(mHolderList.get(position), holder, psHeaderImageLoader, position);
+        psHeaderView.loadInfo(psHolder, holder, psHeaderImageLoader, position);
         
         return convertView;
 	}
@@ -80,8 +82,8 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
         	holder = (PSDetailsView.ViewHolder) convertView.getTag();
         	Log.e("ZZZ", "detail view recycle");
         }
-        
-        psDetailsView.loadInfo(mHolderList.get(position), holder, psDetailsImageLoader, position);
+        ParsedPSHolder psHolder = MFConfig.getInstance().getPsInfoMap().get(mHolderList.get(position));
+        psDetailsView.loadInfo(psHolder, holder, psDetailsImageLoader, position);
         return convertView;
 	}
 

@@ -10,19 +10,36 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.util.TypedValue;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
+import com.cycon.macaufood.bean.ParsedPSHolder;
 
 public class MFUtil {
 
+//	public static void syncPSList(List<ParsedPSHolder> needUpdateList, List<ParsedPSHolder> udpatedList) {
+//		for (ParsedPSHolder parsedPSHolder : udpatedList) {
+//			syncPSList(needUpdateList, parsedPSHolder);
+//		}
+//		for (ParsedPSHolder parsedPSHolder : needUpdateList) {
+//			syncPSList(udpatedList, parsedPSHolder);
+//		}
+//	}
+//
+//	public static void syncPSList(List<ParsedPSHolder> needUpdateList, ParsedPSHolder pHolder) {
+//		for (ParsedPSHolder parsedPSHolder : needUpdateList) {
+//			if (parsedPSHolder.getPhotoid().equals(pHolder.getPhotoid())) {
+//				parsedPSHolder = pHolder;
+//			}
+//		}
+//	}
 	
     public static void CopyStream(InputStream is, OutputStream os)
     {

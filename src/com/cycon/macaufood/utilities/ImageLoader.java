@@ -31,6 +31,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import com.cycon.macaufood.utilities.MFLog;
+import com.cycon.macaufood.widget.PSDetailsView.PSLike;
 
 import android.util.Log;
 import android.view.View;
@@ -112,24 +113,24 @@ public class ImageLoader {
     	maxTasksNumber = number;
     }
     
-    public void setPSHotImagesToLoadFromParsedPS(List<ParsedPSHolder> cafes) {
+    public void setPSHotImagesToLoadFromParsedPS(List<String> photoIds) {
     	imagesToLoad.clear();
-        for (ParsedPSHolder cafe : cafes) {
-        	imagesToLoad.add(cafe.getFilename());
+        for (String photoId : photoIds) {
+        	imagesToLoad.add(MFConfig.getInstance().getPsInfoMap().get(photoId).getFilename());
         }
     }
     
-    public void setPSDetailsImagesToLoadFromParsedPS(List<ParsedPSHolder> cafes) {
+    public void setPSDetailsImagesToLoadFromParsedPS(List<String> photoIds) {
     	imagesToLoad.clear();
-        for (ParsedPSHolder cafe : cafes) {
-        	imagesToLoad.add("image-" + cafe.getPhotoid() + "-1.jpg");
+        for (String photoId : photoIds) {
+        	imagesToLoad.add("image-" + photoId + "-1.jpg");
         }
     }
     
-    public void setProfileImagesToLoadFromParsedPS(List<ParsedPSHolder> cafes) {
+    public void setProfileImagesToLoadFromParsedPS(List<String> photoIds) {
     	imagesToLoad.clear();
-        for (ParsedPSHolder cafe : cafes) {
-        	imagesToLoad.add(cafe.getMemberid());
+        for (String photoId : photoIds) {
+        	imagesToLoad.add(MFConfig.getInstance().getPsInfoMap().get(photoId).getMemberid());
         }
     }
     
@@ -138,6 +139,13 @@ public class ImageLoader {
         for (ParsedFriendsHolder holder : holders) {
         	imagesToLoad.add(holder.getId());
         	idUrlMap.put(holder.getId(), holder.getPicLink());
+        }
+    }
+    
+    public void setImagesToLoadFromLikeList(List<PSLike> holders) {
+    	imagesToLoad.clear();
+        for (PSLike holder : holders) {
+        	imagesToLoad.add(holder.id);
         }
     }
     
