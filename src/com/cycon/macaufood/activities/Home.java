@@ -86,8 +86,8 @@ public class Home extends SherlockFragmentActivity {
 				Coupon.class, null);
 		mTabsAdapter.addTab(bar.newTab().setText(R.string.foodNews),
 				FoodNews.class, null);
-		mTabsAdapter.addTab(bar.newTab().setText(R.string.photoShare),
-				PhotoShare.class, null);
+//		mTabsAdapter.addTab(bar.newTab().setText(R.string.photoShare),
+//				PhotoShare.class, null);
 
 		if (savedInstanceState != null) {
 			bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
