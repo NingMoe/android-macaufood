@@ -30,6 +30,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.baidu.mapapi.BMapManager;
+import com.baidu.mapapi.map.MapController;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
@@ -95,16 +99,20 @@ public class Map extends SherlockFragmentActivity {
 	private boolean needPopulateMarkers;
 	private com.actionbarsherlock.view.MenuItem mOptionsItem;
 	private com.actionbarsherlock.view.MenuItem mGoogleMapItem;
-	private GoogleMap mMap;
-	private HashMap<Marker, String> mMarkersHashMap = new HashMap<Marker, String>();
-	private MarkerOptions mSelectedMarkerOptions;
-	private Marker mSelectedMarker;
+//	private GoogleMap mMap;
+//	private HashMap<Marker, String> mMarkersHashMap = new HashMap<Marker, String>();
+//	private MarkerOptions mSelectedMarkerOptions;
+//	private Marker mSelectedMarker;
 	private Button navigateIsland;
-	private BitmapDescriptor greenBitmap;
-	private BitmapDescriptor blueBitmap;;
-	private BitmapDescriptor favoriteBitmap;
+//	private BitmapDescriptor greenBitmap;
+//	private BitmapDescriptor blueBitmap;;
+//	private BitmapDescriptor favoriteBitmap;
 	private ArrayList<Cafe> searchResultCafes;
 	private boolean isFirstPopulateFromSearch;
+	
+	
+	private BMapManager mBMapMan = null;
+	private MapView mMapView = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -117,6 +125,9 @@ public class Map extends SherlockFragmentActivity {
 			Process.killProcess(Process.myPid());
 			return;
 		}
+		
+		mBMapMan=new BMapManager(getApplication());  
+		mBMapMan.init("CjWobmOYcj8eD4ilipMllU5P", null); 
 		
 		searchResultCafes = new ArrayList<Cafe>(MFConfig.getInstance().getSearchResultList());
 		MFConfig.getInstance().getSearchResultList().clear();
@@ -230,21 +241,25 @@ public class Map extends SherlockFragmentActivity {
 	}
 
 	private void setUpMapIfNeeded() {
-		// Do a null check to confirm that we have not already instantiated the
-		// map.
-		if (mMap == null) {
-			// Try to obtain the map from the SupportMapFragment.
-			mMap = ((SupportMapFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.map)).getMap();
-			// Check if we were successful in obtaining the map.
-			if (mMap != null) {
-				setUpMap();
-			}
+		if (mMapView == null) {
+			setUpMap();
 		}
 	}
 
 	private void setUpMap() {
-		greenBitmap = BitmapDescriptorFactory.fromResource(R.drawable.green_pin);
+		mMapView=(MapView)findViewById(R.id.map);  
+		mMapView.setBuiltInZoomControls(true);  
+		//设置启用内置的缩放控件  
+		MapController mMapController=mMapView.getController();  
+		// 得到mMapView的控制权,可以用它控制和驱动平移和缩放  
+		GeoPoint point =new GeoPoint((int)(LAT_DEFAULT* 1E6),(int)(LONG_DEFAULT* 1E6));  
+		//用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)  
+		mMapController.setCenter(point);//设置地图中心点  
+		mMapController.setZoom(16);//设置地图zoom级别  
+		mMapController.enableClick(true);
+		
+		
+/*		greenBitmap = BitmapDescriptorFactory.fromResource(R.drawable.green_pin);
 		blueBitmap = BitmapDescriptorFactory.fromResource(R.drawable.blue_pin);
 		favoriteBitmap = BitmapDescriptorFactory.fromResource(R.drawable.favorite_heart_pin);
 		mMap.setMyLocationEnabled(true);
@@ -269,17 +284,6 @@ public class Map extends SherlockFragmentActivity {
 				return null;
 			}
 		});
-//		mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-//			
-//			public boolean onMarkerClick(Marker marker) {
-//				marker.setIcon(lightBlueBitmap);
-//				if (mPreviousMarker != null) {
-//					mPreviousMarker.setIcon(greenBitmap);
-//				}
-//				mPreviousMarker = marker;
-//				return false;
-//			}
-//		});
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 			
 			public void onInfoWindowClick(Marker marker) {
@@ -302,12 +306,6 @@ public class Map extends SherlockFragmentActivity {
 //				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16));
 			}
 		});
-//		mMap.setOnMapClickListener(new OnMapClickListener() {
-//			
-//			public void onMapClick(LatLng point) {
-//				MFLog.e("ZZZ", point.latitude + " " + point.longitude);
-//			}
-//		});
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 			
 			public void onCameraChange(CameraPosition position) {
@@ -422,7 +420,7 @@ public class Map extends SherlockFragmentActivity {
 				}
 			}
 		});
-		
+		*/
 	}
 
 	private void doAdvancedSearch() {
@@ -486,7 +484,7 @@ public class Map extends SherlockFragmentActivity {
 	}
 
 	private void searchNearby() {
-
+/*
 		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>();
 		
 		mMap.clear();
@@ -587,6 +585,8 @@ public class Map extends SherlockFragmentActivity {
 				disableItemSelect = false;
 			}
 		}, 400);
+		
+		*/
 	}
 	
 	private LatLng getLatLngFromCafe(Cafe cafe) {
@@ -595,10 +595,10 @@ public class Map extends SherlockFragmentActivity {
 
 	private void populateOverlayFromSearchList() {
 		
-		if (mMap == null) {
+		if (mMapView == null) {
 			setUpMapIfNeeded(); //fix a crash report
 		}
-		
+		/*
 		mMap.clear();
 		mMarkersHashMap.clear();
 
@@ -672,15 +672,10 @@ public class Map extends SherlockFragmentActivity {
 		} else {
 			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(50f, getResources())));
 		}
+		
+		*/
 	}
 
-	@Override
-	protected void onDestroy() {
-//		MFConfig.getInstance().getSearchResultList().clear();
-		cafeAdapter.imageLoader.cleanup();
-
-		super.onDestroy();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
@@ -787,5 +782,33 @@ public class Map extends SherlockFragmentActivity {
 		public void onNothingSelected(AdapterView<?> parent) {
 		}
 	};
+	
+	
+	@Override  
+	protected void onDestroy(){  
+	        mMapView.destroy();  
+	        if(mBMapMan!=null){  
+	                mBMapMan.destroy();  
+	                mBMapMan=null;  
+	        }  
+	        cafeAdapter.imageLoader.cleanup();
+	        super.onDestroy();  
+	}  
+	@Override  
+	protected void onPause(){  
+	        mMapView.onPause();  
+	        if(mBMapMan!=null){  
+	               mBMapMan.stop();  
+	        }  
+	        super.onPause();  
+	}  
+	@Override  
+	protected void onResume(){  
+	        mMapView.onResume();  
+	        if(mBMapMan!=null){  
+	                mBMapMan.start();  
+	        }  
+	       super.onResume();  
+	}  
 
 }
