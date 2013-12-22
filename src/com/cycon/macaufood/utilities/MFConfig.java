@@ -24,7 +24,6 @@ import android.net.NetworkInfo;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
-import com.cycon.macaufood.bean.PSCachedUserAction;
 import com.cycon.macaufood.bean.ParsedCafeHolder;
 import com.cycon.macaufood.bean.ParsedFoodNewsHolder;
 import com.cycon.macaufood.bean.ParsedPSHolder;

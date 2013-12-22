@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,7 +19,10 @@ import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,17 +31,17 @@ import android.widget.Toast;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.activities.Details;
-import com.cycon.macaufood.bean.PSCachedUserAction;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.facebook.Session;
 
 public class PSDetailsView extends LinearLayout {
 
-	private final static int MAX_LIKE = 7;
+	private final static int MAX_LIKE = 6;
 	private Context mContext;
 	
 	public PSDetailsView(Context context) {
@@ -70,7 +76,6 @@ public class PSDetailsView extends LinearLayout {
 	public void loadInfo(final ParsedPSHolder pInfo, final ViewHolder holder, ImageLoader imageLoader, int pos) {
 		final String cafeId = pInfo.getCafeid();
 
-		Log.e("ZZZ", "loadInfo");
 		int width = Integer.parseInt(pInfo.getImgwidth());
 		int height = Integer.parseInt(pInfo.getImgheight());
 		int padding = MFUtil.getPixelsFromDip(16, getResources());
@@ -122,7 +127,6 @@ public class PSDetailsView extends LinearLayout {
 			@Override
 			public void onClick(View v) {
 				//TODO:check login status
-				//TODO: check internet and show toast
 				if (!MFConfig.isOnline(mContext)) {
 					Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
 				} else {
@@ -130,15 +134,15 @@ public class PSDetailsView extends LinearLayout {
 						pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
 						loadLikeInfo(pInfo, holder, false);
 						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_LIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
-//						addLikeToActionMap(pInfo.getPhotoid(), true);
 					} else {
 						loadLikeInfo(pInfo, holder, true);
 						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_UNLIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
-//						addLikeToActionMap(pInfo.getPhotoid(), false);
 					}
 				}
 			}
 		});
+		
+
 		
 
 		if (pInfo.getMemberid().equals(MFConfig.memberId)) {
@@ -147,25 +151,6 @@ public class PSDetailsView extends LinearLayout {
 			holder.deleteButton.setVisibility(View.INVISIBLE);
 		}
 	}
-	
-	
-//	private void addLikeToActionMap(String photoId, boolean like) {
-//		PSCachedUserAction a = MFConfig.getInstance().getPsActionMap().get(photoId);
-//		if (a == null) {
-//			a = new PSCachedUserAction();
-//			MFConfig.getInstance().getPsActionMap().put(photoId, a);
-//		}
-//		a.like = like;
-//	}
-//	
-//	private void addCommentToActionMap(String photoId, String comment) {
-//		PSCachedUserAction a = MFConfig.getInstance().getPsActionMap().get(photoId);
-//		if (a == null) {
-//			a = new PSCachedUserAction();
-//			MFConfig.getInstance().getPsActionMap().put(photoId, a);
-//		}
-//		a.comments.add(comment);
-//	}
 	
     public static class ViewHolder {
     	ImageView photoImage;
@@ -245,7 +230,6 @@ public class PSDetailsView extends LinearLayout {
 			    	
 					AlertDialog dialog = new AlertDialog.Builder(mContext)
 					.setView(view)
-					.setCancelable(false)
 					.setPositiveButton(mContext.getResources().getString(R.string.confirmed),
 							new DialogInterface.OnClickListener() {
 
@@ -282,7 +266,7 @@ public class PSDetailsView extends LinearLayout {
     
     private void loadCommentInfo(final ParsedPSHolder pInfo, ViewHolder holder) {
 		holder.comment.removeAllViews();
-		List<PSComment> commentList = extractCommentList(pInfo.getComments());
+		final List<PSComment> commentList = extractCommentList(pInfo.getComments());
 		if (commentList.size() > 0) {
 			holder.commentLayout.setVisibility(View.VISIBLE);
 			for (int i = 0; i < commentList.size(); i++) {
@@ -298,6 +282,60 @@ public class PSDetailsView extends LinearLayout {
 		} else {
 			holder.commentLayout.setVisibility(View.GONE);
 		}
+		
+		holder.commentButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (!MFConfig.isOnline(mContext)) {
+					Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+					return;
+				}
+		    	final CommentDialogView view = new CommentDialogView(mContext, commentList);
+		    	
+				final AlertDialog dialog = new AlertDialog.Builder(mContext)
+				.setView(view)
+				.show();
+				
+				final EditText editTv = (EditText) view.findViewById(R.id.editTv);
+//				InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+//				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+				
+//				editTv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//				    @Override
+//				    public void onFocusChange(View v, boolean hasFocus) {
+//				        if (hasFocus) {
+				            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+//				        }
+//				    }
+//				});
+
+				editTv.requestFocus();
+				
+				Button sendButton = (Button) view.findViewById(R.id.sendButton);
+				sendButton.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						String commentStr = editTv.getText().toString().trim();
+						if (commentStr.length() > 0) {
+							if (!MFConfig.isOnline(mContext)) {
+								Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+							} else {
+								List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+				    			pairs.add(new BasicNameValuePair("memberid", MFConfig.memberId));
+				    			pairs.add(new BasicNameValuePair("photoid", pInfo.getPhotoid()));
+				    			pairs.add(new BasicNameValuePair("comment", commentStr));
+				    			MFService.sendRequestWithParams(MFURL.PHOTOSHARE_COMMENT, mContext.getApplicationContext(), pairs);
+				    			pInfo.setComments(commentStr + "|||" + MFConfig.memberId + "|||" + MFConfig.memberName + "|||" + (System.currentTimeMillis() / 1000) + pInfo.getComments() + (pInfo.getComments().equals("") ? "" : "@@@"));
+				    			dialog.dismiss();
+							}
+						}
+
+					}
+				});
+			}
+		});
     }
     
     private void setLikeButtonStatus(boolean like, Button likeButton) {
@@ -328,7 +366,8 @@ public class PSDetailsView extends LinearLayout {
     private List<PSComment> extractCommentList(String str) {
     	List<PSComment> commentList = new ArrayList<PSComment>();
     	String[] tokens = str.split("@@@");
-    	for (String tokenStr : tokens) {
+    	for (int i = tokens.length - 1; i >= 0; i--) {
+    		String tokenStr = tokens[i];
 			String[] strArr = tokenStr.split("\\|\\|\\|");
 			if (strArr.length > 3) {
 				PSComment comment = new PSComment();

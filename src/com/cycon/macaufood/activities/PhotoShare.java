@@ -398,7 +398,7 @@ public class PhotoShare extends SherlockFragment{
 //			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
 //		}
 //		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + MFConfig.memberId;
-		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + "29";
+		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + "491";
 		
 		MFFetchListHelper.fetchList(url, handler, f, new MFServiceCallBack() {
 			

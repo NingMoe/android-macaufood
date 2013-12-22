@@ -36,11 +36,13 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
             psDetailsImageLoader=new ImageLoader(context, 0, ImageType.PHOTOSHARE);
             psDetailsImageLoader.setTaskMaxNumber(2);
             psDetailsImageLoader.setNoAnim(true);
+            //no need to keep loading detail images right?
 //            psDetailsImageLoader.setPSDetailsImagesToLoadFromParsedPS(holderList);
 
             psHeaderImageLoader=new ImageLoader(context, holderList.size(), ImageType.PSLOCALAVATAR);
 //            psHeaderImageLoader.setProfileImagesToLoadFromParsedPS(holderList);
             psHeaderImageLoader.setNoAnim(true);
+            psHeaderImageLoader.setAllowedDuplicate(true);
         	mInflater =  (LayoutInflater)context.getSystemService
         		      (Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -57,7 +59,7 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
         	holder = psHeaderView.initView();
         	convertView = psHeaderView;
         	convertView.setTag(holder);
-        	MFService.loadImage(mContext.getApplicationContext(), ImageType.PSLOCALAVATAR, psHolder.getMemberid(), holder.profilePic, false, false);
+//        	MFService.loadImage(mContext.getApplicationContext(), ImageType.PSLOCALAVATAR, psHolder.getMemberid(), holder.profilePic, false, false);
         } else {
         	psHeaderView = (PSHeaderView) convertView;
         	holder = (PSHeaderView.ViewHolder) convertView.getTag();

@@ -104,7 +104,14 @@ public class MFService {
 	public static void sendRequest(String url, Context c) {
 		appContext = c;
 		if (MFConfig.isOnline(appContext)) {
-			AsyncTaskHelper.execute(new SendRequestTask(url));
+			AsyncTaskHelper.execute(new SendRequestTask(url, null));
+		}
+	}
+	
+	public static void sendRequestWithParams(String url, Context c, List<NameValuePair> pairs) {
+		appContext = c;
+		if (MFConfig.isOnline(appContext)) {
+			AsyncTaskHelper.execute(new SendRequestTask(url, pairs));
 		}
 	}
 	
@@ -134,7 +141,7 @@ public class MFService {
 		HttpParams httpParams = client.getParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_PERIOD);
 		HttpPost request = new HttpPost(url);
-		request.setEntity(new UrlEncodedFormEntity(pairs));
+		request.setEntity(new UrlEncodedFormEntity(pairs, "utf-8"));
 		HttpResponse response = client.execute(request);
 		InputStream is = response.getEntity().getContent();
 		return is;
@@ -366,20 +373,22 @@ public class MFService {
 	private static class SendRequestTask extends AsyncTask<Void, Void, Void> {
 		
 		private String url;
+		private List<NameValuePair> pairs;
 		
-		private SendRequestTask(String url) {
+		private SendRequestTask(String url, List<NameValuePair> pairs) {
 			this.url = url;
+			this.pairs = pairs;
 		}
 		
 		@Override
 		protected Void doInBackground(Void... params) {
 			
             try {
-            	HttpClient client = new DefaultHttpClient();
-            	HttpParams httpParams = client.getParams();
-            	HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_PERIOD);
-            	HttpGet request = new HttpGet(url);
-            	client.execute(request);
+            	if (pairs == null) {
+            		executeRequest(url);
+				} else {
+					executeRequestWithHttpParams(url, pairs);
+				}
             	
 			} catch (MalformedURLException e) {
 				MFLog.e(TAG, "malformed url exception");
