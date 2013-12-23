@@ -78,10 +78,22 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="7dip"
             android:background="@drawable/light_button_bg"
-            android:padding="10dip"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
             android:text="@string/searchNearby"
             android:textColor="@color/green_text"
             android:textSize="15sp" />
+        
+        
+        <ImageButton
+            android:id="@+id/curLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="10dip"
+            android:background="@drawable/light_button_bg"
+            android:padding="5dip"
+            android:src="@drawable/ic_current_location" />
         
         
         <Button
