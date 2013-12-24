@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,16 +39,24 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.BMapManager;
+import com.baidu.mapapi.map.ItemizedOverlay;
 import com.baidu.mapapi.map.LocationData;
+import com.baidu.mapapi.map.MKMapStatus;
+import com.baidu.mapapi.map.MKMapStatusChangeListener;
+import com.baidu.mapapi.map.MKMapTouchListener;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationOverlay;
+import com.baidu.mapapi.map.OverlayItem;
+import com.baidu.mapapi.map.PopupClickListener;
+import com.baidu.mapapi.map.PopupOverlay;
 import com.baidu.mapapi.map.MyLocationOverlay.LocationMode;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.AdvancedSearchHelper;
+import com.cycon.macaufood.utilities.CoordsHelper;
 import com.cycon.macaufood.utilities.LatLngBoundHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
@@ -77,15 +87,19 @@ public class Map extends SherlockFragmentActivity {
 	public static final int SHOW_MAP_REQUEST_CODE = 1;
 	private static final int SHOW_LIST_MENU_ID = 1;
 	private static final int SHOW_GOOGLE_MAP_MENU_ID = 2;
-	private static final double LAT_MIN = 22.104;
-	private static final double LAT_MAX = 22.24;
-	private static final double LONG_MIN = 113.51;
-	private static final double LONG_MAX = 113.60;
-	private static final double LAT_DEFAULT = 22.19971287;
-	private static final double LONG_DEFAULT = 113.54500506;
-	private static final double LAT_DEFAULT_ISLAND = 22.148;
-	private static final double LONG_DEFAULT_ISLAND = 113.559;
-	private static final double LAT_ISLAND_BOUNDARY = 22.1735;
+	private static final double LAT_DIFF  = 0.0030;
+	private static final double LONG_DIFF = 0.0117;
+	private static final double LAT_MIN = 22.104 + LAT_DIFF;
+	private static final double LAT_MAX = 22.24 + LAT_DIFF;
+	private static final double LONG_MIN = 113.51 + LONG_DIFF;
+	private static final double LONG_MAX = 113.60 + LONG_DIFF;
+	private static final double LAT_DEFAULT = 22.19971287 + LAT_DIFF;
+	private static final double LONG_DEFAULT = 113.54500506 + LONG_DIFF;
+	private static final double LAT_DEFAULT_ISLAND = 22.148 + LAT_DIFF;
+	private static final double LONG_DEFAULT_ISLAND = 113.559 + LONG_DIFF;
+	private static final double LAT_ISLAND_BOUNDARY = 22.1735 + LAT_DIFF;
+	private static final float MARKER_HEIGHT_DP = 36f; //72px in xhdpi folder
+	
 	private static LatLngBounds mMapBounds = new LatLngBounds(new LatLng(LAT_MIN, LONG_MIN), new LatLng(LAT_MAX, LONG_MAX));
 	private String selectedCafeId;
 	private Button searchNearby;
@@ -119,7 +133,7 @@ public class Map extends SherlockFragmentActivity {
 	private ArrayList<Cafe> searchResultCafes;
 	private boolean isFirstPopulateFromSearch;
 	
-	
+	private boolean mMapShown;
 	private BMapManager mBMapMan = null;
 	private MapView mMapView = null;
 	private MapController mMapController = null;
@@ -131,8 +145,18 @@ public class Map extends SherlockFragmentActivity {
 	//定位图层
 	MyLocationOverlay myLocationOverlay = null;
 	boolean isRequest = false;//是否手动触发请求定位
-	boolean isFirstLoc = true;//是否首次定位
-
+	boolean isRequestFromStart = false;
+	
+	private MyOverlay mSelectedCafeOverlay = null;
+	private MyOverlay mOverlay = null;
+	private PopupOverlay   pop  = null;
+	private ArrayList<OverlayItem>  mItems = null; 
+	private CafeOverlayItem mCurItem;
+	private TextView  popupTitle = null;
+	private TextView  popupSnippet = null;
+	private View popupArrow = null;
+	private View popupView = null;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -150,6 +174,8 @@ public class Map extends SherlockFragmentActivity {
 		
 		searchResultCafes = new ArrayList<Cafe>(MFConfig.getInstance().getSearchResultList());
 		MFConfig.getInstance().getSearchResultList().clear();
+		
+
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.map);
@@ -160,8 +186,6 @@ public class Map extends SherlockFragmentActivity {
 		mapFilterPanel = findViewById(R.id.mapFilterPanel);
 		displaySearchQuery = (TextView) findViewById(R.id.displaySearchQuery);
 		navigateIsland = (Button) findViewById(R.id.navigateIsland);
-		
-		setUpMapIfNeeded();
 
 		headerView = new TextView(this);
 		headerView.setText(getString(R.string.totalResultsFound, searchResultCafes.size()));
@@ -229,14 +253,7 @@ public class Map extends SherlockFragmentActivity {
 //			return;
 //		}
 
-		// display list
-		if (searchResultCafes.size() > 0) {
-			needPopulateMarkers = true;
-			listLayout.setVisibility(View.VISIBLE);
-			mapLayout.setVisibility(View.GONE);
-			setTitle(R.string.searchResults);
-			isFirstPopulateFromSearch = true;
-		}
+
 
 		String queryText = getIntent().getStringExtra("querySearch");
 		if (queryText != null) {
@@ -257,6 +274,20 @@ public class Map extends SherlockFragmentActivity {
 			listMessage.setVisibility(View.VISIBLE);
 			list.setVisibility(View.INVISIBLE);
 		}
+		
+		// display list
+		if (searchResultCafes.size() > 0) {
+			needPopulateMarkers = true;
+			listLayout.setVisibility(View.VISIBLE);
+			mapLayout.setVisibility(View.GONE);
+			setTitle(R.string.searchResults);
+			isFirstPopulateFromSearch = true;
+			mMapShown = false;
+		} else {
+			mMapShown = true;
+		}
+
+		setUpMapIfNeeded();
 	}
 
 	private void setUpMapIfNeeded() {
@@ -288,15 +319,14 @@ public class Map extends SherlockFragmentActivity {
             //更新图层数据执行刷新后生效
             mMapView.refresh();
             //是手动触发请求或首次定位时，移动到定位点
-            if (isRequest || isFirstLoc){
-            	//移动地图到定位点
-            	Log.d("LocationOverlay", "receive location, animate to it");
+            if (isRequest){
                 mMapController.animateTo(new GeoPoint((int)(locData.latitude* 1e6), (int)(locData.longitude *  1e6)));
                 isRequest = false;
-//                myLocationOverlay.setLocationMode(LocationMode.FOLLOWING);
             }
-            //首次定位完成
-            isFirstLoc = false;
+            if (isRequestFromStart && locData.latitude < LAT_MAX && locData.latitude > LAT_MIN && locData.longitude < LONG_MAX && locData.longitude > LONG_MIN){
+                mMapController.animateTo(new GeoPoint((int)(locData.latitude* 1e6), (int)(locData.longitude *  1e6)));
+                isRequestFromStart = false;
+            }
         }
         
         public void onReceivePoi(BDLocation poiLocation) {
@@ -304,6 +334,56 @@ public class Map extends SherlockFragmentActivity {
                 return ;
             }
         }
+    }
+    
+    private static class CafeOverlayItem extends OverlayItem {
+    	
+    	private String cafeId;
+
+		public CafeOverlayItem(GeoPoint arg0, String arg1, String arg2, String cafeId) {
+			super(arg0, arg1, arg2);
+			this.cafeId = cafeId;
+		}
+		
+		private String getCafeId() {
+			return cafeId;
+		}
+    	
+    }
+    
+    private class MyOverlay extends ItemizedOverlay<CafeOverlayItem>{
+
+		public MyOverlay(Drawable defaultMarker, MapView mapView) {
+			super(defaultMarker, mapView);
+		}
+		
+
+		@Override
+		public boolean onTap(int index){
+			CafeOverlayItem item = (CafeOverlayItem)getItem(index);
+			mCurItem = item ;
+			popupTitle.setText(item.getTitle());
+			if (item.getSnippet() != null) {
+				popupSnippet.setVisibility(View.VISIBLE);
+				popupSnippet.setText(item.getSnippet());
+				popupArrow.setVisibility(View.VISIBLE);
+			} else {
+				popupSnippet.setVisibility(View.GONE);
+				popupArrow.setVisibility(View.GONE);
+			}
+			
+			pop.showPopup(popupView, item.getPoint(), MFUtil.getPixelsFromDip(MARKER_HEIGHT_DP, getResources()));
+			return true;
+		}
+		
+		@Override
+		public boolean onTap(GeoPoint pt , MapView mMapView){
+			if (pop != null){
+                pop.hidePop();
+			}
+			return false;
+		}
+    	
     }
 
 	private void setUpMap() {
@@ -315,7 +395,7 @@ public class Map extends SherlockFragmentActivity {
 		GeoPoint point =new GeoPoint((int)(LAT_DEFAULT* 1E6),(int)(LONG_DEFAULT* 1E6));  
 		//用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)  
 		mMapController.setCenter(point);//设置地图中心点  
-		mMapController.setZoom(16);//设置地图zoom级别  
+		mMapController.setZoom(16.5f);//设置地图zoom级别  
 		mMapController.enableClick(true);
 		
 		 //定位初始化
@@ -327,17 +407,19 @@ public class Map extends SherlockFragmentActivity {
         option.setCoorType("bd09ll");     //设置坐标类型
         option.setScanSpan(10000);
         mLocClient.setLocOption(option);
-        mLocClient.start();
+        //click from map instead from search / map is displayed
+        if (mMapShown) {
+        	if (!mLocClient.isStarted()) mLocClient.start();
+        	//move to my position if click from action button
+        	if (getIntent().getBooleanExtra("fromActionButton", false)) isRequestFromStart = true;
+		}
         
-        //定位图层初始化
 		myLocationOverlay = new MyLocationOverlay(mMapView);
-		//设置定位数据
 	    myLocationOverlay.setData(locData);
-	    //添加定位图层
 		mMapView.getOverlays().add(myLocationOverlay);
 		myLocationOverlay.enableCompass();
-		//修改定位数据后刷新图层生效
 		mMapView.refresh();
+		
 		
 		curLocation = (ImageButton)findViewById(R.id.curLocation);
 		curLocation.setOnClickListener(new OnClickListener() {
@@ -345,63 +427,36 @@ public class Map extends SherlockFragmentActivity {
 			@Override
 			public void onClick(View arg0) {
 				isRequest = true;
+				if (!mLocClient.isStarted()) mLocClient.start();
 		        mLocClient.requestLocation();
 			}
 		});
 		
-/*		greenBitmap = BitmapDescriptorFactory.fromResource(R.drawable.green_pin);
-		blueBitmap = BitmapDescriptorFactory.fromResource(R.drawable.blue_pin);
-		favoriteBitmap = BitmapDescriptorFactory.fromResource(R.drawable.favorite_heart_pin);
-		mMap.setMyLocationEnabled(true);
-		mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+		popupView = getLayoutInflater().inflate(R.layout.balloon_overlay, null);
+		popupTitle = (TextView) popupView.findViewById(R.id.balloon_item_title);
+		popupSnippet = (TextView) popupView.findViewById(R.id.balloon_item_snippet);
+		popupArrow = popupView.findViewById(R.id.arrow);
+		pop = new PopupOverlay(mMapView, new PopupClickListener() {
 			
-			public View getInfoWindow(Marker marker) {
-				View view = Map.this.getLayoutInflater().inflate(R.layout.balloon_overlay, null);
-				TextView title = (TextView) view.findViewById(R.id.balloon_item_title);
-				TextView snippet = (TextView) view.findViewById(R.id.balloon_item_snippet);
-				title.setText(marker.getTitle());
-				if (marker.equals(mSelectedMarker)) {
-					snippet.setVisibility(View.GONE);
-					view.findViewById(R.id.arrow).setVisibility(View.GONE);
-				} else {
-					snippet.setText(marker.getSnippet());
-				}
-				return view;
-			}
-			
-			public View getInfoContents(Marker marker) {
-				// TODO Auto-generated method stub
-				return null;
+			@Override
+			public void onClickedPopup(int index) {
+				Intent i = new Intent(Map.this, Details.class);
+				i.putExtra("id", mCurItem.getCafeId());
+				i.putExtra("fromMap", true);
+				startActivity(i);
 			}
 		});
-		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+		
+		mMapView.regMapStatusChangeListener(new MKMapStatusChangeListener() {
 			
-			public void onInfoWindowClick(Marker marker) {
-
-				if (!marker.equals(mSelectedMarker)) {
-					String cafeId = mMarkersHashMap.get(marker);
-					Intent i = new Intent(Map.this, Details.class);
-					i.putExtra("id", cafeId);
-					i.putExtra("fromMap", true);
-					startActivity(i);
-				}
-			}
-		});
-		//use location client to get last location
-//		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude()), 16));
-		mMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener() {
-			
-			public void onMyLocationChange(Location location) {
-				//maybe use location client in the future
-//				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16));
-			}
-		});
-		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
-			
-			public void onCameraChange(CameraPosition position) {
-				if (mMapBounds.contains(position.target)) {
+			@Override
+			public void onMapStatusChange(MKMapStatus mapStatus) {
+				GeoPoint targetGeo = mapStatus.targetGeo;
+				double targetLat = targetGeo.getLatitudeE6() / 1000000.0;
+				double targetLng = targetGeo.getLongitudeE6() / 1000000.0;
+				if (targetLat < LAT_MAX && targetLat > LAT_MIN && targetLng < LONG_MAX && targetLng > LONG_MIN) {
 					searchNearby.setText(R.string.searchNearby);
-					if (position.zoom > 13) {
+					if (mapStatus.zoom > 15) {
 						navigateIsland.setVisibility(View.VISIBLE);
 					} else {
 						navigateIsland.setVisibility(View.GONE);
@@ -410,12 +465,13 @@ public class Map extends SherlockFragmentActivity {
 					searchNearby.setText(R.string.backToMacau);
 					navigateIsland.setVisibility(View.GONE);
 				}
-				
-				if (position.target.latitude < LAT_ISLAND_BOUNDARY) {
-					navigateIsland.setBackgroundResource(R.drawable.map_arrow_up);
+				if (targetLat < LAT_ISLAND_BOUNDARY) {
+					navigateIsland
+							.setBackgroundResource(R.drawable.map_arrow_up);
 					navigateIsland.setText(R.string.macauPeninsula);
 				} else {
-					navigateIsland.setBackgroundResource(R.drawable.map_arrow_down);
+					navigateIsland
+							.setBackgroundResource(R.drawable.map_arrow_down);
 					navigateIsland.setText(R.string.macauIsland);
 				}
 			}
@@ -426,14 +482,18 @@ public class Map extends SherlockFragmentActivity {
 		String coordx = getIntent().getStringExtra("coordx");
 		String coordy = getIntent().getStringExtra("coordy");
 		if (coordx != null && coordy != null) {
-			LatLng selectedLatLng = new LatLng(Double.parseDouble(coordx), Double.parseDouble(coordy));
-			mSelectedMarkerOptions = new MarkerOptions()
-            .position(selectedLatLng)
-            .title(name)
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin));
-			
-			mSelectedMarker = mMap.addMarker(mSelectedMarkerOptions);
-			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 16));
+			if (mSelectedCafeOverlay != null) {
+				mSelectedCafeOverlay.removeAll();
+			}
+			mSelectedCafeOverlay = new MyOverlay(getResources().getDrawable(R.drawable.red_pin), mMapView);
+			GeoPoint p = getGeoPointFromString(coordx, coordy);
+			CafeOverlayItem item = new CafeOverlayItem(p, name ,null, selectedCafeId);
+			mSelectedCafeOverlay.addItem(item);
+			mMapController.setCenter(p);
+			mMapController.setZoom(17.5f);
+			mMapView.getOverlays().clear();
+			mMapView.getOverlays().add(mSelectedCafeOverlay);
+			mMapView.refresh();
 		}
 
 		searchNearby = (Button) findViewById(R.id.searchNearby);
@@ -442,7 +502,8 @@ public class Map extends SherlockFragmentActivity {
 			public void onClick(View v) {
 				if (searchNearby.getText().toString()
 						.equals(getString(R.string.backToMacau))) {
-					mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LAT_DEFAULT, LONG_DEFAULT), 14));
+					mMapController.setCenter(new GeoPoint((int)(LAT_DEFAULT * 1e6), (int)(LONG_DEFAULT * 1e6)));
+					mMapController.setZoom(16.5f);
 					searchNearby.setText(R.string.searchNearby);
 				} else {
 					searchResultCafes.clear();
@@ -455,62 +516,58 @@ public class Map extends SherlockFragmentActivity {
 			searchNearby.setVisibility(View.GONE);
 			mapFilterPanel.setVisibility(View.GONE);
 			
-			Builder boundsBuilder = new LatLngBounds.Builder();
+			if (mOverlay != null) {
+				mOverlay.removeAll();
+			}
+			mOverlay = new MyOverlay(getResources().getDrawable(R.drawable.favorite_heart_pin), mMapView);
 			
 			for (String str : MFConfig.getInstance().getFavoriteLists()) {
 				Cafe cafe = MFConfig.getInstance().getCafeLists().get(Integer.parseInt(str) - 1);
-				boundsBuilder.include(getLatLngFromCafe(cafe));
-				Marker marker = mMap.addMarker(new MarkerOptions()
-	            .position(getLatLngFromCafe(cafe))
-	            .title(cafe.getName())
-	            .snippet(MFUtil.getDishesStringFromCafe(cafe))
-	            .icon(favoriteBitmap));
-				
-				mMarkersHashMap.put(marker, cafe.getId());
-				
-				if (MFConfig.getInstance().getFavoriteLists().size() == 1) {
-					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getLatLngFromCafe(cafe), 16));
-				}
+				GeoPoint p = getGeoPointFromString(cafe.getCoordx(), cafe.getCoordy());
+				CafeOverlayItem item = new CafeOverlayItem(p, cafe.getName() ,MFUtil.getDishesStringFromCafe(cafe), cafe.getId());
+				mOverlay.addItem(item);
+//				mMarkersHashMap.put(marker, cafe.getId());
 			}
-			if (MFConfig.getInstance().getFavoriteLists().size() > 1) {
-				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(96f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
-			}
+			mMapView.getOverlays().clear();
+			mMapView.getOverlays().add(mOverlay);
+			mMapView.refresh();
 		} else if (getIntent().getBooleanExtra("fromBranch", false)) {
 			searchNearby.setVisibility(View.GONE);
 			mapFilterPanel.setVisibility(View.GONE);
 			
-			Builder boundsBuilder = new LatLngBounds.Builder();
+			if (mOverlay != null) {
+				mOverlay.removeAll();
+			}
+			mOverlay = new MyOverlay(getResources().getDrawable(R.drawable.green_pin), mMapView);
+			
 			ArrayList<Cafe> branchList = (ArrayList<Cafe>) getIntent().getSerializableExtra("branchList");
 			for (Cafe cafe : branchList) {
-				boundsBuilder.include(getLatLngFromCafe(cafe));
-				Marker marker = mMap.addMarker(new MarkerOptions()
-	            .position(getLatLngFromCafe(cafe))
-	            .title(cafe.getName())
-	            .snippet(MFUtil.getDishesStringFromCafe(cafe))
-	            .icon(greenBitmap));
-				
-				mMarkersHashMap.put(marker, cafe.getId());
+				GeoPoint p = getGeoPointFromString(cafe.getCoordx(), cafe.getCoordy());
+				CafeOverlayItem item = new CafeOverlayItem(p, cafe.getName() ,MFUtil.getDishesStringFromCafe(cafe), cafe.getId());
+				mOverlay.addItem(item);
 			}
-			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(96f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
-//			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFUtil.getPixelsFromDip(50f, getResources())));
+			
+			mMapView.getOverlays().clear();
+			mMapView.getOverlays().add(mOverlay);
+			mMapView.refresh();
 		}
 		
-		if (needPopulateMarkers) {
-			needPopulateMarkers = false;
-			populateOverlayFromSearchList();
-		}
-		
+//		if (needPopulateMarkers) {
+//			needPopulateMarkers = false;
+//			populateOverlayFromSearchList();
+//		}
 		navigateIsland.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View arg0) {
 				if (navigateIsland.getText().toString().equals(getString(R.string.macauPeninsula))) {
-					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LAT_DEFAULT, LONG_DEFAULT), 14));
+					mMapController.setCenter(new GeoPoint((int)(LAT_DEFAULT * 1e6), (int)(LONG_DEFAULT * 1e6)));
+					mMapController.setZoom(16.5f);
 				} else {
-					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LAT_DEFAULT_ISLAND, LONG_DEFAULT_ISLAND), 13.6f));
+					mMapController.setCenter(new GeoPoint((int)(LAT_DEFAULT_ISLAND * 1e6), (int)(LONG_DEFAULT_ISLAND * 1e6)));
+					mMapController.setZoom(16f);
 				}
 			}
 		});
-		*/
 	}
 
 	private void doAdvancedSearch() {
@@ -682,12 +739,23 @@ public class Map extends SherlockFragmentActivity {
 	private LatLng getLatLngFromCafe(Cafe cafe) {
 		return new LatLng(Double.parseDouble(cafe.getCoordx()), Double.parseDouble(cafe.getCoordy()));
 	}
+	
+	private int getLatFromString(String coord) {
+		return (int)((Double.parseDouble(coord) + LAT_DIFF) * 1E6);
+	}
+	
+	private int getLngFromString(String coord) {
+		return (int)((Double.parseDouble(coord) + LONG_DIFF) * 1E6);
+	}
+	
+	private GeoPoint getGeoPointFromString(String coordx, String coordy) {
+		GeoPoint p = new GeoPoint(getLatFromString(coordx), getLngFromString(coordy));
+		return p;
+	}
 
 	private void populateOverlayFromSearchList() {
 		
-		if (mMapView == null) {
-			setUpMapIfNeeded(); //fix a crash report
-		}
+		setUpMapIfNeeded(); //fix a crash report
 		/*
 		mMap.clear();
 		mMarkersHashMap.clear();
@@ -796,6 +864,10 @@ public class Map extends SherlockFragmentActivity {
 		switch (item.getItemId()) {
 		case SHOW_LIST_MENU_ID:
 			if (listLayout.isShown()) {
+				mMapShown = true;
+				if (!mLocClient.isStarted()) {
+					mLocClient.start();
+				}
 				listLayout.setVisibility(View.GONE);
 				mapLayout.setVisibility(View.VISIBLE);
 				item.setIcon(R.drawable.ic_action_list).setTitle(
@@ -806,6 +878,8 @@ public class Map extends SherlockFragmentActivity {
 					populateOverlayFromSearchList();
 				}
 			} else {
+				mMapShown = false;
+				mLocClient.stop();
 				listLayout.setVisibility(View.VISIBLE);
 				mapLayout.setVisibility(View.GONE);
 				item.setIcon(R.drawable.map).setTitle(R.string.showMap);
@@ -837,9 +911,10 @@ public class Map extends SherlockFragmentActivity {
 			
 			return true;
 		case android.R.id.home:
-			Intent i = new Intent(this, Home.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
+			finish();
+//			Intent i = new Intent(this, Home.class);
+//			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//			startActivity(i);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -881,9 +956,7 @@ public class Map extends SherlockFragmentActivity {
 	                mBMapMan.destroy();  
 	                mBMapMan=null;  
 	        }  
-	        if (mLocClient != null) {
-	            mLocClient.stop();
-	        }
+            mLocClient.stop();
 	        cafeAdapter.imageLoader.cleanup();
 	        super.onDestroy();  
 	}  
@@ -893,6 +966,7 @@ public class Map extends SherlockFragmentActivity {
 	        if(mBMapMan!=null){  
 	               mBMapMan.stop();  
 	        }  
+	        mLocClient.stop();
 	        super.onPause();  
 	}  
 	@Override  
@@ -901,6 +975,9 @@ public class Map extends SherlockFragmentActivity {
 	        if(mBMapMan!=null){  
 	                mBMapMan.start();  
 	        }  
+	        if (!mLocClient.isStarted() && mMapShown) {
+				mLocClient.start();
+			}
 	       super.onResume();  
 	}  
 

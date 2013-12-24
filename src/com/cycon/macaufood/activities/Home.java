@@ -261,6 +261,7 @@ public class Home extends SherlockFragmentActivity {
 			return true;
 		case R.id.menu_map:
 			i = new Intent(this, Map.class);
+			i.putExtra("fromActionButton", true);
 			startActivity(i);
 			return true;
 		case R.id.menu_favorite_list:
