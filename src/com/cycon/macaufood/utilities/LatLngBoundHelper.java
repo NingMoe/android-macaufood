@@ -2,8 +2,6 @@ package com.cycon.macaufood.utilities;
 
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.cycon.macaufood.activities.Map;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 
 public class LatLngBoundHelper {
 

@@ -130,23 +130,23 @@ public class Home extends SherlockFragmentActivity {
 		
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY, 0);
         
-//        if (showFrontPage) {
-//			FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
-//			Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
-//			if (bitmap != null) {
-//				new Handler().postDelayed(new Runnable() {
-//					public void run() {
-//							Intent i = new Intent(Home.this, FrontPage.class);
-//							startActivity(i);
-//							overridePendingTransition(R.anim.front_page_fade_in, 0);
-//							showFrontPage = false;
-//					}
-//				}, 1500);
-//			} else {
-//				PreferenceHelper.savePreferencesLong(getApplicationContext(), MFConstants.FRONT_PAGE_STAMP_PREF_KEY, 0);
-//				MFService.fetchFrontPage(getApplicationContext());
-//			}
-//        }
+        if (showFrontPage) {
+			FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
+			Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
+			if (bitmap != null) {
+				new Handler().postDelayed(new Runnable() {
+					public void run() {
+							Intent i = new Intent(Home.this, FrontPage.class);
+							startActivity(i);
+							overridePendingTransition(R.anim.front_page_fade_in, 0);
+							showFrontPage = false;
+					}
+				}, 1500);
+			} else {
+				PreferenceHelper.savePreferencesLong(getApplicationContext(), MFConstants.FRONT_PAGE_STAMP_PREF_KEY, 0);
+				MFService.fetchFrontPage(getApplicationContext());
+			}
+        }
 	}
 	
 	private void showDisclaimerDialog() {

@@ -4,22 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,40 +38,22 @@ import com.baidu.mapapi.map.ItemizedOverlay;
 import com.baidu.mapapi.map.LocationData;
 import com.baidu.mapapi.map.MKMapStatus;
 import com.baidu.mapapi.map.MKMapStatusChangeListener;
-import com.baidu.mapapi.map.MKMapTouchListener;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationOverlay;
 import com.baidu.mapapi.map.OverlayItem;
 import com.baidu.mapapi.map.PopupClickListener;
 import com.baidu.mapapi.map.PopupOverlay;
-import com.baidu.mapapi.map.MyLocationOverlay.LocationMode;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.AdvancedSearchHelper;
-import com.cycon.macaufood.utilities.CoordsHelper;
 import com.cycon.macaufood.utilities.LatLngBoundHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvViewPager;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.LatLngBounds.Builder;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * A list view that demonstrates the use of setEmptyView. This example alos uses
@@ -84,6 +61,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
  */
 public class Map extends SherlockFragmentActivity {
 
+	public static final String BAIDU_MAP_API_KEY = "CjWobmOYcj8eD4ilipMllU5P";
 	public static final int SHOW_MAP_REQUEST_CODE = 1;
 	private static final int SHOW_LIST_MENU_ID = 1;
 	public static final double LAT_DIFF  = 0.0030;
@@ -99,7 +77,6 @@ public class Map extends SherlockFragmentActivity {
 	private static final double LAT_ISLAND_BOUNDARY = 22.1735 + LAT_DIFF;
 	private static final float MARKER_HEIGHT_DP = 36f; //72px in xhdpi folder
 	
-	private static LatLngBounds mMapBounds = new LatLngBounds(new LatLng(LAT_MIN, LONG_MIN), new LatLng(LAT_MAX, LONG_MAX));
 	private String selectedCafeId;
 	private Button searchNearby;
 	private AdvViewPager smallBanner;
@@ -168,7 +145,7 @@ public class Map extends SherlockFragmentActivity {
 		}
 		
 		mBMapMan=new BMapManager(getApplication());  
-		mBMapMan.init("CjWobmOYcj8eD4ilipMllU5P", null); 
+		mBMapMan.init(BAIDU_MAP_API_KEY, null); 
 		
 		searchResultCafes = new ArrayList<Cafe>(MFConfig.getInstance().getSearchResultList());
 		MFConfig.getInstance().getSearchResultList().clear();
@@ -301,11 +278,9 @@ public class Map extends SherlockFragmentActivity {
     	
         @Override
         public void onReceiveLocation(BDLocation location) {
-        	Log.e("LocationOverlay", "receive location");
             if (location == null)
                 return ;
 
-        	Log.e("LocationOverlay", "receive not null location");
             locData.latitude = location.getLatitude();
             locData.longitude = location.getLongitude();
             //如果不显示定位精度圈，将accuracy赋值为0即可
@@ -493,7 +468,6 @@ public class Map extends SherlockFragmentActivity {
 			mSelectedCafeOverlay.addItem(item);
 			mMapController.setCenter(p);
 			mMapController.setZoom(17.5f);
-			mMapView.getOverlays().clear();
 			mMapView.getOverlays().add(mSelectedCafeOverlay);
 			mMapView.refresh();
 		}
@@ -530,7 +504,6 @@ public class Map extends SherlockFragmentActivity {
 				mOverlay.addItem(item);
 //				mMarkersHashMap.put(marker, cafe.getId());
 			}
-			mMapView.getOverlays().clear();
 			mMapView.getOverlays().add(mOverlay);
 			mMapView.refresh();
 		} else if (getIntent().getBooleanExtra("fromBranch", false)) {
@@ -549,7 +522,6 @@ public class Map extends SherlockFragmentActivity {
 				mOverlay.addItem(item);
 			}
 			
-			mMapView.getOverlays().clear();
 			mMapView.getOverlays().add(mOverlay);
 			mMapView.refresh();
 		}
@@ -662,7 +634,6 @@ public class Map extends SherlockFragmentActivity {
     			queue.add(cafe);
     		}
 		}
-		Builder boundsBuilder = new LatLngBounds.Builder();
 		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
 		int displayNumber = 50;
 		for (int i = 0; i < displayNumber && queue.size() > 0; i++) {
@@ -739,10 +710,6 @@ public class Map extends SherlockFragmentActivity {
 		}, 400);
 		
 		
-	}
-	
-	private LatLng getLatLngFromCafe(Cafe cafe) {
-		return new LatLng(Double.parseDouble(cafe.getCoordx()), Double.parseDouble(cafe.getCoordy()));
 	}
 	
 	private int getLatFromString(String coord) {
@@ -908,13 +875,23 @@ public class Map extends SherlockFragmentActivity {
 	protected void onDestroy(){  
 	        mMapView.destroy();  
 	        if(mBMapMan!=null){  
-	                mBMapMan.destroy();  
+//	                mBMapMan.destroy();  
 	                mBMapMan=null;  
 	        }  
             mLocClient.stop();
 	        cafeAdapter.imageLoader.cleanup();
 	        super.onDestroy();  
 	}  
+	
+//	@Override
+//	protected void onStart() {
+//		if (mBMapMan == null) {
+//			mBMapMan=new BMapManager(getApplication());  
+//			mBMapMan.init(BAIDU_MAP_API_KEY, null); 	
+//		}	
+//		super.onStart();
+//	}
+	
 	@Override  
 	protected void onPause(){  
 	        mMapView.onPause();  
