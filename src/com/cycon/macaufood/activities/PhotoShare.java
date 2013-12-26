@@ -114,12 +114,12 @@ public class PhotoShare extends SherlockFragment{
 	private PopupMenu mCameraMenu;
 
 	private ProgressDialog pDialog;
+	public boolean mIsVisible;
 	
 	//FB
 	private LoginButton mLoginButton;
 	private UiLifecycleHelper uiHelper;
 	
-	public boolean mIsVisible;
 	
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	private class MenuClickListener implements OnMenuItemClickListener {
@@ -287,6 +287,7 @@ public class PhotoShare extends SherlockFragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        //FB
         uiHelper = new UiLifecycleHelper(getActivity(), callback);
         uiHelper.onCreate(savedInstanceState);
 
@@ -307,12 +308,6 @@ public class PhotoShare extends SherlockFragment{
 				e.printStackTrace();
 			} 
 		}
-
-//		//refresh when file cache xml is deleted by user
-//        if (MFConfig.getInstance().getPsHotList().size() == 0 && !MFFetchListHelper.isFetching && !((Home)getActivity()).isShowingDisClaimer()) {
-//        	refresh();
-//		}
-		
 
         
 		if (MFConfig.memberId == null) {
@@ -357,20 +352,7 @@ public class PhotoShare extends SherlockFragment{
 		} else {
 			mIsVisible = false;
 		}
-
 	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-//		if (mIsVisible) {
-//			((Home)activity).hideBanner();
-//		} else {
-//			((Home)activity).showBanner();
-//		}
-		
-	}
-	
 	
 	//reload friends activity and show progress bar when there is internet
 	public void loadFriendsActivity() {
@@ -394,11 +376,8 @@ public class PhotoShare extends SherlockFragment{
 
 		mProgressBar.setVisibility(View.VISIBLE);
 		
-//		if (MFConfig.memberId == null) {
-//			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
-//		}
-//		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + MFConfig.memberId;
-		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + "491";
+		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + MFConfig.memberId;
+//		String url = MFURL.PHOTOSHARE_SHOW_PHOTOS + "491";
 		
 		MFFetchListHelper.fetchList(url, handler, f, new MFServiceCallBack() {
 			
@@ -412,7 +391,6 @@ public class PhotoShare extends SherlockFragment{
 					mFriendsActivityAdapter.psDetailsImageLoader.setPSDetailsImagesToLoadFromParsedPS(infoList);
 					mFriendsActivityAdapter.psHeaderImageLoader.cleanup();
 					mFriendsActivityAdapter.psHeaderImageLoader.setProfileImagesToLoadFromParsedPS(infoList);
-//					MFUtil.syncPSList(MFConfig.getInstance().getPsHotList(), MFConfig.getInstance().getFriendsActivityList());
 					mFriendsActivityAdapter.notifyDataSetChanged();
 				} else {
 					mFriendsActivityError.setVisibility(View.VISIBLE);
@@ -438,7 +416,6 @@ public class PhotoShare extends SherlockFragment{
 	}
 	
     public void populateGridView() {
-//    	MFUtil.syncPSList(MFConfig.getInstance().getPsHotList(), MFConfig.getInstance().getFriendsActivityList());
     	mProgressBar.setVisibility(View.GONE);
 		//if no internet and no data in File, show retry message
 		if (MFConfig.getInstance().getPsHotList().size() == 0) {
@@ -469,6 +446,8 @@ public class PhotoShare extends SherlockFragment{
 		if (login) {
 			handlePendingAction(pa);
 		} else {
+    		mFirstShowFriendsActivity = true;
+    		mFriendsActivityTimeStamp = 0;
 			showLoginDialog(pa);
 		}
 	}
@@ -540,42 +519,23 @@ public class PhotoShare extends SherlockFragment{
 	private void showLoginDialog(final PendingAction pa) {
 		
 		View view = getActivity().getLayoutInflater().inflate(R.layout.login_dialog, null);
-		TextView fbTv = (TextView) view.findViewById(R.id.fbLogin);
 		TextView weiboTv = (TextView) view.findViewById(R.id.weiboLogin);
 		
-//		if (mLoginButton == null) {
-			mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-			mLoginButton.setReadPermissions(Arrays.asList("email"));
-			mLoginButton.setFragment(this);
-			mLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
-				
-				@Override
-	            public void onUserInfoFetched(GraphUser user) {
-					Log.e("ZZZ", "userinfo");
-	            	if (user != null) {
-	            		AsyncTaskHelper.executeWithResultString(new RegisterPS(user, pa));
-	            	}
-	            }
-	        });
-//		}
-//		fbTv.setOnClickListener(new OnClickListener() {
-//			
-//			public void onClick(View arg0) {
-//				startFacebookLogin();
-//			}
-//		});
+		mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
+		mLoginButton.setReadPermissions(Arrays.asList("email"));
+		mLoginButton.setFragment(this);
+		mLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+			
+			@Override
+            public void onUserInfoFetched(GraphUser user) {
+            	if (user != null) {
+            		AsyncTaskHelper.executeWithResultString(new RegisterPS(user, pa));
+            	}
+            }
+        });
 		weiboTv.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View arg0) {
-//				 Session.openActiveSession(getActivity(), true, new Session.StatusCallback() {
-//
-//				      // callback when session changes state
-//				      public void call(Session session, SessionState state, Exception exception) {
-//				        if (session.isOpened()) {
-//				        	Log.e("ZZZ", "isOpened!!!!!!!!!!!");
-//				        }
-//				      }
-//				    });
 			}
 		});
 		
@@ -606,7 +566,6 @@ public class PhotoShare extends SherlockFragment{
 
 	
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-    	Log.e("ZZZ", "state = " + state.name());
     	if (state == SessionState.OPENING) {
     		pDialog = ProgressDialog.show(mContext, null,
     				getString(R.string.loginProcess), false, false);
@@ -626,8 +585,6 @@ public class PhotoShare extends SherlockFragment{
     }
     
     private void showFindFriendsDialog() {
-//    	FindFriendsDialogView view = (FindFriendsDialogView) getActivity().getLayoutInflater().inflate(R.layout.find_friends_dialog, null);
-//    	view.init(getActivity());
     	
     	final FindFriendsDialogView view = new FindFriendsDialogView(mContext);
     	
@@ -672,7 +629,6 @@ public class PhotoShare extends SherlockFragment{
     @Override
     public void onDestroy()
     {
-    	MFLog.e(TAG, "onDestroy");
     	if (mHotGV != null) {
     		mHotGV.setAdapter(null);
     	}
@@ -740,7 +696,6 @@ public class PhotoShare extends SherlockFragment{
     	@Override
     	protected void onPostExecute(String result) {
     		super.onPostExecute(result);
-    		Log.e("ZZZ", "result" + result);
     		pDialog.dismiss();
     		if (result == null) {
     			callFacebookLogout(false);
@@ -749,9 +704,7 @@ public class PhotoShare extends SherlockFragment{
     		}
     		
     		Toast.makeText(mContext, getString(R.string.loginMessage, user.getName()), Toast.LENGTH_SHORT).show();
-    		
-    		mFirstShowFriendsActivity = true;
-    		mFriendsActivityTimeStamp = 0;
+
     		MFConfig.memberId = result;
     		MFConfig.memberName = user.getName();
     		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, result);

@@ -264,14 +264,14 @@ public class PSDetailsView extends LinearLayout {
 		}
     }
     
-    private void loadCommentInfo(final ParsedPSHolder pInfo, ViewHolder holder) {
+    private void loadCommentInfo(final ParsedPSHolder pInfo, final ViewHolder holder) {
 		holder.comment.removeAllViews();
 		final List<PSComment> commentList = extractCommentList(pInfo.getComments());
 		if (commentList.size() > 0) {
 			holder.commentLayout.setVisibility(View.VISIBLE);
 			for (int i = 0; i < commentList.size(); i++) {
 				PSComment psComment = commentList.get(i);
-				String displayStr = psComment.name + " " + psComment.comment;
+				String displayStr = psComment.name + "  " + psComment.comment;
 				SpannableString spannable = new SpannableString(displayStr);
 	            spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.green_text)), 0, psComment.name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 	            spannable.setSpan(new RelativeSizeSpan(13f/14), 0, psComment.name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -327,8 +327,9 @@ public class PSDetailsView extends LinearLayout {
 				    			pairs.add(new BasicNameValuePair("photoid", pInfo.getPhotoid()));
 				    			pairs.add(new BasicNameValuePair("comment", commentStr));
 				    			MFService.sendRequestWithParams(MFURL.PHOTOSHARE_COMMENT, mContext.getApplicationContext(), pairs);
-				    			pInfo.setComments(commentStr + "|||" + MFConfig.memberId + "|||" + MFConfig.memberName + "|||" + (System.currentTimeMillis() / 1000) + pInfo.getComments() + (pInfo.getComments().equals("") ? "" : "@@@"));
+				    			pInfo.setComments(commentStr + "|||" + MFConfig.memberId + "|||" + MFConfig.memberName + "|||" + (System.currentTimeMillis() / 1000) + (pInfo.getComments().equals("") ? "" : "@@@") + pInfo.getComments() );
 				    			dialog.dismiss();
+				    			loadCommentInfo(pInfo, holder);
 							}
 						}
 

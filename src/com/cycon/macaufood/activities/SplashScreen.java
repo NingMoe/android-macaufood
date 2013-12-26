@@ -46,7 +46,6 @@ public class SplashScreen extends Activity {
 		
 		String originalVersion = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "versionNo", "");
 		if (!originalVersion.equals(getString(R.string.versionNo))) {
-			PreferenceHelper.savePreferencesBoolean(SplashScreen.this, "disclaimerDialog", true);
 			PreferenceHelper.savePreferencesBoolean(SplashScreen.this, "firstLaunch", true);
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "versionNo", getString(R.string.versionNo));
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "cafe_version_update", MFConfig.cafe_version_update);

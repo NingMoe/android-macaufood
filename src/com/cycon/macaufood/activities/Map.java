@@ -752,9 +752,10 @@ public class Map extends SherlockFragmentActivity {
 			
 			return true;
 		case android.R.id.home:
-			Intent i = new Intent(this, Home.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
+			finish();
+//			Intent i = new Intent(this, Home.class);
+//			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//			startActivity(i);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

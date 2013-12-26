@@ -14,18 +14,6 @@
         android:textSize="20sp"
         android:background="@drawable/actionbar_bg"/>
     
-    <TextView
-        android:id="@+id/fbLogin"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:text="@string/facebookLogin"
-        android:textSize="18sp"
-        android:background="@drawable/transparent_selector_bg"
-        android:paddingLeft="16dp"
-        android:visibility="gone"
-        />
-    
         <com.facebook.widget.LoginButton
             xmlns:facebook="http://schemas.android.com/apk/res-auto"
             android:id="@+id/login_button"
