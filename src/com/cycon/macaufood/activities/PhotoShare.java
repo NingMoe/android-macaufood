@@ -1,34 +1,20 @@
 package com.cycon.macaufood.activities;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.helpers.DefaultHandler;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
-
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -40,39 +26,30 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.PSFriendsActivityAdapter;
 import com.cycon.macaufood.adapters.PSHotAdapter;
 import com.cycon.macaufood.bean.ImageType;
-import com.cycon.macaufood.bean.ParsedPSHolder;
-import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
-import com.cycon.macaufood.utilities.ImageLoader;
+import com.cycon.macaufood.utilities.LoginHelper;
+import com.cycon.macaufood.utilities.LoginHelper.PendingAction;
+import com.cycon.macaufood.utilities.LoginHelper.RegisterPSCallBack;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFLog;
-import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFServiceCallBack;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.FindFriendsDialogView;
-import com.cycon.macaufood.xmlhandler.FriendListXMLHandler;
 import com.cycon.macaufood.xmlhandler.PSDetailXMLHandler;
-import com.facebook.Session;
-import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphUser;
-import com.facebook.widget.FacebookDialog;
-import com.facebook.widget.LoginButton;
 
 public class PhotoShare extends SherlockFragment{
 
@@ -109,15 +86,13 @@ public class PhotoShare extends SherlockFragment{
 	
 	private int mCurrentTab = 1; //friends = 0, hot = 1;
 	
-	private AlertDialog mLoginDialog;
 	private PopupMenu mSettingsMenu;
 	private PopupMenu mCameraMenu;
 
-	private ProgressDialog pDialog;
 	public boolean mIsVisible;
+	private LoginHelper mLoginHelper;
 	
 	//FB
-	private LoginButton mLoginButton;
 	private UiLifecycleHelper uiHelper;
 	
 	
@@ -130,7 +105,7 @@ public class PhotoShare extends SherlockFragment{
 				showFindFriendsDialog();
 				break;
 			case MENU_LOGOUT:
-				callFacebookLogout(true);
+				callLogout(true);
 				break;
 			case MENU_TAKE_PHOTO:
 				break;
@@ -151,7 +126,7 @@ public class PhotoShare extends SherlockFragment{
 				showFindFriendsDialog();
 				break;
 			case MENU_LOGOUT:
-				callFacebookLogout(true);
+				callLogout(true);
 				break;
 			case MENU_TAKE_PHOTO:
 				break;
@@ -286,12 +261,13 @@ public class PhotoShare extends SherlockFragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        //FB
-        uiHelper = new UiLifecycleHelper(getActivity(), callback);
-        uiHelper.onCreate(savedInstanceState);
 
         mContext = getActivity();
+
+        mLoginHelper = new LoginHelper(mContext);
+        //FB
+        uiHelper = new UiLifecycleHelper(getActivity(), mLoginHelper.getFBSessionCallback());
+        uiHelper.onCreate(savedInstanceState);
         
         fileCache=new FileCache(mContext, ImageType.PHOTOSHARE);
         
@@ -313,7 +289,7 @@ public class PhotoShare extends SherlockFragment{
 		if (MFConfig.memberId == null) {
 			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
 			if (MFConfig.memberId == null) {
-				callFacebookLogout(false);
+				callLogout(false);
 			}
 		}
 		
@@ -441,14 +417,24 @@ public class PhotoShare extends SherlockFragment{
 	}
 	
 	private void checkLogin(PendingAction pa) {
-		Session session = Session.getActiveSession();
-		boolean login = session != null && session.isOpened();
-		if (login) {
+		
+		if (mLoginHelper.isLogin()) {
 			handlePendingAction(pa);
 		} else {
     		mFirstShowFriendsActivity = true;
     		mFriendsActivityTimeStamp = 0;
-			showLoginDialog(pa);
+    		mLoginHelper.showLoginDialog(this, pa, new RegisterPSCallBack() {
+				
+				@Override
+				public void onErrorRegistered() {
+					callLogout(false);
+				}
+				
+				@Override
+				public void onCompleteRegistered(PendingAction pa) {
+					handlePendingAction(pa);
+				}
+			});
 		}
 	}
 
@@ -488,107 +474,11 @@ public class PhotoShare extends SherlockFragment{
 		}
 	}
 	
-	//FB logic
-	
-    private enum PendingAction {
-        NONE,
-        FRIENDS,
-        CAMERA,
-        SETTINGS,
-    }
-    
-    private Session.StatusCallback callback = new Session.StatusCallback() {
-    	@Override
-        public void call(Session session, SessionState state, Exception exception) {
-            onSessionStateChange(session, state, exception);
-        }
-    };
-
-    private FacebookDialog.Callback dialogCallback = new FacebookDialog.Callback() {
-    	@Override
-        public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
-            Log.e("HelloFacebook", String.format("Error: %s", error.toString()));
-        }
-    	
-    	@Override
-        public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
-            Log.e("HelloFacebook", "Success!");
-        }
-    };
-	
-	private void showLoginDialog(final PendingAction pa) {
-		
-		View view = getActivity().getLayoutInflater().inflate(R.layout.login_dialog, null);
-		TextView weiboTv = (TextView) view.findViewById(R.id.weiboLogin);
-		
-		mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-		mLoginButton.setReadPermissions(Arrays.asList("email"));
-		mLoginButton.setFragment(this);
-		mLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
-			
-			@Override
-            public void onUserInfoFetched(GraphUser user) {
-            	if (user != null) {
-            		AsyncTaskHelper.executeWithResultString(new RegisterPS(user, pa));
-            	}
-            }
-        });
-		weiboTv.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View arg0) {
-			}
-		});
-		
-		mLoginDialog = new AlertDialog.Builder(mContext)
-		.setView(view)
-		.setPositiveButton(getString(R.string.cancel),
-				new DialogInterface.OnClickListener() {
-
-					public void onClick(DialogInterface dialog,
-							int which) {
-						dialog.dismiss();
-					}
-				}).show();
-	}
-	
-	private void callFacebookLogout(boolean showToast) {
-	    Session session = Session.getActiveSession();
-	    if (session != null && !session.isClosed()) {
-            session.closeAndClearTokenInformation();
-            if (showToast) {
-            	Toast.makeText(mContext, R.string.logoutMessage, Toast.LENGTH_SHORT).show();
-			}
-            PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
-    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, null);
-	    }
-	    switchToHotTab();
-	}
-
-	
-    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-    	if (state == SessionState.OPENING) {
-    		pDialog = ProgressDialog.show(mContext, null,
-    				getString(R.string.loginProcess), false, false);
-    	} else if (state == SessionState.CLOSED_LOGIN_FAILED){
-    		if (pDialog != null) {
-    			pDialog.dismiss();
-    		}
-    	}
-		if (session.isOpened()) {
-			if (mLoginDialog != null) {
-				mLoginDialog.dismiss();
-			}
-		} 
-    	if (exception != null) {
-    		Log.e("ZZZ", "exception= " + exception.getMessage());
-    	}
-    }
-    
     private void showFindFriendsDialog() {
     	
     	final FindFriendsDialogView view = new FindFriendsDialogView(mContext);
     	
-		AlertDialog dialog = new AlertDialog.Builder(mContext)
+		new AlertDialog.Builder(mContext)
 		.setView(view)
 		.setCancelable(false)
 		.setPositiveButton(getString(R.string.confirmed),
@@ -607,11 +497,19 @@ public class PhotoShare extends SherlockFragment{
 					}
 				}).show();
     }
+    
+	
+	private void callLogout(boolean showToast) {
+		mLoginHelper.callLogout(showToast);
+	    switchToHotTab();
+	}
+	
+   //FB logic
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		uiHelper.onActivityResult(requestCode, resultCode, data, dialogCallback);
+		uiHelper.onActivityResult(requestCode, resultCode, data);
 	}
 	
 	@Override
@@ -635,85 +533,14 @@ public class PhotoShare extends SherlockFragment{
         super.onDestroy();
         uiHelper.onDestroy();
     }
-
-    private class RegisterPS extends AsyncTask<Void, Void, String> {
-    	
-    	private GraphUser user;
-    	private PendingAction pa;
-    	
-    	public RegisterPS(GraphUser user, PendingAction pa) {
-    		this.user = user;
-    		this.pa = pa;
-		}
-    	
-    	@Override
-    	protected void onPreExecute() {
-    		super.onPreExecute();
-    	}
-    	
-    	@Override
-    	protected String doInBackground(Void... params) {
-    		// TODO Auto-generated method stub
-    		
-    		try {
-    			Object email = user.asMap().get("email");
-    			Object gender = user.asMap().get("gender");
-    			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-    			pairs.add(new BasicNameValuePair("udid", MFConfig.DEVICE_ID));
-    			pairs.add(new BasicNameValuePair("email", email == null ? "" : email.toString()));
-    			pairs.add(new BasicNameValuePair("name", user.getName()));
-    			pairs.add(new BasicNameValuePair("fbid", user.getId()));
-    			pairs.add(new BasicNameValuePair("gender", gender == null ? "" : gender.toString()));
-    			pairs.add(new BasicNameValuePair("fbtoken", Session.getActiveSession().getAccessToken()));
-    			pairs.add(new BasicNameValuePair("fbexpire", Session.getActiveSession().getExpirationDate().toString()));
-    			pairs.add(new BasicNameValuePair("pic_link", "https://graph.facebook.com/" + user.getId() + "/picture"));
-    			pairs.add(new BasicNameValuePair("devicetoken", "0")); //this device token is for push notification
-    			InputStream is = MFService.executeRequestWithHttpParams(MFURL.PHOTOSHARE_REGISTER + "f", pairs);
-    			StringBuilder sb = new StringBuilder();
-    			BufferedReader rd = new BufferedReader(new InputStreamReader(
-    					is));
-    			String line = null;
-    			while ((line = rd.readLine()) != null) {
-    				sb.append(line + "\n");
-    			}
-    			rd.close();
-    			
-    			String returnMemberId = sb.toString().trim();
-    			Integer.parseInt(returnMemberId);
-    			
-    			return returnMemberId;
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-
-			}
-    		
-    		return null;
-    	}
-    	
-    	@Override
-    	protected void onPostExecute(String result) {
-    		super.onPostExecute(result);
-    		pDialog.dismiss();
-    		if (result == null) {
-    			callFacebookLogout(false);
-    			Toast.makeText(mContext, getString(R.string.errorMsg, user.getName()), Toast.LENGTH_SHORT).show();
-    			return;
-    		}
-    		
-    		Toast.makeText(mContext, getString(R.string.loginMessage, user.getName()), Toast.LENGTH_SHORT).show();
-
-    		MFConfig.memberId = result;
-    		MFConfig.memberName = user.getName();
-    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, result);
-    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, user.getName());
-    		
-    		handlePendingAction(pa);
-    	}
-    	
+    
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+    	super.onSaveInstanceState(outState);
+    	uiHelper.onSaveInstanceState(outState);
     }
+    
+    
 
 
 }
