@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,10 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.auth.WeiboAuth.AuthInfo;
+import com.sina.weibo.sdk.exception.WeiboException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,6 +29,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,10 +39,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class LoginHelper {
+	
+	private static final String TAG = "LoginHelper";
+	
+	//Weibo
+	private static final String WEIBO_APP_KEY = "1904455053";
+	public static final String REDIRECT_URL = "https://api.weibo.com/oauth2/default.html";
+	public static final String SCOPE =
+			"email,direct_messages_read,direct_messages_write,"
+			+ "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
+			+ "follow_app_official_microblog," + "invitation_write";
+	
 //	private boolean isFacebook;
 	private Context mContext;
 	private ProgressDialog pDialog;
 	private Dialog mLoginDialog;
+	private com.sina.weibo.sdk.widget.LoginButton mWeiboLoginButton;
 	
     public enum PendingAction {
         NONE,
@@ -73,14 +91,13 @@ public class LoginHelper {
 	public void showLoginDialog(Fragment fragment, final PendingAction pa, final RegisterPSCallBack callback) {
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.login_dialog, null);
-		TextView weiboTv = (TextView) view.findViewById(R.id.weiboLogin);
 		
-		LoginButton loginButton = (LoginButton) view.findViewById(R.id.login_button);
-		loginButton.setReadPermissions(Arrays.asList("email"));
+		LoginButton fbLoginButton = (LoginButton) view.findViewById(R.id.fb_login_button);
+		fbLoginButton.setReadPermissions(Arrays.asList("email"));
 		if (fragment != null) {
-			loginButton.setFragment(fragment);
+			fbLoginButton.setFragment(fragment);
 		}
-		loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+		fbLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 			
 			@Override
             public void onUserInfoFetched(GraphUser user) {
@@ -89,11 +106,10 @@ public class LoginHelper {
             	}
             }
         });
-		weiboTv.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View arg0) {
-			}
-		});
+		
+		AuthInfo authInfo = new AuthInfo(mContext, WEIBO_APP_KEY, REDIRECT_URL, SCOPE);
+		mWeiboLoginButton = (com.sina.weibo.sdk.widget.LoginButton) view.findViewById(R.id.weibo_login_button);
+		mWeiboLoginButton.setWeiboAuthInfo(authInfo, mAuthListener);
 		
 		mLoginDialog = new AlertDialog.Builder(mContext)
 		.setView(view)
@@ -169,8 +185,35 @@ public class LoginHelper {
     }
     
     // ------ Weibo only-------------------
+    private WeiboAuthListener mAuthListener = new WeiboAuthListener() {
+        @Override
+        public void onComplete(Bundle values) {
+            Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(values);
+            if (accessToken != null && accessToken.isSessionValid()) {
+                String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(
+                        new java.util.Date(accessToken.getExpiresTime()));
+                Log.e("ZZZ", "date" + date);
+                AccessTokenKeeper.writeAccessToken(mContext.getApplicationContext(), accessToken);
+            } else {
+            	String code = values.getString("code");
+            	Log.e("ZZZ", "code = " + code);
+            }
+        }
+
+        @Override
+        public void onWeiboException(WeiboException e) {
+        	MFLog.e(TAG, "weibo exception = " + e.getMessage());
+        }
+
+        @Override
+        public void onCancel() {
+        	MFLog.e(TAG, "weibo on Cancel");
+        }
+    };
     
-    
+    public com.sina.weibo.sdk.widget.LoginButton getWeiboLoginButton() {
+    	return mWeiboLoginButton;
+    }
     
     //-----------------------------------------
     
@@ -244,6 +287,7 @@ public class LoginHelper {
 			}
     		if (result == null) {
     			Toast.makeText(context, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+    			callLogout(false);
     			callback.onErrorRegistered();
     			return;
     		}

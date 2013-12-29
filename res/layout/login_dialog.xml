@@ -16,7 +16,7 @@
     
         <com.facebook.widget.LoginButton
             xmlns:facebook="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/login_button"
+            android:id="@+id/fb_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -26,21 +26,10 @@
             facebook:logout_text="@string/facebookLogin"
             />
     
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:drawable/divider_horizontal_bright"
-        android:visibility="gone" />
-    
-    <TextView
-        android:id="@+id/weiboLogin"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:text="@string/weiboLogin"
-        android:background="@drawable/transparent_selector_bg"
-        android:paddingLeft="16dp"
-        android:textSize="18sp"
-        />
+        <com.sina.weibo.sdk.widget.LoginButton
+            android:id="@+id/weibo_login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"/>
 
 </LinearLayout>

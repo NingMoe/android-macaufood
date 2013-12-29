@@ -427,7 +427,7 @@ public class PhotoShare extends SherlockFragment{
 				
 				@Override
 				public void onErrorRegistered() {
-					callLogout(false);
+					switchToHotTab();
 				}
 				
 				@Override
@@ -510,6 +510,9 @@ public class PhotoShare extends SherlockFragment{
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		uiHelper.onActivityResult(requestCode, resultCode, data);
+		if (mLoginHelper.getWeiboLoginButton() != null) {
+			mLoginHelper.getWeiboLoginButton().onActivityResult(requestCode, resultCode, data);
+		}
 	}
 	
 	@Override
