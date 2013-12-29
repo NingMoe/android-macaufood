@@ -33,6 +33,9 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.activities.Details;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
+import com.cycon.macaufood.utilities.LoginHelper;
+import com.cycon.macaufood.utilities.LoginHelper.PendingAction;
+import com.cycon.macaufood.utilities.LoginHelper.RegisterPSCallBack;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
@@ -43,6 +46,7 @@ public class PSDetailsView extends LinearLayout {
 
 	private final static int MAX_LIKE = 6;
 	private Context mContext;
+	private LoginHelper mLoginHelper;
 	
 	public PSDetailsView(Context context) {
 		super(context);
@@ -56,6 +60,10 @@ public class PSDetailsView extends LinearLayout {
 	
 	private void init(Context context) {
 		mContext = context;
+	}
+	
+	public void setLoginHelper(LoginHelper helper) {
+		mLoginHelper = helper;
 	}
 	
 	public ViewHolder initView() {
@@ -126,19 +134,7 @@ public class PSDetailsView extends LinearLayout {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO:check login status
-				if (!MFConfig.isOnline(mContext)) {
-					Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
-				} else {
-					if (holder.likeButton.getText().equals(getResources().getString(R.string.like))) {
-						pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
-						loadLikeInfo(pInfo, holder, false);
-						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_LIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
-					} else {
-						loadLikeInfo(pInfo, holder, true);
-						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_UNLIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
-					}
-				}
+				checkLogin(PendingAction.LIKE, pInfo, holder, null);
 			}
 		});
 		
@@ -287,56 +283,97 @@ public class PSDetailsView extends LinearLayout {
 			
 			@Override
 			public void onClick(View v) {
-				if (!MFConfig.isOnline(mContext)) {
-					Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
-					return;
-				}
-		    	final CommentDialogView view = new CommentDialogView(mContext, commentList);
-		    	
-				final AlertDialog dialog = new AlertDialog.Builder(mContext)
-				.setView(view)
-				.show();
-				
-				final EditText editTv = (EditText) view.findViewById(R.id.editTv);
-//				InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-//				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-				
-//				editTv.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//				    @Override
-//				    public void onFocusChange(View v, boolean hasFocus) {
-//				        if (hasFocus) {
-				            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-//				        }
-//				    }
-//				});
-
-				editTv.requestFocus();
-				
-				Button sendButton = (Button) view.findViewById(R.id.sendButton);
-				sendButton.setOnClickListener(new OnClickListener() {
-					
-					@Override
-					public void onClick(View v) {
-						String commentStr = editTv.getText().toString().trim();
-						if (commentStr.length() > 0) {
-							if (!MFConfig.isOnline(mContext)) {
-								Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
-							} else {
-								List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-				    			pairs.add(new BasicNameValuePair("memberid", MFConfig.memberId));
-				    			pairs.add(new BasicNameValuePair("photoid", pInfo.getPhotoid()));
-				    			pairs.add(new BasicNameValuePair("comment", commentStr));
-				    			MFService.sendRequestWithParams(MFURL.PHOTOSHARE_COMMENT, mContext.getApplicationContext(), pairs);
-				    			pInfo.setComments(commentStr + "|||" + MFConfig.memberId + "|||" + MFConfig.memberName + "|||" + (System.currentTimeMillis() / 1000) + (pInfo.getComments().equals("") ? "" : "@@@") + pInfo.getComments() );
-				    			dialog.dismiss();
-				    			loadCommentInfo(pInfo, holder);
-							}
-						}
-
-					}
-				});
+				checkLogin(PendingAction.COMMENT, pInfo, holder, commentList);
 			}
 		});
+    }
+    
+    private void doLikeButtonClickAction(final ParsedPSHolder pInfo, final ViewHolder holder) {
+		if (!MFConfig.isOnline(mContext)) {
+			Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+		} else {
+			if (holder.likeButton.getText().equals(getResources().getString(R.string.like))) {
+				pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
+				loadLikeInfo(pInfo, holder, false);
+				MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_LIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+			} else {
+				loadLikeInfo(pInfo, holder, true);
+				MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_UNLIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+			}
+		}
+    }
+    
+    private void doCommentButtonClickAction(final ParsedPSHolder pInfo, final ViewHolder holder, List commentList) {
+		if (!MFConfig.isOnline(mContext)) {
+			Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+			return;
+		}
+    	final CommentDialogView view = new CommentDialogView(mContext, commentList);
+    	
+		final AlertDialog dialog = new AlertDialog.Builder(mContext)
+		.setView(view)
+		.show();
+		
+		final EditText editTv = (EditText) view.findViewById(R.id.editTv);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+		editTv.requestFocus();
+		
+		Button sendButton = (Button) view.findViewById(R.id.sendButton);
+		sendButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				String commentStr = editTv.getText().toString().trim();
+				if (commentStr.length() > 0) {
+					if (!MFConfig.isOnline(mContext)) {
+						Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+					} else {
+						List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		    			pairs.add(new BasicNameValuePair("memberid", MFConfig.memberId));
+		    			pairs.add(new BasicNameValuePair("photoid", pInfo.getPhotoid()));
+		    			pairs.add(new BasicNameValuePair("comment", commentStr));
+		    			MFService.sendRequestWithParams(MFURL.PHOTOSHARE_COMMENT, mContext.getApplicationContext(), pairs);
+		    			pInfo.setComments(commentStr + "|||" + MFConfig.memberId + "|||" + MFConfig.memberName + "|||" + (System.currentTimeMillis() / 1000) + (pInfo.getComments().equals("") ? "" : "@@@") + pInfo.getComments() );
+		    			dialog.dismiss();
+		    			loadCommentInfo(pInfo, holder);
+					}
+				}
+
+			}
+		});
+    }
+    
+	private void checkLogin(PendingAction pa, final ParsedPSHolder pInfo, final ViewHolder holder, final List list) {
+		
+		if (mLoginHelper.isLogin()) {
+			handlePendingAction(pa, pInfo, holder, list);
+		} else {
+    		mLoginHelper.showLoginDialog(null, pa, new RegisterPSCallBack() {
+				
+				@Override
+				public void onErrorRegistered() {
+				}
+				
+				@Override
+				public void onCompleteRegistered(PendingAction pa) {
+					handlePendingAction(pa, pInfo, holder, list);
+				}
+			});
+		}
+	}
+    
+    private void handlePendingAction(PendingAction pa, final ParsedPSHolder pInfo, final ViewHolder holder, List list) {
+    	switch (pa) {
+		case LIKE:
+			doLikeButtonClickAction(pInfo, holder);
+			break;
+		case COMMENT:
+			doCommentButtonClickAction(pInfo, holder, list);
+			break;
+		default:
+			break;
+		}
     }
     
     private void setLikeButtonStatus(boolean like, Button likeButton) {

@@ -48,7 +48,7 @@ public class PSDetails extends BaseActivity {
 		mFriendsActivityInfo.add(psHotId);
 		mFriendsActivityListView = (StickyListHeadersListView) findViewById(R.id.friendsActivityListView);
 		mFriendsActivityAdapter = new PSFriendsActivityAdapter(this,
-				mFriendsActivityInfo);
+				mFriendsActivityInfo, mLoginHelper);
 		mFriendsActivityListView.setAdapter(mFriendsActivityAdapter);
 	}
 

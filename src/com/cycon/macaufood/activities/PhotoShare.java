@@ -175,7 +175,7 @@ public class PhotoShare extends SherlockFragment{
 		}
 		mFriendsActivityError = (TextView) mView.findViewById(R.id.friendsActivityError);
 		mFriendsActivityListView = (StickyListHeadersListView) mView.findViewById(R.id.friendsActivityListView);
-		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, MFConfig.getInstance().getFriendsActivityList());
+		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, MFConfig.getInstance().getFriendsActivityList(), mLoginHelper);
 		mFriendsActivityListView.setAdapter(mFriendsActivityAdapter);
 		
 		mFriendsActivityFindFriendsButton.setOnClickListener(new OnClickListener() {

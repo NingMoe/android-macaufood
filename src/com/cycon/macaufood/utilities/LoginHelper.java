@@ -39,7 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class LoginHelper {
-	
+	//this class cannnot be singleton
 	private static final String TAG = "LoginHelper";
 	
 	//Weibo
