@@ -26,7 +26,7 @@
             facebook:logout_text="@string/facebookLogin"
             />
     
-        <com.sina.weibo.sdk.widget.LoginButton
+        <com.sina.weibo.sdk.widget.LoginoutButton
             android:id="@+id/weibo_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

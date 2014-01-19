@@ -9,12 +9,17 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -29,6 +34,7 @@ import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.cycon.macaufood.R;
@@ -62,6 +68,9 @@ public class PhotoShare extends SherlockFragment{
 	private static final int MENU_TAKE_PHOTO = 3;
 	private static final int MENU_USE_ALBUM = 4;
 	
+	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 7001;
+	private static final int CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE = 7002;
+	
 	private View retryLayout;
 	private Button retryButton;
 	private GridView mHotGV;
@@ -92,6 +101,8 @@ public class PhotoShare extends SherlockFragment{
 	public boolean mIsVisible;
 	private LoginHelper mLoginHelper;
 	
+	private Uri fileUri;
+	
 	//FB
 	private UiLifecycleHelper uiHelper;
 	
@@ -108,8 +119,10 @@ public class PhotoShare extends SherlockFragment{
 				callLogout(true);
 				break;
 			case MENU_TAKE_PHOTO:
+				takePhoto();
 				break;
 			case MENU_USE_ALBUM:
+				useAlbum();
 				break;
 			default:
 				break;
@@ -129,14 +142,35 @@ public class PhotoShare extends SherlockFragment{
 				callLogout(true);
 				break;
 			case MENU_TAKE_PHOTO:
+				takePhoto();
 				break;
 			case MENU_USE_ALBUM:
+				useAlbum();
 				break;
 			default:
 				break;
 			}
 			// TODO Auto-generated method stub
 			return false;
+	}
+	
+	private void takePhoto() {
+	    // create Intent to take a picture and return control to the calling application
+	    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+	    fileUri = MFUtil.getOutputMediaFileUri(MFUtil.MEDIA_TYPE_IMAGE); // create a file to save the image
+	    intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
+
+	    // start the image capture Intent
+	    startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+	}
+	
+	private void useAlbum() {
+	    Intent intent = new Intent(Intent.ACTION_PICK);
+	    intent.setType("image/*");
+
+	    // start the image capture Intent
+	    startActivityForResult(intent, CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE);
 	}
 	
 	@Override
@@ -508,7 +542,33 @@ public class PhotoShare extends SherlockFragment{
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.e("ZZZ", "onActivityResult");
 		super.onActivityResult(requestCode, resultCode, data);
+	    if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+	        if (resultCode == Activity.RESULT_OK) {
+				Intent i = new Intent(mContext, PSUploadPhoto.class);
+				i.setData(data.getData());
+				startActivity(i);
+				mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, 
+					    Uri.parse("file://"+ Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES))));
+	        } else if (resultCode == Activity.RESULT_CANCELED) {
+	        	Log.e("ZZZ", "image capture canceled");
+	        } else {
+				Toast.makeText(mContext, R.string.imageCaptureFailed, Toast.LENGTH_LONG).show();
+	            // Image capture failed, advise user
+	        }
+	    } else if (requestCode == CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE) {
+	        if (resultCode == Activity.RESULT_OK) {
+				Intent i = new Intent(mContext, PSUploadPhoto.class);
+				i.setData(data.getData());
+				startActivity(i);
+	        } else if (resultCode == Activity.RESULT_CANCELED) {
+	        	Log.e("ZZZ", "image capture canceled");
+	        } else {
+				Toast.makeText(mContext, R.string.imageCaptureFailed, Toast.LENGTH_LONG).show();
+	            // Image capture failed, advise user
+	        }
+	    }
 		uiHelper.onActivityResult(requestCode, resultCode, data);
 		if (mLoginHelper.getWeiboLoginButton() != null) {
 			mLoginHelper.getWeiboLoginButton().onActivityResult(requestCode, resultCode, data);

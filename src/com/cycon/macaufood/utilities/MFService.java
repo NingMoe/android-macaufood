@@ -153,11 +153,12 @@ public class MFService {
 		if (cacheFile == null) {
 			return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
 		}
-
+		MFLog.e("MFService", "got bitmap stream");
 		OutputStream os = new FileOutputStream(cacheFile);
 		MFUtil.CopyStream(is, os);
 		os.close();
 
+		MFLog.e("MFService", "finished copy stream");
 		FileInputStream fis = new FileInputStream(cacheFile);
 		return BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis));
 	}

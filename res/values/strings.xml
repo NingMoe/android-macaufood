@@ -161,6 +161,10 @@
     <string name="send">發送</string>
     <string name="commentHeader">請發表留言</string>
     <string name="commentGhost">發表回應...</string>
+    <string name="addCaption">請加入標題...</string>
+    <string name="chooseCafe">請選擇餐廳</string>
+    <string name="imageCaptureFailed">拍攝相片失敗,請重試</string>
+    <string name="post">發佈</string>
  	
  	<!--  Misc. -->
  	<string name="sec">秒</string>
