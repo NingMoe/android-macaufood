@@ -167,6 +167,16 @@ public class Home extends SherlockFragmentActivity {
 		textView.setTextSize(15);
 	}
 	
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		super.onActivityResult(arg0, arg1, arg2);
+		
+		PhotoShare photoShareFragment = (PhotoShare) getFragments()[3];
+		if (photoShareFragment != null) {
+			photoShareFragment.onActivityResult(arg0, arg1, arg2);
+		}
+	}
+	
 //	public int getCurrentFragmentIndex() {
 //		return mViewPager.getCurrentItem();
 //	}

@@ -92,11 +92,7 @@ public class LoginHelper {
 	
 	public boolean isWeiboLogin() {
 		Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(mContext);
-        if (accessToken != null && accessToken.isSessionValid()) {
-        	return true;
-        } else {
-        	return false;
-        }
+        return accessToken != null && accessToken.isSessionValid();
 	}
 	
 	public void showLoginDialog(Fragment fragment, final PendingAction pa, final RegisterPSCallBack callback) {
@@ -211,8 +207,7 @@ public class LoginHelper {
 				}).show();
 	}
 	
-	public void callLogout(boolean showToast) {
-//		if (isFacebook) {
+	public void callLogout(final boolean showToast) {
 		    Session session = Session.getActiveSession();
 		    if (session != null && !session.isClosed()) {
 	            session.closeAndClearTokenInformation();
@@ -222,35 +217,43 @@ public class LoginHelper {
 	            PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
 	    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, null);
 		    }
-//		} else {
-//			
-//		}
-		    new LogoutAPI(AccessTokenKeeper.readAccessToken(mContext)).logout(new RequestListener() {
-				@Override
-				public void onIOException(IOException e) {
-				}
-				@Override
-				public void onError(WeiboException e) {
-				}
-				@Override
-				public void onComplete4binary(ByteArrayOutputStream responseOS) {
-				}
-				@Override
-				public void onComplete(String response) {
-		            if (!TextUtils.isEmpty(response)) {
-		                try {
-		                    JSONObject obj = new JSONObject(response);
-		                    String value = obj.getString("result");
-		                    
-		                    if ("true".equalsIgnoreCase(value)) {
-		                        AccessTokenKeeper.clear(mContext);
-		                    }
-		                } catch (JSONException e) {
-		                    e.printStackTrace();
-		                }
-		            }
-				}
-			});
+		    
+		    Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(mContext);
+	        if (accessToken != null && accessToken.isSessionValid()) {
+		    
+			    new LogoutAPI(accessToken).logout(new RequestListener() {
+					@Override
+					public void onIOException(IOException e) {
+					}
+					@Override
+					public void onError(WeiboException e) {
+					}
+					@Override
+					public void onComplete4binary(ByteArrayOutputStream responseOS) {
+					}
+					@Override
+					public void onComplete(String response) {
+			            if (!TextUtils.isEmpty(response)) {
+			                try {
+			                    JSONObject obj = new JSONObject(response);
+			                    String value = obj.getString("result");
+			                    
+			                    if ("true".equalsIgnoreCase(value)) {
+			                        AccessTokenKeeper.clear(mContext);
+			        	            if (showToast) {
+			        	            	Toast.makeText(mContext, R.string.logoutMessage, Toast.LENGTH_SHORT).show();
+			        				}
+			        	            PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
+			        	    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, null);
+			                    }
+			                } catch (JSONException e) {
+			                    e.printStackTrace();
+			                }
+			            }
+					}
+				});
+		    
+	        }
 	}
 	
 
@@ -399,9 +402,6 @@ public class LoginHelper {
     		PreferenceHelper.savePreferencesStr(context, MFConstants.PS_MEMBERID_PREF_KEY, result);
     		PreferenceHelper.savePreferencesStr(context, MFConstants.PS_MEMBERNAME_PREF_KEY, userName);
     		
-    		//if facebook
-//    		boolean isFacebook = true;
-//    		LoginHelper.getInstance(context).setFacebook(isFacebook);
     		callback.onCompleteRegistered(pa);
     	}
     	

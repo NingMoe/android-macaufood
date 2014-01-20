@@ -165,6 +165,8 @@
     <string name="chooseCafe">請選擇餐廳</string>
     <string name="imageCaptureFailed">拍攝相片失敗,請重試</string>
     <string name="post">發佈</string>
+    <string name="shareInFb">分享到 Facebook</string>
+    <string name="shareInWeibo">分享到微博</string>
  	
  	<!--  Misc. -->
  	<string name="sec">秒</string>
