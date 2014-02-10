@@ -283,13 +283,6 @@ public class Home extends SherlockFragmentActivity {
 				Toast.makeText(this, getString(R.string.noInternetMsg), Toast.LENGTH_SHORT).show();
 			}
 			return true;
-		case R.id.menu_wifi:
-			i = new Intent(this, MacauWifi.class);
-			startActivity(i);
-			return true;
-		case R.id.menu_disclaimer:
-			showDisclaimerDialog();
-			return true;
 		case R.id.menu_about:
 			i = new Intent(this, About.class);
 			startActivity(i);

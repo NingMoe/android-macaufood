@@ -1,7 +1,6 @@
 package com.cycon.macaufood.activities;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,7 +16,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -25,16 +23,19 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -50,7 +51,11 @@ public class PSUploadPhoto extends BaseActivity {
 	private final int POST_MENU_ID = 1;
 	private final String TAG = "PSUploadPhoto";
 	private ImageView mImageView;
-	private Bitmap mThumbNali;
+	private TextView mCafeName;
+	private View mCafeNameLayout;
+	private ToggleButton mFbToggleButton;
+	private ToggleButton mWeiboToggleButton;
+	private int SELECT_CAFE_REQUEST_CODE = 7001;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +63,24 @@ public class PSUploadPhoto extends BaseActivity {
 		setContentView(R.layout.ps_upload_photo);
 		
 		mImageView = (ImageView) findViewById(R.id.imageView);
+		mCafeName = (TextView) findViewById(R.id.cafeName);
+		mCafeNameLayout = findViewById(R.id.cafeNameLayout);
+		mFbToggleButton = (ToggleButton) findViewById(R.id.toggleButtonFb);
+		mWeiboToggleButton = (ToggleButton) findViewById(R.id.toggleButtonWeibo);
+		
+		mCafeNameLayout.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent i = new Intent(PSUploadPhoto.this, PSCafeLocation.class);
+				startActivityForResult(i, SELECT_CAFE_REQUEST_CODE);
+			}
+		});
 		
 		Uri imageUri = getIntent().getData();
 		Bitmap bitmap = null;
 		try {
 			bitmap = MFUtil.getThumbnail(imageUri, this);
-			mThumbNali = bitmap;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

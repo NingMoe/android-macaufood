@@ -68,7 +68,7 @@ public final class R {
 		public static final int com_facebook_list_section_header_background = 0x7f020092;
 		public static final int com_facebook_loginbutton_silver = 0x7f020093;
 		public static final int com_facebook_logo = 0x7f020094;
-		public static final int com_facebook_picker_default_separator_color = 0x7f020161;
+		public static final int com_facebook_picker_default_separator_color = 0x7f020162;
 		public static final int com_facebook_picker_item_background = 0x7f020095;
 		public static final int com_facebook_picker_list_focused = 0x7f020096;
 		public static final int com_facebook_picker_list_longpressed = 0x7f020097;
@@ -87,29 +87,29 @@ public final class R {
 		public static final int com_facebook_usersettingsfragment_background_gradient = 0x7f0200a4;
 	}
 	public static final class id {
-		public static final int com_facebook_login_activity_progress_bar = 0x7f0a0056;
-		public static final int com_facebook_picker_activity_circle = 0x7f0a0055;
-		public static final int com_facebook_picker_checkbox = 0x7f0a0058;
-		public static final int com_facebook_picker_checkbox_stub = 0x7f0a005c;
-		public static final int com_facebook_picker_divider = 0x7f0a0060;
-		public static final int com_facebook_picker_done_button = 0x7f0a005f;
-		public static final int com_facebook_picker_image = 0x7f0a0059;
-		public static final int com_facebook_picker_list_section_header = 0x7f0a005d;
-		public static final int com_facebook_picker_list_view = 0x7f0a0054;
-		public static final int com_facebook_picker_profile_pic_stub = 0x7f0a005a;
-		public static final int com_facebook_picker_row_activity_circle = 0x7f0a0057;
-		public static final int com_facebook_picker_search_text = 0x7f0a0065;
-		public static final int com_facebook_picker_title = 0x7f0a005b;
-		public static final int com_facebook_picker_title_bar = 0x7f0a0062;
-		public static final int com_facebook_picker_title_bar_stub = 0x7f0a0061;
-		public static final int com_facebook_picker_top_bar = 0x7f0a005e;
-		public static final int com_facebook_search_bar_view = 0x7f0a0064;
-		public static final int com_facebook_usersettingsfragment_login_button = 0x7f0a0068;
-		public static final int com_facebook_usersettingsfragment_logo_image = 0x7f0a0066;
-		public static final int com_facebook_usersettingsfragment_profile_name = 0x7f0a0067;
+		public static final int com_facebook_login_activity_progress_bar = 0x7f0a0058;
+		public static final int com_facebook_picker_activity_circle = 0x7f0a0057;
+		public static final int com_facebook_picker_checkbox = 0x7f0a005a;
+		public static final int com_facebook_picker_checkbox_stub = 0x7f0a005e;
+		public static final int com_facebook_picker_divider = 0x7f0a0062;
+		public static final int com_facebook_picker_done_button = 0x7f0a0061;
+		public static final int com_facebook_picker_image = 0x7f0a005b;
+		public static final int com_facebook_picker_list_section_header = 0x7f0a005f;
+		public static final int com_facebook_picker_list_view = 0x7f0a0056;
+		public static final int com_facebook_picker_profile_pic_stub = 0x7f0a005c;
+		public static final int com_facebook_picker_row_activity_circle = 0x7f0a0059;
+		public static final int com_facebook_picker_search_text = 0x7f0a0067;
+		public static final int com_facebook_picker_title = 0x7f0a005d;
+		public static final int com_facebook_picker_title_bar = 0x7f0a0064;
+		public static final int com_facebook_picker_title_bar_stub = 0x7f0a0063;
+		public static final int com_facebook_picker_top_bar = 0x7f0a0060;
+		public static final int com_facebook_search_bar_view = 0x7f0a0066;
+		public static final int com_facebook_usersettingsfragment_login_button = 0x7f0a006a;
+		public static final int com_facebook_usersettingsfragment_logo_image = 0x7f0a0068;
+		public static final int com_facebook_usersettingsfragment_profile_name = 0x7f0a0069;
 		public static final int large = 0x7f0a0006;
 		public static final int normal = 0x7f0a0001;
-		public static final int picker_subtitle = 0x7f0a0063;
+		public static final int picker_subtitle = 0x7f0a0065;
 		public static final int small = 0x7f0a0005;
 	}
 	public static final class layout {

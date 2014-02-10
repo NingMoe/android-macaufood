@@ -167,6 +167,9 @@
     <string name="post">發佈</string>
     <string name="shareInFb">分享到 Facebook</string>
     <string name="shareInWeibo">分享到微博</string>
+    <string name="updateLocation">位置更新中..</string>
+    <string name="psSearchCafeHint">搜尋資料庫所有餐廳</string>
+    <string name="selectCafe">選擇餐廳</string>
  	
  	<!--  Misc. -->
  	<string name="sec">秒</string>

@@ -79,8 +79,7 @@
         <activity android:name=".activities.Info" />
         <activity android:name=".activities.Menu" />
         <activity
-            android:name=".activities.About"
-            android:label="@string/advertiseUs" />
+            android:name=".activities.About"/>
         <activity
             android:name=".activities.Disclaimer"
             android:label="@string/disclaimer" />
@@ -95,6 +94,8 @@
         <activity android:name=".activities.PSDetails" />
         <activity android:name=".activities.PSUploadPhoto"
             android:label="@string/psUpload" />
+        <activity android:name=".activities.PSCafeLocation"
+            android:label="@string/selectCafe" />
         <activity android:name="com.facebook.LoginActivity"/>
         
     </application>

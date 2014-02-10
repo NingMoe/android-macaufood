@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-  	android:background="@color/default_bg_color" >
+    android:background="@color/ps_details_bg_color"
+    android:orientation="vertical" >
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -12,101 +12,142 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:orientation="vertical" >
-
+            android:orientation="vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" >
+            
             <TextView
-                android:id="@+id/ourWebsite"
+                android:id="@+id/disclaimer"
                 android:layout_width="fill_parent"
-                android:layout_height="60dip"
-                android:background="@drawable/about_item_bg"
-                android:drawableRight="@drawable/arrow3"
+                android:layout_height="48dp"
+                android:background="@drawable/transparent_selector_bg"
+                android:drawableRight="@drawable/gray_arrow"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:paddingLeft="15dip"
                 android:paddingRight="15dip"
-                android:text="@string/ourWebsite"
+                android:text="@string/disclaimer"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-            
+
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="1px"
-                android:background="@android:drawable/divider_horizontal_bright"
-                />
+                android:layout_height="1dp"
+                android:background="@color/light_divider" />
+            
+            <TextView
+                android:id="@+id/macauWifi"
+                android:layout_width="fill_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/transparent_selector_bg"
+                android:drawableRight="@drawable/gray_arrow"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:text="@string/macauWifi"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/advertiseUs"
+                android:padding="4dp"
+                android:textColor="@color/green_text" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="3dp"
+                android:background="@color/green_text" />
+
+            <TextView
+                android:id="@+id/ourWebsite"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/transparent_selector_bg"
+                android:drawableRight="@drawable/gray_arrow"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingBottom="6dp"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:paddingTop="6dp"
+                android:text="@string/ourWebsite"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_divider" />
 
             <TextView
                 android:id="@+id/emailUs"
                 android:layout_width="fill_parent"
-                android:layout_height="60dip"
-                android:background="@drawable/about_item_bg"
-                android:drawableRight="@drawable/arrow3"
+                android:layout_height="48dp"
+                android:background="@drawable/transparent_selector_bg"
+                android:drawableRight="@drawable/gray_arrow"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:paddingLeft="15dip"
                 android:paddingRight="15dip"
                 android:text="@string/emailUs"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-            
+
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="1px"
-                android:background="@android:drawable/divider_horizontal_bright"
-                />
+                android:layout_height="1dp"
+                android:background="@color/light_divider" />
 
             <TextView
                 android:id="@+id/callUs1"
                 android:layout_width="fill_parent"
-                android:layout_height="60dip"
-                android:background="@drawable/about_item_bg"
-                android:drawableRight="@drawable/arrow3"
+                android:layout_height="48dp"
+                android:background="@drawable/transparent_selector_bg"
+                android:drawableRight="@drawable/gray_arrow"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:paddingLeft="15dip"
                 android:paddingRight="15dip"
                 android:text="@string/callUs1"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-            
+
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="1px"
-                android:background="@android:drawable/divider_horizontal_bright"
-                />
+                android:layout_height="1dp"
+                android:background="@color/light_divider" />
 
             <TextView
                 android:id="@+id/callUs2"
                 android:layout_width="fill_parent"
-                android:layout_height="60dip"
-                android:background="@drawable/about_item_bg"
-                android:drawableRight="@drawable/arrow3"
+                android:layout_height="48dp"
+                android:background="@drawable/transparent_selector_bg"
+                android:drawableRight="@drawable/gray_arrow"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:paddingLeft="15dip"
                 android:paddingRight="15dip"
                 android:text="@string/callUs2"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-            
+
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="1px"
-                android:background="@android:drawable/divider_horizontal_bright"
-                />
+                android:layout_height="1dp"
+                android:background="@color/light_divider" />
 
             <TextView
                 android:id="@+id/faxUs"
                 android:layout_width="fill_parent"
-                android:layout_height="60dip"
-                android:background="@drawable/about_item_bg"
+                android:layout_height="48dp"
                 android:focusable="true"
                 android:gravity="center_vertical"
                 android:paddingLeft="15dip"
                 android:paddingRight="15dip"
                 android:text="@string/faxUs"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-            
+
             <View
                 android:layout_width="fill_parent"
-                android:layout_height="1px"
-                android:background="@android:drawable/divider_horizontal_bright"
-                />
+                android:layout_height="1dp"
+                android:background="@color/light_divider" />
         </LinearLayout>
     </ScrollView>
 
