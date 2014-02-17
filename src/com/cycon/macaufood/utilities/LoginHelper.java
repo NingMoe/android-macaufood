@@ -68,7 +68,8 @@ public class LoginHelper {
         CAMERA,
         SETTINGS,
         LIKE, 
-        COMMENT
+        COMMENT, 
+        DELETE
     }
 
 	public interface RegisterPSCallBack {

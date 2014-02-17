@@ -143,6 +143,13 @@ public class PSDetailsView extends LinearLayout {
 
 		if (pInfo.getMemberid().equals(MFConfig.memberId)) {
 			holder.deleteButton.setVisibility(View.VISIBLE);
+			holder.deleteButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					checkLogin(PendingAction.DELETE, pInfo, holder, null);
+				}
+			});
 		} else {
 			holder.deleteButton.setVisibility(View.INVISIBLE);
 		}
@@ -288,6 +295,15 @@ public class PSDetailsView extends LinearLayout {
 		});
     }
     
+    private void doDeleteButtonClickAction(final ParsedPSHolder pInfo) {
+		if (!MFConfig.isOnline(mContext)) {
+			Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+		} else {
+			Log.e("ZZZ", "delete request");
+			MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_DELETE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+		}
+    }
+    
     private void doLikeButtonClickAction(final ParsedPSHolder pInfo, final ViewHolder holder) {
 		if (!MFConfig.isOnline(mContext)) {
 			Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
@@ -370,6 +386,9 @@ public class PSDetailsView extends LinearLayout {
 			break;
 		case COMMENT:
 			doCommentButtonClickAction(pInfo, holder, list);
+			break;
+		case DELETE:
+			doDeleteButtonClickAction(pInfo);
 			break;
 		default:
 			break;

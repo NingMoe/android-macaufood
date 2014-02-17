@@ -64,10 +64,10 @@ public class Map extends SherlockFragmentActivity {
 	public static final int SHOW_MAP_REQUEST_CODE = 1;
 	private static final int SHOW_LIST_MENU_ID = 1;
 	private static final int SHOW_GOOGLE_MAP_MENU_ID = 2;
-	private static final double LAT_MIN = 22.104;
-	private static final double LAT_MAX = 22.24;
-	private static final double LONG_MIN = 113.51;
-	private static final double LONG_MAX = 113.60;
+	public static final double LAT_MIN = 22.104;
+	public static final double LAT_MAX = 22.24;
+	public static final double LONG_MIN = 113.51;
+	public static final double LONG_MAX = 113.60;
 	private static final double LAT_DEFAULT = 22.19971287;
 	private static final double LONG_DEFAULT = 113.54500506;
 	private static final double LAT_DEFAULT_ISLAND = 22.148;
@@ -535,8 +535,6 @@ public class Map extends SherlockFragmentActivity {
             .position(cafeLatLng)
             .title(cafe.getName())
             .snippet(MFUtil.getDishesStringFromCafe(cafe))
-//            .snippet(cafe.getPhone().trim().length() == 0 ? null
-//					: cafe.getPhone())
             .icon(blueBitmap));
 			
 			mMarkersHashMap.put(marker, cafe.getId());

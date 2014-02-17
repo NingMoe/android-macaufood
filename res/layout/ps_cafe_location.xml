@@ -5,12 +5,13 @@
     android:orientation="vertical" >
     
     <EditText 
+        android:id="@+id/cafeSearchText"
 	    android:layout_width="match_parent"
 	    android:layout_height="48dp"
 	    android:orientation="horizontal" 
 	    android:background="@color/light_gray_bg"
 	    android:hint="@string/psSearchCafeHint"
-	    android:drawableLeft="@drawable/search"
+	    android:drawableLeft="@drawable/search_grey"
 	    android:drawablePadding="6dp"
 	    android:gravity="center_vertical"
 	    android:paddingLeft="10dp"
@@ -18,5 +19,11 @@
         >
     </EditText>
     
+    <ListView
+        android:id="@+id/cafeLocationList"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        />
 
 </LinearLayout>

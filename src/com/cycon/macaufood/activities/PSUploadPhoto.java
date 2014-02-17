@@ -1,6 +1,7 @@
 package com.cycon.macaufood.activities;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -26,6 +28,8 @@ import org.apache.http.params.HttpParams;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,6 +44,7 @@ import android.widget.ToggleButton;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFLog;
@@ -50,6 +55,7 @@ public class PSUploadPhoto extends BaseActivity {
 	
 	private final int POST_MENU_ID = 1;
 	private final String TAG = "PSUploadPhoto";
+	private Cafe mSelectedCafe;
 	private ImageView mImageView;
 	private TextView mCafeName;
 	private View mCafeNameLayout;
@@ -88,6 +94,17 @@ public class PSUploadPhoto extends BaseActivity {
 		}
 		
 		mImageView.setImageBitmap(bitmap);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == SELECT_CAFE_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				mSelectedCafe = (Cafe) data.getSerializableExtra("cafe");
+				mCafeName.setText(mSelectedCafe.getName());
+			}
+		}
 	}
 	
 	private void uploadPhoto() {
@@ -161,6 +178,22 @@ public class PSUploadPhoto extends BaseActivity {
         		"&cafename=Testing&coordx=0&coordy=0&cafeid=12&cafeaddress=123&cafephone=123";
         		HttpPost request = new HttpPost(url);
         		
+        		
+        		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                bitmap.compress(CompressFormat.JPEG, 75, byteArrayOutputStream); 
+                byte[] byteData = byteArrayOutputStream.toByteArray();
+                //String strData = Base64.encodeToString(data, Base64.DEFAULT); // I have no idea why Im doing this
+                ByteArrayBody byteArrayBody = new ByteArrayBody(byteData, "image");
+        		
+        		
+        		
+ /*               request.addHeader("Content-Type", "multipart/form-data; boundary="
+                        + "---------------------------14737809831466499882746641449");
+
+                request.addHeader("Content-Type", "application/x-www-form-urlencoded");*/
+        		
+        		Log.e("ZZZ", "file path = " + filePath);
         		File file = new File(filePath);
 //        		FileBody fileBody = new FileBody(file);
 //        		ContentBody encFile = new FileBody(file, "image/jpg");
@@ -170,7 +203,13 @@ public class PSUploadPhoto extends BaseActivity {
 //        		multipartEntity.addBinaryBody("picture", file);
         		
         		ContentBody cbFile = new FileBody(file, "image/jpeg");
-        		multipartEntity.addPart("userfile", cbFile); 
+//        		FileBody body  = new FileBody(file);
+//        		FormBodyPart fbp = new FormBodyPart("file", body);
+        		
+        		
+        		multipartEntity.addPart("userfile", byteArrayBody); 
+/*        		multipartEntity.addTextBody("Content-Disposition", "form-data");
+        		multipartEntity.addTextBody("Content-Type", "application/octet-stream");*/
         		
         		
 //        		ByteArrayOutputStream bao = new ByteArrayOutputStream();
@@ -188,7 +227,10 @@ public class PSUploadPhoto extends BaseActivity {
 //        		InputStreamEntity entity = new InputStreamEntity(fileInputStream, file.length());
 //        		entity.setContentType("binary/octet-stream");
 //        		entity.setChunked(true);
-        		
+
+                
+ /*               request.addHeader("Content-Disposition", "form-data; name=userfile; filename=xxxxdddd.jpg");
+                request.addHeader("Content-Type", "application/octet-stream\r\n\r\n");*/
         		request.setEntity(multipartEntity.build());
         		HttpResponse response = client.execute(request);
         		InputStream is = response.getEntity().getContent();

@@ -170,8 +170,12 @@
     <string name="updateLocation">位置更新中..</string>
     <string name="psSearchCafeHint">搜尋資料庫所有餐廳</string>
     <string name="selectCafe">選擇餐廳</string>
+    <string name="addCafe">新增加餐廳</string>
+    <string name="pleaseFillCafeName">請填寫餐廳名字</string>
  	
  	<!--  Misc. -->
+ 	<string name="meter">米</string>
+ 	<string name="km">公里</string>
  	<string name="sec">秒</string>
  	<string name="min">分鐘</string>
  	<string name="hour">小時</string>
