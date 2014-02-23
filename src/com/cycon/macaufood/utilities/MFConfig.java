@@ -52,6 +52,7 @@ public class MFConfig {
 	private ArrayList<ParsedCafeHolder> normalCouponCafeList = new ArrayList<ParsedCafeHolder>(60);
 	private ArrayList<ParsedCafeHolder> creditVipCouponCafeList = new ArrayList<ParsedCafeHolder>(30);
 	private ArrayList<ParsedFoodNewsHolder> foodNewsList = new ArrayList<ParsedFoodNewsHolder>(20);
+	//string is photoid, both hot list and friends activity info points to same object in map
 	private ArrayList<String> psHotList = new ArrayList<String>(26);
 	private ArrayList<String> mFriendsActivityInfo = new ArrayList<String>();
 	

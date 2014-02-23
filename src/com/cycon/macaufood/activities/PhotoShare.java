@@ -54,6 +54,7 @@ import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 import com.cycon.macaufood.widget.FindFriendsDialogView;
+import com.cycon.macaufood.widget.PSDetailsView.DetailsViewCallback;
 import com.cycon.macaufood.xmlhandler.PSDetailXMLHandler;
 import com.facebook.UiLifecycleHelper;
 
@@ -70,6 +71,7 @@ public class PhotoShare extends SherlockFragment{
 	
 	private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 7001;
 	private static final int CHOOSE_IMAGE_ACTIVITY_REQUEST_CODE = 7002;
+	private static final int UPLOAD_IMAGE_ACTIVITY_REQUEST_CODE = 8001;
 	
 	private View retryLayout;
 	private Button retryButton;
@@ -102,6 +104,7 @@ public class PhotoShare extends SherlockFragment{
 	private LoginHelper mLoginHelper;
 	
 	private Uri fileUri;
+	private File mPhotoFile;
 	
 	//FB
 	private UiLifecycleHelper uiHelper;
@@ -158,7 +161,8 @@ public class PhotoShare extends SherlockFragment{
 	    // create Intent to take a picture and return control to the calling application
 	    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-	    fileUri = MFUtil.getOutputMediaFileUri(MFUtil.MEDIA_TYPE_IMAGE); // create a file to save the image
+	    mPhotoFile = MFUtil.getOutputMediaFile(MFUtil.MEDIA_TYPE_IMAGE);
+	    fileUri = Uri.fromFile(mPhotoFile); // create a file to save the image
 	    intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
 	    // start the image capture Intent
@@ -209,7 +213,14 @@ public class PhotoShare extends SherlockFragment{
 		}
 		mFriendsActivityError = (TextView) mView.findViewById(R.id.friendsActivityError);
 		mFriendsActivityListView = (StickyListHeadersListView) mView.findViewById(R.id.friendsActivityListView);
-		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, MFConfig.getInstance().getFriendsActivityList(), mLoginHelper);
+		mFriendsActivityAdapter = new PSFriendsActivityAdapter(mContext, MFConfig.getInstance().getFriendsActivityList(), mLoginHelper, new DetailsViewCallback() {
+			
+			@Override
+			public void onDeletePhoto() {
+				mFriendsActivityAdapter.notifyDataSetChanged();
+				mPsHotAdapter.notifyDataSetChanged();
+			}
+		});
 		mFriendsActivityListView.setAdapter(mFriendsActivityAdapter);
 		
 		mFriendsActivityFindFriendsButton.setOnClickListener(new OnClickListener() {
@@ -255,6 +266,13 @@ public class PhotoShare extends SherlockFragment{
 			registerForContextMenu(mPsSettingsTab);
 		}
 
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		//reload in case photo deleted in ps details view.
+		mPsHotAdapter.notifyDataSetChanged();
 	}
 	
 	private void switchToHotTab() {
@@ -306,7 +324,7 @@ public class PhotoShare extends SherlockFragment{
         fileCache=new FileCache(mContext, ImageType.PHOTOSHARE);
         
 		if (MFConfig.isOnline(mContext) && 
-				!MFConfig.hasAlreadyRefreshList) { //need to fetch hot list again if already fetched all list
+				!MFConfig.hasAlreadyRefreshList) { //need to fetch hot list again if not already fetched all list
 			MFFetchListHelper.fetchPSHotList((Home)mContext);
 		} else { 
 	        File f=fileCache.getFile(MFConstants.PS_HOT_XML_FILE_NAME);
@@ -522,14 +540,18 @@ public class PhotoShare extends SherlockFragment{
 							int which) {
 						dialog.dismiss();
 						if (view.isModified()) {
-							if (mCurrentTab == 0) {
-								loadFriendsActivity();
-							} else {
-								mFriendsActivityTimeStamp = 0;
-							}
+							reloadActivityOrResetTimeStamp();
 						}
 					}
 				}).show();
+    }
+    
+    public void reloadActivityOrResetTimeStamp() {
+		if (mCurrentTab == 0) {
+			loadFriendsActivity();
+		} else {
+			mFriendsActivityTimeStamp = 0;
+		}
     }
     
 	
@@ -547,8 +569,9 @@ public class PhotoShare extends SherlockFragment{
 	    if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
 	        if (resultCode == Activity.RESULT_OK) {
 				Intent i = new Intent(mContext, PSUploadPhoto.class);
-				i.setData(data.getData());
-				startActivity(i);
+				i.setData(fileUri);
+				i.putExtra("photoFile", mPhotoFile);
+				startActivityForResult(i, UPLOAD_IMAGE_ACTIVITY_REQUEST_CODE);
 				mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, 
 					    Uri.parse("file://"+ Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES))));
 	        } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -561,13 +584,26 @@ public class PhotoShare extends SherlockFragment{
 	        if (resultCode == Activity.RESULT_OK) {
 				Intent i = new Intent(mContext, PSUploadPhoto.class);
 				i.setData(data.getData());
-				startActivity(i);
+				startActivityForResult(i, UPLOAD_IMAGE_ACTIVITY_REQUEST_CODE);
 	        } else if (resultCode == Activity.RESULT_CANCELED) {
 	        	Log.e("ZZZ", "image capture canceled");
 	        } else {
-				Toast.makeText(mContext, R.string.imageCaptureFailed, Toast.LENGTH_LONG).show();
+				Toast.makeText(mContext, R.string.imageChooseFailed, Toast.LENGTH_LONG).show();
 	            // Image capture failed, advise user
 	        }
+	    } else if (requestCode == UPLOAD_IMAGE_ACTIVITY_REQUEST_CODE) {
+	        if (resultCode == Activity.RESULT_OK) {
+	        	mFriendsActivityTimeStamp = 0;
+	        	if (mCurrentTab == 0) {
+	        		loadFriendsActivity();
+	        	} else {
+		        	switchToFriendsTab();
+	        	}
+	        	
+	    		if (MFConfig.isOnline(mContext)) {
+	    			MFFetchListHelper.fetchPSHotList((Home)mContext);
+	    		}
+	        } 
 	    }
 		uiHelper.onActivityResult(requestCode, resultCode, data);
 		if (mLoginHelper.getWeiboLoginButton() != null) {

@@ -140,13 +140,9 @@ public class MFUtil {
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
 
-    /** Create a file Uri for saving an image or video */
-    public static Uri getOutputMediaFileUri(int type){
-          return Uri.fromFile(getOutputMediaFile(type));
-    }
 
     /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type){
+    public static File getOutputMediaFile(int type){
     	if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) return null;
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
@@ -180,42 +176,43 @@ public class MFUtil {
     }
 
     
-    public static int getOrientation(Context context, Uri photoUri) {
+    public static int getOrientation(Context context, Uri photoUri, File file) {
         /* it's on the external media. */
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[] { MediaStore.Images.ImageColumns.ORIENTATION }, null, null, null);
-
-        if (cursor.getCount() != 1) {
-            return -1;
+        Log.e("ZZZ", "cursor = 	" + cursor);
+        if (cursor != null && cursor.getCount() != 1) {
+            cursor.moveToFirst();
+            return cursor.getInt(0);
         }
+        
+        int rotate = 0;
+        try {
+            ExifInterface exif = new ExifInterface(
+            		file.getAbsolutePath());
+            int orientation = exif.getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
 
-        cursor.moveToFirst();
-        return cursor.getInt(0);
+            switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                rotate = 270;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                rotate = 180;
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                rotate = 90;
+                break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.e("ZZZ", "rotate = " + rotate);
+        return rotate;
     }
     
-    public static Bitmap getThumbnail(Uri uri, Context context) throws FileNotFoundException, IOException{
-//    	Log.e("ZZZ", "orientatio n = " + getOrientation(context, uri));
-//    	
-//    	int rotate = 0;
-//        ExifInterface exif = new ExifInterface(uri.getPath());
-//        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-//
-//        switch (orientation) {
-//        case ExifInterface.ORIENTATION_ROTATE_270:
-//            rotate = 270;
-//            break;
-//        case ExifInterface.ORIENTATION_ROTATE_180:
-//            rotate = 180;
-//            break;
-//        case ExifInterface.ORIENTATION_ROTATE_90:
-//            rotate = 90;
-//            break;
-//        }
-//
-//        Log.e("RotateImage", "Exif orientation: " + orientation);
-//        Log.e("RotateImage", "Rotate value: " + rotate);
-    	
-    	
+    public static Bitmap getThumbnail(Uri uri, File file, Context context) throws FileNotFoundException, IOException{
         InputStream input = context.getContentResolver().openInputStream(uri);
 
         BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
@@ -238,7 +235,7 @@ public class MFUtil {
         input = context.getContentResolver().openInputStream(uri);
         Bitmap bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions);
         input.close();
-        int rotation = getOrientation(context, uri);
+        int rotation = getOrientation(context, uri, file);
         if (rotation != 0) {
         	Matrix matrix = new Matrix();
         	matrix.preRotate(rotation);

@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Process;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -43,10 +44,15 @@ import com.cycon.macaufood.utilities.MFUtil;
 import com.facebook.Session;
 
 public class PSDetailsView extends LinearLayout {
+	
+	public interface DetailsViewCallback {
+		void onDeletePhoto();
+	}
 
 	private final static int MAX_LIKE = 6;
 	private Context mContext;
 	private LoginHelper mLoginHelper;
+	private DetailsViewCallback mCallback;
 	
 	public PSDetailsView(Context context) {
 		super(context);
@@ -64,6 +70,10 @@ public class PSDetailsView extends LinearLayout {
 	
 	public void setLoginHelper(LoginHelper helper) {
 		mLoginHelper = helper;
+	}
+	
+	public void setDetailsViewCallback(DetailsViewCallback callback) {
+		mCallback = callback;
 	}
 	
 	public ViewHolder initView() {
@@ -109,7 +119,7 @@ public class PSDetailsView extends LinearLayout {
 		
 		
 		//buttons------------------------------------------------
-		if (!cafeId.equals("0") && MFConfig.getInstance().getCafeLists().size() >= Integer.parseInt(cafeId)) {
+		if (Integer.parseInt(cafeId) > 0 && MFConfig.getInstance().getCafeLists().size() >= Integer.parseInt(cafeId)) {
 			try {
 				holder.infoButton.setOnClickListener(new OnClickListener() {
 					
@@ -299,8 +309,27 @@ public class PSDetailsView extends LinearLayout {
 		if (!MFConfig.isOnline(mContext)) {
 			Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
 		} else {
-			Log.e("ZZZ", "delete request");
-			MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_DELETE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+			new AlertDialog.Builder(mContext)
+			.setMessage(mContext.getString(R.string.deleteConfirmPrompt))
+			.setPositiveButton(mContext.getString(R.string.confirmed),
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_DELETE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+							String photoId = pInfo.getPhotoid();
+							MFConfig.getInstance().getPsInfoMap().remove(photoId);
+							MFConfig.getInstance().getPsHotList().remove(photoId);
+							MFConfig.getInstance().getFriendsActivityList().remove(photoId);
+							mCallback.onDeletePhoto();
+						}
+					})
+			.setNegativeButton(mContext.getString(R.string.cancel),
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							dialog.dismiss();
+						}
+					}).show();
 		}
     }
     

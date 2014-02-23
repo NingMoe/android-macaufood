@@ -1,5 +1,7 @@
 package com.cycon.macaufood.utilities;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
-import java.nio.MappedByteBuffer;
+import java.net.URL;
 import java.util.List;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -31,24 +33,17 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import com.cycon.macaufood.R;
-import com.cycon.macaufood.activities.BaseActivity;
-import com.cycon.macaufood.activities.FrontPage;
-import com.cycon.macaufood.bean.ImageType;
-import com.cycon.macaufood.sqlite.LocalDbManager;
-import com.cycon.macaufood.xmlhandler.UpdateXMLHandler;
-
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import com.cycon.macaufood.utilities.MFLog;
-
 import android.util.Log;
-import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+
+import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.sqlite.LocalDbManager;
+import com.cycon.macaufood.xmlhandler.UpdateXMLHandler;
 
 public class MFService {
 	
@@ -153,12 +148,10 @@ public class MFService {
 		if (cacheFile == null) {
 			return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
 		}
-		MFLog.e("MFService", "got bitmap stream");
 		OutputStream os = new FileOutputStream(cacheFile);
 		MFUtil.CopyStream(is, os);
 		os.close();
 
-		MFLog.e("MFService", "finished copy stream");
 		FileInputStream fis = new FileInputStream(cacheFile);
 		return BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis));
 	}
@@ -453,6 +446,5 @@ public class MFService {
 			}
     	}
     }
-	
 	
 }

@@ -153,7 +153,6 @@ public class Home extends SherlockFragmentActivity {
 		AlertDialog dialog = new AlertDialog.Builder(this)
 		.setTitle(R.string.disclaimer)
 		.setMessage(R.string.disclaimerText)
-		.setCancelable(false)
 		.setPositiveButton(getString(R.string.agreeDisclaimer),
 				new DialogInterface.OnClickListener() {
 
@@ -305,6 +304,12 @@ public class Home extends SherlockFragmentActivity {
 			MFConfig.hasAlreadyRefreshList = true;
 			MFFetchListHelper.fetchAllList(this);
 			MFService.checkUpdate(getApplicationContext());
+			
+			PhotoShare psFragment = (PhotoShare) mTabsAdapter.getActiveFragment(mViewPager, 3);
+			if (psFragment != null) {
+				psFragment.reloadActivityOrResetTimeStamp();
+			}
+				
 		} 
 	};
 

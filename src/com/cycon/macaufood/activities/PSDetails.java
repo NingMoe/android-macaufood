@@ -12,6 +12,7 @@ import com.cycon.macaufood.adapters.PSFriendsActivityAdapter;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.LoginHelper;
 import com.cycon.macaufood.utilities.MFConfig;
+import com.cycon.macaufood.widget.PSDetailsView.DetailsViewCallback;
 import com.facebook.UiLifecycleHelper;
 
 public class PSDetails extends BaseActivity {
@@ -48,7 +49,13 @@ public class PSDetails extends BaseActivity {
 		mFriendsActivityInfo.add(psHotId);
 		mFriendsActivityListView = (StickyListHeadersListView) findViewById(R.id.friendsActivityListView);
 		mFriendsActivityAdapter = new PSFriendsActivityAdapter(this,
-				mFriendsActivityInfo, mLoginHelper);
+				mFriendsActivityInfo, mLoginHelper, new DetailsViewCallback() {
+					
+					@Override
+					public void onDeletePhoto() {
+						finish();
+					}
+				});
 		mFriendsActivityListView.setAdapter(mFriendsActivityAdapter);
 	}
 

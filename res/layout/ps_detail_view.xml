@@ -147,13 +147,13 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:background="@drawable/button_gray_selector"
-            android:drawableLeft="@drawable/ic_cafe"
+            android:drawableLeft="@drawable/ic_delete"
             android:drawablePadding="2dp"
             android:ellipsize="marquee"
             android:gravity="center"
             android:maxLines="1"
             android:paddingLeft="4dp"
-            android:text="@string/cafeInfo"
+            android:text="@string/delete"
             android:textColor="@color/tab_gray_text"
             android:textSize="14sp" />
     </LinearLayout>

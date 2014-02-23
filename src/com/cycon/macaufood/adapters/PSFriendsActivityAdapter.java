@@ -19,6 +19,7 @@ import com.cycon.macaufood.utilities.LoginHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.widget.PSDetailsView;
+import com.cycon.macaufood.widget.PSDetailsView.DetailsViewCallback;
 import com.cycon.macaufood.widget.PSHeaderView;
 
 public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListHeadersAdapter {
@@ -29,13 +30,15 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
     private Context mContext;
     private LayoutInflater mInflater;
     private LoginHelper mLoginHelper;
+    private DetailsViewCallback mCallback;
 //    private final int imageWidth;
     public final static int SPACING_IN_DP = 4;
 
-    public PSFriendsActivityAdapter(Context context, List<String> holderList, LoginHelper helper) {
+    public PSFriendsActivityAdapter(Context context, List<String> holderList, LoginHelper helper, DetailsViewCallback callback) {
             this.mHolderList = holderList;
             mContext = context;
             mLoginHelper = helper;
+            mCallback = callback;
             psDetailsImageLoader=new ImageLoader(context, 0, ImageType.PHOTOSHARE);
             psDetailsImageLoader.setTaskMaxNumber(2);
             psDetailsImageLoader.setNoAnim(true);
@@ -79,6 +82,7 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
         if (convertView == null) {
         	psDetailsView = (PSDetailsView) mInflater.inflate(R.layout.ps_detail_view, null);
         	psDetailsView.setLoginHelper(mLoginHelper);
+        	psDetailsView.setDetailsViewCallback(mCallback);
         	holder = psDetailsView.initView();
         	convertView = psDetailsView;
         	convertView.setTag(holder);

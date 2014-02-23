@@ -8,23 +8,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URLEncoder;
+import java.util.Locale;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -37,8 +39,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.actionbarsherlock.view.Menu;
@@ -48,19 +52,22 @@ import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFLog;
+import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 
 public class PSUploadPhoto extends BaseActivity {
 	
 	private final int POST_MENU_ID = 1;
-	private final String TAG = "PSUploadPhoto";
+	private final static String TAG = "PSUploadPhoto";
 	private Cafe mSelectedCafe;
 	private ImageView mImageView;
+	private EditText mCaptionText;
 	private TextView mCafeName;
 	private View mCafeNameLayout;
 	private ToggleButton mFbToggleButton;
 	private ToggleButton mWeiboToggleButton;
+	private ProgressDialog pDialog;
 	private int SELECT_CAFE_REQUEST_CODE = 7001;
 
 	@Override
@@ -69,6 +76,7 @@ public class PSUploadPhoto extends BaseActivity {
 		setContentView(R.layout.ps_upload_photo);
 		
 		mImageView = (ImageView) findViewById(R.id.imageView);
+		mCaptionText = (EditText) findViewById(R.id.captionText);
 		mCafeName = (TextView) findViewById(R.id.cafeName);
 		mCafeNameLayout = findViewById(R.id.cafeNameLayout);
 		mFbToggleButton = (ToggleButton) findViewById(R.id.toggleButtonFb);
@@ -86,7 +94,7 @@ public class PSUploadPhoto extends BaseActivity {
 		Uri imageUri = getIntent().getData();
 		Bitmap bitmap = null;
 		try {
-			bitmap = MFUtil.getThumbnail(imageUri, this);
+			bitmap = MFUtil.getThumbnail(imageUri, (File)getIntent().getSerializableExtra("photoFile"), this);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -110,17 +118,12 @@ public class PSUploadPhoto extends BaseActivity {
 	private void uploadPhoto() {
 		//check logout
 		
-		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-		pairs.add(new BasicNameValuePair("userid", MFConfig.memberId));
-		pairs.add(new BasicNameValuePair("photocaption", "123"));
-		pairs.add(new BasicNameValuePair("cafename", "321"));
-		pairs.add(new BasicNameValuePair("coordx", ""));
-		pairs.add(new BasicNameValuePair("coordy", ""));
-		pairs.add(new BasicNameValuePair("cafeid", "2"));
-		pairs.add(new BasicNameValuePair("cafeaddress", ""));
-		pairs.add(new BasicNameValuePair("cafephone", ""));
+		if (mSelectedCafe == null) {
+			Toast.makeText(this, R.string.chooseCafe, Toast.LENGTH_SHORT).show();
+			return;
+		}
 		
-		AsyncTaskHelper.executeWithResultString(new UploadPhotoTask(MFURL.PHOTOSHARE_UPLOAD, pairs, getPath(getIntent().getData())));	
+		AsyncTaskHelper.executeWithResultString(new UploadPhotoTask());	
 		
 	}
 	
@@ -133,6 +136,9 @@ public class PSUploadPhoto extends BaseActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case android.R.id.home:
+			showConfirmExitDialog();
+			return true;
 		case POST_MENU_ID:
 			uploadPhoto();
 			return true;
@@ -140,32 +146,57 @@ public class PSUploadPhoto extends BaseActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
-    public String getPath(Uri uri) 
-    {
-        String[] projection = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        if (cursor == null) return null;
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        String s=cursor.getString(column_index);
-        cursor.close();
-        return s;
+    
+//    public String getPath(Context context, Uri contentUri) {
+//    	  Cursor cursor = null;
+//    	  try { 
+//    	    String[] proj = { MediaStore.Images.Media.DATA };
+//    	    cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+//    	    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//    	    cursor.moveToFirst();
+//    	    return cursor.getString(column_index);
+//    	  } finally {
+//    	    if (cursor != null) {
+//    	      cursor.close();
+//    	    }
+//    	  }
+//    	}
+    
+    @Override
+    public void onBackPressed() {
+    	showConfirmExitDialog();
+    }
+    
+    private void showConfirmExitDialog() {
+		new AlertDialog.Builder(this)
+		.setMessage(this.getString(R.string.confirmExitUpload))
+		.setPositiveButton(this.getString(R.string.confirmed),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int whichButton) {
+						dialog.dismiss();
+						finish();
+					}
+				})
+		.setNegativeButton(this.getString(R.string.cancel),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int whichButton) {
+						dialog.dismiss();
+					}
+				}).show();
     }
 	
 	
 	private class UploadPhotoTask extends AsyncTask<Void, Void, String> {
 		
-		private String filePath;
-		private String url;
-		private List<NameValuePair> pairs;
-		
-		private UploadPhotoTask(String url, List<NameValuePair> pairs, String filePath) {
-			this.url = url;
-			this.pairs = pairs;
-			this.filePath = filePath;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = ProgressDialog.show(PSUploadPhoto.this, null, getString(R.string.uploadingPhotoProgress));
 		}
 		
+		@SuppressLint("NewApi")
 		@Override
 		protected String doInBackground(Void... params) {
 			
@@ -173,64 +204,33 @@ public class PSUploadPhoto extends BaseActivity {
         		HttpClient client = new DefaultHttpClient();
         		HttpParams httpParams = client.getParams();
         		HttpConnectionParams.setConnectionTimeout(httpParams, 15000);
-        		//&userid=%@&photocaption=%@&cafename=%@&coordx=%@&coordy=%@&cafeid=%d@&cafeaddress=%@&cafephone=%@
-        		url = url + "&userid=" + MFConfig.memberId + "&photocaption=" + "1234" + 
-        		"&cafename=Testing&coordx=0&coordy=0&cafeid=12&cafeaddress=123&cafephone=123";
+        		String url = MFURL.PHOTOSHARE_UPLOAD + "&userid=" + MFConfig.memberId + "&photocaption=" + mCaptionText.getText().toString() + 
+        				"&cafename=" + mSelectedCafe.getName() + "&coordx=" + mSelectedCafe.getCoordx() + 
+        				"&coordy=" + mSelectedCafe.getCoordy() + "&cafeid=" + mSelectedCafe.getId() + 
+        				"&cafeaddress=" + mSelectedCafe.getAddress() + "&cafephone=" + mSelectedCafe.getPhone();
+        		URLEncoder.encode(url, "UTF-8");
         		HttpPost request = new HttpPost(url);
         		
-        		
+        		InputStream imageIs = getContentResolver().openInputStream(getIntent().getData());
         		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-                bitmap.compress(CompressFormat.JPEG, 75, byteArrayOutputStream); 
+                Bitmap bitmap = BitmapFactory.decodeStream(imageIs);
+                Log.e("ZZZ", "bitmap = " + bitmap.getByteCount() + " width =" + bitmap.getWidth() + " height = " + bitmap.getHeight());
+                
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                if (width > 600) {
+                	height =  (int) (height * 600.0 / width);
+					width = 600;
+				}
+                Bitmap finalBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+                finalBitmap.compress(CompressFormat.JPEG, 100, byteArrayOutputStream); 
                 byte[] byteData = byteArrayOutputStream.toByteArray();
-                //String strData = Base64.encodeToString(data, Base64.DEFAULT); // I have no idea why Im doing this
                 ByteArrayBody byteArrayBody = new ByteArrayBody(byteData, "image");
-        		
-        		
-        		
- /*               request.addHeader("Content-Type", "multipart/form-data; boundary="
-                        + "---------------------------14737809831466499882746641449");
-
-                request.addHeader("Content-Type", "application/x-www-form-urlencoded");*/
-        		
-        		Log.e("ZZZ", "file path = " + filePath);
-        		File file = new File(filePath);
-//        		FileBody fileBody = new FileBody(file);
-//        		ContentBody encFile = new FileBody(file, "image/jpg");
         		
         		MultipartEntityBuilder multipartEntity = MultipartEntityBuilder.create();  
         		multipartEntity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-//        		multipartEntity.addBinaryBody("picture", file);
-        		
-        		ContentBody cbFile = new FileBody(file, "image/jpeg");
-//        		FileBody body  = new FileBody(file);
-//        		FormBodyPart fbp = new FormBodyPart("file", body);
-        		
         		
         		multipartEntity.addPart("userfile", byteArrayBody); 
-/*        		multipartEntity.addTextBody("Content-Disposition", "form-data");
-        		multipartEntity.addTextBody("Content-Type", "application/octet-stream");*/
-        		
-        		
-//        		ByteArrayOutputStream bao = new ByteArrayOutputStream();
-//        		mThumbNali.compress(CompressFormat.JPEG, 100, bao);
-//
-//        		ByteArrayBody body = new ByteArrayBody(bao.toByteArray(), "image/jpeg", "picture");
-        		
-                for(int index=0; index < pairs.size(); index++) {
-//                	multipartEntity.addPart(pairs.get(index).getName(), new StringBody(pairs.get(index).getValue()));
-                }
-                
-                multipartEntity.setBoundary("---------------------------14737809831466499882746641449");
-        		
-//        		FileInputStream fileInputStream = new FileInputStream(file);
-//        		InputStreamEntity entity = new InputStreamEntity(fileInputStream, file.length());
-//        		entity.setContentType("binary/octet-stream");
-//        		entity.setChunked(true);
-
-                
- /*               request.addHeader("Content-Disposition", "form-data; name=userfile; filename=xxxxdddd.jpg");
-                request.addHeader("Content-Type", "application/octet-stream\r\n\r\n");*/
         		request.setEntity(multipartEntity.build());
         		HttpResponse response = client.execute(request);
         		InputStream is = response.getEntity().getContent();
@@ -254,11 +254,7 @@ public class PSUploadPhoto extends BaseActivity {
 				MFLog.e(TAG, "io exception" + e.getMessage());
 				e.printStackTrace();
 				return null;
-			} catch (Exception e) {
-				MFLog.e(TAG, "exception");
-				e.printStackTrace();
-				return null;
-			}
+			} 
 			
 		}
 		
@@ -266,7 +262,16 @@ public class PSUploadPhoto extends BaseActivity {
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			
-			Log.e("ZZZ", "string = " + result);
+			Log.e("ZZZ", "result = " + result);
+			
+			pDialog.dismiss();
+			if (result != null) {
+				Toast.makeText(PSUploadPhoto.this, R.string.uploadSucceed, Toast.LENGTH_SHORT).show();
+				setResult(Activity.RESULT_OK);
+			} else {
+				Toast.makeText(PSUploadPhoto.this, R.string.uploadFailure, Toast.LENGTH_SHORT).show();
+			}
+			finish();
 		}
 	}
 	
