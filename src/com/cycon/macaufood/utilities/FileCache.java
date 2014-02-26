@@ -3,6 +3,7 @@ package com.cycon.macaufood.utilities;
 import java.io.File;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.cycon.macaufood.bean.ImageType;
 
@@ -28,6 +29,7 @@ public class FileCache {
     }
     
     public File getFile(String id){
+    	Log.e("ZZZ", "get file id = " + id);
         String filename= id;
         File f = new File(cacheDir, filename + "-" + imageType.getValue());
         return f;

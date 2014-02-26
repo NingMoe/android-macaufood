@@ -564,7 +564,6 @@ public class PhotoShare extends SherlockFragment{
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.e("ZZZ", "onActivityResult");
 		super.onActivityResult(requestCode, resultCode, data);
 	    if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
 	        if (resultCode == Activity.RESULT_OK) {
@@ -575,7 +574,6 @@ public class PhotoShare extends SherlockFragment{
 				mContext.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, 
 					    Uri.parse("file://"+ Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES))));
 	        } else if (resultCode == Activity.RESULT_CANCELED) {
-	        	Log.e("ZZZ", "image capture canceled");
 	        } else {
 				Toast.makeText(mContext, R.string.imageCaptureFailed, Toast.LENGTH_LONG).show();
 	            // Image capture failed, advise user
@@ -586,7 +584,6 @@ public class PhotoShare extends SherlockFragment{
 				i.setData(data.getData());
 				startActivityForResult(i, UPLOAD_IMAGE_ACTIVITY_REQUEST_CODE);
 	        } else if (resultCode == Activity.RESULT_CANCELED) {
-	        	Log.e("ZZZ", "image capture canceled");
 	        } else {
 				Toast.makeText(mContext, R.string.imageChooseFailed, Toast.LENGTH_LONG).show();
 	            // Image capture failed, advise user

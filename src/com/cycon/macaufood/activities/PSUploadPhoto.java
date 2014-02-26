@@ -68,6 +68,7 @@ public class PSUploadPhoto extends BaseActivity {
 	private ToggleButton mFbToggleButton;
 	private ToggleButton mWeiboToggleButton;
 	private ProgressDialog pDialog;
+	private int mPhotoRotation;
 	private int SELECT_CAFE_REQUEST_CODE = 7001;
 
 	@Override
@@ -94,7 +95,11 @@ public class PSUploadPhoto extends BaseActivity {
 		Uri imageUri = getIntent().getData();
 		Bitmap bitmap = null;
 		try {
-			bitmap = MFUtil.getThumbnail(imageUri, (File)getIntent().getSerializableExtra("photoFile"), this);
+			bitmap = MFUtil.getThumbnail(imageUri, this);
+			mPhotoRotation = MFUtil.getOrientation(this, imageUri, (File)getIntent().getSerializableExtra("photoFile"));
+			if (mPhotoRotation != 0) {
+				bitmap = MFUtil.rotateBitmap(bitmap, mPhotoRotation);
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -146,21 +151,7 @@ public class PSUploadPhoto extends BaseActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-    
-//    public String getPath(Context context, Uri contentUri) {
-//    	  Cursor cursor = null;
-//    	  try { 
-//    	    String[] proj = { MediaStore.Images.Media.DATA };
-//    	    cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-//    	    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-//    	    cursor.moveToFirst();
-//    	    return cursor.getString(column_index);
-//    	  } finally {
-//    	    if (cursor != null) {
-//    	      cursor.close();
-//    	    }
-//    	  }
-//    	}
+
     
     @Override
     public void onBackPressed() {
@@ -196,7 +187,6 @@ public class PSUploadPhoto extends BaseActivity {
 			pDialog = ProgressDialog.show(PSUploadPhoto.this, null, getString(R.string.uploadingPhotoProgress));
 		}
 		
-		@SuppressLint("NewApi")
 		@Override
 		protected String doInBackground(Void... params) {
 			
@@ -214,8 +204,9 @@ public class PSUploadPhoto extends BaseActivity {
         		InputStream imageIs = getContentResolver().openInputStream(getIntent().getData());
         		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 Bitmap bitmap = BitmapFactory.decodeStream(imageIs);
-                Log.e("ZZZ", "bitmap = " + bitmap.getByteCount() + " width =" + bitmap.getWidth() + " height = " + bitmap.getHeight());
-                
+    			if (mPhotoRotation != 0) {
+    				bitmap = MFUtil.rotateBitmap(bitmap, mPhotoRotation);
+    			}
                 int width = bitmap.getWidth();
                 int height = bitmap.getHeight();
                 if (width > 600) {
@@ -223,7 +214,7 @@ public class PSUploadPhoto extends BaseActivity {
 					width = 600;
 				}
                 Bitmap finalBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
-                finalBitmap.compress(CompressFormat.JPEG, 100, byteArrayOutputStream); 
+                finalBitmap.compress(CompressFormat.JPEG, 50, byteArrayOutputStream); 
                 byte[] byteData = byteArrayOutputStream.toByteArray();
                 ByteArrayBody byteArrayBody = new ByteArrayBody(byteData, "image");
         		
