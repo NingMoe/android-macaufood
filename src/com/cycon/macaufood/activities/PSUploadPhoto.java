@@ -194,11 +194,17 @@ public class PSUploadPhoto extends BaseActivity {
         		HttpClient client = new DefaultHttpClient();
         		HttpParams httpParams = client.getParams();
         		HttpConnectionParams.setConnectionTimeout(httpParams, 15000);
-        		String url = MFURL.PHOTOSHARE_UPLOAD + "&userid=" + MFConfig.memberId + "&photocaption=" + mCaptionText.getText().toString() + 
-        				"&cafename=" + mSelectedCafe.getName() + "&coordx=" + mSelectedCafe.getCoordx() + 
-        				"&coordy=" + mSelectedCafe.getCoordy() + "&cafeid=" + mSelectedCafe.getId() + 
-        				"&cafeaddress=" + mSelectedCafe.getAddress() + "&cafephone=" + mSelectedCafe.getPhone();
-        		URLEncoder.encode(url, "UTF-8");
+				String url = MFURL.PHOTOSHARE_UPLOAD + "&userid="
+						+ MFConfig.memberId + "&photocaption="
+						+ URLEncoder.encode(mCaptionText.getText().toString(), "UTF-8")
+						+ "&cafename="
+						+ URLEncoder.encode(mSelectedCafe.getName(), "UTF-8")
+						+ "&coordx=" + mSelectedCafe.getCoordx() + "&coordy="
+						+ mSelectedCafe.getCoordy() + "&cafeid="
+						+ mSelectedCafe.getId() + "&cafeaddress="
+						+ URLEncoder.encode(mSelectedCafe.getAddress(), "UTF-8")
+						+ "&cafephone="
+						+ URLEncoder.encode(mSelectedCafe.getPhone(), "UTF-8");
         		HttpPost request = new HttpPost(url);
         		
         		InputStream imageIs = getContentResolver().openInputStream(getIntent().getData());

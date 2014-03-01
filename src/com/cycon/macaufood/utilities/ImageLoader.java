@@ -188,8 +188,17 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
                 memoryCache.put(id, bitmap);
             } else {
-//            	imageView.setImageDrawable(loadingBlankPhoto);
-            	imageView.setImageDrawable(null);
+            	if (imageType == ImageType.PHOTOSHARE) {
+            		bitmap = MFUtil.getBitmapFromCache(fileCache, id.replace("-1.jpg", "-0.jpg"));
+            		if (bitmap != null) {
+            			imageView.setImageBitmap(bitmap);
+            		} else {
+            			imageView.setImageDrawable(null);
+            		}
+				} else {
+					imageView.setImageDrawable(null);
+				}
+            	
             	
             	boolean needLoad = true;
             	
