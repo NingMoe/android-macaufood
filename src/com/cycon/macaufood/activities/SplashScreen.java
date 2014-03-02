@@ -134,6 +134,7 @@ public class SplashScreen extends Activity {
 			finish();
 			
 			Intent i = new Intent(SplashScreen.this, Home.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			startActivity(i);
 		}
 	}

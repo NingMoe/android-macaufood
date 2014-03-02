@@ -11,7 +11,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Process;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -354,6 +356,9 @@ public class PSDetailsView extends LinearLayout {
 			return;
 		}
     	final CommentDialogView view = new CommentDialogView(mContext, commentList);
+		if (Build.VERSION.SDK_INT < 11) {
+			view.setBackgroundColor(Color.WHITE);
+		}
     	
 		final AlertDialog dialog = new AlertDialog.Builder(mContext)
 		.setView(view)

@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="#cc000000" >
-    
-    <ImageView
-        android:id="@+id/frontPage"
+    android:background="#CC000000"
+    android:orientation="vertical" >
+
+    <com.cycon.macaufood.widget.VerticalViewPager
+        android:id="@+id/pager"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        />
-    
-    <ImageView
-        android:id="@+id/cross"
-        android:src="@drawable/front_page_cross"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        />
+        android:layout_height="fill_parent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:gravity="center_horizontal"
+        android:text="@string/dismissAd"
+        android:textColor="#dddddd"
+        android:textSize="13sp" />
 
 </RelativeLayout>

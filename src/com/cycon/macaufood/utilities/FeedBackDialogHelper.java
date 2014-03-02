@@ -17,6 +17,8 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
+
 import com.cycon.macaufood.utilities.MFLog;
 
 import android.view.Gravity;
@@ -40,6 +42,9 @@ public class FeedBackDialogHelper {
 		cafeId = id;
 
 		View view = inflater.inflate(R.layout.feedback, null);
+		if (Build.VERSION.SDK_INT < 11) {
+			view.setBackgroundColor(Color.WHITE);
+		}
 		name = (TextView)view.findViewById(R.id.nameText);
 		email = (TextView)view.findViewById(R.id.emailText);
 		content = (TextView)view.findViewById(R.id.contentText);

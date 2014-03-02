@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -129,24 +130,32 @@ public class Home extends SherlockFragmentActivity {
 		MFService.sendFavoriteLog(getApplicationContext());
 		
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY, 0);
-        
-//        if (showFrontPage) {
-//			FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
-//			Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
-//			if (bitmap != null) {
-//				new Handler().postDelayed(new Runnable() {
-//					public void run() {
-//							Intent i = new Intent(Home.this, FrontPage.class);
-//							startActivity(i);
-//							overridePendingTransition(R.anim.front_page_fade_in, 0);
-//							showFrontPage = false;
-//					}
-//				}, 1500);
-//			} else {
-//				PreferenceHelper.savePreferencesLong(getApplicationContext(), MFConstants.FRONT_PAGE_STAMP_PREF_KEY, 0);
-//				MFService.fetchFrontPage(getApplicationContext());
-//			}
-//        }
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+        if (showFrontPage) {
+			FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
+			Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
+			if (bitmap != null) {
+				Handler handler = new Handler();
+				handler.postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						Intent i = new Intent(Home.this, FrontPage.class);
+						startActivity(i);
+						overridePendingTransition(0, 0);
+						showFrontPage = false;
+					}
+				}, Build.VERSION.SDK_INT < 11 ? 100 : 0);
+
+			} else {
+				PreferenceHelper.savePreferencesLong(getApplicationContext(), MFConstants.FRONT_PAGE_STAMP_PREF_KEY, 0);
+				MFService.fetchFrontPage(getApplicationContext());
+			}
+        }
 	}
 	
 	private void showDisclaimerDialog() {

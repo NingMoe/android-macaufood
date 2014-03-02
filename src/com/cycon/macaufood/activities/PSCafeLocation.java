@@ -10,7 +10,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.text.Editable;
@@ -200,6 +202,9 @@ public class PSCafeLocation extends SherlockFragmentActivity implements
 	
 	private void addCafe() {
 		View view = getLayoutInflater().inflate(R.layout.add_cafe_location, null);
+		if (Build.VERSION.SDK_INT < 11) {
+			view.setBackgroundColor(Color.WHITE);
+		}
 		final TextView name = (TextView)view.findViewById(R.id.nameText);
 		final TextView addr = (TextView)view.findViewById(R.id.addrText);
 		final TextView phone = (TextView)view.findViewById(R.id.phoneText);

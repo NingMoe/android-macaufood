@@ -63,9 +63,9 @@ public class Recommend extends SherlockFragment {
         
         swingLeftInAnimationAdapter = new SwingLeftInAnimationAdapter(cafeAdapter);
         swingLeftInAnimationAdapter.setListView(list);
-        if (MFFetchListHelper.isFetching || ((Home)getActivity()).isShowingDisClaimer()) {
+//        if (MFFetchListHelper.isFetching || ((Home)getActivity()).isShowingDisClaimer()) {
 			swingLeftInAnimationAdapter.setAnimationEnabled(false);
-		}
+//		}
 
 		list.setAdapter(swingLeftInAnimationAdapter);
         list.setOnItemClickListener(itemClickListener);

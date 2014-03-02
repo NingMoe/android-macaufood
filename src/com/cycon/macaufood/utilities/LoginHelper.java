@@ -33,7 +33,10 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -99,6 +102,9 @@ public class LoginHelper {
 	public void showLoginDialog(Fragment fragment, final PendingAction pa, final RegisterPSCallBack callback) {
 		LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.login_dialog, null);
+		if (Build.VERSION.SDK_INT < 11) {
+			view.setBackgroundColor(Color.WHITE);
+		}
 		
 		LoginButton fbLoginButton = (LoginButton) view.findViewById(R.id.fb_login_button);
 		fbLoginButton.setReadPermissions(Arrays.asList("email"));
@@ -129,6 +135,7 @@ public class LoginHelper {
 		
 		AuthInfo authInfo = new AuthInfo(mContext, WEIBO_APP_KEY, REDIRECT_URL, SCOPE);
 		mWeiboLoginButton = (com.sina.weibo.sdk.widget.LoginoutButton) view.findViewById(R.id.weibo_login_button);
+		mWeiboLoginButton.setText(R.string.weiboLogin);
 		mWeiboLoginButton.setWeiboAuthInfo(authInfo, new WeiboAuthListener() {
 			
 			@Override
@@ -206,6 +213,7 @@ public class LoginHelper {
 						dialog.dismiss();
 					}
 				}).show();
+		
 	}
 	
 	public void callLogout(final boolean showToast) {

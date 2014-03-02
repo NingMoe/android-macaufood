@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -529,6 +530,9 @@ public class PhotoShare extends SherlockFragment{
     private void showFindFriendsDialog() {
     	
     	final FindFriendsDialogView view = new FindFriendsDialogView(mContext);
+		if (Build.VERSION.SDK_INT < 11) {
+			view.setBackgroundColor(Color.WHITE);
+		}
     	
 		new AlertDialog.Builder(mContext)
 		.setView(view)

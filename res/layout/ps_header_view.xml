@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     class="com.cycon.macaufood.widget.PSHeaderView"
-    android:background="#d0f3f3f3"
+    android:background="#ccf3f3f3"
     android:gravity="center_vertical"
     android:paddingBottom="6dp"
     android:paddingLeft="8dp"
