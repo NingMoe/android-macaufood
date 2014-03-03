@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -122,6 +123,11 @@ public class MFService {
 	}
 	
 	private static InputStream executeRequest(String url) throws ClientProtocolException, IOException {
+//		URL myUrl = new URL(url);
+//		URLConnection urlConnection = myUrl.openConnection(); 
+//		InputStream is = new BufferedInputStream(urlConnection.getInputStream());
+		
+		
 		HttpClient client = new DefaultHttpClient();
 		HttpParams httpParams = client.getParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_PERIOD);

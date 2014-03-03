@@ -6,11 +6,13 @@ import org.xmlpull.v1.XmlPullParser;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -18,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.activities.PSDetails;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
@@ -46,7 +49,7 @@ public class PSHotAdapter extends BaseAdapter {
         		      (Context.LAYOUT_INFLATER_SERVICE);
     }
 
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
             if (convertView == null) {
             	convertView = mInflater.inflate(R.layout.ps_image, null);

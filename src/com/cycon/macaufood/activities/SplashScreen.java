@@ -13,19 +13,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.DisplayMetrics;
-import android.util.Log;
-
-import com.cycon.macaufood.utilities.MFLog;
 import android.view.KeyEvent;
 import android.view.Window;
 
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.activities.Intro.FetchPageTask;
+import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.sqlite.LocalDbManager;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
+import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
-import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 
 public class SplashScreen extends Activity {
@@ -59,6 +56,14 @@ public class SplashScreen extends Activity {
 					clearFileInSd();
 //				}
 //			}
+					
+					
+			
+             //uncomment in future version to clear profile images and figure a way to update
+					
+             //clearProfileImages();		
+					
+					
 		}
 		
 		MFConfig.cafe_version_update = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "cafe_version_update" ,MFConfig.cafe_version_update);
@@ -71,6 +76,11 @@ public class SplashScreen extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		MFConfig.deviceWidth = dm.widthPixels;
 		MFConfig.deviceHeight = dm.heightPixels;
+	}
+	
+	private void clearProfileImages() {
+		FileCache cacheFile = new FileCache(this, ImageType.PSLOCALAVATAR);
+		cacheFile.clear();
 	}
 	
 	private void clearFileInSd() {

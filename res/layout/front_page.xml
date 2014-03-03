@@ -18,7 +18,7 @@
         android:layout_marginBottom="15dp"
         android:gravity="center_horizontal"
         android:text="@string/dismissAd"
-        android:textColor="#dddddd"
+        android:textColor="#cccccc"
         android:textSize="13sp" />
 
 </RelativeLayout>

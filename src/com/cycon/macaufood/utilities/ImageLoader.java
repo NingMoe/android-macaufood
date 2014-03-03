@@ -38,6 +38,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
@@ -54,6 +55,7 @@ public class ImageLoader {
     MemoryCache memoryCache=new MemoryCache();
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
+//    private Map<String, ProgressBar> progressBarMap = Collections.synchronizedMap(new HashMap<String, ProgressBar>());
     private Drawable nophoto;
 //    private Drawable loadingBlankPhoto;
     private Drawable nointernet;
@@ -167,13 +169,14 @@ public class ImageLoader {
     	this.allowedDuplicate = allowedDuplicate;
     }
     
+    public void displayImage(String id, ImageView imageView, int position, ProgressBar pBar) {
+//    	progressBarMap.put(id, pBar);
+    	displayImage(id, imageView, position);
+    }
+    
     public void displayImage(String id, ImageView imageView, int position)
     {
     	imagesToLoad.remove(id);
-//    	MFLog.e(TAG, "remove " + id);
-//    	if (imagesToLoad.remove(id) == false) {
-//    		MFLog.e(TAG, "error....id in imagestoload does not exist");
-//    	}
 		imageViews.put(imageView, id);
 		
         Bitmap bitmap=memoryCache.get(id);
@@ -188,7 +191,11 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
                 memoryCache.put(id, bitmap);
             } else {
-            	if (imageType == ImageType.PHOTOSHARE) {
+//            	ProgressBar pBar = progressBarMap.get(id);
+//            	if (pBar != null) {
+//					pBar.setVisibility(View.VISIBLE);
+//            	} 
+            	if (imageType == ImageType.PHOTOSHARE) { //load thumbnail in ps details image
             		bitmap = MFUtil.getBitmapFromCache(fileCache, id.replace("-1.jpg", "-0.jpg"));
             		if (bitmap != null) {
             			imageView.setImageBitmap(bitmap);

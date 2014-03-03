@@ -140,7 +140,6 @@ public class LoginHelper {
 			
 			@Override
 			public void onComplete(Bundle values) {
-	        	Log.e("ZZZ", "onComplete");
 	            final Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(values);
 	            if (accessToken != null && accessToken.isSessionValid()) {
 	                AccessTokenKeeper.writeAccessToken(mContext.getApplicationContext(), accessToken);
@@ -192,7 +191,6 @@ public class LoginHelper {
 	    			}
 	            } else {
 	            	String code = values.getString("code");
-	            	Log.e("ZZZ", "code = " + code);
 	            }
 			}
 			@Override
@@ -305,9 +303,6 @@ public class LoginHelper {
 				mLoginDialog.dismiss();
 			}
 		} 
-    	if (exception != null) {
-    		Log.e("ZZZ", "fb exception= " + exception.getMessage());
-    	}
     }
     
     // ------ Weibo only-------------------
@@ -329,9 +324,6 @@ public class LoginHelper {
     };
     
     public com.sina.weibo.sdk.widget.LoginoutButton getWeiboLoginButton() {
-    	if (mWeiboLoginButton == null) {
-			Log.e("ZZZ", "NULL");
-		}
     	return mWeiboLoginButton;
     }
     
@@ -405,7 +397,6 @@ public class LoginHelper {
     		}
     		
     		Toast.makeText(context, context.getResources().getString(R.string.loginMessage, userName), Toast.LENGTH_SHORT).show();
-    		Log.e("ZZZ", "memeber id = " + result);
     		MFConfig.memberId = result;
     		MFConfig.memberName = userName;
     		PreferenceHelper.savePreferencesStr(context, MFConstants.PS_MEMBERID_PREF_KEY, result);

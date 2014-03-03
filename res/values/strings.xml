@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!--  Main app string -->
-    <string name="app_id">539139189509748</string>
+    <string name="app_id">312867848799588</string>
     <string name="app_name">食在澳門</string>
     <string name="homepage">主頁</string>
     <string name="recommend_tab">今期推介</string>
@@ -181,6 +181,7 @@
     <string name="uploadSucceed">發佈成功</string>
     <string name="uploadFailure">發佈失敗,請稍後重試</string>
     <string name="confirmExitUpload">你確定要放棄發佈這相片?</string>
+    <string name="sharePhotoCaption">%1$s\n\n@%2$s\n地址:%3$s\n電話:%4$s\n營業時間:%5$s</string>
  	
  	<!--  Misc. -->
  	<string name="meter">米</string>

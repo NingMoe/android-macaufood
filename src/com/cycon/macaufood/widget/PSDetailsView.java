@@ -29,6 +29,8 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,6 +92,7 @@ public class PSDetailsView extends LinearLayout {
     	holder.commentButton = (Button) findViewById(R.id.commentButton);
     	holder.infoButton = (Button) findViewById(R.id.infoButton);
     	holder.deleteButton = (Button) findViewById(R.id.deleteButton);
+//    	holder.pBar = (ProgressBar) findViewById(R.id.pBar);
 		return holder;
 	}
 	
@@ -99,12 +102,12 @@ public class PSDetailsView extends LinearLayout {
 		int width = Integer.parseInt(pInfo.getImgwidth());
 		int height = Integer.parseInt(pInfo.getImgheight());
 		int padding = MFUtil.getPixelsFromDip(16, getResources());
-		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) holder.photoImage.getLayoutParams();
+		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.photoImage.getLayoutParams();
 		int imageHeight = (MFConfig.deviceWidth - padding) * height / width;
 		params.height = imageHeight;
 		holder.photoImage.setLayoutParams(params);
 		
-		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, pos);
+		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, pos, holder.pBar);
 		
 		String captionText = pInfo.getCaption();
 		if (captionText.length() > 0 && !captionText.equals("(null)")) {
@@ -178,6 +181,7 @@ public class PSDetailsView extends LinearLayout {
     	Button commentButton;
     	Button infoButton;
     	Button deleteButton;
+    	ProgressBar pBar;
     }
     
     private void loadLikeInfo(final ParsedPSHolder pInfo, ViewHolder holder, boolean cancelMyLike) {

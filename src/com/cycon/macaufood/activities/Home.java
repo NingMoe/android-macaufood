@@ -130,11 +130,7 @@ public class Home extends SherlockFragmentActivity {
 		MFService.sendFavoriteLog(getApplicationContext());
 		
         dataTimeStamp = PreferenceHelper.getPreferenceValueLong(getApplicationContext(), MFConstants.TIME_STAMP_PREF_KEY, 0);
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
+        
         if (showFrontPage) {
 			FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
 			Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
