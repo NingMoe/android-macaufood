@@ -18,16 +18,20 @@ import org.json.JSONObject;
 
 import com.cycon.macaufood.R;
 import com.facebook.Session;
+import com.facebook.Session.StatusCallback;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.WeiboAuth.AuthInfo;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -97,6 +101,23 @@ public class LoginHelper {
 	public boolean isWeiboLogin() {
 		Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(mContext);
         return accessToken != null && accessToken.isSessionValid();
+	}
+	
+//	public void loginFacebook(Session session, Activity activity, StatusCallback statusCallback) {
+//	    if (!session.isOpened() && !session.isClosed()) {
+//	        session.openForRead(new Session.OpenRequest(activity)
+//	        .setPermissions(Arrays.asList("basic_info"))
+//	            .setCallback(statusCallback));
+//	    } else {
+//	        Session.openActiveSession(activity, true, statusCallback);
+//	    }
+//	}
+	
+	public SsoHandler loginWeibo(Activity activity, WeiboAuthListener listener) {
+		WeiboAuth authInfo = new WeiboAuth(mContext, WEIBO_APP_KEY, REDIRECT_URL, SCOPE);
+		SsoHandler ssoHandler = new SsoHandler(activity, authInfo);
+		ssoHandler.authorize(listener);
+		return ssoHandler;
 	}
 	
 	public void showLoginDialog(Fragment fragment, final PendingAction pa, final RegisterPSCallBack callback) {
@@ -218,11 +239,6 @@ public class LoginHelper {
 		    Session session = Session.getActiveSession();
 		    if (session != null && !session.isClosed()) {
 	            session.closeAndClearTokenInformation();
-	            if (showToast) {
-	            	Toast.makeText(mContext, R.string.logoutMessage, Toast.LENGTH_SHORT).show();
-				}
-	            PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
-	    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, null);
 		    }
 		    
 		    Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(mContext);
@@ -240,27 +256,30 @@ public class LoginHelper {
 					}
 					@Override
 					public void onComplete(String response) {
-			            if (!TextUtils.isEmpty(response)) {
-			                try {
-			                    JSONObject obj = new JSONObject(response);
-			                    String value = obj.getString("result");
-			                    
-			                    if ("true".equalsIgnoreCase(value)) {
-			                        AccessTokenKeeper.clear(mContext);
-			        	            if (showToast) {
-			        	            	Toast.makeText(mContext, R.string.logoutMessage, Toast.LENGTH_SHORT).show();
-			        				}
-			        	            PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
-			        	    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, null);
-			                    }
-			                } catch (JSONException e) {
-			                    e.printStackTrace();
-			                }
-			            }
+//			            if (!TextUtils.isEmpty(response)) {
+//			                try {
+//			                    JSONObject obj = new JSONObject(response);
+//			                    String value = obj.getString("result");
+//			                    
+//			                    if ("true".equalsIgnoreCase(value)) {
+//			                        AccessTokenKeeper.clear(mContext);
+//			        	            
+//			                    }
+//			                } catch (JSONException e) {
+//			                    e.printStackTrace();
+//			                }
+//			            }
 					}
 				});
-		    
 	        }
+	        
+	        AccessTokenKeeper.clear(mContext);
+	        
+	        if (showToast) {
+            	Toast.makeText(mContext, R.string.logoutMessage, Toast.LENGTH_SHORT).show();
+			}
+            PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERID_PREF_KEY, null);
+    		PreferenceHelper.savePreferencesStr(mContext, MFConstants.PS_MEMBERNAME_PREF_KEY, null);
 	}
 	
 

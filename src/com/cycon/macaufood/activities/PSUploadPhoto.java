@@ -68,6 +68,9 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.auth.WeiboAuthListener;
+import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.sina.weibo.sdk.exception.WeiboException;
 
 public class PSUploadPhoto extends BaseActivity {
 	
@@ -92,6 +95,8 @@ public class PSUploadPhoto extends BaseActivity {
 	private LoginHelper mLoginHelper;
 	private UiLifecycleHelper uiHelper;
 	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
+	private SsoHandler mSsoHandler;
+	private boolean isFbRequested;
 	
     private Session.StatusCallback mStatusCallback = new Session.StatusCallback() {
     	@Override
@@ -122,13 +127,51 @@ public class PSUploadPhoto extends BaseActivity {
 			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 				if (arg1) {
 					Session session = Session.getActiveSession();
-		            // Check for publish permissions    
-		            List<String> permissions = session.getPermissions();
-		            if (!isSubsetOf(PERMISSIONS, permissions)) {
-		                Session.NewPermissionsRequest newPermissionsRequest = new Session
-		                        .NewPermissionsRequest(PSUploadPhoto.this, PERMISSIONS);
-		                session.requestNewPublishPermissions(newPermissionsRequest);
-		            }
+					if (session != null && session.isOpened()) {
+						fbRequestPermissionIfNeeded(session);
+					} else if (!session.isClosed()) {
+				        session.openForRead(new Session.OpenRequest(PSUploadPhoto.this)
+				        .setPermissions(Arrays.asList("basic_info"))
+				            .setCallback(mStatusCallback));
+				    } else {
+				    	Log.e("ZZZ", "closed!!!!");
+				        Session.openActiveSession(PSUploadPhoto.this, true, mStatusCallback);
+				    }
+					
+				}
+			}
+		});
+		mWeiboToggleButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+				if (arg1) {
+					if (!mLoginHelper.isWeiboLogin()) {
+						mSsoHandler = mLoginHelper.loginWeibo(PSUploadPhoto.this, new WeiboAuthListener() {
+							
+							@Override
+							public void onWeiboException(WeiboException arg0) {
+								mWeiboToggleButton.setChecked(false);
+							}
+							
+							@Override
+							public void onComplete(Bundle values) {
+								Log.e("ZZZ", "oncomplete");
+					            final Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(values);
+					            if (accessToken != null && accessToken.isSessionValid()) {
+					                AccessTokenKeeper.writeAccessToken(PSUploadPhoto.this.getApplicationContext(), accessToken);
+					            } else {
+					            	mWeiboToggleButton.setChecked(false);
+					            }
+							}
+							
+							@Override
+							public void onCancel() {
+								Log.e("ZZZ", "oncancel");
+								mWeiboToggleButton.setChecked(false);
+							}
+						});
+					}
 				}
 			}
 		});
@@ -172,11 +215,11 @@ public class PSUploadPhoto extends BaseActivity {
 				mCafeName.setText(mSelectedCafe.getName());
 			}
 		}
-		
+		Log.e("ZZZ", "onactivity result");
 		uiHelper.onActivityResult(requestCode, resultCode, data);
-		if (mLoginHelper.getWeiboLoginButton() != null) {
-			mLoginHelper.getWeiboLoginButton().onActivityResult(requestCode,
-					resultCode, data);
+		if (mSsoHandler != null) {
+			Log.e("ZZZ", "handler not null");
+			mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
 		}
 	}
 	
@@ -189,6 +232,17 @@ public class PSUploadPhoto extends BaseActivity {
 			AsyncTaskHelper.executeWithResultString(new UploadPhotoTask());	
 		}; 
 	};
+	
+	private void fbRequestPermissionIfNeeded(Session session) {
+        List<String> permissions = session.getPermissions();
+        if (!isSubsetOf(PERMISSIONS, permissions)) {
+        	Log.e("ZZZ", "send permission publish");
+        	isFbRequested = true;
+            Session.NewPermissionsRequest newPermissionsRequest = new Session
+                    .NewPermissionsRequest(PSUploadPhoto.this, PERMISSIONS);
+            session.requestNewPublishPermissions(newPermissionsRequest);
+        }
+	}
 	
 	private void uploadPhoto() {
 		
@@ -286,11 +340,11 @@ public class PSUploadPhoto extends BaseActivity {
 			}
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
-            if (width > 600) {
-            	height =  (int) (height * 600.0 / width);
-				width = 600;
+            if (width > 640) {
+            	height =  (int) (height * 640.0 / width);
+				width = 640;
 			}
-            Bitmap finalBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+            Bitmap finalBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
             finalBitmap.compress(CompressFormat.JPEG, 50, byteArrayOutputStream); 
             mByeData = byteArrayOutputStream.toByteArray();
             
@@ -446,25 +500,18 @@ public class PSUploadPhoto extends BaseActivity {
 	
 	
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-//    	if (state == SessionState.OPENING) {
-//    		pDialog = ProgressDialog.show(mContext, null,
-//    				mContext.getString(R.string.loginProcess), false, false);
-//    	} else if (state == SessionState.CLOSED_LOGIN_FAILED){
-//    		if (pDialog != null) {
-//    			pDialog.dismiss();
-//    		}
-//    	}
-//		if (session.isOpened()) {
-//			if (mLoginDialog != null) {
-//				mLoginDialog.dismiss();
-//			}
-//		} 
-    	
-    	if (state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
-    	} else {
-    		mFbToggleButton.setChecked(false);
+    	if (state == SessionState.OPENED) {
+    		if (isFbRequested) {
+    			mFbToggleButton.setChecked(false);
+			} else {
+				fbRequestPermissionIfNeeded(session);
+			}
+    	} else if (state.equals(SessionState.OPENED_TOKEN_UPDATED)) {
+    		
+    	} else if (state.equals(SessionState.CLOSED_LOGIN_FAILED) || 
+    			state.equals(SessionState.CLOSED)) {
+    			mFbToggleButton.setChecked(false);
+			}
     	}
-    	
-    }
 	
 }
