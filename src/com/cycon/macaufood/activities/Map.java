@@ -158,41 +158,34 @@ public class Map extends SherlockFragmentActivity {
 				.setDropDownViewResource(android.R.layout.simple_list_item_1);
 		regionSpinner.setAdapter(regionAdapter);
 		int regionIndex = getIntent().getIntExtra("regionIndex", 0);
-		regionSpinner.setSelection(regionIndex);
+		regionSpinner.setSelection(regionIndex, false);
 		dishesSpinner = (Spinner) findViewById(R.id.dishesSpinner);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				R.layout.spinner_textview, MFConstants.dishesType);
 		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
 		dishesSpinner.setAdapter(adapter);
 		int dishesIndex = getIntent().getIntExtra("dishesIndex", 0);
-		dishesSpinner.setSelection(dishesIndex);
+		dishesSpinner.setSelection(dishesIndex, false);
 		categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
 		adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview,
 				MFConstants.serviceType);
 		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
 		categorySpinner.setAdapter(adapter);
 		int servicesIndex = getIntent().getIntExtra("servicesIndex", 0);
-		categorySpinner.setSelection(servicesIndex);
+		categorySpinner.setSelection(servicesIndex, false);
 
-		// to avoid calling onitemselected first time
-		regionSpinner.post(new Runnable() {
-
-			public void run() {
-				regionSpinner.setOnItemSelectedListener(itemSelectListener);
-			}
-		});
-		dishesSpinner.post(new Runnable() {
-
-			public void run() {
-				dishesSpinner.setOnItemSelectedListener(itemSelectListener);
-			}
-		});
-		categorySpinner.post(new Runnable() {
+		regionSpinner.setOnItemSelectedListener(itemSelectListener);
+		dishesSpinner.setOnItemSelectedListener(itemSelectListener);
+		categorySpinner.setOnItemSelectedListener(itemSelectListener);
+				
+		// to avoid calling onitemselected initially
+		disableItemSelect = true;
+		new Handler().postDelayed(new Runnable() {
 
 			public void run() {
-				categorySpinner.setOnItemSelectedListener(itemSelectListener);
+				disableItemSelect = false;
 			}
-		});
+		}, 400);
 
 		
 //		if (selectedCafeId != null) {
