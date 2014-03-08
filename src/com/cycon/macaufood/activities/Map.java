@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,8 +32,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.cycon.macaufood.R;
+import com.cycon.macaufood.activities.PSCafeLocation.ErrorDialogFragment;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.AdvancedSearchHelper;
@@ -39,6 +44,10 @@ import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvViewPager;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
@@ -59,7 +68,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * A list view that demonstrates the use of setEmptyView. This example alos uses
  * a custom layout file that adds some extra buttons to the screen.
  */
-public class Map extends SherlockFragmentActivity {
+public class Map extends SherlockFragmentActivity implements
+GooglePlayServicesClient.ConnectionCallbacks,
+GooglePlayServicesClient.OnConnectionFailedListener{
+	
+	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
 	public static final int SHOW_MAP_REQUEST_CODE = 1;
 	private static final int SHOW_LIST_MENU_ID = 1;
@@ -79,6 +92,9 @@ public class Map extends SherlockFragmentActivity {
 	private AdvViewPager smallBanner;
 	private View listLayout;
 	private View mapLayout;
+	
+	private LocationClient mLocationClient;
+	private Location mCurrentLocation;
 
 	private ListView list;
 	private CafeSearchListAdapter cafeAdapter;
@@ -117,12 +133,15 @@ public class Map extends SherlockFragmentActivity {
 			Process.killProcess(Process.myPid());
 			return;
 		}
+		setContentView(R.layout.map);
+		
+		mLocationClient = new LocationClient(this, this, this);
+		mLocationClient.connect();
 		
 		searchResultCafes = new ArrayList<Cafe>(MFConfig.getInstance().getSearchResultList());
 		MFConfig.getInstance().getSearchResultList().clear();
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		setContentView(R.layout.map);
 
 		smallBanner = (AdvViewPager) findViewById(R.id.viewPager);
 		list = (ListView) findViewById(R.id.list);
@@ -779,5 +798,124 @@ public class Map extends SherlockFragmentActivity {
 		public void onNothingSelected(AdapterView<?> parent) {
 		}
 	};
+	
+	
+	//--------------Location Listener
+	
+	@Override
+	public void onConnected(Bundle connectionHint) {
+		// TODO Auto-generated method stub
+		mCurrentLocation = mLocationClient.getLastLocation();
+//		mCurrentLocation.setLatitude(22.19971287);
+//		mCurrentLocation.setLongitude(113.54500506);
+		if (mMap != null && mCurrentLocation != null && getIntent().getBooleanExtra("fromMap", false)) {
+			LatLng selectedLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+			if (mMapBounds.contains(selectedLatLng)) {
+				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 15));
+			}
+		}
+	}
+
+	@Override
+	public void onDisconnected() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Decide what to do based on the original request code
+		switch (requestCode) {
+		case CONNECTION_FAILURE_RESOLUTION_REQUEST:
+			/*
+			 * If the result code is Activity.RESULT_OK, try to connect again
+			 */
+			switch (resultCode) {
+			case Activity.RESULT_OK:
+				mLocationClient.connect();
+				break;
+			}
+		}
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		mLocationClient.connect();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		mLocationClient.disconnect();
+	}
+
+	// Define a DialogFragment that displays the error dialog
+	public static class ErrorDialogFragment extends SherlockDialogFragment {
+		// Global field to contain the error dialog
+		private Dialog mDialog;
+
+		// Default constructor. Sets the dialog field to null
+		public ErrorDialogFragment() {
+			super();
+			mDialog = null;
+		}
+
+		// Set the dialog to display
+		public void setDialog(Dialog dialog) {
+			mDialog = dialog;
+		}
+
+		// Return a Dialog to the DialogFragment.
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			return mDialog;
+		}
+	}
+
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
+		/*
+		 * Google Play services can resolve some errors it detects. If the error
+		 * has a resolution, try sending an Intent to start a Google Play
+		 * services activity that can resolve error.
+		 */
+		if (connectionResult.hasResolution()) {
+			try {
+				// Start an Activity that tries to resolve the error
+				connectionResult.startResolutionForResult(this,
+						CONNECTION_FAILURE_RESOLUTION_REQUEST);
+				/*
+				 * Thrown if Google Play services canceled the original
+				 * PendingIntent
+				 */
+			} catch (IntentSender.SendIntentException e) {
+				// Log the error
+				e.printStackTrace();
+			}
+		} else {
+
+			// Get the error code
+			int errorCode = connectionResult.getErrorCode();
+			// Get the error dialog from Google Play services
+			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
+					errorCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
+
+			// If Google Play services can provide an error dialog
+			if (errorDialog != null) {
+				// Create a new DialogFragment for the error dialog
+				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
+				// Set the dialog in the DialogFragment
+				errorFragment.setDialog(errorDialog);
+				// Show the error dialog in the DialogFragment
+				errorFragment.show(getSupportFragmentManager(),
+						"Location Updates");
+			}
+		}
+	}
+	
+	
+	
+	
 
 }

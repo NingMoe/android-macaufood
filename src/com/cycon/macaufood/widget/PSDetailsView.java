@@ -23,6 +23,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -92,7 +93,7 @@ public class PSDetailsView extends LinearLayout {
     	holder.commentButton = (Button) findViewById(R.id.commentButton);
     	holder.infoButton = (Button) findViewById(R.id.infoButton);
     	holder.deleteButton = (Button) findViewById(R.id.deleteButton);
-//    	holder.pBar = (ProgressBar) findViewById(R.id.pBar);
+    	holder.pBar = (ProgressBar) findViewById(R.id.pBar);
 		return holder;
 	}
 	
@@ -106,6 +107,9 @@ public class PSDetailsView extends LinearLayout {
 		int imageHeight = (MFConfig.deviceWidth - padding) * height / width;
 		params.height = imageHeight;
 		holder.photoImage.setLayoutParams(params);
+		RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) holder.pBar.getLayoutParams();
+		params1.bottomMargin = 100;
+		holder.pBar.setLayoutParams(params1);
 		
 		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, pos, holder.pBar);
 		

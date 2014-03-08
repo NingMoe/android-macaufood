@@ -55,7 +55,7 @@ public class ImageLoader {
     MemoryCache memoryCache=new MemoryCache();
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
-//    private Map<String, ProgressBar> progressBarMap = Collections.synchronizedMap(new HashMap<String, ProgressBar>());
+    private Map<String, ProgressBar> progressBarMap = Collections.synchronizedMap(new HashMap<String, ProgressBar>());
     private Drawable nophoto;
 //    private Drawable loadingBlankPhoto;
     private Drawable nointernet;
@@ -170,7 +170,7 @@ public class ImageLoader {
     }
     
     public void displayImage(String id, ImageView imageView, int position, ProgressBar pBar) {
-//    	progressBarMap.put(id, pBar);
+    	progressBarMap.put(id, pBar);
     	displayImage(id, imageView, position);
     }
     
@@ -191,14 +191,14 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
                 memoryCache.put(id, bitmap);
             } else {
-//            	ProgressBar pBar = progressBarMap.get(id);
-//            	if (pBar != null) {
-//					pBar.setVisibility(View.VISIBLE);
-//            	} 
             	if (imageType == ImageType.PHOTOSHARE) { //load thumbnail in ps details image
             		bitmap = MFUtil.getBitmapFromCache(fileCache, id.replace("-1.jpg", "-0.jpg"));
             		if (bitmap != null) {
             			imageView.setImageBitmap(bitmap);
+                    	ProgressBar pBar = progressBarMap.get(id);
+                    	if (pBar != null) {
+        					pBar.setVisibility(View.VISIBLE);
+                    	} 
             		} else {
             			imageView.setImageDrawable(null);
             		}
@@ -389,6 +389,11 @@ public class ImageLoader {
 			} else {
 				String tag=imageViews.get(p.imageView);
 				if(tag!=null && tag.equals(p.id)){
+					//hide progress bar
+                	ProgressBar pBar = progressBarMap.get(p.id);
+                	if (pBar != null) {
+    					pBar.setVisibility(View.GONE);
+                	} 
 					if (noConnection) {
 						p.imageView.setImageDrawable(nointernet);
 					} else {
