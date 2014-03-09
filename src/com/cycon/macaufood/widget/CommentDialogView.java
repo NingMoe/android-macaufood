@@ -98,7 +98,6 @@ public class CommentDialogView extends LinearLayout {
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			final ViewHolder holder;
-			Log.e("ZZZ", "getView");
             if (convertView == null) {
             	convertView = mInflater.inflate(R.layout.comment_list_row, null);
             	holder = new ViewHolder();

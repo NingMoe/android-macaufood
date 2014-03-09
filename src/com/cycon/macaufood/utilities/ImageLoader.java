@@ -55,7 +55,7 @@ public class ImageLoader {
     MemoryCache memoryCache=new MemoryCache();
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
-    private Map<String, ProgressBar> progressBarMap = Collections.synchronizedMap(new HashMap<String, ProgressBar>());
+    private Map<String, ProgressBar> progressBarMap = Collections.synchronizedMap(new WeakHashMap<String, ProgressBar>());
     private Drawable nophoto;
 //    private Drawable loadingBlankPhoto;
     private Drawable nointernet;
@@ -261,7 +261,6 @@ public class ImageLoader {
     		//scroll to specific position
     		if (imageView != null) {
 	    		imagesToLoad.addFirst(id);
-	    		Log.e("ZZZ", "add to images to load id = " + id);
 	    		return;
     		} 
     	}
@@ -343,7 +342,7 @@ public class ImageLoader {
             if (currentDisplayImages.isEmpty()) {
 				while (!imagesToLoad.isEmpty() && imagesLoading.size() <= maxTasksNumber) {
 					String id = imagesToLoad.poll();
-					Log.e(TAG, " imagesToLoad poll id " + id);
+					MFLog.e(TAG, " imagesToLoad poll id " + id);
 					
 					//check if poll id is in memoryCache or filecache;
 			        Bitmap bitmap=memoryCache.get(id);
@@ -358,7 +357,7 @@ public class ImageLoader {
 			                continue;
 			            }
 			        }
-					Log.e(TAG, "poll id " + id);
+					MFLog.e(TAG, "poll id " + id);
 					loadImages(id, null);
 				}
             }
@@ -369,6 +368,12 @@ public class ImageLoader {
 					for (ImageView view : imageViews.keySet()) {
 						String tag=imageViews.get(view);
 						if(tag!=null && tag.equals(p.id)){ 
+							//hide progress bar
+			            	ProgressBar pBar = progressBarMap.get(p.id);
+			            	if (pBar != null) {
+								pBar.setVisibility(View.GONE);
+			            	} 
+							
 //							ETMFLog.e(TAG, "set photo after load " + p.id);
 							if (result == null) {
 //								ETMFLog.e(TAG, "set nophoto id = " + p.id);
@@ -389,11 +394,13 @@ public class ImageLoader {
 			} else {
 				String tag=imageViews.get(p.imageView);
 				if(tag!=null && tag.equals(p.id)){
+					
 					//hide progress bar
-                	ProgressBar pBar = progressBarMap.get(p.id);
-                	if (pBar != null) {
-    					pBar.setVisibility(View.GONE);
-                	} 
+	            	ProgressBar pBar = progressBarMap.get(p.id);
+	            	if (pBar != null) {
+						pBar.setVisibility(View.GONE);
+	            	} 
+
 					if (noConnection) {
 						p.imageView.setImageDrawable(nointernet);
 					} else {

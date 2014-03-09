@@ -107,9 +107,6 @@ public class PSDetailsView extends LinearLayout {
 		int imageHeight = (MFConfig.deviceWidth - padding) * height / width;
 		params.height = imageHeight;
 		holder.photoImage.setLayoutParams(params);
-		RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) holder.pBar.getLayoutParams();
-		params1.bottomMargin = 100;
-		holder.pBar.setLayoutParams(params1);
 		
 		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, pos, holder.pBar);
 		

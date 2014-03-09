@@ -27,7 +27,8 @@ public class WeiboUserApi extends AbsOpenAPI {
             params.add("uid", mAccessToken.getUid());
             request(USER_URL, params, "GET", listener);
         } else {
-            Log.e("ZZZ", "Invite args error!");
+
+        	MFLog.e("WeiboUserApi", "invite error");
         }
     }
 	

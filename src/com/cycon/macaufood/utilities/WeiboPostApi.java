@@ -30,7 +30,7 @@ public class WeiboPostApi extends AbsOpenAPI {
             params.add("pic", path);
             request(UPLOAD_URL, params, "POST", null);
         } else {
-            Log.e("ZZZ", "Invite args error!");
+        	MFLog.e("WeiboPostApi", "invite error");
         }
     }
 	

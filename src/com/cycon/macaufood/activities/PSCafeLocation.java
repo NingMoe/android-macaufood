@@ -174,27 +174,30 @@ public class PSCafeLocation extends SherlockFragmentActivity implements
 		
 		mShowDist = true;
 		
-		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>();
+		int displayNumber = 20;
+		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>(displayNumber);
 		
 		for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
-			double dist = distFrom(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), Double.parseDouble(cafe.getCoordx()), Double.parseDouble(cafe.getCoordy()));
-			cafe.setDistance(dist);
-			queue.add(cafe);
+			if (cafe.getStatus().equals("0")) continue;
+			double dist = MFUtil.distFrom(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), Double.parseDouble(cafe.getCoordx()), Double.parseDouble(cafe.getCoordy()));
+				cafe.setDistance(dist);
+				if (queue.size() < displayNumber) {
+					queue.add(cafe);
+				} else if (dist < queue.peek().getDistance()) {
+					queue.poll();
+					queue.add(cafe);
+				}
 		}
 		
-		ArrayList<Cafe> searchList = new ArrayList<Cafe>();
+//		ArrayList<Cafe> searchList = new ArrayList<Cafe>();
 		
-		int displayNumber = 20;
-		for (int i = 0; i < displayNumber && queue.size() > 0; i++) {
-			Cafe cafe = queue.poll();
-			if (cafe.getStatus().equals("0")) {
-				displayNumber++;
-				continue;
-			}
-			searchList.add(cafe);
-		}
 		nearbyCafes.clear();
-		nearbyCafes.addAll(searchList);
+		while (!queue.isEmpty()) {
+			Cafe cafe = queue.poll();
+			nearbyCafes.add(cafe);
+		}
+		Collections.reverse(nearbyCafes);
+//		nearbyCafes.addAll(searchList);
 		searchAdapter.setCafes(nearbyCafes);
 		searchAdapter.notifyDataSetChanged();
 		
@@ -460,20 +463,5 @@ public class PSCafeLocation extends SherlockFragmentActivity implements
 		}
 	}
 
-	public static double distFrom(double lat1, double lng1, double lat2, double lng2) {
-		double earthRadius = 3958.75;
-		double dLat = Math.toRadians(lat2 - lat1);
-		double dLng = Math.toRadians(lng2 - lng1);
-		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-				+ Math.cos(Math.toRadians(lat1))
-				* Math.cos(Math.toRadians(lat2)) * Math.sin(dLng / 2)
-				* Math.sin(dLng / 2);
-		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		double dist = earthRadius * c;
-
-		int meterConversion = 1609;
-
-		return dist * meterConversion;
-	}
 
 }

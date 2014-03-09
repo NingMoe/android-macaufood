@@ -375,8 +375,8 @@ public class Cafe implements Comparable<Cafe>, Serializable{
 	}
 	
 	public int compareTo(Cafe another) {
-		if (distance < another.distance) return -1;
-		else if (distance > another.distance) return 1;
+		if (distance < another.distance) return 1;
+		else if (distance > another.distance) return -1;
 		return 0;
 	}
 	

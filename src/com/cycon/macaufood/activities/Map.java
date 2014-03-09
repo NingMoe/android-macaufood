@@ -499,7 +499,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 
 	private void searchNearby() {
 
-		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>();
+		
 		
 		mMap.clear();
 		mMarkersHashMap.clear();
@@ -514,27 +514,26 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		LatLng mapCenter = mMap.getCameraPosition().target;
 		LatLngBounds currentBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
 
+		int displayNumber = 50;
+		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>(displayNumber + 1);
 		for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
+			if (cafe.getStatus().equals("0") || cafe.getId().equals(selectedCafeId)) continue;
 			LatLng cafeLatLng = getLatLngFromCafe(cafe);
 			if (currentBounds.contains(cafeLatLng)) {
-				cafe.setDistance(Math.hypot(mapCenter.latitude - cafeLatLng.latitude, mapCenter.longitude - cafeLatLng.longitude));
-				queue.add(cafe);
+				double dist = Math.hypot(mapCenter.latitude - cafeLatLng.latitude, mapCenter.longitude - cafeLatLng.longitude);
+				cafe.setDistance(dist);
+				if (queue.size() < displayNumber) {
+					queue.add(cafe);
+				} else if (dist < queue.peek().getDistance()) {
+					queue.poll();
+					queue.add(cafe);
+				}
 			}
 		}
 		Builder boundsBuilder = new LatLngBounds.Builder();
-		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
-		int displayNumber = 50;
-		for (int i = 0; i < displayNumber && queue.size() > 0; i++) {
+		ArrayList<Cafe> priorityList = new ArrayList<Cafe>();
+		while (!queue.isEmpty()) {
 			Cafe cafe = queue.poll();
-			if (cafe.getStatus().equals("0")) {
-				displayNumber++;
-				continue;
-			}
-			if (cafe.getId().equals(selectedCafeId)) {
-				displayNumber++;
-				continue;
-			}
-			
 			if (cafe.getPriority().equals("0")) {
 				searchResultCafes.add(cafe);
 			} else {
@@ -560,6 +559,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			
 		});
 		
+		Collections.reverse(searchResultCafes);
 		searchResultCafes.addAll(0, priorityList);
 		
 		

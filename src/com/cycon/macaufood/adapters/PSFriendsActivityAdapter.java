@@ -69,7 +69,6 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
         } else {
         	psHeaderView = (PSHeaderView) convertView;
         	holder = (PSHeaderView.ViewHolder) convertView.getTag();
-        	Log.e("ZZZ", "header view recycle");
         }
         psHeaderView.loadInfo(psHolder, holder, psHeaderImageLoader, position);
         
@@ -86,11 +85,9 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
         	holder = psDetailsView.initView();
         	convertView = psDetailsView;
         	convertView.setTag(holder);
-        	Log.e("ZZZ", "detail view null");
         } else {
         	psDetailsView = (PSDetailsView) convertView;
         	holder = (PSDetailsView.ViewHolder) convertView.getTag();
-        	Log.e("ZZZ", "detail view recycle");
         }
         ParsedPSHolder psHolder = MFConfig.getInstance().getPsInfoMap().get(mHolderList.get(position));
         psDetailsView.loadInfo(psHolder, holder, psDetailsImageLoader, position);

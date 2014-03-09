@@ -134,7 +134,6 @@ public class PSUploadPhoto extends BaseActivity {
 				        .setPermissions(Arrays.asList("basic_info"))
 				            .setCallback(mStatusCallback));
 				    } else {
-				    	Log.e("ZZZ", "closed!!!!");
 				        Session.openActiveSession(PSUploadPhoto.this, true, mStatusCallback);
 				    }
 					
@@ -156,7 +155,6 @@ public class PSUploadPhoto extends BaseActivity {
 							
 							@Override
 							public void onComplete(Bundle values) {
-								Log.e("ZZZ", "oncomplete");
 					            final Oauth2AccessToken accessToken = Oauth2AccessToken.parseAccessToken(values);
 					            if (accessToken != null && accessToken.isSessionValid()) {
 					                AccessTokenKeeper.writeAccessToken(PSUploadPhoto.this.getApplicationContext(), accessToken);
@@ -167,7 +165,6 @@ public class PSUploadPhoto extends BaseActivity {
 							
 							@Override
 							public void onCancel() {
-								Log.e("ZZZ", "oncancel");
 								mWeiboToggleButton.setChecked(false);
 							}
 						});
@@ -215,17 +212,14 @@ public class PSUploadPhoto extends BaseActivity {
 				mCafeName.setText(mSelectedCafe.getName());
 			}
 		}
-		Log.e("ZZZ", "onactivity result");
 		uiHelper.onActivityResult(requestCode, resultCode, data);
 		if (mSsoHandler != null) {
-			Log.e("ZZZ", "handler not null");
 			mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
 		}
 	}
 	
 	private Handler mHandler = new Handler(Looper.myLooper()) {
 		public void handleMessage(Message msg) {
-			Log.e("ZZZ", "receive message");
 			if (mFbToggleButton.isChecked()) {
 				publishStoryToFb(getStatusString());
 			}
@@ -236,7 +230,6 @@ public class PSUploadPhoto extends BaseActivity {
 	private void fbRequestPermissionIfNeeded(Session session) {
         List<String> permissions = session.getPermissions();
         if (!isSubsetOf(PERMISSIONS, permissions)) {
-        	Log.e("ZZZ", "send permission publish");
         	isFbRequested = true;
             Session.NewPermissionsRequest newPermissionsRequest = new Session
                     .NewPermissionsRequest(PSUploadPhoto.this, PERMISSIONS);
@@ -450,7 +443,6 @@ public class PSUploadPhoto extends BaseActivity {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			Log.e("ZZZ", "result =" + result);
 			
 			pDialog.dismiss();
 			if (result != null) {
