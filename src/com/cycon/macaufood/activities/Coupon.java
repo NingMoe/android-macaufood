@@ -146,6 +146,7 @@ public class Coupon extends SherlockFragment {
 			}
 		});
 		mainCoupon = (TextView) mView.findViewById(R.id.mainCoupon);
+		mainCoupon.setSelected(true);
 		mainCoupon.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -194,42 +195,31 @@ public class Coupon extends SherlockFragment {
 
 	private void setNormalCouponTab(boolean select) {
 		if (select) {
-			normalCoupon.setTextColor(Color.parseColor("#FFFFFF"));
-			normalCoupon
-					.setBackgroundResource(R.drawable.tab_credit_coupon_selected);
+			normalCoupon.setSelected(true);
 			normalCouponList.setVisibility(View.VISIBLE);
 		} else {
-			normalCoupon.setTextColor(Color.parseColor("#40C28a"));
-			normalCoupon
-					.setBackgroundResource(R.drawable.tab_credit_coupon_unselected);
+			normalCoupon.setSelected(false);
 			normalCouponList.setVisibility(View.GONE);
 		}
 	}
 
 	private void setCreditVipCouponTab(boolean select) {
 		if (select) {
-			creditVipCoupon.setTextColor(Color.parseColor("#FFFFFF"));
-			creditVipCoupon
-					.setBackgroundResource(R.drawable.tab_vip_coupon_selected);
+			creditVipCoupon.setSelected(true);
 			creditVipCouponList.setVisibility(View.VISIBLE);
 		} else {
-			creditVipCoupon.setTextColor(Color.parseColor("#EF6666"));
-			creditVipCoupon
-					.setBackgroundResource(R.drawable.tab_vip_coupon_unselected);
+			creditVipCoupon.setSelected(false);
 			creditVipCouponList.setVisibility(View.GONE);
 		}
 	}
 
 	private void setMainCouponTab(boolean select) {
 		if (select) {
-			mainCoupon.setTextColor(Color.parseColor("#FFFFFF"));
-			mainCoupon.setBackgroundResource(R.drawable.tab_normal_coupon_selected);
+			mainCoupon.setSelected(true);
 			mainCouponScrollView.setVisibility(View.VISIBLE);
 			advViewPager.setVisibility(View.GONE);
 		} else {
-			mainCoupon.setTextColor(Color.parseColor("#68A6E6"));
-			mainCoupon
-					.setBackgroundResource(R.drawable.tab_normal_coupon_unselected);
+			mainCoupon.setSelected(false);
 			mainCouponScrollView.setVisibility(View.GONE);
 			advViewPager.setVisibility(View.VISIBLE);
 		}

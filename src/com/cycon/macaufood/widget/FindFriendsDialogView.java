@@ -74,9 +74,6 @@ public class FindFriendsDialogView extends LinearLayout {
 		});
 		mFriendListAdapter = new FriendListAdapter();
 		mListView.setAdapter(mFriendListAdapter);
-		if (MFConfig.memberId == null) {
-			MFConfig.memberId = PreferenceHelper.getPreferenceValueStr(context, MFConstants.PS_MEMBERID_PREF_KEY, null);
-		}
 		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + MFConfig.memberId;
 //		String url = MFURL.PHOTOSHARE_FIND_FRIENDS + "29";
 		DefaultHandler handler = new FriendListXMLHandler(mHolderList);

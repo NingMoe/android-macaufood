@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -86,8 +87,8 @@ public class Home extends SherlockFragmentActivity {
 				Coupon.class, null);
 		mTabsAdapter.addTab(bar.newTab().setText(R.string.foodNews),
 				FoodNews.class, null);
-//		mTabsAdapter.addTab(bar.newTab().setText(R.string.photoShare),
-//				PhotoShare.class, null);
+		mTabsAdapter.addTab(bar.newTab().setText(R.string.photoShare),
+				PhotoShare.class, null);
 
 		if (savedInstanceState != null) {
 			bar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
@@ -134,14 +135,17 @@ public class Home extends SherlockFragmentActivity {
 			FileCache fileCache = new FileCache(Home.this, ImageType.FRONTPAGE);
 			Bitmap bitmap = MFUtil.getBitmapFromCache(fileCache, "1");
 			if (bitmap != null) {
-				new Handler().postDelayed(new Runnable() {
+				Handler handler = new Handler();
+				handler.postDelayed(new Runnable() {
+					
+					@Override
 					public void run() {
-							Intent i = new Intent(Home.this, FrontPage.class);
-							startActivity(i);
-							overridePendingTransition(R.anim.front_page_fade_in, 0);
-							showFrontPage = false;
+						Intent i = new Intent(Home.this, FrontPage.class);
+						startActivity(i);
+						overridePendingTransition(0, 0);
+						showFrontPage = false;
 					}
-				}, 1500);
+				}, Build.VERSION.SDK_INT < 11 ? 100 : 0);
 			} else {
 				PreferenceHelper.savePreferencesLong(getApplicationContext(), MFConstants.FRONT_PAGE_STAMP_PREF_KEY, 0);
 				MFService.fetchFrontPage(getApplicationContext());
@@ -153,7 +157,6 @@ public class Home extends SherlockFragmentActivity {
 		AlertDialog dialog = new AlertDialog.Builder(this)
 		.setTitle(R.string.disclaimer)
 		.setMessage(R.string.disclaimerText)
-		.setCancelable(false)
 		.setPositiveButton(getString(R.string.agreeDisclaimer),
 				new DialogInterface.OnClickListener() {
 
@@ -165,6 +168,16 @@ public class Home extends SherlockFragmentActivity {
 
 		TextView textView = (TextView) dialog.findViewById(android.R.id.message);
 		textView.setTextSize(15);
+	}
+	
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		super.onActivityResult(arg0, arg1, arg2);
+		
+		PhotoShare photoShareFragment = (PhotoShare) getFragments()[3];
+		if (photoShareFragment != null) {
+			photoShareFragment.onActivityResult(arg0, arg1, arg2);
+		}
 	}
 	
 //	public int getCurrentFragmentIndex() {
@@ -261,7 +274,7 @@ public class Home extends SherlockFragmentActivity {
 			return true;
 		case R.id.menu_map:
 			i = new Intent(this, Map.class);
-			i.putExtra("fromActionButton", true);
+			i.putExtra("fromHome", true);
 			startActivity(i);
 			return true;
 		case R.id.menu_favorite_list:
@@ -273,13 +286,6 @@ public class Home extends SherlockFragmentActivity {
 			if (!MFConfig.isOnline(this)) {
 				Toast.makeText(this, getString(R.string.noInternetMsg), Toast.LENGTH_SHORT).show();
 			}
-			return true;
-		case R.id.menu_wifi:
-			i = new Intent(this, MacauWifi.class);
-			startActivity(i);
-			return true;
-		case R.id.menu_disclaimer:
-			showDisclaimerDialog();
 			return true;
 		case R.id.menu_about:
 			i = new Intent(this, About.class);
@@ -303,6 +309,12 @@ public class Home extends SherlockFragmentActivity {
 			MFConfig.hasAlreadyRefreshList = true;
 			MFFetchListHelper.fetchAllList(this);
 			MFService.checkUpdate(getApplicationContext());
+			
+			PhotoShare psFragment = (PhotoShare) mTabsAdapter.getActiveFragment(mViewPager, 3);
+			if (psFragment != null) {
+				psFragment.reloadActivityOrResetTimeStamp();
+			}
+				
 		} 
 	};
 

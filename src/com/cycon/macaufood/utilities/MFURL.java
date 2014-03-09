@@ -25,7 +25,7 @@ public class MFURL {
 	public static final String SUBMIT_FEEDBACK = "http://www.cycon.com.mo/xml_submitmsg2.php?key=cafecafe&udid=android-";//more params behind
 	public static final String FRONT_PAGE_TIME = "http://www.cycon.com.mo/xml_get_config.php?key=cafecafe&type=front_page";
 	public static final String FRONT_PAGE_LINK_URL = "http://www.cycon.com.mo/xml_get_config.php?key=cafecafe&type=front_page_url";
-	public static final String PHOTOSHARE_HOT_LIST = "http://www.cycon.com.mo/photo_xml_gethot2.php?key=photo123456&iphone5=1";
+	public static final String PHOTOSHARE_HOT_LIST = "http://www.cycon.com.mo/photo_xml_gethot2.php?key=photo123456&iphone5=0";
 	public static final String PHOTOSHARE_HOT_IMAGE = "http://www.cycon.com.mo/displayimage.php?filename=";
 	public static final String PHOTOSHARE_REGISTER = "http://www.cycon.com.mo/photo_xml_memberlogin_socialnetwork.php?key=photo123456&logintype=";
 	public static final String PHOTOSHARE_FIND_FRIENDS = "http://www.cycon.com.mo/photo_xml_friends2.php?key=photo123456&memberid=";
@@ -33,6 +33,9 @@ public class MFURL {
 	public static final String PHOTOSHARE_SHOW_PHOTOS = "http://www.cycon.com.mo/photo_xml_showphotos.php?key=photo123456&onlyme=0&memberid=";
 	public static final String PHOTOSHARE_LIKE = "http://www.cycon.com.mo/photo_xml_like.php?key=photo123456&memberid=%s&photoid=%s";
 	public static final String PHOTOSHARE_UNLIKE = "http://www.cycon.com.mo/photo_xml_unlike.php?key=photo123456&memberid=%s&photoid=%s";
+	public static final String PHOTOSHARE_COMMENT = "http://www.cycon.com.mo/photo_xml_addcomment.php?key=photo123456";
+	public static final String PHOTOSHARE_UPLOAD = "http://www.cycon.com.mo/photo_xml_uploadphoto.php?key=photo123456";
+	public static final String PHOTOSHARE_DELETE = "http://www.cycon.com.mo/photo_xml_addphoto.php?key=photo123456&memberid=%s&photoid=%s";
 	
 	private static final String APP_IMAGE = "http://www.cycon.com.mo/appimages/";
 	private static final String INTRO_PAGE = "http://www.cycon.com.mo/detail_page.php?id=";

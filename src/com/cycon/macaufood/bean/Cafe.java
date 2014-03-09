@@ -286,6 +286,9 @@ public class Cafe implements Comparable<Cafe>, Serializable{
 	public void setDistance(double distance) {
 		this.distance = distance;
 	}
+	public double getDistance() {
+		return distance;
+	}
 	
 	public void setAnyField(String field, String value) throws Exception {
 		if (field.equals(CafeAttrToken.ID.getValue())) id = value;
@@ -372,8 +375,8 @@ public class Cafe implements Comparable<Cafe>, Serializable{
 	}
 	
 	public int compareTo(Cafe another) {
-		if (distance < another.distance) return -1;
-		else if (distance > another.distance) return 1;
+		if (distance < another.distance) return 1;
+		else if (distance > another.distance) return -1;
 		return 0;
 	}
 	

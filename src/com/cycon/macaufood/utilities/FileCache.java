@@ -3,6 +3,7 @@ package com.cycon.macaufood.utilities;
 import java.io.File;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.cycon.macaufood.bean.ImageType;
 

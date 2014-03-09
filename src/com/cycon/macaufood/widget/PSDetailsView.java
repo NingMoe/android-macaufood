@@ -4,11 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.os.Process;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -16,27 +22,42 @@ import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.activities.Details;
-import com.cycon.macaufood.bean.PSCachedUserAction;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
+import com.cycon.macaufood.utilities.LoginHelper;
+import com.cycon.macaufood.utilities.LoginHelper.PendingAction;
+import com.cycon.macaufood.utilities.LoginHelper.RegisterPSCallBack;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.facebook.Session;
 
 public class PSDetailsView extends LinearLayout {
+	
+	public interface DetailsViewCallback {
+		void onDeletePhoto();
+	}
 
-	private final static int MAX_LIKE = 7;
+	private final static int MAX_LIKE = 6;
 	private Context mContext;
+	private LoginHelper mLoginHelper;
+	private DetailsViewCallback mCallback;
 	
 	public PSDetailsView(Context context) {
 		super(context);
@@ -52,6 +73,14 @@ public class PSDetailsView extends LinearLayout {
 		mContext = context;
 	}
 	
+	public void setLoginHelper(LoginHelper helper) {
+		mLoginHelper = helper;
+	}
+	
+	public void setDetailsViewCallback(DetailsViewCallback callback) {
+		mCallback = callback;
+	}
+	
 	public ViewHolder initView() {
 		ViewHolder holder = new ViewHolder();
     	holder.photoImage = (ImageView) findViewById(R.id.photoImage);
@@ -64,22 +93,22 @@ public class PSDetailsView extends LinearLayout {
     	holder.commentButton = (Button) findViewById(R.id.commentButton);
     	holder.infoButton = (Button) findViewById(R.id.infoButton);
     	holder.deleteButton = (Button) findViewById(R.id.deleteButton);
+    	holder.pBar = (ProgressBar) findViewById(R.id.pBar);
 		return holder;
 	}
 	
 	public void loadInfo(final ParsedPSHolder pInfo, final ViewHolder holder, ImageLoader imageLoader, int pos) {
 		final String cafeId = pInfo.getCafeid();
 
-		Log.e("ZZZ", "loadInfo");
 		int width = Integer.parseInt(pInfo.getImgwidth());
 		int height = Integer.parseInt(pInfo.getImgheight());
 		int padding = MFUtil.getPixelsFromDip(16, getResources());
-		FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) holder.photoImage.getLayoutParams();
+		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.photoImage.getLayoutParams();
 		int imageHeight = (MFConfig.deviceWidth - padding) * height / width;
 		params.height = imageHeight;
 		holder.photoImage.setLayoutParams(params);
 		
-		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, pos);
+		imageLoader.displayImage("image-" + pInfo.getPhotoid() + "-1.jpg", holder.photoImage, pos, holder.pBar);
 		
 		String captionText = pInfo.getCaption();
 		if (captionText.length() > 0 && !captionText.equals("(null)")) {
@@ -96,7 +125,7 @@ public class PSDetailsView extends LinearLayout {
 		
 		
 		//buttons------------------------------------------------
-		if (!cafeId.equals("0") && MFConfig.getInstance().getCafeLists().size() >= Integer.parseInt(cafeId)) {
+		if (Integer.parseInt(cafeId) > 0 && MFConfig.getInstance().getCafeLists().size() >= Integer.parseInt(cafeId)) {
 			try {
 				holder.infoButton.setOnClickListener(new OnClickListener() {
 					
@@ -121,51 +150,26 @@ public class PSDetailsView extends LinearLayout {
 			
 			@Override
 			public void onClick(View v) {
-				//TODO:check login status
-				//TODO: check internet and show toast
-				if (!MFConfig.isOnline(mContext)) {
-					Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
-				} else {
-					if (holder.likeButton.getText().equals(getResources().getString(R.string.like))) {
-						pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
-						loadLikeInfo(pInfo, holder, false);
-						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_LIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
-//						addLikeToActionMap(pInfo.getPhotoid(), true);
-					} else {
-						loadLikeInfo(pInfo, holder, true);
-						MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_UNLIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
-//						addLikeToActionMap(pInfo.getPhotoid(), false);
-					}
-				}
+				checkLogin(PendingAction.LIKE, pInfo, holder, null);
 			}
 		});
 		
 
+		
+
 		if (pInfo.getMemberid().equals(MFConfig.memberId)) {
 			holder.deleteButton.setVisibility(View.VISIBLE);
+			holder.deleteButton.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					checkLogin(PendingAction.DELETE, pInfo, holder, null);
+				}
+			});
 		} else {
 			holder.deleteButton.setVisibility(View.INVISIBLE);
 		}
 	}
-	
-	
-//	private void addLikeToActionMap(String photoId, boolean like) {
-//		PSCachedUserAction a = MFConfig.getInstance().getPsActionMap().get(photoId);
-//		if (a == null) {
-//			a = new PSCachedUserAction();
-//			MFConfig.getInstance().getPsActionMap().put(photoId, a);
-//		}
-//		a.like = like;
-//	}
-//	
-//	private void addCommentToActionMap(String photoId, String comment) {
-//		PSCachedUserAction a = MFConfig.getInstance().getPsActionMap().get(photoId);
-//		if (a == null) {
-//			a = new PSCachedUserAction();
-//			MFConfig.getInstance().getPsActionMap().put(photoId, a);
-//		}
-//		a.comments.add(comment);
-//	}
 	
     public static class ViewHolder {
     	ImageView photoImage;
@@ -178,6 +182,7 @@ public class PSDetailsView extends LinearLayout {
     	Button commentButton;
     	Button infoButton;
     	Button deleteButton;
+    	ProgressBar pBar;
     }
     
     private void loadLikeInfo(final ParsedPSHolder pInfo, ViewHolder holder, boolean cancelMyLike) {
@@ -245,7 +250,6 @@ public class PSDetailsView extends LinearLayout {
 			    	
 					AlertDialog dialog = new AlertDialog.Builder(mContext)
 					.setView(view)
-					.setCancelable(false)
 					.setPositiveButton(mContext.getResources().getString(R.string.confirmed),
 							new DialogInterface.OnClickListener() {
 
@@ -280,14 +284,14 @@ public class PSDetailsView extends LinearLayout {
 		}
     }
     
-    private void loadCommentInfo(final ParsedPSHolder pInfo, ViewHolder holder) {
+    private void loadCommentInfo(final ParsedPSHolder pInfo, final ViewHolder holder) {
 		holder.comment.removeAllViews();
-		List<PSComment> commentList = extractCommentList(pInfo.getComments());
+		final List<PSComment> commentList = extractCommentList(pInfo.getComments());
 		if (commentList.size() > 0) {
 			holder.commentLayout.setVisibility(View.VISIBLE);
 			for (int i = 0; i < commentList.size(); i++) {
 				PSComment psComment = commentList.get(i);
-				String displayStr = psComment.name + " " + psComment.comment;
+				String displayStr = psComment.name + "  " + psComment.comment;
 				SpannableString spannable = new SpannableString(displayStr);
 	            spannable.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.green_text)), 0, psComment.name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 	            spannable.setSpan(new RelativeSizeSpan(13f/14), 0, psComment.name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -297,6 +301,136 @@ public class PSDetailsView extends LinearLayout {
 			}
 		} else {
 			holder.commentLayout.setVisibility(View.GONE);
+		}
+		
+		holder.commentButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				checkLogin(PendingAction.COMMENT, pInfo, holder, commentList);
+			}
+		});
+    }
+    
+    private void doDeleteButtonClickAction(final ParsedPSHolder pInfo) {
+		if (!MFConfig.isOnline(mContext)) {
+			Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+		} else {
+			new AlertDialog.Builder(mContext)
+			.setMessage(mContext.getString(R.string.deleteConfirmPrompt))
+			.setPositiveButton(mContext.getString(R.string.confirmed),
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_DELETE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+							String photoId = pInfo.getPhotoid();
+							MFConfig.getInstance().getPsInfoMap().remove(photoId);
+							MFConfig.getInstance().getPsHotList().remove(photoId);
+							MFConfig.getInstance().getFriendsActivityList().remove(photoId);
+							mCallback.onDeletePhoto();
+						}
+					})
+			.setNegativeButton(mContext.getString(R.string.cancel),
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							dialog.dismiss();
+						}
+					}).show();
+		}
+    }
+    
+    private void doLikeButtonClickAction(final ParsedPSHolder pInfo, final ViewHolder holder) {
+		if (!MFConfig.isOnline(mContext)) {
+			Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+		} else {
+			if (holder.likeButton.getText().equals(getResources().getString(R.string.like))) {
+				pInfo.setLikes(pInfo.getLikes() + (pInfo.getLikes().equals("") ? "" : "@@@") + MFConfig.memberId + "|||" + MFConfig.memberName);
+				loadLikeInfo(pInfo, holder, false);
+				MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_LIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+			} else {
+				loadLikeInfo(pInfo, holder, true);
+				MFService.sendRequest(String.format(Locale.US, MFURL.PHOTOSHARE_UNLIKE, MFConfig.memberId, pInfo.getPhotoid()), mContext.getApplicationContext());
+			}
+		}
+    }
+    
+    private void doCommentButtonClickAction(final ParsedPSHolder pInfo, final ViewHolder holder, List commentList) {
+		if (!MFConfig.isOnline(mContext)) {
+			Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+			return;
+		}
+    	final CommentDialogView view = new CommentDialogView(mContext, commentList);
+		if (Build.VERSION.SDK_INT < 11) {
+			view.setBackgroundColor(Color.WHITE);
+		}
+    	
+		final AlertDialog dialog = new AlertDialog.Builder(mContext)
+		.setView(view)
+		.show();
+		
+		final EditText editTv = (EditText) view.findViewById(R.id.editTv);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+
+		editTv.requestFocus();
+		
+		Button sendButton = (Button) view.findViewById(R.id.sendButton);
+		sendButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				String commentStr = editTv.getText().toString().trim();
+				if (commentStr.length() > 0) {
+					if (!MFConfig.isOnline(mContext)) {
+						Toast.makeText(mContext, R.string.errorMsg, Toast.LENGTH_SHORT).show();
+					} else {
+						List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		    			pairs.add(new BasicNameValuePair("memberid", MFConfig.memberId));
+		    			pairs.add(new BasicNameValuePair("photoid", pInfo.getPhotoid()));
+		    			pairs.add(new BasicNameValuePair("comment", commentStr));
+		    			MFService.sendRequestWithParams(MFURL.PHOTOSHARE_COMMENT, mContext.getApplicationContext(), pairs);
+		    			pInfo.setComments(commentStr + "|||" + MFConfig.memberId + "|||" + MFConfig.memberName + "|||" + (System.currentTimeMillis() / 1000) + (pInfo.getComments().equals("") ? "" : "@@@") + pInfo.getComments() );
+		    			dialog.dismiss();
+		    			loadCommentInfo(pInfo, holder);
+					}
+				}
+
+			}
+		});
+    }
+    
+	private void checkLogin(PendingAction pa, final ParsedPSHolder pInfo, final ViewHolder holder, final List list) {
+		
+		if (mLoginHelper.isLogin()) {
+			handlePendingAction(pa, pInfo, holder, list);
+		} else {
+    		mLoginHelper.showLoginDialog(null, pa, new RegisterPSCallBack() {
+				
+				@Override
+				public void onErrorRegistered() {
+				}
+				
+				@Override
+				public void onCompleteRegistered(PendingAction pa) {
+					handlePendingAction(pa, pInfo, holder, list);
+				}
+			});
+		}
+	}
+    
+    private void handlePendingAction(PendingAction pa, final ParsedPSHolder pInfo, final ViewHolder holder, List list) {
+    	switch (pa) {
+		case LIKE:
+			doLikeButtonClickAction(pInfo, holder);
+			break;
+		case COMMENT:
+			doCommentButtonClickAction(pInfo, holder, list);
+			break;
+		case DELETE:
+			doDeleteButtonClickAction(pInfo);
+			break;
+		default:
+			break;
 		}
     }
     
@@ -328,7 +462,8 @@ public class PSDetailsView extends LinearLayout {
     private List<PSComment> extractCommentList(String str) {
     	List<PSComment> commentList = new ArrayList<PSComment>();
     	String[] tokens = str.split("@@@");
-    	for (String tokenStr : tokens) {
+    	for (int i = tokens.length - 1; i >= 0; i--) {
+    		String tokenStr = tokens[i];
 			String[] strArr = tokenStr.split("\\|\\|\\|");
 			if (strArr.length > 3) {
 				PSComment comment = new PSComment();

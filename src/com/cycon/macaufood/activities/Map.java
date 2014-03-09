@@ -66,10 +66,10 @@ public class Map extends SherlockFragmentActivity {
 	private static final int SHOW_LIST_MENU_ID = 1;
 	public static final double LAT_DIFF  = 0.0030;
 	public static final double LONG_DIFF = 0.0117;
-	private static final double LAT_MIN = 22.104 + LAT_DIFF;
-	private static final double LAT_MAX = 22.24 + LAT_DIFF;
-	private static final double LONG_MIN = 113.51 + LONG_DIFF;
-	private static final double LONG_MAX = 113.60 + LONG_DIFF;
+	public static final double LAT_MIN = 22.104 + LAT_DIFF;
+	public static final double LAT_MAX = 22.24 + LAT_DIFF;
+	public static final double LONG_MIN = 113.51 + LONG_DIFF;
+	public static final double LONG_MAX = 113.60 + LONG_DIFF;
 	private static final double LAT_DEFAULT = 22.19971287 + LAT_DIFF;
 	private static final double LONG_DEFAULT = 113.54500506 + LONG_DIFF;
 	private static final double LAT_DEFAULT_ISLAND = 22.148 + LAT_DIFF;
@@ -204,24 +204,33 @@ public class Map extends SherlockFragmentActivity {
 		categorySpinner.setSelection(servicesIndex);
 
 		// to avoid calling onitemselected first time
-		regionSpinner.post(new Runnable() {
-
-			public void run() {
+//		regionSpinner.post(new Runnable() {
+//
+//			public void run() {
 				regionSpinner.setOnItemSelectedListener(itemSelectListener);
-			}
-		});
-		dishesSpinner.post(new Runnable() {
-
-			public void run() {
+//			}
+//		});
+//		dishesSpinner.post(new Runnable() {
+//
+//			public void run() {
 				dishesSpinner.setOnItemSelectedListener(itemSelectListener);
-			}
-		});
-		categorySpinner.post(new Runnable() {
+//			}
+//		});
+//		categorySpinner.post(new Runnable() {
+//
+//			public void run() {
+				categorySpinner.setOnItemSelectedListener(itemSelectListener);
+//			}
+//		});
+		
+		
+		disableItemSelect = true;
+		new Handler().postDelayed(new Runnable() {
 
 			public void run() {
-				categorySpinner.setOnItemSelectedListener(itemSelectListener);
+				disableItemSelect = false;
 			}
-		});
+		}, 400);
 
 		
 //		if (selectedCafeId != null) {
@@ -385,7 +394,7 @@ public class Map extends SherlockFragmentActivity {
         if (mMapShown) {
         	if (!mLocClient.isStarted()) mLocClient.start();
         	//move to my position if click from action button
-        	if (getIntent().getBooleanExtra("fromActionButton", false)) isRequestFromStart = true;
+        	if (getIntent().getBooleanExtra("fromHome", false)) isRequestFromStart = true;
 		}
         
 		myLocationOverlay = new MyLocationOverlay(mMapView);
@@ -601,7 +610,6 @@ public class Map extends SherlockFragmentActivity {
 
 	private void searchNearby() {
 
-		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>();
 		
 		if (pop != null){
             pop.hidePop();
@@ -625,28 +633,26 @@ public class Map extends SherlockFragmentActivity {
     	int seLongitutde = centerLong + longSpan / 2;
 		
 
+		int displayNumber = 50;
+		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>(displayNumber + 1);
 		for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
+			if (cafe.getStatus().equals("0") || cafe.getId().equals(selectedCafeId)) continue;
 			GeoPoint p = getGeoPointFromString(cafe.getCoordx(), cafe.getCoordy());
-			
-    		if (p.getLatitudeE6() < nwLatitude && p.getLatitudeE6() > seLatitude 
-    				&& p.getLongitudeE6() < seLongitutde && p.getLongitudeE6() > nwLongitutde) {
-    			cafe.setDistance(Math.hypot(centerLat - p.getLatitudeE6(), centerLong - p.getLongitudeE6()));
-    			queue.add(cafe);
-    		}
+			if (p.getLatitudeE6() < nwLatitude && p.getLatitudeE6() > seLatitude 
+				&& p.getLongitudeE6() < seLongitutde && p.getLongitudeE6() > nwLongitutde) {
+				double dist = Math.hypot(centerLat - p.getLatitudeE6(), centerLong - p.getLongitudeE6());
+				cafe.setDistance(dist);
+				if (queue.size() < displayNumber) {
+					queue.add(cafe);
+				} else if (dist < queue.peek().getDistance()) {
+					queue.poll();
+					queue.add(cafe);
+				}
+			}
 		}
 		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
-		int displayNumber = 50;
-		for (int i = 0; i < displayNumber && queue.size() > 0; i++) {
+		while (!queue.isEmpty()) {
 			Cafe cafe = queue.poll();
-			if (cafe.getStatus().equals("0")) {
-				displayNumber++;
-				continue;
-			}
-			if (cafe.getId().equals(selectedCafeId)) {
-				displayNumber++;
-				continue;
-			}
-			
 			if (cafe.getPriority().equals("0")) {
 				searchResultCafes.add(cafe);
 			} else {
@@ -674,6 +680,7 @@ public class Map extends SherlockFragmentActivity {
 			
 		});
 		
+		Collections.reverse(searchResultCafes);
 		searchResultCafes.addAll(0, priorityList);
 		
 

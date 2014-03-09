@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/cafe_row_bg"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="4dp"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/distText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/light_gray_text"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/distText"
+        android:ellipsize="marquee"
+        android:paddingBottom="4dip"
+        android:shadowColor="#999999"
+        android:shadowDy="@integer/shadow_dy"
+        android:shadowRadius="1"
+        android:singleLine="true"
+        android:textColor="@color/dark_gray_text"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/subText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name"
+        android:layout_toLeftOf="@id/distText"
+        android:maxLines="1"
+        android:textColor="@color/green_text"
+        android:textSize="14sp"
+        android:ellipsize="end" />
+
+</RelativeLayout>

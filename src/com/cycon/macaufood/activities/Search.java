@@ -136,30 +136,6 @@ public class Search extends BaseActivity {
         	clearTv.setVisibility(View.GONE);
 		}
         
-//        footer = new TextView(this);
-//        footer.setBackgroundResource(R.drawable.transparent_selector_bg);
-//        footer.setTextColor(getResources().getColor(R.color.light_gray_text));
-//        footer.setTextSize(16f);
-//        int leftPadding = MFUtil.getPixelsFromDip(16, getResources());
-//        int topPadding = MFUtil.getPixelsFromDip(5, getResources());
-//        footer.setPadding(leftPadding, topPadding, leftPadding, topPadding);
-//        footer.setText(R.string.clearHistory);
-//        footer.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_clear_history, 0, 0, 0);
-//        footer.setOnClickListener(new OnClickListener() {
-//			
-//			public void onClick(View arg0) {
-//				historyStrings.clear();
-//				historyAdapter.notifyDataSetChanged();
-//				PreferenceHelper.savePreferencesStr(Search.this, "searchHistoryStr", "");
-//				historyList.removeFooterView(footer);
-//			}
-//		});
-//
-//		historyList.addFooterView(footer);
-//        
-//        if (historyStrings.size() > 0) {
-//			historyList.addFooterView(footer);
-//		}
         
         historyAdapter = new HistoryAdapter(this, 0, historyStrings);
         historyList.setAdapter(historyAdapter);
@@ -204,16 +180,6 @@ public class Search extends BaseActivity {
 		});
         
         searchTextBox = (EditText) findViewById(R.id.searchTextBox);
-        
-//        searchTextBox.setOnFocusChangeListener(new OnFocusChangeListener() {
-//			
-//			public void onFocusChange(View v, boolean hasFocus) {
-//				if (!hasFocus) {
-//					hideKeyboard(v);
-//				} 
-//			}
-//		});
-        
         searchTextBox.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -224,7 +190,6 @@ public class Search extends BaseActivity {
 
 					navi.setVisibility(View.GONE);
 					advViewPager.setVisibility(View.GONE);
-//					clearBtn.setVisibility(View.VISIBLE);
 			}
 		});
         
@@ -263,17 +228,11 @@ public class Search extends BaseActivity {
 					clearBtn.setVisibility(View.GONE);
 					searchCafes.clear();
 					searchAdapter.notifyDataSetChanged();
-//					advViewPager.setVisibility(View.VISIBLE);
-//					navi.setVisibility(View.VISIBLE);
-					
 					historyLayout.setVisibility(View.VISIBLE);
 				} else {
 					clearBtn.setVisibility(View.VISIBLE);
 					searchList.setVisibility(View.VISIBLE);
 					doDirectSearch(s.toString());
-//					navi.setVisibility(View.GONE);
-//					advViewPager.setVisibility(View.GONE);
-
 					historyLayout.setVisibility(View.GONE);
 				}
 			}
@@ -317,10 +276,6 @@ public class Search extends BaseActivity {
 
         mActionBar.addTab(tab1);
         mActionBar.addTab(tab2);
-        
-//		if (savedInstanceState != null) {
-//			mActionBar.setSelectedNavigationItem(savedInstanceState.getInt("tab", 0));
-//		}
     }
     
     
@@ -334,11 +289,8 @@ public class Search extends BaseActivity {
     private void setDirectSearchTab(boolean select) {
     	if (select) {
     		directSearchLayout.setVisibility(View.VISIBLE);
-//    		if (banner.isShown())
-//    			banner.startTask();
     	} else {
     		directSearchLayout.setVisibility(View.GONE);
-//    		banner.stopTask();
     	}
     }
     
@@ -373,14 +325,11 @@ public class Search extends BaseActivity {
     protected void onResume() {
     	super.onResume();
     	expand();
-
-//    	advViewPager.startTimer();
     }
     
     @Override
     protected void onPause() {
     	super.onPause();
-//    	advViewPager.stopTimer();
     }
     
     public void hideKeyboard() {

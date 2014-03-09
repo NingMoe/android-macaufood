@@ -15,9 +15,11 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.bean.ParsedPSHolder;
 import com.cycon.macaufood.utilities.ImageLoader;
+import com.cycon.macaufood.utilities.LoginHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.widget.PSDetailsView;
+import com.cycon.macaufood.widget.PSDetailsView.DetailsViewCallback;
 import com.cycon.macaufood.widget.PSHeaderView;
 
 public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListHeadersAdapter {
@@ -27,20 +29,26 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
     private List<String> mHolderList;
     private Context mContext;
     private LayoutInflater mInflater;
+    private LoginHelper mLoginHelper;
+    private DetailsViewCallback mCallback;
 //    private final int imageWidth;
     public final static int SPACING_IN_DP = 4;
 
-    public PSFriendsActivityAdapter(Context context, List<String> holderList) {
+    public PSFriendsActivityAdapter(Context context, List<String> holderList, LoginHelper helper, DetailsViewCallback callback) {
             this.mHolderList = holderList;
             mContext = context;
+            mLoginHelper = helper;
+            mCallback = callback;
             psDetailsImageLoader=new ImageLoader(context, 0, ImageType.PHOTOSHARE);
             psDetailsImageLoader.setTaskMaxNumber(2);
             psDetailsImageLoader.setNoAnim(true);
+            //no need to keep loading detail images right?
 //            psDetailsImageLoader.setPSDetailsImagesToLoadFromParsedPS(holderList);
 
             psHeaderImageLoader=new ImageLoader(context, holderList.size(), ImageType.PSLOCALAVATAR);
 //            psHeaderImageLoader.setProfileImagesToLoadFromParsedPS(holderList);
             psHeaderImageLoader.setNoAnim(true);
+            psHeaderImageLoader.setAllowedDuplicate(true);
         	mInflater =  (LayoutInflater)context.getSystemService
         		      (Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -57,11 +65,10 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
         	holder = psHeaderView.initView();
         	convertView = psHeaderView;
         	convertView.setTag(holder);
-        	MFService.loadImage(mContext.getApplicationContext(), ImageType.PSLOCALAVATAR, psHolder.getMemberid(), holder.profilePic, false, false);
+//        	MFService.loadImage(mContext.getApplicationContext(), ImageType.PSLOCALAVATAR, psHolder.getMemberid(), holder.profilePic, false, false);
         } else {
         	psHeaderView = (PSHeaderView) convertView;
         	holder = (PSHeaderView.ViewHolder) convertView.getTag();
-        	Log.e("ZZZ", "header view recycle");
         }
         psHeaderView.loadInfo(psHolder, holder, psHeaderImageLoader, position);
         
@@ -73,14 +80,14 @@ public class PSFriendsActivityAdapter extends BaseAdapter implements StickyListH
 		PSDetailsView psDetailsView;
         if (convertView == null) {
         	psDetailsView = (PSDetailsView) mInflater.inflate(R.layout.ps_detail_view, null);
+        	psDetailsView.setLoginHelper(mLoginHelper);
+        	psDetailsView.setDetailsViewCallback(mCallback);
         	holder = psDetailsView.initView();
         	convertView = psDetailsView;
         	convertView.setTag(holder);
-        	Log.e("ZZZ", "detail view null");
         } else {
         	psDetailsView = (PSDetailsView) convertView;
         	holder = (PSDetailsView.ViewHolder) convertView.getTag();
-        	Log.e("ZZZ", "detail view recycle");
         }
         ParsedPSHolder psHolder = MFConfig.getInstance().getPsInfoMap().get(mHolderList.get(position));
         psDetailsView.loadInfo(psHolder, holder, psDetailsImageLoader, position);

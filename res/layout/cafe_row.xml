@@ -21,7 +21,7 @@
 	    android:paddingTop="6dip"
 	    android:paddingBottom="4dip"
 	    android:paddingLeft="9dip"
-	    android:paddingRight="7dip"
+	    android:paddingRight="10dip"
 	    android:singleLine="true"
 	    android:shadowDy="@integer/shadow_dy"
 	    android:shadowColor="#999999"
@@ -38,7 +38,7 @@
 	    android:layout_below="@id/name"
 	    android:layout_toRightOf="@id/imageView"
 	    android:paddingLeft="7dip"
-	    android:paddingRight="7dip"
+	    android:paddingRight="10dip"
 	    android:maxLines="2"
 	    />
   		

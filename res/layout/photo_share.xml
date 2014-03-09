@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="48dip"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:background="@color/default_bg_color" >
 
         <TextView
             android:id="@+id/psFriends"
@@ -125,7 +126,7 @@
             android:id="@+id/friendsActivityLayout"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/default_bg_color" 
+            android:background="@color/ps_details_bg_color" 
             android:visibility="gone">
 
             <se.emilsjolander.stickylistheaders.StickyListHeadersListView

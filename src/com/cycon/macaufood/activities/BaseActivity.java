@@ -35,14 +35,14 @@ public abstract class BaseActivity extends SherlockActivity {
 		mActionBar.setDisplayHomeAsUpEnabled(true);
 	}
 	
-	protected TextView getActionbarTitle() {
-
-	    TextView title = (TextView) findViewById(R.id.abs__action_bar_title);// for ActionBarSerlock
-	    if (title == null) title = (TextView) findViewById(Resources.getSystem()
-	            .getIdentifier("action_bar_title", "id", "android"));// for default action bar
-
-	    return title;
-	}
+//	protected TextView getActionbarTitle() {
+//
+//	    TextView title = (TextView) findViewById(R.id.abs__action_bar_title);// for ActionBarSerlock
+//	    if (title == null) title = (TextView) findViewById(Resources.getSystem()
+//	            .getIdentifier("action_bar_title", "id", "android"));// for default action bar
+//
+//	    return title;
+//	}
 	
 	@Override
 	protected void onResume() {

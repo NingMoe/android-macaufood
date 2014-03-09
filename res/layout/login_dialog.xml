@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
     
  <TextView 
         android:layout_width="match_parent"
@@ -14,21 +14,9 @@
         android:textSize="20sp"
         android:background="@drawable/actionbar_bg"/>
     
-    <TextView
-        android:id="@+id/fbLogin"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:text="@string/facebookLogin"
-        android:textSize="18sp"
-        android:background="@drawable/transparent_selector_bg"
-        android:paddingLeft="16dp"
-        android:visibility="gone"
-        />
-    
         <com.facebook.widget.LoginButton
             xmlns:facebook="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/login_button"
+            android:id="@+id/fb_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -38,21 +26,13 @@
             facebook:logout_text="@string/facebookLogin"
             />
     
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:drawable/divider_horizontal_bright"
-        android:visibility="gone" />
-    
-    <TextView
-        android:id="@+id/weiboLogin"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
-        android:text="@string/weiboLogin"
-        android:background="@drawable/transparent_selector_bg"
-        android:paddingLeft="16dp"
-        android:textSize="18sp"
-        />
+        <com.sina.weibo.sdk.widget.LoginoutButton
+            android:id="@+id/weibo_login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="16dp"/>
 
 </LinearLayout>

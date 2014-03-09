@@ -21,6 +21,7 @@ import android.os.Bundle;
 import com.cycon.macaufood.utilities.MFLog;
 
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -91,29 +92,30 @@ public class PSHeaderView extends RelativeLayout {
 		} else {
 			holder.cafeName.setVisibility(View.VISIBLE);
 			holder.cafeName.setText(pInfo.getPlace());
-			holder.cafeName.setTextColor(mContext.getResources().getColor(R.color.dark_gray_text));
-			holder.cafeName.setTypeface(null, Typeface.NORMAL);
+			holder.cafeName.setTextColor(mContext.getResources().getColor(R.color.green_text));
 			
 			final String cafeId = pInfo.getCafeid();
-			if (!cafeId.equals("0") && MFConfig.getInstance().getCafeLists().size() >= Integer.parseInt(cafeId)) {
-				try {
-					holder.cafeName.setOnClickListener(new OnClickListener() {
-						
-						@Override
-						public void onClick(View arg0) {
-							Intent i = new Intent(mContext, Details.class);
-							i.putExtra("id", cafeId);
-							mContext.startActivity(i);
-						}
-					});
-					
-					holder.cafeName.setTextColor(mContext.getResources().getColor(R.color.green_text));
-					holder.cafeName.setTypeface(null, Typeface.BOLD);
-					
-				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				}
-			} 
+			if (!cafeId.equals("0")
+					&& !cafeId.equals("-1")
+					&& MFConfig.getInstance().getCafeLists().size() >= Integer
+							.parseInt(cafeId)) {
+				holder.cafeName.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						Intent i = new Intent(mContext, Details.class);
+						i.putExtra("id", cafeId);
+						mContext.startActivity(i);
+					}
+				});
+
+				// holder.cafeName.setTextColor(mContext.getResources().getColor(R.color.green_text));
+				holder.cafeName.setTypeface(null, Typeface.BOLD);
+				holder.cafeName.setBackgroundResource(R.drawable.text_bg_selector);
+			} else {
+				holder.cafeName.setTypeface(null, Typeface.NORMAL);
+				holder.cafeName.setBackgroundDrawable(null);
+			}
 		}
 		
 		

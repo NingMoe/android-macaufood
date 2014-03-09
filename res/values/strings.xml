@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <!--  Main app string -->
-    <string name="app_id">539139189509748</string>
+    <string name="app_id">312867848799588</string>
     <string name="app_name">食在澳門</string>
     <string name="homepage">主頁</string>
     <string name="recommend_tab">今期推介</string>
@@ -12,6 +12,8 @@
     <string name="refresh">重新整理</string>
     <string name="loadingInfo">載入資訊中...</string>
     <string name="loadingContent">載入主頁資料中...</string>
+    <string name="dismissAd">向下拖曳以移除廣告</string>
+    
     
 <!--  Recommmend -->
     <string name="noInternetMsg">請連接網絡獲取資料</string>
@@ -157,10 +159,33 @@
  	<string name="like">讚好</string>
  	<string name="liked">已讚</string>
  	<string name="comment">留言</string>
+ 	<string name="delete">刪除</string>
+ 	<string name="deleteConfirmPrompt">你確定要刪除這相片嗎?</string>
  	<string name="cafeInfo">資料</string>
- 	
+    <string name="send">發送</string>
+    <string name="commentHeader">請發表留言</string>
+    <string name="commentGhost">發表回應...</string>
+    <string name="addCaption">請加入標題...</string>
+    <string name="chooseCafe">請選擇餐廳</string>
+    <string name="imageCaptureFailed">拍攝相片失敗,請重試</string>
+    <string name="imageChooseFailed">選擇相片失敗,請重試</string>
+    <string name="post">發佈</string>
+    <string name="shareInFb">分享到 Facebook</string>
+    <string name="shareInWeibo">分享到微博</string>
+    <string name="updateLocation">位置更新中..</string>
+    <string name="psSearchCafeHint">搜尋資料庫所有餐廳</string>
+    <string name="selectCafe">選擇餐廳</string>
+    <string name="addCafe">新增加餐廳</string>
+    <string name="pleaseFillCafeName">請填寫餐廳名字</string>
+    <string name="uploadingPhotoProgress">發佈相片中...</string>
+    <string name="uploadSucceed">發佈成功</string>
+    <string name="uploadFailure">發佈失敗,請稍後重試</string>
+    <string name="confirmExitUpload">你確定要放棄發佈這相片?</string>
+    <string name="sharePhotoCaption">%1$s\n\n@%2$s\n地址:%3$s\n電話:%4$s\n營業時間:%5$s</string>
  	
  	<!--  Misc. -->
+ 	<string name="meter">米</string>
+ 	<string name="km">公里</string>
  	<string name="sec">秒</string>
  	<string name="min">分鐘</string>
  	<string name="hour">小時</string>

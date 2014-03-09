@@ -124,7 +124,6 @@ public class BannerView extends FrameLayout {
     		if (!MFConfig.isOnline(mContext)) return null;
 
             try {
-            	Log.e("ZZZ", "send adv service");
             	tempLinkId = MFService.getString(MFURL.SMALL_ADV, null);
             	// no need fetch image if same id
             	if (tempLinkId.equals(linkId)) return null;
@@ -153,7 +152,6 @@ public class BannerView extends FrameLayout {
             if (isCancelled()) return null;
     		
             try {
-            	Log.e("ZZZ", "fetch bitmap");
             	Bitmap bitmap = MFService.getBitmap(MFURL.getImageUrl(ImageType.ADV, tempLinkId), null);
             	
 	    		linkId = tempLinkId;

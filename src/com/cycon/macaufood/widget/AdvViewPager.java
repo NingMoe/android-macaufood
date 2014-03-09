@@ -308,6 +308,7 @@ public class AdvViewPager extends ViewPager {
         	if (linkIdList.size() == 0) {
         		if (MFConfig.isOnline(mContext)) {
         			imageList.clear();
+        			imageAdapter.notifyDataSetChanged();
         			if (!isFetchingId)
         				AsyncTaskHelper.execute(new FetchAdvIdTask());
         		} else {

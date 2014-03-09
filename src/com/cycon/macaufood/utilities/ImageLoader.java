@@ -31,12 +31,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import com.cycon.macaufood.utilities.MFLog;
+import com.cycon.macaufood.widget.PSDetailsView.PSComment;
 import com.cycon.macaufood.widget.PSDetailsView.PSLike;
 
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.Cafe;
@@ -53,6 +55,7 @@ public class ImageLoader {
     MemoryCache memoryCache=new MemoryCache();
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
+    private Map<String, ProgressBar> progressBarMap = Collections.synchronizedMap(new WeakHashMap<String, ProgressBar>());
     private Drawable nophoto;
 //    private Drawable loadingBlankPhoto;
     private Drawable nointernet;
@@ -72,6 +75,8 @@ public class ImageLoader {
     private int maxTasksNumber = 10;
     
     private boolean noAnimation;
+    
+    private boolean allowedDuplicate = false; //this image loader for unique id by default
     
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
     	mContext = context;
@@ -149,17 +154,29 @@ public class ImageLoader {
         }
     }
     
+    public void setImagesToLoadFromCommentList(List<PSComment> holders) {
+    	imagesToLoad.clear();
+        for (PSComment holder : holders) {
+        	imagesToLoad.add(holder.id);
+        }
+    }
+    
     public void setNoAnim(boolean noAnim) {
     	noAnimation = noAnim;
+    }
+    
+    public void setAllowedDuplicate(boolean allowedDuplicate) {
+    	this.allowedDuplicate = allowedDuplicate;
+    }
+    
+    public void displayImage(String id, ImageView imageView, int position, ProgressBar pBar) {
+    	progressBarMap.put(id, pBar);
+    	displayImage(id, imageView, position);
     }
     
     public void displayImage(String id, ImageView imageView, int position)
     {
     	imagesToLoad.remove(id);
-//    	MFLog.e(TAG, "remove " + id);
-//    	if (imagesToLoad.remove(id) == false) {
-//    		MFLog.e(TAG, "error....id in imagestoload does not exist");
-//    	}
 		imageViews.put(imageView, id);
 		
         Bitmap bitmap=memoryCache.get(id);
@@ -174,19 +191,36 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
                 memoryCache.put(id, bitmap);
             } else {
-//            	imageView.setImageDrawable(loadingBlankPhoto);
-            	imageView.setImageDrawable(null);
+            	if (imageType == ImageType.PHOTOSHARE) { //load thumbnail in ps details image
+            		bitmap = MFUtil.getBitmapFromCache(fileCache, id.replace("-1.jpg", "-0.jpg"));
+            		if (bitmap != null) {
+            			imageView.setImageBitmap(bitmap);
+                    	ProgressBar pBar = progressBarMap.get(id);
+                    	if (pBar != null) {
+        					pBar.setVisibility(View.VISIBLE);
+                    	} 
+            		} else {
+            			imageView.setImageDrawable(null);
+            		}
+				} else {
+					imageView.setImageDrawable(null);
+				}
+            	
             	
             	boolean needLoad = true;
-            	for (FetchImageTask task : imagesLoading) {
-            		if (task == null || task.p.id == null) {
-            			needLoad = true; 
-            			break;
-            		}
-            		if (task.p.id.equals(id)) {
-            			needLoad = false; 
-            			break;
-            		}
+            	
+            	if (!allowedDuplicate) { //if allowed duplicate, must load, but may affect performance
+					
+	            	for (FetchImageTask task : imagesLoading) {
+	            		if (task == null || task.p.id == null) {
+	            			needLoad = true; 
+	            			break;
+	            		}
+	            		if (task.p.id.equals(id)) {
+	            			needLoad = false; 
+	            			break;
+	            		}
+	            	}
             	}
             	
             	if (needLoad) {
@@ -222,12 +256,11 @@ public class ImageLoader {
         
     public void loadImages(String id, ImageView imageView)
     {
-    	
+
     	if (imagesLoading.size() > maxTasksNumber) {
     		//scroll to specific position
     		if (imageView != null) {
 	    		imagesToLoad.addFirst(id);
-	    		Log.e("ZZZ", "add to images to load id = " + id);
 	    		return;
     		} 
     	}
@@ -272,6 +305,7 @@ public class ImageLoader {
 
 		@Override
 		protected Bitmap doInBackground(Void... params) {
+			MFLog.e(TAG, "fetch photo id = " + p.id);
             Bitmap bmp=getBitmap(p.id);
             if (bmp != null) {
 //            	ETMFLog.e(TAG, "load successful " + p.id + " max tasks no = " + imagesLoading.size());
@@ -308,7 +342,7 @@ public class ImageLoader {
             if (currentDisplayImages.isEmpty()) {
 				while (!imagesToLoad.isEmpty() && imagesLoading.size() <= maxTasksNumber) {
 					String id = imagesToLoad.poll();
-					Log.e(TAG, " imagesToLoad poll id " + id);
+					MFLog.e(TAG, " imagesToLoad poll id " + id);
 					
 					//check if poll id is in memoryCache or filecache;
 			        Bitmap bitmap=memoryCache.get(id);
@@ -323,7 +357,7 @@ public class ImageLoader {
 			                continue;
 			            }
 			        }
-					Log.e(TAG, "poll id " + id);
+					MFLog.e(TAG, "poll id " + id);
 					loadImages(id, null);
 				}
             }
@@ -334,6 +368,12 @@ public class ImageLoader {
 					for (ImageView view : imageViews.keySet()) {
 						String tag=imageViews.get(view);
 						if(tag!=null && tag.equals(p.id)){ 
+							//hide progress bar
+			            	ProgressBar pBar = progressBarMap.get(p.id);
+			            	if (pBar != null) {
+								pBar.setVisibility(View.GONE);
+			            	} 
+							
 //							ETMFLog.e(TAG, "set photo after load " + p.id);
 							if (result == null) {
 //								ETMFLog.e(TAG, "set nophoto id = " + p.id);
@@ -354,6 +394,13 @@ public class ImageLoader {
 			} else {
 				String tag=imageViews.get(p.imageView);
 				if(tag!=null && tag.equals(p.id)){
+					
+					//hide progress bar
+	            	ProgressBar pBar = progressBarMap.get(p.id);
+	            	if (pBar != null) {
+						pBar.setVisibility(View.GONE);
+	            	} 
+
 					if (noConnection) {
 						p.imageView.setImageDrawable(nointernet);
 					} else {

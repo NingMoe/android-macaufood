@@ -46,7 +46,6 @@ public class TouchImageView extends ImageView implements OnTouchListener{
 
 	public void onClick() {
 		// TODO Auto-generated method stub
-		Log.e("ZZZ", "onClick");
 	}
 	
 	public boolean onTouch(View v, MotionEvent event) {
@@ -70,7 +69,6 @@ public class TouchImageView extends ImageView implements OnTouchListener{
 		
 		TouchImageViewHelper(Context context) {
 			if (mImageFilter == null) {
-				Log.e("ZZZ", "once");
 				int selectedImageMaskColor = context.getResources().getColor(R.color.holo_blue_light);
 		        mImageFilter = new PorterDuffColorFilter(selectedImageMaskColor,
 		        		android.graphics.PorterDuff.Mode.SRC_ATOP);

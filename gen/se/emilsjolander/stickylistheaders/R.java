@@ -8,11 +8,11 @@ package se.emilsjolander.stickylistheaders;
 
 public final class R {
 	public static final class attr {
-		public static final int hasStickyHeaders = 0x7f010000;
-		public static final int isDrawingListUnderStickyHeader = 0x7f010001;
+		public static final int hasStickyHeaders = 0x7f010010;
+		public static final int isDrawingListUnderStickyHeader = 0x7f010011;
 	}
 	public static final class styleable {
-		public static final int[] StickyListHeadersListView = { 0x010100eb, 0x010100fc, 0x7f010000, 0x7f010001 };
+		public static final int[] StickyListHeadersListView = { 0x010100eb, 0x010100fc, 0x7f010010, 0x7f010011 };
 		public static final int StickyListHeadersListView_android_clipToPadding = 0;
 		public static final int StickyListHeadersListView_android_drawSelectorOnTop = 1;
 		public static final int StickyListHeadersListView_hasStickyHeaders = 2;

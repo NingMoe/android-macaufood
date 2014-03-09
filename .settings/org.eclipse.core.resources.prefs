@@ -17,6 +17,7 @@ encoding//src/com/cycon/macaufood/activities/PhotoShare.java=UTF-8
 encoding//src/com/cycon/macaufood/activities/Recommend.java=UTF-8
 encoding//src/com/cycon/macaufood/activities/Search.java=UTF-8
 encoding//src/com/cycon/macaufood/activities/SplashScreen.java=UTF-8
+encoding//src/com/cycon/macaufood/utilities/AccessTokenKeeper.java=UTF-8
 encoding//src/com/cycon/macaufood/utilities/MFConstants.java=UTF-8
 encoding//src/com/cycon/macaufood/utilities/MFFetchListHelper.java=UTF-8
 encoding//src/com/cycon/macaufood/utilities/MFUtil.java=UTF-8
