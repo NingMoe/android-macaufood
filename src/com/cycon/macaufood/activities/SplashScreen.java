@@ -141,11 +141,11 @@ public class SplashScreen extends Activity {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 
-//			finish();
-//			
-//			Intent i = new Intent(SplashScreen.this, Home.class);
-//			i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//			startActivity(i);
+			finish();
+			
+			Intent i = new Intent(SplashScreen.this, Home.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+			startActivity(i);
 		}
 	}
 	

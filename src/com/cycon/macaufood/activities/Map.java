@@ -300,7 +300,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 					String cafeId = mMarkersHashMap.get(marker);
 					Intent i = new Intent(Map.this, Details.class);
 					i.putExtra("id", cafeId);
-					i.putExtra("fromMap", true);
+					i.putExtra("fromHome", true);
 					startActivity(i);
 				}
 			}
