@@ -85,28 +85,6 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 		textMap = new Hashtable<Integer, String>(totalPages);
 		imageMap = new Hashtable<Integer, Bitmap>(totalPages);
 		imageViewsMap = new Hashtable<Integer, ImageView>(totalPages);
-		imageAdapter = new ImageAdapter(this);
-//		gallery.setAdapter(imageAdapter);
-//		gallery.setOnItemSelectedListener(new OnItemSelectedListener() {
-//
-//			public void onItemSelected(AdapterView<?> arg0, View arg1, int id,
-//					long arg3) {
-//					
-//				String s = textMap.get(id + 1);
-//				//prevent sliding text even when text is same
-//				if (s != null) {
-//					if (!((TextView)textSwitcher.getCurrentView()).getText().toString().equals(s)) {	
-//						textSwitcher.setText(s);
-//					}
-//				}
-//				navi.setPosition(id);
-//				navi.invalidate();
-//			}
-//
-//			public void onNothingSelected(AdapterView<?> arg0) {
-//				
-//			}
-//		});
 		
 		boolean cacheError = false;
 		
@@ -118,7 +96,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 			String pageStr = rd.readLine().trim();
 			
 			serverTotalPages = Integer.parseInt(pageStr);
-			imageAdapter.notifyDataSetChanged();
+//			imageAdapter.notifyDataSetChanged();
 			navi.setSize(serverTotalPages);
     		navi.setVisibility(View.GONE);
     		navi.setVisibility(View.VISIBLE);
@@ -126,7 +104,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
     			f=fileCache.getFile(introid + "-" + i + "-image");
                 fis = new FileInputStream(f);
                 imageMap.put(i, BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis)));
-                imageAdapter.notifyDataSetChanged();
+//                imageAdapter.notifyDataSetChanged();
     		}
     		for (int i = 1; i <= serverTotalPages; i++) {
     			StringBuilder sb = new StringBuilder();
@@ -162,6 +140,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 			}
 		}
 		
+		imageAdapter = new ImageAdapter(this);
 		viewPager.setAdapter(imageAdapter);
 		viewPager.setOnPageChangeListener(imageAdapter);
 		viewPager.setPageTransformer(true, imageAdapter);
@@ -193,7 +172,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 					serverTotalPages = totalPages;
 					e.printStackTrace();
 				}
-            	
+        		imageAdapter.notifyDataSetChanged();
 			} catch (MalformedURLException e) {
 				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
@@ -213,7 +192,6 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
     		navi.setSize(serverTotalPages);
     		navi.setVisibility(View.GONE);
     		navi.setVisibility(View.VISIBLE);
-    		imageAdapter.notifyDataSetChanged();
     		if (finishLoadingFirstImage) {
 	    		for (int i = 3; i <= serverTotalPages; i++) {
 					AsyncTaskHelper.executeWithResultBitmap(new FetchImageTask(i));
