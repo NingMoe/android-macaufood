@@ -48,7 +48,7 @@ public class AdvViewPager extends ViewPager {
 
 	private static final long REFRESH_PERIOD = 6000;
 	
-	private ImageAdapter imageAdapter = new ImageAdapter();
+	private ImageAdapter imageAdapter;
 	private Context mContext;
 	private List<String> idList;
 	private String fileAdvListStr;
@@ -88,6 +88,7 @@ public class AdvViewPager extends ViewPager {
 		mHandler = new Handler();
 		noadv = getContext().getResources().getDrawable(isSmallAdv ? R.drawable.adv2 : R.drawable.searchadv);
 		mContext = this.getContext();
+		imageAdapter = new ImageAdapter();
 		setAdapter(imageAdapter);
 		setOnPageChangeListener(imageAdapter);
 		
