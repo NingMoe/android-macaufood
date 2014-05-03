@@ -88,9 +88,6 @@ public class AdvViewPager extends ViewPager {
 		mHandler = new Handler();
 		noadv = getContext().getResources().getDrawable(isSmallAdv ? R.drawable.adv2 : R.drawable.searchadv);
 		mContext = this.getContext();
-		imageAdapter = new ImageAdapter();
-		setAdapter(imageAdapter);
-		setOnPageChangeListener(imageAdapter);
 		
 		fileCache = new FileCache(mContext, ImageType.ADV);
 		
@@ -135,10 +132,6 @@ public class AdvViewPager extends ViewPager {
         	
 		if (imageList.size() > 0) {
 			isUsingCache = true;
-    		imageAdapter.notifyDataSetChanged();
-//    		setAdapter(imageAdapter);
-    		
-//    		startTimer();
 		}
 		
 		
@@ -146,8 +139,12 @@ public class AdvViewPager extends ViewPager {
 			AsyncTaskHelper.execute(new FetchAdvIdTask());
 		} else if (!isUsingCache){
 			imageList.add(((BitmapDrawable) noadv).getBitmap());
-    		imageAdapter.notifyDataSetChanged();
 		}
+		
+
+		imageAdapter = new ImageAdapter();
+		setAdapter(imageAdapter);
+		setOnPageChangeListener(imageAdapter);
 	}
 	
 	public void setNavi(GalleryNavigator navi) {
@@ -227,7 +224,6 @@ public class AdvViewPager extends ViewPager {
     		
     		if (idList.size() == 0 && !isUsingCache) {
 				imageList.add(((BitmapDrawable) noadv).getBitmap());
-//				setAdapter(imageAdapter);
 	    		imageAdapter.notifyDataSetChanged();
     		} else {
 	    		for (String id : idList) {
@@ -295,9 +291,8 @@ public class AdvViewPager extends ViewPager {
 	    		
 	    		imageList = tempImageList;
 	    		linkIdList = tempLinkIdList;
-	    		setAdapter(imageAdapter);
-//	    		imageAdapter.notifyDataSetChanged();
 	    		startTimer();
+	    		imageAdapter.notifyDataSetChanged();
     		}
             
     	}
@@ -313,9 +308,7 @@ public class AdvViewPager extends ViewPager {
         			if (!isFetchingId)
         				AsyncTaskHelper.execute(new FetchAdvIdTask());
         		} else {
-//            		setVisibility(View.VISIBLE);
         			imageList.add(((BitmapDrawable) noadv).getBitmap());
-//        			setAdapter(imageAdapter);
             		imageAdapter.notifyDataSetChanged();
         		}
         	} else {

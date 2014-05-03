@@ -67,8 +67,8 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 				+ getIntent().getStringExtra("name"));
 		infoid = getIntent().getStringExtra("infoid");
 		totalPages = Integer.parseInt(getIntent().getStringExtra("page"));
-		if (totalPages == 0)
-			totalPages = 1;
+		if (totalPages == 0) totalPages = 1;
+		serverTotalPages = totalPages;
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		// gallery = (Gallery) findViewById(R.id.gallery);
 		navi = (GalleryNavigator) findViewById(R.id.navi);
@@ -184,15 +184,8 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 			try {
 				File f = fileCache.getFile(infoid + "-page");
 				String pageStr = MFService.getString(MFURL.getIntroPageUrl(infoid), f);
-
-				try {
-					serverTotalPages = Integer.parseInt(pageStr);
-				} catch (NumberFormatException e) {
-					serverTotalPages = totalPages;
-					e.printStackTrace();
-				}
-				imageAdapter.notifyDataSetChanged();
-
+				return pageStr;
+				
 			} catch (MalformedURLException e) {
 				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
@@ -209,6 +202,13 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
+        	try {
+				serverTotalPages = Integer.parseInt(result);
+			} catch (NumberFormatException e) {
+				serverTotalPages = totalPages;
+				e.printStackTrace();
+			}
+    		imageAdapter.notifyDataSetChanged();
 			navi.setSize(serverTotalPages);
 			navi.setVisibility(View.GONE);
 			navi.setVisibility(View.VISIBLE);
@@ -327,13 +327,13 @@ public class Info extends BaseActivity implements ViewSwitcher.ViewFactory {
 							height));
 					imageView.setImageBitmap(result);
 				}
+				imageAdapter.notifyDataSetChanged();
 
 				// load rest photos
 				if (page == 1) {
 					PreferenceHelper.savePreferencesLong(
 							getApplicationContext(), "infoTimeStamp",
 							System.currentTimeMillis());
-					imageAdapter.notifyDataSetChanged();
 					finishLoadingFirstImage = true;
 
 					for (int i = 3; i <= serverTotalPages; i++) {

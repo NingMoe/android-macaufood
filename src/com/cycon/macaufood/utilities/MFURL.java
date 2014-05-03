@@ -14,7 +14,6 @@ public class MFURL {
 	public static final String CREDIT_VIP_COUPON_LIST = "http://www.cycon.com.mo/xml_cafecoupon2_new.php?key=cafecafe&type=1";
 	public static final String MAIN_COUPON = "http://www.cycon.com.mo/xml_cafecoupon2_new.php?key=cafecafe&type=2";
 	public static final String SMALL_ADV = "http://www.cycon.com.mo/xml_adv.php?code=android-" + MFConfig.DEVICE_ID + "&type=s";
-	public static final String BIG_ADV = "http://www.cycon.com.mo/xml_adv.php?code=android-" + MFConfig.DEVICE_ID + "&type=b";
 	public static final String NEW_BIG_ADV = "http://www.cycon.com.mo/xml_adv2.php?code=android-" + MFConfig.DEVICE_ID + "&type=b";
 	public static final String NEW_SMALL_ADV = "http://www.cycon.com.mo/xml_adv2.php?code=android-" + MFConfig.DEVICE_ID + "&type=s";
 	public static final String FAVORITE_LOG = "http://www.cycon.com.mo/xml_favouritelog.php?key=cafecafe&udid=android-" + 

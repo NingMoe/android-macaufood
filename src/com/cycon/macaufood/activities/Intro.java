@@ -68,6 +68,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 		introid = getIntent().getStringExtra("introid");
 		totalPages = Integer.parseInt(getIntent().getStringExtra("page"));
 		if (totalPages == 0) totalPages = 1;
+		serverTotalPages = totalPages;
 		viewPager = (ViewPager) findViewById(R.id.pager);
 //		gallery = (OneFlingGallery) findViewById(R.id.gallery);
 		navi = (GalleryNavigator) findViewById(R.id.navi);
@@ -85,7 +86,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 		textMap = new Hashtable<Integer, String>(totalPages);
 		imageMap = new Hashtable<Integer, Bitmap>(totalPages);
 		imageViewsMap = new Hashtable<Integer, ImageView>(totalPages);
-		
+
 		boolean cacheError = false;
 		
 		try {
@@ -139,7 +140,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 				}
 			}
 		}
-		
+
 		imageAdapter = new ImageAdapter(this);
 		viewPager.setAdapter(imageAdapter);
 		viewPager.setOnPageChangeListener(imageAdapter);
@@ -165,14 +166,8 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
             try {
 				File f = fileCache.getFile(introid + "-page");
 				String pageStr = MFService.getString(MFURL.getIntroPageUrl(introid), f);
-	            
-            	try {
-					serverTotalPages = Integer.parseInt(pageStr);
-				} catch (NumberFormatException e) {
-					serverTotalPages = totalPages;
-					e.printStackTrace();
-				}
-        		imageAdapter.notifyDataSetChanged();
+	            return pageStr;
+
 			} catch (MalformedURLException e) {
 				MFLog.e(TAG, "malformed url exception");
 				e.printStackTrace();
@@ -189,6 +184,13 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
     	@Override
     	protected void onPostExecute(String result) {
     		super.onPostExecute(result);
+        	try {
+				serverTotalPages = Integer.parseInt(result);
+			} catch (NumberFormatException e) {
+				serverTotalPages = totalPages;
+				e.printStackTrace();
+			}
+    		imageAdapter.notifyDataSetChanged();
     		navi.setSize(serverTotalPages);
     		navi.setVisibility(View.GONE);
     		navi.setVisibility(View.VISIBLE);
@@ -306,11 +308,11 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 							height));
 					imageView.setImageBitmap(result);
     			}
+    			imageAdapter.notifyDataSetChanged();
     			
         		//load rest photos
         		if (page == 1) {
         			PreferenceHelper.savePreferencesLong(getApplicationContext(), "introTimeStamp", System.currentTimeMillis());
-        			imageAdapter.notifyDataSetChanged();
         			finishLoadingFirstImage = true;
         			
     	    		for (int i = 3; i <= serverTotalPages; i++) {
