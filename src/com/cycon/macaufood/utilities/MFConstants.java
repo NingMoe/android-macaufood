@@ -18,7 +18,7 @@ public class MFConstants {
 			14, 11, 12, 20, 21, 27, 32, 15, 16, 17, 18, 19, 28, 25, 22, 24, 29,
 			41, 23, 31, 30, 40, 26, 33, 34, 35, 42 };
 
-	public static String[] serviceType = { "全部", "外送", "訂枱", "宵夜", "到會",
+	public static String[] serviceType = { "全部", "澳門通", "外送", "訂枱", "宵夜", "到會",
 			"自助任食", "飲宴", "WIFI", "泊車" };
 
 	public static final String RECOMMEND_XML_FILE_NAME = "recommend_parsed_xml";

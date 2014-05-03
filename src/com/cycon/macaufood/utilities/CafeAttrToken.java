@@ -39,7 +39,8 @@ public enum CafeAttrToken {
 	OPTION_WIFI("option_wifi"),
 	OPTION_PARKING("option_parking"),
 	BRANCH("branch"),
-	PRIORITY("priority");
+	PRIORITY("priority"),
+	OPTION_MACAUPASS("option_macaupass");
 	
 	private final String value;
 	

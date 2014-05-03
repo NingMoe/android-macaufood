@@ -47,6 +47,7 @@ public class Cafe implements Comparable<Cafe>, Serializable{
 	private String option_parking = "0";
 	private String branch = "0";
 	private String priority = "0";
+	private String option_macaupass = "0";
 	
 	private double distance;
 	
@@ -269,6 +270,12 @@ public class Cafe implements Comparable<Cafe>, Serializable{
 	public void setOption_parking(String option_parking) {
 		this.option_parking = option_parking;
 	}
+	public String getOption_macaupass() {
+		return option_macaupass;
+	}
+	public void setOption_macaupass(String option_macaupass) {
+		this.option_macaupass = option_macaupass;
+	}
 	public String getBranch() {
 		return branch;
 	}
@@ -329,6 +336,7 @@ public class Cafe implements Comparable<Cafe>, Serializable{
 		else if (field.equals(CafeAttrToken.OPTION_PARKING.getValue())) option_parking = value;
 		else if (field.equals(CafeAttrToken.PRIORITY.getValue())) priority = value;
 		else if (field.equals(CafeAttrToken.BRANCH.getValue())) branch = value;
+		else if (field.equals(CafeAttrToken.OPTION_MACAUPASS.getValue())) option_macaupass = value;
 		else {MFLog.e("Cafe", "no field" + field); throw new Exception("No such field");}
 	}
 	
@@ -371,6 +379,7 @@ public class Cafe implements Comparable<Cafe>, Serializable{
 		else if (field.equals(CafeAttrToken.OPTION_PARKING.getValue())) return option_parking;
 		else if (field.equals(CafeAttrToken.PRIORITY.getValue())) return priority;
 		else if (field.equals(CafeAttrToken.BRANCH.getValue())) return branch;
+		else if (field.equals(CafeAttrToken.OPTION_MACAUPASS.getValue())) return option_macaupass;
 		else {MFLog.e("Cafe", "no field" + field); throw new Exception("No such field");}
 	}
 	
@@ -379,41 +388,6 @@ public class Cafe implements Comparable<Cafe>, Serializable{
 		else if (distance > another.distance) return -1;
 		return 0;
 	}
-	
-//	public void setHashMap(HashMap<String, PListObject> map) {
-//		id = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.ID.getValue())).getValue();
-//		name = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.NAME.getValue())).getValue();
-//		phone = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.PHONE.getValue())).getValue();
-//		district = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.DISTRICT.getValue())).getValue();
-//		address = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.ADDRESS.getValue())).getValue();
-//		website = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.WEBSITE.getValue())).getValue();
-//		coordx = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.COORDX.getValue())).getValue();
-//		coordy = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.COORDY.getValue())).getValue();
-//		openhours = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.OPENHOURS.getValue())).getValue();
-//		description = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.DESCRIPTION.getValue())).getValue();
-//		message = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.MESSAGE.getValue())).getValue();
-//		type0 = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.TYPE0.getValue())).getValue();
-//		type1 = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.TYPE1.getValue())).getValue();
-//		type2 = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.TYPE2.getValue())).getValue();
-//		option_phoneorder = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_PHONEORDER.getValue())).getValue();
-//		option_booking = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_BOOOKING.getValue())).getValue();
-//		option_night = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_NIGHT.getValue())).getValue();
-//		option_call = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_CALL.getValue())).getValue();
-//		option_buffet = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_BUFFET.getValue())).getValue();
-//		option_banquet = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_BANQUET.getValue())).getValue();
-//		option_photo = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_PHOTO.getValue())).getValue();
-//		option_intro = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_INTRO.getValue())).getValue();
-//		option_menu = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_MENU.getValue())).getValue();
-//		menuid = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.MENUID.getValue())).getValue();
-//		introid = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.INTROID.getValue())).getValue();
-//		intropage = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.INTROPAGE.getValue())).getValue();
-//		recommendid = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.RECOMMENDID.getValue())).getValue();
-//		recommendpage = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.RECOMMENDPAGE.getValue())).getValue();
-//		menupage = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.MENUPAGE.getValue())).getValue();
-//		option_confirm = ((com.longevitysoft.android.xml.plist.domain.Integer) map.get(CafeAttrToken.OPTION_CONFIRM.getValue())).getValue();
-//		status = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.STATUS.getValue())).getValue();
-//		timeadded = ((com.longevitysoft.android.xml.plist.domain.String) map.get(CafeAttrToken.TIMEADDED.getValue())).getValue();
-//	}
 	
 }
 

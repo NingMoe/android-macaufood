@@ -42,55 +42,62 @@ public class AdvancedSearchHelper {
 					matchServices = true;
 					break;
 				case 1:
-					if (cafe.getOption_phoneorder().equals("1")) {
+					if (cafe.getOption_macaupass().equals("1")) {
 						matchServices = true;
 					} else {
 						matchServices = false;
 					}
 					break;
 				case 2:
-					if (cafe.getOption_booking().equals("1")) {
+					if (cafe.getOption_phoneorder().equals("1")) {
 						matchServices = true;
 					} else {
 						matchServices = false;
 					}
 					break;
 				case 3:
-					if (cafe.getOption_night().equals("1")) {
+					if (cafe.getOption_booking().equals("1")) {
 						matchServices = true;
 					} else {
 						matchServices = false;
 					}
 					break;
 				case 4:
-					if (cafe.getOption_call().equals("1")) {
+					if (cafe.getOption_night().equals("1")) {
 						matchServices = true;
 					} else {
 						matchServices = false;
 					}
 					break;
 				case 5:
-					if (cafe.getOption_buffet().equals("1")) {
+					if (cafe.getOption_call().equals("1")) {
 						matchServices = true;
 					} else {
 						matchServices = false;
 					}
 					break;
 				case 6:
-					if (cafe.getOption_banquet().equals("1")) {
+					if (cafe.getOption_buffet().equals("1")) {
 						matchServices = true;
 					} else {
 						matchServices = false;
 					}
 					break;
 				case 7:
-					if (cafe.getOption_wifi().equals("1")) {
+					if (cafe.getOption_banquet().equals("1")) {
 						matchServices = true;
 					} else {
 						matchServices = false;
 					}
 					break;
 				case 8:
+					if (cafe.getOption_wifi().equals("1")) {
+						matchServices = true;
+					} else {
+						matchServices = false;
+					}
+					break;
+				case 9:
 					if (cafe.getOption_parking().equals("1")) {
 						matchServices = true;
 					} else {
