@@ -283,6 +283,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
+      	  	  		android:clipToPadding="false"
+	  	  		    android:clipChildren="false"
                     android:orientation="horizontal"
                     android:padding="3dp" >
 
@@ -307,7 +309,11 @@
                         android:id="@+id/paymentGrid"
                         android:layout_width="200dip"
                         android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+		  	  			android:clipChildren="false"
+						android:scrollbars="none"
                         android:gravity="center_vertical"
+                        android:layout_gravity="center_vertical"
                         android:horizontalSpacing="5dp"
                         android:numColumns="4"
                         android:paddingBottom="3dip"

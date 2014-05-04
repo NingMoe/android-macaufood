@@ -100,7 +100,7 @@
 
 <!--  About -->	
     <string name="disclaimer">免責聲明</string>
-    <string name="versionNo">3.0</string>
+    <string name="versionNo">3.1</string>
     <string name="aboutUs">關於我們</string>
     <string name="macauWifi">澳門 WIFI 熱點</string>
     <string name="advertiseUs">刊登廣告和查詢</string>
@@ -206,7 +206,7 @@
 		recommendpage TEXT , menupage TEXT , 
 		payment TEXT , status TEXT ,
 		option_wifi TEXT , option_parking TEXT , branch TEXT , 
-		priority TEXT )
+		priority TEXT, option_macaupass TEXT )
 	</string>
 	
 	<string name="insertCafeSql">INSERT INTO CAFEENTRIES(
@@ -215,9 +215,9 @@
 		option_booking, option_night, option_call, option_buffet,
 		option_banquet, menuid, introid, intropage, recommendid, 
 		recommendpage, menupage, payment, status, option_wifi,
-		option_parking, branch, priority) VALUES(?, ?, ?, ?, ?,
+		option_parking, branch, priority, option_macaupass) VALUES(?, ?, ?, ?, ?,
 		?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?,
-		?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?)</string>
+		?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?)</string>
 		
 
 	<string name="getCafeEntriesSql">SELECT * FROM CAFEENTRIES 

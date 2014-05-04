@@ -282,16 +282,16 @@ public class Details extends BaseActivity {
 			if (paymentMethods.size() > 8) {
 				LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) paymentGrid.getLayoutParams();
 				params.height = (int) TypedValue.applyDimension(
-						TypedValue.COMPLEX_UNIT_DIP, (float) 80,
+						TypedValue.COMPLEX_UNIT_DIP, (float) 85,
 						getResources().getDisplayMetrics());
 				paymentGrid.setLayoutParams(params);
 			} else if (paymentMethods.size() > 4) {
 				LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) paymentGrid.getLayoutParams();
 				params.height = (int) TypedValue.applyDimension(
-						TypedValue.COMPLEX_UNIT_DIP, (float) 53,
+						TypedValue.COMPLEX_UNIT_DIP, (float) 58,
 						getResources().getDisplayMetrics());
 				paymentGrid.setLayoutParams(params);
-			}
+			} 
 			paymentGrid.setAdapter(new PaymentAdapter());
 		
 		}
@@ -428,6 +428,9 @@ public class Details extends BaseActivity {
 				break;
 			case 9:
 				image.setImageResource(R.drawable.payment9);
+				break;
+			case 10:
+				image.setImageResource(R.drawable.payment10);
 				break;
 			default:
 				image.setImageResource(0);

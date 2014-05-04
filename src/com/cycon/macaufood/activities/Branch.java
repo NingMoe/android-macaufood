@@ -1,6 +1,8 @@
 package com.cycon.macaufood.activities;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +40,14 @@ public class Branch extends BaseActivity {
         		branchList.add(cafe);
         	}
         }
+        
+		Collections.sort(branchList, new Comparator<Cafe>() {
+			public int compare(Cafe cafe1, Cafe cafe2) {
+				
+				return Integer.parseInt(cafe2.getPriority()) - Integer.parseInt(cafe1.getPriority());
+			};
+			
+		});
         
         list = (ListView) findViewById(R.id.list);
         list.setOnItemClickListener(itemClickListener);

@@ -80,7 +80,7 @@ public class LocalDbManager {
 						cafe.getIntroid(), cafe.getIntropage(), cafe.getRecommendid(), 
 						cafe.getRecommendpage(), cafe.getMenupage(), 
 						cafe.getPayment(), cafe.getStatus(), cafe.getOption_wifi(), 
-						cafe.getOption_parking(), cafe.getBranch(), cafe.getPriority()});
+						cafe.getOption_parking(), cafe.getBranch(), cafe.getPriority(), cafe.getOption_macaupass()});
 	}
 	
 	public synchronized void insertCafeLists() {
@@ -100,7 +100,7 @@ public class LocalDbManager {
 					cafe.getIntroid(), cafe.getIntropage(), cafe.getRecommendid(), 
 					cafe.getRecommendpage(), cafe.getMenupage(), 
 					cafe.getPayment(), cafe.getStatus(), cafe.getOption_wifi(), 
-					cafe.getOption_parking(), cafe.getBranch(), cafe.getPriority()});
+					cafe.getOption_parking(), cafe.getBranch(), cafe.getPriority(), cafe.getOption_macaupass()});
 		}
 		endWritableDb();
 	}
@@ -148,6 +148,7 @@ public class LocalDbManager {
 				cafe.setOption_parking(c.getString(29));
 				cafe.setBranch(c.getString(30));
 				cafe.setPriority(c.getString(31));
+				cafe.setOption_macaupass(c.getString(32));
 //				ETMFLog.e("localdao", cafe.getId());
 				MFConfig.getInstance().getCafeLists().add(cafe);
 				c.moveToNext();
