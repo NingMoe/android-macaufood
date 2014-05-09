@@ -19,10 +19,12 @@ import android.view.Window;
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.sqlite.LocalDbManager;
+import com.cycon.macaufood.utilities.AdController;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
+import com.cycon.macaufood.utilities.MFServiceCallBack;
 import com.cycon.macaufood.utilities.PreferenceHelper;
 
 public class SplashScreen extends Activity {
@@ -48,21 +50,16 @@ public class SplashScreen extends Activity {
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "cafe_version_update", MFConfig.cafe_version_update);
 			PreferenceHelper.savePreferencesLong(SplashScreen.this, MFConstants.TIME_STAMP_PREF_KEY, 0); //refresh main page after update?
 			
-			//clear cache for first launch regardless of version (uncomment in version after 3.0)
-//			if (originalVersion.length() > 0) {
-//				int versionHeadNumber = originalVersion.charAt(0) - '0';
-//		    	//clear in ext file / cache file for version below 3.0
-//				if (versionHeadNumber < 3) {
+			//clear cache for first launch for version 2.x
+			if (originalVersion.length() > 0) {
+				int versionHeadNumber = originalVersion.charAt(0) - '0';
+				if (versionHeadNumber < 3) {
 					clearFileInSd();
-//				}
-//			}
-					
-					
+				}
+			}
 			
              //uncomment in future version to clear profile images and figure a way to update
-					
-             //clearProfileImages();		
-					
+             clearProfileImages();
 					
 		}
 		
@@ -76,6 +73,8 @@ public class SplashScreen extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		MFConfig.deviceWidth = dm.widthPixels;
 		MFConfig.deviceHeight = dm.heightPixels;
+		
+		AdController.getInstance(getApplicationContext()).requestAd();
 	}
 	
 	private void clearProfileImages() {

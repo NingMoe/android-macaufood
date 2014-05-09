@@ -54,5 +54,9 @@
 	    android:paddingBottom="1dip"
 	    />
   		
+    <View 
+        android:layout_width="fill_parent"
+        android:layout_height="80dip"
+        android:background="@drawable/transparent_selector_bg"/>
     
 </RelativeLayout>

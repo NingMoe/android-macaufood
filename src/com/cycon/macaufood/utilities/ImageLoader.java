@@ -30,6 +30,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+
+import com.cycon.macaufood.utilities.AdController.AdInfo;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.widget.PSDetailsView.PSComment;
 import com.cycon.macaufood.widget.PSDetailsView.PSLike;
@@ -57,8 +59,7 @@ public class ImageLoader {
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     private Map<String, ProgressBar> progressBarMap = Collections.synchronizedMap(new WeakHashMap<String, ProgressBar>());
     private Drawable nophoto;
-//    private Drawable loadingBlankPhoto;
-    private Drawable nointernet;
+//    private Drawable nointernet;
     private Context mContext;
     
     private LinkedList<String> imagesToLoad;
@@ -69,28 +70,30 @@ public class ImageLoader {
     private Map<String, String> idUrlMap = Collections.synchronizedMap(new HashMap<String, String>());
     
     private int lastVisibleRowIndex;
-    
     private ImageType imageType;
-    
     private int maxTasksNumber = 10;
-    
     private boolean noAnimation;
-    
-    private boolean allowedDuplicate = false; //this image loader for unique id by default
+    private boolean allowedDuplicate; //this image loader for unique id by default
     
     public ImageLoader(Context context, int lastRowIndex, ImageType imageType){
     	mContext = context;
     	this.imageType = imageType;
     	if (imageType != null) { //image type null means not using cache
     		fileCache=new FileCache(context, imageType);
-//    		loadingBlankPhoto = context.getResources().getDrawable(imageType == ImageType.REGULAR ? R.drawable.light_green_gradient_bg : R.drawable.cafe_row_bg);
     	}
         lastVisibleRowIndex = lastRowIndex;
         nophoto = context.getResources().getDrawable(R.drawable.nophoto);
-        nointernet = context.getResources().getDrawable(R.drawable.nointernet);
+//        nointernet = context.getResources().getDrawable(R.drawable.nointernet);
         
         imagesLoading = new ConcurrentLinkedQueue<FetchImageTask>();
         imagesToLoad = new LinkedList<String>();
+    }
+    
+    public void setImagesToLoadFromIdList(ArrayList<String> idList) {
+    	imagesToLoad.clear();
+        for (String id : idList) {
+        	imagesToLoad.add(id);
+        }
     }
     
     public void setImagesToLoadFromCafe(ArrayList<Cafe> cafes) {
@@ -161,6 +164,13 @@ public class ImageLoader {
         }
     }
     
+    public void setImagesToLoadFromAdInfoList(List<AdInfo> adinfoList) {
+    	imagesToLoad.clear();
+        for (AdInfo info : adinfoList) {
+        	imagesToLoad.add(info.advId);
+        }
+    }
+    
     public void setNoAnim(boolean noAnim) {
     	noAnimation = noAnim;
     }
@@ -217,6 +227,7 @@ public class ImageLoader {
 	            			break;
 	            		}
 	            		if (task.p.id.equals(id)) {
+	            			//no need to load if its loading
 	            			needLoad = false; 
 	            			break;
 	            		}
@@ -232,7 +243,7 @@ public class ImageLoader {
         //start loading other images even displayImage not called when imagesLoading is empty(all dislpay images finish loaded.
         //otherwise, dont load other images to speed up getView images first.
         if (position == lastVisibleRowIndex && imagesLoading.isEmpty()) {
-			while (!imagesToLoad.isEmpty() && imagesLoading.size() <= maxTasksNumber) {
+			while (!imagesToLoad.isEmpty() && imagesLoading.size() < maxTasksNumber) {
 				String pollId = imagesToLoad.poll();	
 				//check if poll id is in memoryCache or filecache;
 		        Bitmap b = memoryCache.get(pollId);
@@ -248,7 +259,6 @@ public class ImageLoader {
 		                continue;
 		            }
 		        }
-				MFLog.e(TAG, "init poll id " + pollId);
 				loadImages(pollId, null);
 			}
         }
@@ -257,7 +267,7 @@ public class ImageLoader {
     public void loadImages(String id, ImageView imageView)
     {
 
-    	if (imagesLoading.size() > maxTasksNumber) {
+    	if (imagesLoading.size() >= maxTasksNumber) {
     		//scroll to specific position
     		if (imageView != null) {
 	    		imagesToLoad.addFirst(id);
@@ -340,9 +350,9 @@ public class ImageLoader {
             
 			//make sure load all current display getView image first before load any other
             if (currentDisplayImages.isEmpty()) {
-				while (!imagesToLoad.isEmpty() && imagesLoading.size() <= maxTasksNumber) {
+				while (!imagesToLoad.isEmpty() && imagesLoading.size() < maxTasksNumber) {
 					String id = imagesToLoad.poll();
-					MFLog.e(TAG, " imagesToLoad poll id " + id);
+//					MFLog.e(TAG, " imagesToLoad poll id " + id);
 					
 					//check if poll id is in memoryCache or filecache;
 			        Bitmap bitmap=memoryCache.get(id);
@@ -357,7 +367,7 @@ public class ImageLoader {
 			                continue;
 			            }
 			        }
-					MFLog.e(TAG, "poll id " + id);
+//					MFLog.e(TAG, "poll id " + id);
 					loadImages(id, null);
 				}
             }
@@ -379,7 +389,7 @@ public class ImageLoader {
 //								ETMFLog.e(TAG, "set nophoto id = " + p.id);
 								view.setImageDrawable(nophoto);
 							} else {
-								MFLog.e(TAG, "set iamge bitmap");
+								MFLog.e(TAG, "set image bitmap");
 								view.setImageBitmap(result);
 								if (!noAnimation) {
 									view.setAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
@@ -402,7 +412,7 @@ public class ImageLoader {
 	            	} 
 
 					if (noConnection) {
-						p.imageView.setImageDrawable(nointernet);
+//						p.imageView.setImageDrawable(nointernet);
 					} else {
 						if (result == null) {
 							MFLog.e(TAG, "set nophoto id = " + p.id);

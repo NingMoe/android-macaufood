@@ -30,6 +30,7 @@ public class MFConstants {
 	public static final String PS_HOT_XML_FILE_NAME = "photo_share_hot_parsed_xml";
 	public static final String PS_FRIENDS_ACTIVITY_XML_FILE_NAME = "photo_share_friends_activity_parsed_xml";
 	public static final String MAIN_COUPON_INFO_STR = "main_coupon_info_string";
+	public static final String ADV_INFO_LIST = "adv_id_list";
 
 	public static final String TIME_STAMP_PREF_KEY = "listTimeStamp";
 	public static final String FRONT_PAGE_LINK_PREF_KEY = "frontPageLink";

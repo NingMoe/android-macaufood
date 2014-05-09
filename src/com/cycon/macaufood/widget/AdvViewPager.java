@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -30,406 +32,245 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
 
 import com.cycon.macaufood.R;
 import com.cycon.macaufood.bean.ImageType;
+import com.cycon.macaufood.utilities.AdController;
+import com.cycon.macaufood.utilities.AdController.AdInfo;
 import com.cycon.macaufood.utilities.AsyncTaskHelper;
 import com.cycon.macaufood.utilities.FileCache;
+import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFService;
+import com.cycon.macaufood.utilities.MFServiceCallBack;
 import com.cycon.macaufood.utilities.MFURL;
 import com.cycon.macaufood.utilities.MFUtil;
 
 public class AdvViewPager extends ViewPager {
-	
-	private static final String TAG = "AdvFlingGallery";
-	private static String ADV_ID_LIST;
+	public interface Callback {
+		void onAdLoadResultSuccess();
+		void onAdLoadResultError();
+	}
+
+	private static final String TAG = "AdvViewPager";
 
 	private static final long REFRESH_PERIOD = 6000;
-	
-	private ImageAdapter imageAdapter;
-	private Context mContext;
-	private List<String> idList;
-	private String fileAdvListStr;
 
-	private List<Bitmap> tempImageList;
-	private List<String> tempLinkIdList;
-	public List<Bitmap> imageList = Collections.synchronizedList(new ArrayList<Bitmap>());
-	public List<String> linkIdList = Collections.synchronizedList(new ArrayList<String>());
-	
-	private GalleryNavigator navi;
-	private Timer timer;
+	private boolean mSmallAdv;
+	private ImageAdapter mImageAdapter;
+	private Context mContext;
+	private GalleryNavigator mNavi;
+	private Timer mTimer;
 	private Handler mHandler;
-	private Drawable noadv;
-	private boolean isFetchingId;
-	private FileCache fileCache;
-	private boolean isUsingCache;
 	private View loadingLayout;
-	private boolean isSmallAdv;
-	
+	private List<AdInfo> mAdInfoList;
+	private AdController mAdController;
+	private ImageLoader mImageLoader;
+
+	private Callback mAdCallback = new Callback() {
+
+		@Override
+		public void onAdLoadResultSuccess() {
+			if (mSmallAdv) {
+				mAdInfoList = mAdController.getSmallAdInfoList();
+			} else {
+				mAdInfoList = mAdController.getBigAdInfoList();
+			}
+			mImageAdapter.notifyDataSetChanged();
+		}
+
+		@Override
+		public void onAdLoadResultError() {
+			// TODO Auto-generated method stub
+
+		}
+	};
 
 	public AdvViewPager(Context context) {
 		super(context);
 		init(null);
 	}
-	
+
 	public AdvViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init(attrs);
 	}
-	
+
 	private void init(AttributeSet attrs) {
-		
-		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AdvViewPager, 0, 0);
-		isSmallAdv = a.getBoolean(R.styleable.AdvViewPager_small, false);
-		a.recycle();
-		
-		mHandler = new Handler();
-		noadv = getContext().getResources().getDrawable(isSmallAdv ? R.drawable.adv2 : R.drawable.searchadv);
 		mContext = this.getContext();
-		
-		fileCache = new FileCache(mContext, ImageType.ADV);
-		
-		if (isSmallAdv) {
-			ADV_ID_LIST = "small_adv_id_list";
+		mAdController = AdController.getInstance(mContext
+				.getApplicationContext());
+
+		TypedArray a = getContext().obtainStyledAttributes(attrs,
+				R.styleable.AdvViewPager, 0, 0);
+		mSmallAdv = a.getBoolean(R.styleable.AdvViewPager_small, false);
+		a.recycle();
+
+		mHandler = new Handler();
+
+		if (mSmallAdv) {
+			mAdInfoList = mAdController.getSmallAdInfoList();
 		} else {
-			ADV_ID_LIST = "adv_id_list";
+			mAdInfoList = mAdController.getBigAdInfoList();
 		}
-		
-		
-		fileAdvListStr = MFUtil.getStringFromCache(fileCache, ADV_ID_LIST);
-		
-		if (fileAdvListStr != null) {
-			String[] advIdList = fileAdvListStr.split(",");
-        	for (String id : advIdList) {
 
-        		if (!id.equals("")) {
-        			try {
-						Integer.parseInt(id);
-					} catch (NumberFormatException e) {
-						e.printStackTrace();
-						continue;
-					}
-        			//to make sure the adv is in random order
-        			Random rand = new Random(); 
-        			boolean randomValue = rand.nextBoolean();
-        			if (randomValue) {
-        				linkIdList.add(id);
-        			} else {
-        				linkIdList.add(0, id);
-        			}
-        		}
-        	}
-        	
-        	for (int i = 0; i < linkIdList.size(); i++) {
-        		Bitmap bm = MFUtil.getBitmapFromCache(fileCache, linkIdList.get(i));
-        		if (bm != null) {
-        			imageList.add(bm);
-        		}
-			}
-		}
-        	
-		if (imageList.size() > 0) {
-			isUsingCache = true;
-		}
-		
-		
-		if (MFConfig.isOnline(mContext)) {
-			AsyncTaskHelper.execute(new FetchAdvIdTask());
-		} else if (!isUsingCache){
-			imageList.add(((BitmapDrawable) noadv).getBitmap());
-		}
-		
+		// normally would not happen as splash screen already request Ad
+		// in case connection is very slow
+		if (mAdInfoList.size() == 0) {
+			// show connection error/loading
+		} else {
+			mImageAdapter = new ImageAdapter();
+			setAdapter(mImageAdapter);
+			setOnPageChangeListener(mImageAdapter);
 
-		imageAdapter = new ImageAdapter();
-		setAdapter(imageAdapter);
-		setOnPageChangeListener(imageAdapter);
+			mImageLoader = new ImageLoader(mContext, 0, ImageType.ADV);
+			mImageLoader.setTaskMaxNumber(1);
+			mImageLoader.setImagesToLoadFromAdInfoList(mAdInfoList);
+		}
 	}
-	
+
 	public void setNavi(GalleryNavigator navi) {
-		this.navi = navi;
-		if (isUsingCache) {
-			navi.setSize(linkIdList.size());
-			navi.setVisibility(View.GONE);
-			navi.setVisibility(View.VISIBLE);
-		}
+		this.mNavi = navi;
+		navi.setSize(mAdInfoList.size());
+		navi.setVisibility(View.GONE);
+		navi.setVisibility(View.VISIBLE);
 	}
-	
+
 	public void setLoadingLayout(View loadingLayout) {
 		this.loadingLayout = loadingLayout;
-		if (isUsingCache) {
-			loadingLayout.setVisibility(View.GONE);
-		}
+		loadingLayout.setVisibility(View.GONE);
 	}
 
-   private class FetchAdvIdTask extends AsyncTask<Void, Void, Void> {
-    	
-    	@Override
-    	protected void onPreExecute() {
-    		super.onPreExecute();
-    		isFetchingId = true;
-    	}
-    	@Override
-    	protected Void doInBackground(Void... params) {
-    		if (isCancelled()) return null;
+	public void setLoadingText(TextView tv) {
 
-    		if (!MFConfig.isOnline(mContext)) return null;
-
-            try {
-            	File f = fileCache.getFile(ADV_ID_LIST);
-            	String advListStr = MFService.getString(isSmallAdv ? MFURL.NEW_SMALL_ADV : MFURL.NEW_BIG_ADV, f);
-            	//if id list same is cache file id list and image list size > 0, no need to download new ads 
-            	if (advListStr.equals(fileAdvListStr) && isUsingCache) {
-					return null;
-				}
-            	
-            	idList = new ArrayList<String>();
-            	tempImageList = new ArrayList<Bitmap>();
-            	tempLinkIdList = new ArrayList<String>();
-            	String[] advIdList = advListStr.split(",");
-            	for (String id : advIdList) {
-
-    				MFLog.e(TAG, id);
-            		if (!id.equals("")) {
-            			Integer.parseInt(id);
-            			idList.add(id);
-            		}
-            	}
-            	
-			} catch (MalformedURLException e) {
-				MFLog.e(TAG, "malformed url exception");
-				e.printStackTrace();
-				return null;
-			} catch (IOException e) {
-				MFLog.e(TAG, "io exception");
-				e.printStackTrace();
-				return null;
-			} catch (Exception e) {
-				MFLog.e(TAG, "exception");
-				e.printStackTrace();
-				return null;
-			}
-			
-			return null;
-    	}
-            
-    	@Override
-    	protected void onPostExecute(Void result) {
-    		super.onPostExecute(result);
-    		
-    		isFetchingId = false;
-    		
-    		if (idList == null) return;
-    		
-    		if (idList.size() == 0 && !isUsingCache) {
-				imageList.add(((BitmapDrawable) noadv).getBitmap());
-	    		imageAdapter.notifyDataSetChanged();
-    		} else {
-	    		for (String id : idList) {
-	    			AsyncTaskHelper.executeWithResultBitmap(new FetchAdvTask(id));
-	    		}
-    		}
-    	}
-   }
-   
-   private class FetchAdvTask extends AsyncTask<Void, Void, Bitmap> {
-	   
-	private String id;
-	
-	public FetchAdvTask(String id) {
-		this.id = id;
 	}
-   	
-   	@Override
-   	protected Bitmap doInBackground(Void... params) {
-   		if (isCancelled()) return null;
 
-   		if (!MFConfig.isOnline(mContext)) return null;
-
-            try {
-            	File f = fileCache.getFile(id);
-            	return MFService.getBitmap(MFURL.getImageUrl(ImageType.ADV, id), f);
-				
-			} catch (MalformedURLException e) {
-				MFLog.e(TAG, "malformed url exception");
-				e.printStackTrace();
-			} catch (IOException e) {
-				MFLog.e(TAG, "io exception");
-				e.printStackTrace();
-			} 
-    		
-    		return null;
-    	}
-    	
-    	@Override
-    	protected void onPostExecute(Bitmap result) {
-    		super.onPostExecute(result);
-    		if (result != null) {
-    			Random rand = new Random();
-    			boolean randomValue = rand.nextBoolean();
-    			if (randomValue) {
-    				tempImageList.add(result);
-    				tempLinkIdList.add(id);
-    			} else {
-    				tempImageList.add(0, result);
-    				tempLinkIdList.add(0, id);
-    			}
-    		}
-    		
-	    		//populate after all images are load
-    		if (tempImageList.size() == idList.size()) {
-    			
-    			if (loadingLayout != null) {
-    				loadingLayout.setVisibility(View.GONE);
-    			}
-    			if (navi != null) {
-		    		navi.setSize(idList.size());
-		    		navi.setVisibility(View.GONE);
-		    		navi.setVisibility(View.VISIBLE);
-    			}
-	    		
-	    		imageList = tempImageList;
-	    		linkIdList = tempLinkIdList;
-	    		startTimer();
-	    		imageAdapter.notifyDataSetChanged();
-    		}
-            
-    	}
-    }
-   
 	final Runnable mUpdateResults = new Runnable() {
-        public void run() {
-        	
-        	if (linkIdList.size() == 0) {
-        		if (MFConfig.isOnline(mContext)) {
-        			imageList.clear();
-        			imageAdapter.notifyDataSetChanged();
-        			if (!isFetchingId)
-        				AsyncTaskHelper.execute(new FetchAdvIdTask());
-        		} else {
-        			imageList.add(((BitmapDrawable) noadv).getBitmap());
-            		imageAdapter.notifyDataSetChanged();
-        		}
-        	} else {
-				int cur = getCurrentItem(); 
-				setCurrentItem(cur == linkIdList.size() - 1 ? 0 : cur + 1, true);
-        	}
+		public void run() {
+			if (mAdInfoList.size() == 0) {
+			}
+			int cur = getCurrentItem();
+			setCurrentItem(cur == mAdInfoList.size() - 1 ? 0 : cur + 1, true);
+		}
+	};
 
-        }
-    };
-   
-   @Override
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-	   if (event.getAction() == MotionEvent.ACTION_DOWN) {
-		   stopTimer();
-	   } else if (event.getAction() == MotionEvent.ACTION_UP) {
-		   startTimer();
-	   } 
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			stopTimer();
+		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+//			startTimer();
+		}
 
 		return super.onTouchEvent(event);
-   }
-   
-   public class ImageAdapter extends PagerAdapter implements
-	ViewPager.OnPageChangeListener {
-	   
+	}
 
-       public int getCount() {
-       	return imageList.size();
-       }
-       
-       @Override
+	public class ImageAdapter extends PagerAdapter implements
+			ViewPager.OnPageChangeListener {
+
+		public int getCount() {
+			return mAdInfoList.size();
+		}
+
+		@Override
 		public boolean isViewFromObject(View view, Object object) {
 			return view == ((ImageView) object);
 		}
-       
-       @Override
-		public Object instantiateItem(ViewGroup container, int position) {
-    	   if (imageList.size() == 0) return null;
-	        Bitmap bmp = imageList.get(position);
-	        ImageView i = new ImageView(mContext);
-	        i.setImageBitmap(bmp);
-	        i.setScaleType(isSmallAdv ? ScaleType.FIT_XY : ScaleType.FIT_END);
-	        final int pos = position;
-	        i.setOnClickListener(new OnClickListener() {
-				
+
+		@Override
+		public Object instantiateItem(ViewGroup container, final int position) {
+			MFLog.e(TAG, "view pager instantiate pos = " + position);
+			ImageView i = new ImageView(mContext);
+			mImageLoader.displayImage(mAdInfoList.get(position).advId, i,
+					position);
+			i.setScaleType(mSmallAdv ? ScaleType.FIT_XY : ScaleType.FIT_END);
+			i.setOnClickListener(new OnClickListener() {
+
 				public void onClick(View arg0) {
-					if (linkIdList.size() != 0) {
-						Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(String.format(Locale.US, MFURL.CLICK_ADV, linkIdList.get(pos), MFConfig.DEVICE_ID)));
-						mContext.startActivity(myIntent);
+					if (mAdInfoList.size() != 0) {
+						Intent i = new Intent(Intent.ACTION_VIEW, Uri
+								.parse(mAdInfoList.get(position).advLink));
+						mContext.startActivity(i);
 					}
 				}
 			});
-	        ((ViewPager) container).addView(i, 0);
-	    	return i;
-       }
-       
+			((ViewPager) container).addView(i, 0);
+			return i;
+		}
+
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
 			((ViewPager) container).removeView((ImageView) object);
 		}
 
-	public void onPageScrollStateChanged(int arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+		public void onPageScrollStateChanged(int arg0) {
+			// TODO Auto-generated method stub
 
-	public void onPageScrolled(int arg0, float arg1, int arg2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onPageSelected(int position) {
-		if (navi != null) {
-			navi.setPosition(position);
-			navi.invalidate();
 		}
+
+		public void onPageScrolled(int arg0, float arg1, int arg2) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void onPageSelected(int position) {
+			if (mNavi != null) {
+				mNavi.setPosition(position);
+				mNavi.invalidate();
+			}
+		}
+
 	}
-	
-   }
-   
-   public void startTimer() {
-	   stopTimer();
-	   timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			
+
+	public void startTimer() {
+		stopTimer();
+		mTimer = new Timer();
+		mTimer.scheduleAtFixedRate(new TimerTask() {
+
 			@Override
 			public void run() {
 				mHandler.post(mUpdateResults);
 			}
 		}, REFRESH_PERIOD, REFRESH_PERIOD);
 
-   }
-   
-   public void stopTimer() {
-	   if (timer != null) {
-		   timer.cancel();
-	   }
-   }
-   
-	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		if (isShown()) {
-			startTimer();
+	}
+
+	public void stopTimer() {
+		if (mTimer != null) {
+			mTimer.cancel();
 		}
 	}
-	
+
+	@Override
+	protected void onAttachedToWindow() {
+		Log.e("ZZZ", "onAttachedtowindow");
+		super.onAttachedToWindow();
+		if (isShown()) {
+//			startTimer();
+		}
+		AdController.getInstance(mContext.getApplicationContext())
+				.registerCallback(mAdCallback);
+	}
+
 	@Override
 	protected void onDetachedFromWindow() {
+		Log.e("ZZZ", "onDetachedtowindow");
 		super.onDetachedFromWindow();
 		stopTimer();
+		AdController.getInstance(mContext.getApplicationContext())
+				.unregisterCallback(mAdCallback);
 	}
-	
+
 	@Override
 	protected void onVisibilityChanged(View changedView, int visibility) {
 		super.onVisibilityChanged(changedView, visibility);
 		if (visibility == View.VISIBLE) {
-			startTimer();
+//			startTimer();
 		} else {
 			stopTimer();
 		}
 	}
-	
-	
+
 }

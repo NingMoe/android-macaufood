@@ -82,7 +82,7 @@ public class MFService {
 	//check update everytime fresh launch as we did not save updatetimestamp in preferences
 	public static void checkUpdate(Context c) {
 		appContext = c;
-		if (MFConfig.isOnline(appContext) && !isUpdating && System.currentTimeMillis() - updateCafeListTimeStamp > UPDATE_TIME_PERIOD) {
+		if (System.currentTimeMillis() - updateCafeListTimeStamp > UPDATE_TIME_PERIOD && MFConfig.isOnline(appContext) && !isUpdating) {
 			AsyncTaskHelper.execute(new FetchUpdateTask());
 		}
 	}
