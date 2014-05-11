@@ -2450,22 +2450,22 @@ containing a value of this type.
           @attr name com.cycon.macaufood:adUnitId
         */
         public static final int AdsAttrs_adUnitId = 1;
-        /** Attributes that can be used with a AdvViewPager.
+        /** Attributes that can be used with a AdvView.
            <p>Includes the following attributes:</p>
            <table>
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #AdvViewPager_small com.cycon.macaufood:small}</code></td><td></td></tr>
+           <tr><td><code>{@link #AdvView_small com.cycon.macaufood:small}</code></td><td></td></tr>
            </table>
-           @see #AdvViewPager_small
+           @see #AdvView_small
          */
-        public static final int[] AdvViewPager = {
+        public static final int[] AdvView = {
             0x7f010086
         };
         /**
           <p>This symbol is the offset where the {@link com.cycon.macaufood.R.attr#small}
-          attribute's value can be found in the {@link #AdvViewPager} array.
+          attribute's value can be found in the {@link #AdvView} array.
 
 
           <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
@@ -2476,7 +2476,7 @@ theme attribute (in the form
 containing a value of this type.
           @attr name com.cycon.macaufood:small
         */
-        public static final int AdvViewPager_small = 0;
+        public static final int AdvView_small = 0;
         /** Attributes that can be used with a MapAttrs.
            <p>Includes the following attributes:</p>
            <table>

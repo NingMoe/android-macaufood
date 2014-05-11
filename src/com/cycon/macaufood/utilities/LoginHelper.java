@@ -386,6 +386,7 @@ public class LoginHelper {
     				sb.append(line + "\n");
     			}
     			rd.close();
+    			is.close();
     			
     			String returnMemberId = sb.toString().trim();
     			Integer.parseInt(returnMemberId);

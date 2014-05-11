@@ -122,6 +122,8 @@ public class MFFetchListHelper {
 					baos.write(buffer, 0, len);
 				}
 				baos.flush();
+				baos.close();
+				is.close();
 
 
 			} catch (MalformedURLException e) {

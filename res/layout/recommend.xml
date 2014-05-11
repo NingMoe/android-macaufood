@@ -15,7 +15,7 @@
         android:listSelector="@android:color/transparent"
         android:smoothScrollbar="true"/>
 
-    <com.cycon.macaufood.widget.AdvViewPager
+    <com.cycon.macaufood.widget.AdvView
         android:id="@+id/viewPager"
         mf:small="true"
         android:layout_width="fill_parent"

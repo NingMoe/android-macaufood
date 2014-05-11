@@ -100,7 +100,7 @@
 
 <!--  About -->	
     <string name="disclaimer">免責聲明</string>
-    <string name="versionNo">3.1</string>
+    <string name="versionNo">3.01</string>
     <string name="aboutUs">關於我們</string>
     <string name="macauWifi">澳門 WIFI 熱點</string>
     <string name="advertiseUs">刊登廣告和查詢</string>
@@ -222,7 +222,7 @@
 
 	<string name="getCafeEntriesSql">SELECT * FROM CAFEENTRIES 
 	</string>
-	<string name="clearCafeTableSql">DELETE FROM CAFEENTRIES</string>
+	<string name="clearCafeTableSql">DROP TABLE IF EXISTS CAFEENTRIES</string>
 	
     
 </resources>

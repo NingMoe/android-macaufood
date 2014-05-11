@@ -369,7 +369,7 @@
 <type0>5</type0>
 <type1>29</type1>
 <option_phoneorder>1</option_phoneorder>
-<menuid>1001804</menuid>
+<menuid>1001805</menuid>
 <introid>639</introid>
 <intropage>5</intropage>
 <recommendid>644</recommendid>
@@ -1018,7 +1018,7 @@
 <recommendpage>1</recommendpage>
 <menupage>2</menupage>
 <branch>121</branch>
-<priority>8</priority>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>54</id>
@@ -1927,7 +1927,7 @@
 <type0>15</type0>
 <option_phoneorder>1</option_phoneorder>
 <option_night>1</option_night>
-<menuid>1010502</menuid>
+<menuid>1010504</menuid>
 <introid>1049</introid>
 <intropage>2</intropage>
 <recommendid>1808</recommendid>
@@ -2925,21 +2925,12 @@
 <address>澳門宋玉生廣場東南亞商業中心RSTU地下</address>
 <coordx>22.188547</coordx>
 <coordy>113.551441</coordy>
-<openhours>11:00 ~ 06:00</openhours>
-<description>茶餐廳、各式美食</description>
-<message>外送附近不限，遠則滿$100及在晚上才送</message>
+<openhours>*店主未能提供*</openhours>
+<description>*請聯絡店主*</description>
 <type0>1</type0>
 <type1>28</type1>
 <type2>10</type2>
-<option_phoneorder>1</option_phoneorder>
-<option_booking>1</option_booking>
-<option_night>1</option_night>
-<option_banquet>1</option_banquet>
-<menuid>1016000</menuid>
-<introid>1347</introid>
 <intropage>10</intropage>
-<menupage>4</menupage>
-<priority>7</priority>
 </cafe>
 <cafe>
 <id>161</id>
@@ -3837,7 +3828,6 @@
 <message>外賣自取</message>
 <type0>2</type0>
 <branch>74</branch>
-<priority>1</priority>
 </cafe>
 <cafe>
 <id>216</id>
@@ -3886,7 +3876,7 @@
 <recommendpage>4</recommendpage>
 <menupage>31</menupage>
 <branch>104</branch>
-<priority>8</priority>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>218</id>
@@ -5142,8 +5132,8 @@
 <menuid>1029501</menuid>
 <introid>1046</introid>
 <intropage>11</intropage>
-<recommendid>1899</recommendid>
-<recommendpage>6</recommendpage>
+<recommendid>1925</recommendid>
+<recommendpage>7</recommendpage>
 <menupage>5</menupage>
 <branch>59</branch>
 <priority>7</priority>
@@ -5694,8 +5684,8 @@
 <phone>6328-3780</phone>
 <district>7</district>
 <address>澳門黑沙環廣褔祥花園地下AV舖</address>
-<coordx>22.210100</coordx>
-<coordy>113.556243</coordy>
+<coordx>22.209791</coordx>
+<coordy>113.555758</coordy>
 <openhours>15:00 ~ 00:00
 逢星期日休息</openhours>
 <description>馳名煲仔飯、秘制咖喱汁、特色靚鹵味</description>
@@ -6068,7 +6058,7 @@
 <recommendpage>3</recommendpage>
 <menupage>2</menupage>
 <branch>121</branch>
-<priority>8</priority>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>344</id>
@@ -6159,7 +6149,7 @@
 <type1>27</type1>
 <option_booking>1</option_booking>
 <option_macaupass>1</option_macaupass>
-<menuid>1034801</menuid>
+<menuid>1034802</menuid>
 <introid>1337</introid>
 <intropage>10</intropage>
 <menupage>2</menupage>
@@ -6918,7 +6908,7 @@ www.facebook.com/elgauchomacau</message>
 <menupage>37</menupage>
 <payment>0,1,2,4</payment>
 <branch>104</branch>
-<priority>8</priority>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>385</id>
@@ -7284,27 +7274,22 @@ www.facebook.com/elgauchomacau</message>
 </cafe>
 <cafe>
 <id>405</id>
-<name>九品甜品和食放題</name>
-<phone>2875-5990, 6321-8899</phone>
-<district>11</district>
-<address>澳門皇朝區馬德里街37號地下（太平洋酒窖側）</address>
-<coordx>22.187701</coordx>
-<coordy>113.552153</coordy>
-<openhours>15:00 ~ 01:00</openhours>
-<description>甜品和食放題</description>
-<message>超過150款飲品食品及甜品，任君選擇。星期一至日成人每位198元，小童每位98元。另有啤酒任飲，HOEGAARDEN生啤48元任飲，青島生啤38元任飲。</message>
-<type0>13</type0>
-<type1>24</type1>
-<option_booking>1</option_booking>
-<option_night>1</option_night>
-<option_buffet>1</option_buffet>
-<option_banquet>1</option_banquet>
+<name>新加坡炎記海南雞專門店</name>
+<phone>2823-2829, 2823-4822</phone>
+<district>2</district>
+<address>澳門筷子基海灣南街19號地下E鋪</address>
+<coordx>22.206415</coordx>
+<coordy>113.540863</coordy>
+<openhours>11:00 ~ 23:00</openhours>
+<description>海南雞專門店</description>
+<message>外賣自取</message>
+<type0>19</type0>
 <menuid>1040500</menuid>
-<introid>1307</introid>
-<intropage>5</intropage>
-<recommendid>1308</recommendid>
-<recommendpage>3</recommendpage>
-<menupage>5</menupage>
+<introid>1927</introid>
+<intropage>10</intropage>
+<recommendid>1928</recommendid>
+<recommendpage>4</recommendpage>
+<menupage>2</menupage>
 <branch>98</branch>
 <priority>7</priority>
 </cafe>
@@ -8020,7 +8005,7 @@ www.facebook.com/elgauchomacau</message>
 <intropage>10</intropage>
 <menupage>9</menupage>
 <payment>0,1,2,4</payment>
-<priority>8</priority>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>441</id>
@@ -8339,7 +8324,7 @@ www.facebook.com/elgauchomacau</message>
 <type1>27</type1>
 <option_booking>1</option_booking>
 <option_macaupass>1</option_macaupass>
-<menuid>1034801</menuid>
+<menuid>1034802</menuid>
 <introid>1337</introid>
 <intropage>10</intropage>
 <menupage>2</menupage>
@@ -9083,12 +9068,12 @@ www.facebook.com/elgauchomacau</message>
 <option_call>1</option_call>
 <option_banquet>1</option_banquet>
 <option_parking>1</option_parking>
-<menuid>1049848</menuid>
+<menuid>1049850</menuid>
 <introid>1101</introid>
 <intropage>10</intropage>
 <recommendid>1423</recommendid>
 <recommendpage>11</recommendpage>
-<menupage>12</menupage>
+<menupage>10</menupage>
 <payment>0,1,2,4</payment>
 <priority>7</priority>
 </cafe>
@@ -9232,10 +9217,12 @@ www.facebook.com/elgauchomacau</message>
 <type2>28</type2>
 <option_booking>1</option_booking>
 <option_night>1</option_night>
+<menuid>1050600</menuid>
 <introid>1836</introid>
 <intropage>10</intropage>
 <recommendid>1822</recommendid>
 <recommendpage>5</recommendpage>
+<menupage>14</menupage>
 <priority>7</priority>
 </cafe>
 <cafe>
@@ -9468,7 +9455,7 @@ www.facebook.com/elgauchomacau</message>
 <introid>1825</introid>
 <intropage>5</intropage>
 <menupage>2</menupage>
-<priority>8</priority>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>521</id>
@@ -10260,44 +10247,61 @@ www.facebook.com/elgauchomacau</message>
 </cafe>
 <cafe>
 <id>566</id>
-<name>明苑粥麵</name>
-<phone>2832-2538</phone>
-<district>9</district>
-<address>澳門議事亭前地7號A</address>
-<coordx>22.193749</coordx>
-<coordy>113.539774</coordy>
-<openhours>08:30 ~ 00:30</openhours>
-<description>粥品、粉麵</description>
-<type0>3</type0>
+<name>長野料理</name>
+<phone>2822-2041</phone>
+<district>2</district>
+<address>澳門和樂坊二街宏興大廈10號S地下(筷子基老記後面)</address>
+<coordx>22.208441</coordx>
+<coordy>113.543990</coordy>
+<openhours>18:00 ~ 03:00</openhours>
+<description>日本餐廳</description>
+<type0>13</type0>
 <option_booking>1</option_booking>
 <option_night>1</option_night>
-<status>0</status>
+<menuid>1056600</menuid>
+<menupage>2</menupage>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>567</id>
-<name>東方咖啡美食</name>
-<phone>2893-0399</phone>
-<district>9</district>
-<address>澳門東方斜巷19號A</address>
-<coordx>22.193130</coordx>
-<coordy>113.538849</coordy>
-<description>茶餐廳</description>
-<type0>1</type0>
+<name>天使咖啡 Cafe T.S. Mesquita</name>
+<phone>2852-0627</phone>
+<district>7</district>
+<address>澳門美副將大馬路64號</address>
+<coordx>22.206857</coordx>
+<coordy>113.546586</coordy>
+<openhours>12:00 ~ 22:00</openhours>
+<description>休閒咖啡室</description>
+<message>速近皆送
+設有Wifi</message>
+<type0>25</type0>
+<option_phoneorder>1</option_phoneorder>
 <option_booking>1</option_booking>
-<option_night>1</option_night>
-<status>0</status>
+<option_wifi>1</option_wifi>
+<menuid>1056700</menuid>
+<introid>1926</introid>
+<intropage>10</intropage>
+<menupage>2</menupage>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>568</id>
-<name>東亞飯店 (東亞酒店)</name>
-<phone>2892-2386</phone>
-<district>9</district>
-<address>澳門東亞酒店</address>
-<coordx>22.196525</coordx>
-<coordy>113.537314</coordy>
-<description>飯店</description>
-<type0>33</type0>
-<status>0</status>
+<name>韓牛韓式料理</name>
+<phone>2848-1107</phone>
+<district>4</district>
+<address>澳門馬場海邊馬路121號康樂新村第一座地下T鋪</address>
+<coordx>22.209718</coordx>
+<coordy>113.551552</coordy>
+<openhours>18:00 ~ 02:00</openhours>
+<description>韓式任食燒烤料理</description>
+<type0>14</type0>
+<type1>7</type1>
+<option_booking>1</option_booking>
+<option_night>1</option_night>
+<option_buffet>1</option_buffet>
+<option_wifi>1</option_wifi>
+<payment>0,1,2,4</payment>
+<priority>8</priority>
 </cafe>
 <cafe>
 <id>569</id>
@@ -10315,18 +10319,24 @@ www.facebook.com/elgauchomacau</message>
 </cafe>
 <cafe>
 <id>570</id>
-<name>法跡三文治專門店</name>
-<phone>2835-7868</phone>
-<district>9</district>
-<address>澳門大炮臺街2-2A號地下</address>
-<coordx>22.195363</coordx>
-<coordy>113.541029</coordy>
-<openhours>11:00 ~ 21:00</openhours>
-<description>法國、三文治</description>
-<message>外賣自取</message>
-<type0>22</type0>
-<option_phoneorder>1</option_phoneorder>
-<status>0</status>
+<name>Roadhouse Bar</name>
+<phone>2875-2945</phone>
+<district>11</district>
+<address>澳門馬德里街45號環宇豪庭地下</address>
+<coordx>22.187754</coordx>
+<coordy>113.552268</coordy>
+<openhours>17:00 ~ 03:00</openhours>
+<description>酒吧</description>
+<type0>26</type0>
+<option_night>1</option_night>
+<menuid>1057000</menuid>
+<introid>1930</introid>
+<intropage>10</intropage>
+<recommendid>1929</recommendid>
+<recommendpage>9</recommendpage>
+<menupage>2</menupage>
+<payment>0,1,2</payment>
+<priority>7</priority>
 </cafe>
 <cafe>
 <id>571</id>
@@ -15320,7 +15330,7 @@ www.facebook.com/elgauchomacau</message>
 <option_phoneorder>1</option_phoneorder>
 <option_night>1</option_night>
 <option_call>1</option_call>
-<menuid>1087806</menuid>
+<menuid>1087807</menuid>
 <introid>721</introid>
 <intropage>7</intropage>
 <recommendid>722</recommendid>
@@ -15858,10 +15868,10 @@ www.facebook.com/elgauchomacau</message>
 <name>豐順美食 (筷子基店)</name>
 <phone>2822-1885</phone>
 <district>2</district>
-<address>澳門沙梨頭新街113威翠花園</address>
-<coordx>22.207504</coordx>
-<coordy>113.543749</coordy>
-<openhours>17:00 ~ 05:00</openhours>
+<address>澳門筷子基南街66號多寶花園地下N舖</address>
+<coordx>22.207877</coordx>
+<coordy>113.544425</coordy>
+<openhours>17:00 ~ 05:30</openhours>
 <description>海鮮小炒、火鍋</description>
 <message>外賣自取</message>
 <type0>8</type0>
@@ -23821,7 +23831,6 @@ www.facebook.com/elgauchomacau</message>
 <introid>1637</introid>
 <intropage>10</intropage>
 <menupage>2</menupage>
-<priority>7</priority>
 </cafe>
 <cafe>
 <id>1347</id>
@@ -23950,7 +23959,7 @@ www.facebook.com/elgauchomacau</message>
 <option_phoneorder>1</option_phoneorder>
 <option_night>1</option_night>
 <option_call>1</option_call>
-<menuid>1135300</menuid>
+<menuid>1135301</menuid>
 <introid>768</introid>
 <intropage>5</intropage>
 <menupage>2</menupage>
@@ -26138,19 +26147,11 @@ www.facebook.com/elgauchomacau</message>
 <address>澳門南灣澳門廣場地下舖1號</address>
 <coordx>22.191299</coordx>
 <coordy>113.540928</coordy>
-<openhours>07:00 ~ 23:00</openhours>
-<description>燒味、小食、茶餐廳</description>
-<message>外賣自取</message>
+<openhours>*店主未能提供*</openhours>
+<description>*請聯絡店主*</description>
 <type0>4</type0>
 <type1>1</type1>
 <type2>22</type2>
-<menuid>1148600</menuid>
-<introid>1330</introid>
-<intropage>7</intropage>
-<recommendid>1331</recommendid>
-<recommendpage>4</recommendpage>
-<menupage>10</menupage>
-<priority>7</priority>
 </cafe>
 <cafe>
 <id>1487</id>
@@ -27599,20 +27600,10 @@ www.facebook.com/elgauchomacau</message>
 <address>澳門船澳街海擎天大廈L座地下50號鋪</address>
 <coordx>22.205216</coordx>
 <coordy>113.540912</coordy>
-<openhours>12:00 ~ 00:00</openhours>
-<description>比薩、炸雞、烤雞、各式美食</description>
-<message>Great Taste Eat Fresh
-只送附近</message>
+<openhours>*店主未能提供*</openhours>
+<description>*請聯絡店主*</description>
 <type0>25</type0>
 <type1>28</type1>
-<option_phoneorder>1</option_phoneorder>
-<option_booking>1</option_booking>
-<option_night>1</option_night>
-<menuid>1158402</menuid>
-<introid>1375</introid>
-<intropage>6</intropage>
-<menupage>2</menupage>
-<priority>7</priority>
 </cafe>
 <cafe>
 <id>1585</id>
@@ -27642,7 +27633,7 @@ www.facebook.com/elgauchomacau</message>
 <type0>2</type0>
 <option_phoneorder>1</option_phoneorder>
 <option_night>1</option_night>
-<menuid>1158600</menuid>
+<menuid>1158601</menuid>
 <introid>1456</introid>
 <intropage>10</intropage>
 <menupage>2</menupage>
@@ -29623,18 +29614,10 @@ www.facebook.com/elgauchomacau</message>
 <address>澳門龍嵩正街32CA號江華閣地下</address>
 <coordx>22.191190</coordx>
 <coordy>113.537865</coordy>
-<openhours>08:00 ~ 02:00</openhours>
-<description>茶餐廳、各式美食</description>
-<message>只送附近</message>
+<openhours>*店主未能提供*</openhours>
+<description>*請聯絡店主*</description>
 <type0>1</type0>
 <type1>28</type1>
-<option_phoneorder>1</option_phoneorder>
-<option_night>1</option_night>
-<menuid>1170500</menuid>
-<introid>1368</introid>
-<intropage>10</intropage>
-<menupage>2</menupage>
-<priority>7</priority>
 </cafe>
 <cafe>
 <id>1706</id>
@@ -30151,18 +30134,9 @@ www.facebook.com/elgauchomacau</message>
 <address>澳門新口岸馬六甲街,澳門國際中心(第二期) 地鋪</address>
 <coordx>22.196574</coordx>
 <coordy>113.554799</coordy>
-<openhours>11:00 ~ 02:30</openhours>
-<description>湘川菜館</description>
-<message>遠近皆送, 遠則需付車費</message>
+<openhours>*店主未能提供*</openhours>
+<description>*請聯絡店主*</description>
 <type0>10</type0>
-<option_phoneorder>1</option_phoneorder>
-<option_booking>1</option_booking>
-<option_night>1</option_night>
-<menuid>1173901</menuid>
-<introid>1354</introid>
-<intropage>10</intropage>
-<menupage>2</menupage>
-<priority>7</priority>
 </cafe>
 <cafe>
 <id>1740</id>
@@ -32081,15 +32055,9 @@ www.facebook.com/elgauchomacau</message>
 <address>澳門祐漢新村第八街康泰樓50室(新華學校對面)</address>
 <coordx>22.212557</coordx>
 <coordy>113.549661</coordy>
-<openhours>12:00 ~ 00:00</openhours>
-<description>甜品、糖水</description>
-<message>遠近皆送</message>
+<openhours>*店主未能提供*</openhours>
+<description>*請聯絡店主*</description>
 <type0>24</type0>
-<option_phoneorder>1</option_phoneorder>
-<option_night>1</option_night>
-<menuid>1185201</menuid>
-<menupage>2</menupage>
-<priority>7</priority>
 </cafe>
 <cafe>
 <id>1853</id>
@@ -33250,8 +33218,8 @@ www.facebook.com/elgauchomacau</message>
 <address>澳門水坑尾街280號坤記大廈地下</address>
 <coordx>22.195036</coordx>
 <coordy>113.544408</coordy>
-<openhours>(一、三、四、五): 11:30 ~ 21:00
-(六、日): 11:30 ~ 22:00
+<openhours>(一、三、四、五): 12:00 ~ 21:00
+(六、日): 112:00 ~ 22:00
 逢星期二休息</openhours>
 <description>日本拉麵館</description>
 <type0>2</type0>
@@ -34564,22 +34532,9 @@ Set Lunch&lt;資訊&gt;查詢</message>
 <address>澳門祐漢新村第四街55號地下C座</address>
 <coordx>22.211141</coordx>
 <coordy>113.549801</coordy>
-<openhours>18:00 ~ 01:00</openhours>
-<description>十品台式自選火鍋</description>
-<message>一人一鍋，非一般享受
-設有免費Wifi</message>
+<openhours>*店主未能提供*</openhours>
+<description>*請聯絡店主*</description>
 <type0>6</type0>
-<option_booking>1</option_booking>
-<option_night>1</option_night>
-<option_buffet>1</option_buffet>
-<option_wifi>1</option_wifi>
-<menuid>1199800</menuid>
-<introid>985</introid>
-<intropage>6</intropage>
-<recommendid>986</recommendid>
-<recommendpage>2</recommendpage>
-<menupage>1</menupage>
-<priority>8</priority>
 </cafe>
 <cafe>
 <id>1999</id>

@@ -56,6 +56,8 @@ public class MFService {
 	private static boolean isUpdating = false;
 	private static Context appContext;
 	private static final int TIMEOUT_PERIOD = 10000;
+	//dont decode bitmap larger than 1MB to avoid memory leak
+	public static final long MAX_BITMAP_SIZE = 1000000; 
 	
 	public static void loadImage(Context c, ImageType imageType, String id,
 			ImageView imageView, final boolean useCache, boolean fadeInAnimation) {
@@ -152,14 +154,26 @@ public class MFService {
 		InputStream is = executeRequest(url);
 		
 		if (cacheFile == null) {
-			return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
+			try {
+				return BitmapFactory.decodeStream(MFUtil.flushedInputStream(is));
+			} finally {
+				is.close();
+			}
 		}
 		OutputStream os = new FileOutputStream(cacheFile);
 		MFUtil.CopyStream(is, os);
+		is.close();
 		os.close();
 
+		if (cacheFile.length() > MAX_BITMAP_SIZE) {
+			return null;
+		}
 		FileInputStream fis = new FileInputStream(cacheFile);
-		return BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis));
+		try {
+			return BitmapFactory.decodeStream(MFUtil.flushedInputStream(fis));
+		} finally {
+			fis.close();
+		}
 	}
 	
 	public static String getString(String url, File cacheFile) throws ClientProtocolException, IOException {
@@ -174,6 +188,7 @@ public class MFService {
 			while ((line = rd.readLine()) != null) {
 				sb.append(line + "\n");
 			}
+			is.close();
 			rd.close();
 
 			return sb.toString().trim();
@@ -181,17 +196,22 @@ public class MFService {
 
 		OutputStream os = new FileOutputStream(cacheFile);
 		MFUtil.CopyStream(is, os);
+		is.close();
 		os.close();
 
 		FileInputStream fis = new FileInputStream(cacheFile);
 		BufferedReader rd = new BufferedReader(new InputStreamReader(
 				fis));
-		String line = null;
-		while ((line = rd.readLine()) != null) {
-			sb.append(line + "\n");
+		try {
+			String line = null;
+			while ((line = rd.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			return sb.toString().trim();
+		} finally {
+			rd.close();
+			fis.close();
 		}
-		rd.close();
-		return sb.toString().trim();
 	}
 	
     public static class FetchImageTask extends AsyncTask<Void, Void, Bitmap> {
@@ -319,6 +339,8 @@ public class MFService {
 						e.printStackTrace();
 					} catch (Exception e) {
 						MFLog.e(TAG, "EXCEPTION" + e.getMessage());
+					} finally {
+						is.close();
 					}
 					updateCafeListTimeStamp = System.currentTimeMillis();
     	            updateSuccessfully = false;
@@ -385,9 +407,9 @@ public class MFService {
 			
             try {
             	if (pairs == null) {
-            		executeRequest(url);
+            		executeRequest(url).close();
 				} else {
-					executeRequestWithHttpParams(url, pairs);
+					executeRequestWithHttpParams(url, pairs).close();
 				}
             	
 			} catch (MalformedURLException e) {

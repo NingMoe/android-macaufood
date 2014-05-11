@@ -425,6 +425,7 @@ public class PSUploadPhoto extends BaseActivity {
     				sb.append(line + "\n");
     			}
     			rd.close();
+    			is.close();
 
     			return sb.toString().trim();
             	

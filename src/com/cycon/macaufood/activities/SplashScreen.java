@@ -44,13 +44,22 @@ public class SplashScreen extends Activity {
 		}
 		
 		String originalVersion = PreferenceHelper.getPreferenceValueStr(SplashScreen.this, "versionNo", "");
+		
 		if (!originalVersion.equals(getString(R.string.versionNo))) {
+			//new version update.....
 			PreferenceHelper.savePreferencesBoolean(SplashScreen.this, "firstLaunch", true);
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "versionNo", getString(R.string.versionNo));
 			PreferenceHelper.savePreferencesStr(SplashScreen.this, "cafe_version_update", MFConfig.cafe_version_update);
 			PreferenceHelper.savePreferencesLong(SplashScreen.this, MFConstants.TIME_STAMP_PREF_KEY, 0); //refresh main page after update?
 			
-			//clear cache for first launch for version 2.x
+			//clear recommnd pages for version 3.0 due to out of memory issue
+			if (originalVersion.length() > 0) {
+				if (originalVersion.equals("3.0")) {
+					clearRecommendImages();
+				}
+			}
+			
+			//clear cache for version 2.x in first launch
 			if (originalVersion.length() > 0) {
 				int versionHeadNumber = originalVersion.charAt(0) - '0';
 				if (versionHeadNumber < 3) {
@@ -79,6 +88,11 @@ public class SplashScreen extends Activity {
 	
 	private void clearProfileImages() {
 		FileCache cacheFile = new FileCache(this, ImageType.PSLOCALAVATAR);
+		cacheFile.clear();
+	}
+	
+	private void clearRecommendImages() {
+		FileCache cacheFile = new FileCache(this, ImageType.RECOMMEND);
 		cacheFile.clear();
 	}
 	
@@ -124,7 +138,8 @@ public class SplashScreen extends Activity {
 
 			if (PreferenceHelper.getPreferenceValueBoolean(SplashScreen.this, "firstLaunch", true)) {
 				MFConfig.initDataFromXml(getResources(), SplashScreen.this);
-				LocalDbManager.getInstance(getApplicationContext()).clearTable();
+				LocalDbManager.getInstance(getApplicationContext()).dropTable();
+				LocalDbManager.getInstance(getApplicationContext()).initTable();
 				LocalDbManager.getInstance(getApplicationContext()).insertCafeLists();
 				PreferenceHelper.savePreferencesBoolean(SplashScreen.this, "firstLaunch", false);
 			} else {

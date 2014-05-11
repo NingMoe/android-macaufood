@@ -81,9 +81,9 @@ public class OldAdvViewPager extends ViewPager {
 	
 	private void init(AttributeSet attrs) {
 		
-		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AdvViewPager, 0, 0);
-		isSmallAdv = a.getBoolean(R.styleable.AdvViewPager_small, false);
-		a.recycle();
+//		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.AdvViewPager, 0, 0);
+//		isSmallAdv = a.getBoolean(R.styleable.AdvViewPager_small, false);
+//		a.recycle();
 		
 		mHandler = new Handler();
 		noadv = getContext().getResources().getDrawable(isSmallAdv ? R.drawable.adv2 : R.drawable.searchadv);

@@ -9,7 +9,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.cycon.macaufood.bean.ImageType;
-import com.cycon.macaufood.widget.AdvViewPager;
+import com.cycon.macaufood.widget.AdvView;
 
 public class AdController {
 	
@@ -20,7 +20,7 @@ public class AdController {
 	private Context mContext;
 	public static boolean isUpdating;
 	private boolean isSuccessfullyUpdatedOnce;
-	private List<AdvViewPager.Callback> mCallBacks = new ArrayList<AdvViewPager.Callback>();
+	private List<AdvView.Callback> mCallBacks = new ArrayList<AdvView.Callback>();
 	
 	
 	public static class AdInfo {
@@ -45,11 +45,11 @@ public class AdController {
 		}
 	}
 	
-	public void registerCallback(AdvViewPager.Callback callback) {
+	public void registerCallback(AdvView.Callback callback) {
 		mCallBacks.add(callback);
 	}
 	
-	public void unregisterCallback(AdvViewPager.Callback callback) {
+	public void unregisterCallback(AdvView.Callback callback) {
 		mCallBacks.remove(callback);
 	}
 	
@@ -66,7 +66,7 @@ public class AdController {
 					isUpdating = false;
 					isSuccessfullyUpdatedOnce = true;
 					extractAdvInfoList((String) result, false);
-					for (AdvViewPager.Callback callback : mCallBacks) {
+					for (AdvView.Callback callback : mCallBacks) {
 						callback.onAdLoadResultSuccess();
 					}
 				}
@@ -75,7 +75,7 @@ public class AdController {
 				public void onLoadResultError() {
 					Log.e("ZZZ", "onLoadResult Error");
 					isUpdating = false;
-					for (AdvViewPager.Callback callback : mCallBacks) {
+					for (AdvView.Callback callback : mCallBacks) {
 						callback.onAdLoadResultError();
 					}
 				}
@@ -85,12 +85,17 @@ public class AdController {
 	
 	public void extractAdvInfoList(String str, boolean random) {
 		if (str == null) return;
+		mBigAdList.clear();
+		mSmallAdList.clear();
 		String[] tokens = str.split("\\|\\|\\|");
 		for (String token : tokens) {
 			String[] infoStr = token.split("\\|\\|");
 			AdInfo info = new AdInfo();
 			info.type = infoStr[0];
-			if (infoStr.length > 1) info.advId = infoStr[1];
+			if (infoStr.length > 1){
+				info.advId = infoStr[1];
+				if (info.advId.equals("admob"))continue;
+			}
 			if (infoStr.length > 2) info.advLink = infoStr[2];
 			//to make sure the adv is in random order
 			Random rand = new Random(); 

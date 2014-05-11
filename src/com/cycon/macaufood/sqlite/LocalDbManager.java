@@ -33,7 +33,6 @@ public class LocalDbManager {
 	private LocalDbManager(Context context) {
 		this.context = context;
 		helper = new MfSqliteOpenHelper(context, dbName);
-		initTable();
 	}
 	
 	public synchronized void initTable() {
@@ -42,7 +41,7 @@ public class LocalDbManager {
 		endWritableDb();
 	}
 	
-	public synchronized void clearTable() {
+	public synchronized void dropTable() {
 		String clearCafeTableSql = context
 		.getString(R.string.clearCafeTableSql);
 		beginWritableDb();

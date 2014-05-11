@@ -123,7 +123,7 @@
             android:src="@drawable/tab_shadow" />
     </FrameLayout>
 
-    <com.cycon.macaufood.widget.AdvViewPager
+    <com.cycon.macaufood.widget.AdvView
         android:id="@+id/viewPager"
         android:layout_width="fill_parent"
         android:layout_height="48dp"

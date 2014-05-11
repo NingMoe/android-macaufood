@@ -43,7 +43,7 @@ import com.cycon.macaufood.utilities.LatLngBoundHelper;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
-import com.cycon.macaufood.widget.AdvViewPager;
+import com.cycon.macaufood.widget.AdvView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -89,7 +89,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private static LatLngBounds mMapBounds = new LatLngBounds(new LatLng(LAT_MIN, LONG_MIN), new LatLng(LAT_MAX, LONG_MAX));
 	private String selectedCafeId;
 	private Button searchNearby;
-	private AdvViewPager smallBanner;
+	private AdvView smallBanner;
 	private View listLayout;
 	private View mapLayout;
 	
@@ -143,7 +143,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		smallBanner = (AdvViewPager) findViewById(R.id.viewPager);
+		smallBanner = (AdvView) findViewById(R.id.viewPager);
 		list = (ListView) findViewById(R.id.list);
 		listMessage = (TextView) findViewById(R.id.listMessage);
 		mapFilterPanel = findViewById(R.id.mapFilterPanel);

@@ -111,7 +111,20 @@ public class MFUtil {
 			return null;
 		File f = fileCache.getFile(imageId);
 		try {
-			return BitmapFactory.decodeStream(new FileInputStream(f));
+			if (f.length() > MFService.MAX_BITMAP_SIZE) {
+				return null;
+			}
+			FileInputStream fis = new FileInputStream(f);
+			try {
+				return BitmapFactory.decodeStream(fis);
+			} finally {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		} catch (FileNotFoundException e) {
 			return null;
 		}
@@ -131,10 +144,17 @@ public class MFUtil {
 			str = rd.readLine();
 			if (str != null)
 				str = str.trim();
-			rd.close();
 			return str;
 		} catch (IOException e) {
 			return null;
+		} finally {
+			try {
+				rd.close();
+				fis.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	

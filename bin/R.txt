@@ -1264,8 +1264,8 @@ int style com_sina_weibo_sdk_loginview_silver_style 0x7f080003
 int[] styleable AdsAttrs { 0x7f010002, 0x7f010003 }
 int styleable AdsAttrs_adSize 0
 int styleable AdsAttrs_adUnitId 1
-int[] styleable AdvViewPager { 0x7f010086 }
-int styleable AdvViewPager_small 0
+int[] styleable AdvView { 0x7f010086 }
+int styleable AdvView_small 0
 int[] styleable MapAttrs { 0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007, 0x7f010008, 0x7f010009, 0x7f01000a, 0x7f01000b, 0x7f01000c, 0x7f01000d, 0x7f01000e, 0x7f01000f, 0x7f010010, 0x7f010011 }
 int styleable MapAttrs_cameraBearing 1
 int styleable MapAttrs_cameraTargetLat 2

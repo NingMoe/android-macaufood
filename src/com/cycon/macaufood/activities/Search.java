@@ -44,8 +44,7 @@ import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
-import com.cycon.macaufood.widget.AdvViewPager;
-import com.cycon.macaufood.widget.GalleryNavigator;
+import com.cycon.macaufood.widget.AdvView;
 
 public class Search extends BaseActivity {
 	
@@ -53,8 +52,7 @@ public class Search extends BaseActivity {
 
 	private View directSearchLayout;
 	private View advancedSearchLayout;
-	private GalleryNavigator navi;
-	private AdvViewPager advViewPager;
+	private AdvView advView;
 	private EditText searchTextBox;
 	private View clearBtn;
 	private Button searchBtn;
@@ -151,10 +149,7 @@ public class Search extends BaseActivity {
 				});
         
         
-		navi = (GalleryNavigator) findViewById(R.id.navi);
-		advViewPager = (AdvViewPager) findViewById(R.id.gallery);
-		advViewPager.setNavi(navi);
-		advViewPager.setLoadingLayout(findViewById(R.id.loadingProgressLayout));
+		advView = (AdvView) findViewById(R.id.gallery);
         
         regionTitle = (TextView) findViewById(R.id.regionTitle);
         
@@ -188,8 +183,7 @@ public class Search extends BaseActivity {
 						historyLayout.setVisibility(View.VISIBLE);
 					}
 
-					navi.setVisibility(View.GONE);
-					advViewPager.setVisibility(View.GONE);
+					advView.setVisibility(View.GONE);
 			}
 		});
         
@@ -276,6 +270,11 @@ public class Search extends BaseActivity {
 
         mActionBar.addTab(tab1);
         mActionBar.addTab(tab2);
+        
+        if (!MFConfig.isOnline(this)) {
+        	findViewById(R.id.pBar).setVisibility(View.GONE);
+        	((TextView) findViewById(R.id.loadingAdvLabel)).setText(R.string.noInternetMsg);
+        }
     }
     
     

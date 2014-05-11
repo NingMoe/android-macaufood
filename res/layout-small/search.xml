@@ -80,7 +80,7 @@
 	  		  	</LinearLayout>
 	  		  	
 				
-	  		  	<com.cycon.macaufood.widget.AdvViewPager android:id="@+id/gallery"
+	  		  	<com.cycon.macaufood.widget.AdvView android:id="@+id/gallery"
 					android:layout_width="fill_parent" android:layout_height="wrap_content" 
 					android:layout_alignParentBottom="true"/>
 	  		  	

@@ -32,7 +32,7 @@ import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
-import com.cycon.macaufood.widget.AdvViewPager;
+import com.cycon.macaufood.widget.AdvView;
 import com.cycon.macaufood.widget.BannerView;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
@@ -42,7 +42,7 @@ public class Coupon extends SherlockFragment {
 
 	private View retryLayout;
 	private Button retryButton;
-	private AdvViewPager advViewPager;
+	private AdvView advViewPager;
 	private ListView normalCouponList;
 	private ListView creditVipCouponList;
 	private View mainCouponScrollView;
@@ -77,7 +77,7 @@ public class Coupon extends SherlockFragment {
 	private void initView() {
 
 		retryLayout = mView.findViewById(R.id.retryLayout);
-		advViewPager = (AdvViewPager) mView.findViewById(R.id.viewPager);
+		advViewPager = (AdvView) mView.findViewById(R.id.viewPager);
 		mainCouponScrollView = mView.findViewById(R.id.mainCouponScrollView);
 		mainCouponImage = (ImageView) mView.findViewById(R.id.mainCouponImage);
 
