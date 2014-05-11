@@ -52,7 +52,7 @@ public class MFService {
 
 	public static boolean updateSuccessfully;
 	private static long updateCafeListTimeStamp;
-	private static final long UPDATE_TIME_PERIOD = 3600 * 1000 * 12; // 12 hours
+	private static final long UPDATE_TIME_PERIOD = 3600 * 1000 * 1; //everyhour
 	private static boolean isUpdating = false;
 	private static Context appContext;
 	private static final int TIMEOUT_PERIOD = 10000;
