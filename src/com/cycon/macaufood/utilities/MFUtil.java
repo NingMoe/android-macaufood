@@ -102,8 +102,7 @@ public class MFUtil {
 	}
 
 	public static float getDipFromPixels(int pixel, Resources res) {
-		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixel,
-				res.getDisplayMetrics());
+		return pixel / res.getDisplayMetrics().density;
 	}
 
 	public static Bitmap getBitmapFromCache(FileCache fileCache, String imageId) {

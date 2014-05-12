@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
@@ -25,8 +26,12 @@ import com.cycon.macaufood.bean.ImageType;
 import com.cycon.macaufood.utilities.AdController;
 import com.cycon.macaufood.utilities.AdController.AdInfo;
 import com.cycon.macaufood.utilities.ImageLoader;
+import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 public class AdvView extends RelativeLayout {
 	public interface Callback {
@@ -34,6 +39,7 @@ public class AdvView extends RelativeLayout {
 		void onAdLoadResultError();
 	}
 
+	private static final String ADMOB_ID = "a1533e3193a319e";
 	private static final String TAG = "AdvViewPager";
 
 	private static final long REFRESH_PERIOD = 7000;
@@ -48,6 +54,8 @@ public class AdvView extends RelativeLayout {
 	private ImageLoader mImageLoader;
 	private ViewPager mViewPager;
 	private GalleryNavigator mNavi;
+	private int mAdFixedHeight;
+	private AdView mAdMobView;
 
 	private Callback mAdCallback = new Callback() {
 
@@ -82,14 +90,21 @@ public class AdvView extends RelativeLayout {
 				R.styleable.AdvView, 0, 0);
 		mSmallAdv = a.getBoolean(R.styleable.AdvView_small, false);
 		a.recycle();
+		
+
 
 		mHandler = new Handler();
 
 		mViewPager = new ViewPager(mContext);
 		mNavi = new GalleryNavigator(mContext);
-//		mNavi.setVisibility(View.GONE);
-//		mNavi.setVisibility(View.VISIBLE);
-		addView(mViewPager);
+		if (!mSmallAdv) {
+			mAdFixedHeight = (int) (700.0 / 640 * MFConfig.deviceWidth);
+			RelativeLayout.LayoutParams viewPagerParams = new LayoutParams(LayoutParams.MATCH_PARENT, mAdFixedHeight);
+			viewPagerParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			addView(mViewPager, viewPagerParams);
+		} else {
+			addView(mViewPager);
+		}
 		RelativeLayout.LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.bottomMargin = MFUtil.getPixelsFromDip(3f, getResources());
 		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
@@ -116,6 +131,7 @@ public class AdvView extends RelativeLayout {
 		} else {
 			setVisibility(View.VISIBLE);
 			mImageAdapter = new ImageAdapter();
+			mViewPager.setOffscreenPageLimit(mAdInfoList.size());
 			mViewPager.setAdapter(mImageAdapter);
 			mViewPager.setOnPageChangeListener(mImageAdapter);
 
@@ -143,15 +159,34 @@ public class AdvView extends RelativeLayout {
 
 		@Override
 		public boolean isViewFromObject(View view, Object object) {
-			return view == ((ImageView) object);
+			if (object instanceof ImageView) {
+				return view == ((ImageView) object);
+			} else if (object instanceof AdView) {
+				return view == ((AdView) object);
+			}
+			return false;
 		}
 
 		@Override
 		public Object instantiateItem(ViewGroup container, final int position) {
-			MFLog.e(TAG, "view pager instantiate pos = " + position);
+			Log.e(TAG, "view pager instantiate pos = " + position);
+			String advId = mAdInfoList.get(position).advId;
+			if (advId.equals("admob")) {
+				mAdMobView = new AdView(mContext);
+				mAdMobView.setAdUnitId(ADMOB_ID);
+				if (!mSmallAdv) {
+					mAdMobView.setAdSize(new AdSize(-1, (int)(MFUtil.getDipFromPixels(mAdFixedHeight, mContext.getResources()))));
+				} else {
+					mAdMobView.setAdSize(new AdSize(-1, 48));
+				}
+				AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+				mAdMobView.loadAd(adRequestBuilder.build());
+				((ViewPager) container).addView(mAdMobView, 0);
+				return mAdMobView;
+			}
+			
 			ImageView i = new ImageView(mContext);
-			mImageLoader.displayImage(mAdInfoList.get(position).advId, i,
-					position);
+			mImageLoader.displayImage(advId, i, position);
 			i.setScaleType(mSmallAdv ? ScaleType.FIT_XY : ScaleType.FIT_END);
 			i.setOnClickListener(new OnClickListener() {
 
@@ -169,7 +204,11 @@ public class AdvView extends RelativeLayout {
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
-			((ViewPager) container).removeView((ImageView) object);
+			if (object instanceof ImageView) {
+				((ViewPager) container).removeView((ImageView) object);
+			} else if (object instanceof AdView) {
+				((ViewPager) container).removeView((AdView) object);
+			}
 		}
 
 		public void onPageScrollStateChanged(int state) {

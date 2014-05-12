@@ -83,6 +83,7 @@
 				
 	  		  	<com.cycon.macaufood.widget.AdvView android:id="@+id/gallery"
 					android:layout_width="fill_parent" android:layout_height="wrap_content" 
+					android:clipChildren="false" android:clipToPadding="false"
 					android:layout_alignParentBottom="true"/>
 				
 			<LinearLayout 

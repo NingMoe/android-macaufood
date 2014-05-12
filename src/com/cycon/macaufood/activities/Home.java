@@ -350,6 +350,7 @@ public class Home extends SherlockFragmentActivity {
 			mContext = activity;
 			mActionBar = activity.getSupportActionBar();
 			mViewPager = pager;
+			mViewPager.setOffscreenPageLimit(4);
 			mViewPager.setAdapter(this);
 			mViewPager.setOnPageChangeListener(this);
 
