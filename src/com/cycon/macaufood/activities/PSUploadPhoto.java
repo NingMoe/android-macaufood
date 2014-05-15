@@ -396,15 +396,15 @@ public class PSUploadPhoto extends BaseActivity {
         		HttpConnectionParams.setConnectionTimeout(httpParams, 15000);
 				String url = MFURL.PHOTOSHARE_UPLOAD + "&userid="
 						+ MFConfig.memberId + "&photocaption="
-						+ URLEncoder.encode(mCaptionText.getText().toString(), "UTF-8")
+						+ URLEncoder.encode(mCaptionText.getText().toString().trim(), "UTF-8")
 						+ "&cafename="
-						+ URLEncoder.encode(mSelectedCafe.getName(), "UTF-8")
-						+ "&coordx=" + mSelectedCafe.getCoordx() + "&coordy="
-						+ mSelectedCafe.getCoordy() + "&cafeid="
-						+ mSelectedCafe.getId() + "&cafeaddress="
-						+ URLEncoder.encode(mSelectedCafe.getAddress(), "UTF-8")
+						+ URLEncoder.encode(mSelectedCafe.getName().trim(), "UTF-8")
+						+ "&coordx=" + mSelectedCafe.getCoordx().trim() + "&coordy="
+						+ mSelectedCafe.getCoordy().trim() + "&cafeid="
+						+ mSelectedCafe.getId().trim() + "&cafeaddress="
+						+ URLEncoder.encode(mSelectedCafe.getAddress().trim(), "UTF-8")
 						+ "&cafephone="
-						+ URLEncoder.encode(mSelectedCafe.getPhone(), "UTF-8");
+						+ URLEncoder.encode(mSelectedCafe.getPhone().trim(), "UTF-8");
         		HttpPost request = new HttpPost(url);
 
                 ByteArrayBody byteArrayBody = new ByteArrayBody(mByeData, "image");
