@@ -338,7 +338,6 @@
 		  	  		android:clipChildren="false"
 					android:scrollbars="none"
 				    android:verticalSpacing="3dp"
-				    android:horizontalSpacing="5dp"
 				    android:numColumns="4"
 				    android:gravity="center_vertical"
 				    android:layout_gravity="center_vertical"

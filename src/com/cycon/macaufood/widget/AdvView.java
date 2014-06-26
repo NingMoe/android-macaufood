@@ -39,7 +39,7 @@ public class AdvView extends RelativeLayout {
 		void onAdLoadResultError();
 	}
 
-	private static final String ADMOB_ID = "a1533e3193a319e";
+	private static final String ADMOB_ID = "ca-app-pub-9283087895377549/9464415517";
 	private static final String TAG = "AdvViewPager";
 
 	private static final long REFRESH_PERIOD = 7000;
@@ -119,6 +119,9 @@ public class AdvView extends RelativeLayout {
 			mAdInfoList = mAdController.getSmallAdInfoList();
 		} else {
 			mAdInfoList = mAdController.getBigAdInfoList();
+			AdInfo adInfo = new AdInfo();
+			adInfo.advId = "admob";
+			mAdInfoList.add(adInfo);
 		}
 		if (mAdInfoList.size() <= 1) {
 			mNavi.setVisibility(View.GONE);
@@ -180,6 +183,8 @@ public class AdvView extends RelativeLayout {
 					mAdMobView.setAdSize(new AdSize(-1, 48));
 				}
 				AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+				adRequestBuilder.setGender(AdRequest.GENDER_MALE);
+				adRequestBuilder.addTestDevice("A156D7505B65D1EF4E74C3F1D0C08402");
 				mAdMobView.loadAd(adRequestBuilder.build());
 				((ViewPager) container).addView(mAdMobView, 0);
 				return mAdMobView;
@@ -268,14 +273,17 @@ public class AdvView extends RelativeLayout {
 		stopTimer();
 		AdController.getInstance(mContext.getApplicationContext())
 				.unregisterCallback(mAdCallback);
+		if (mAdMobView != null) mAdMobView.destroy();
 	}
 
 	@Override
 	protected void onVisibilityChanged(View changedView, int visibility) {
 		super.onVisibilityChanged(changedView, visibility);
 		if (visibility == View.VISIBLE) {
+			if (mAdMobView != null) mAdMobView.resume();
 			startTimer();
 		} else {
+			if (mAdMobView != null) mAdMobView.pause();
 			stopTimer();
 		}
 	}

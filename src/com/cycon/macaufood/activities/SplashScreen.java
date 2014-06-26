@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Process;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 
@@ -154,12 +155,12 @@ public class SplashScreen extends Activity {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-
-			finish();
 			
 			Intent i = new Intent(SplashScreen.this, Home.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			startActivity(i);
+			overridePendingTransition(0, 0);
+			finish();
+			overridePendingTransition(0, 0);
 		}
 	}
 	
