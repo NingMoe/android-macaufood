@@ -630,11 +630,16 @@ public class PhotoShare extends SherlockFragment {
 				i.setData(fileUri);
 				i.putExtra("photoFile", mPhotoFile);
 				startActivityForResult(i, UPLOAD_IMAGE_ACTIVITY_REQUEST_CODE);
-				mContext.sendBroadcast(new Intent(
-						Intent.ACTION_MEDIA_MOUNTED,
-						Uri.parse("file://"
-								+ Environment
-										.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES))));
+				try {
+					mContext.sendBroadcast(new Intent(
+							Intent.ACTION_MEDIA_MOUNTED,	
+							Uri.parse("file://"
+									+ Environment
+											.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES))));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else if (resultCode == Activity.RESULT_CANCELED) {
 			} else {
 				Toast.makeText(mContext, R.string.imageCaptureFailed,

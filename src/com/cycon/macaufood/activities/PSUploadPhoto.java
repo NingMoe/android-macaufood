@@ -183,6 +183,7 @@ public class PSUploadPhoto extends BaseActivity {
 		});
 		
 		mImageUri = getIntent().getData();
+		Log.e("ZZZ", "image uri = " + mImageUri.toString());
 		Object file = getIntent().getSerializableExtra("photoFile");
 		if (file != null) {
 			mCaptureImageFile = (File) file;

@@ -332,7 +332,7 @@
 	  	  			
   	  			<GridView 
   	  				android:id="@+id/paymentGrid"
-					android:layout_width="200dp" 
+					android:layout_width="190dp" 
 					android:layout_height="wrap_content"
 		  	  		android:clipToPadding="false"
 		  	  		android:clipChildren="false"

@@ -3,6 +3,8 @@ package com.cycon.macaufood.activities;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
@@ -13,9 +15,12 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+
 import com.cycon.macaufood.utilities.MFLog;
 import android.util.TypedValue;
 import android.view.View;
@@ -45,7 +50,8 @@ import com.cycon.macaufood.utilities.PreferenceHelper;
 public class Details extends BaseActivity {
 	
 	private static final String TAG = "Details";
-	private static final int FAVORITE_MENU_ID = 1;
+	private static final int FAVORITE_MENU_ID = 0;
+	private static final int SHARE_MENU_ID = 1;
 	private static final int BRANCH_MENU_ID = 2;
 	private static final int FEEDBACK_MENU_ID = 3;
 	private TextView name, addr, website, cash, phone, businessHours, infoText;
@@ -307,7 +313,8 @@ public class Details extends BaseActivity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-		menu.add(0, FAVORITE_MENU_ID, 1, R.string.addFavorite).setIcon(isFavorite ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_empty).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(0, FAVORITE_MENU_ID, 0, R.string.addFavorite).setIcon(isFavorite ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_empty).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(0, SHARE_MENU_ID, 1, R.string.share).setIcon(R.drawable.ic_share).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		if (!cafe.getBranch().equals("0")) {
 			menu.add(0, BRANCH_MENU_ID, 2, R.string.branch).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);;
 		}
@@ -332,6 +339,39 @@ public class Details extends BaseActivity {
 			return true;
 		case FEEDBACK_MENU_ID:
 			FeedBackDialogHelper.showFeedBackDialog(this, getLayoutInflater(), getIntent().getStringExtra("id"));
+			return true;
+		case SHARE_MENU_ID:
+			View v = findViewById(android.R.id.content).getRootView();
+		    v.setDrawingCacheEnabled(true);
+		    Bitmap bitmap = Bitmap.createBitmap(v.getDrawingCache());
+		    v.setDrawingCacheEnabled(false);
+		    int statusBarHeight = MFUtil.getStatusBarHeight(this);
+		    bitmap = Bitmap.createBitmap(bitmap, 0, statusBarHeight, bitmap.getWidth(), bitmap.getHeight() - statusBarHeight, null, true);
+			File file = MFUtil.getOutputMediaFile(MFUtil.MEDIA_TYPE_IMAGE);
+			if (file == null) {
+				Toast.makeText(this, R.string.shareFailed,
+						Toast.LENGTH_LONG).show();
+				return false;
+			}
+			FileOutputStream fout;
+			try {
+				fout = new FileOutputStream(file);
+				bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fout);
+				fout.flush();
+				fout.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			Intent shareIntent = new Intent();
+			shareIntent.setAction(Intent.ACTION_SEND);
+			shareIntent.putExtra(Intent.EXTRA_TEXT, cafe.getName() + "\nhttp://www.ifoodmacau.com/cafe/" + cafe.getId());
+			shareIntent.putExtra(Intent.EXTRA_STREAM, 
+					Uri.fromFile(file));
+			shareIntent.setType("image/*");
+			startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.shareTo)));
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
