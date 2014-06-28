@@ -45,7 +45,6 @@ import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFService;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.utilities.PreferenceHelper;
-import com.cycon.macaufood.widget.BannerView;
 import com.facebook.Session;
 
 public class Home extends SherlockFragmentActivity {
@@ -311,9 +310,11 @@ public class Home extends SherlockFragmentActivity {
 			MFFetchListHelper.fetchAllList(this);
 			MFService.checkUpdate(getApplicationContext());
 			
-			PhotoShare psFragment = (PhotoShare) mTabsAdapter.getActiveFragment(mViewPager, 3);
-			if (psFragment != null) {
-				psFragment.reloadActivityOrResetTimeStamp();
+			if (mTabsAdapter != null) {
+				PhotoShare psFragment = (PhotoShare) mTabsAdapter.getActiveFragment(mViewPager, 3);
+				if (psFragment != null) {
+					psFragment.reloadActivityOrResetTimeStamp();
+				}
 			}
 				
 		} 

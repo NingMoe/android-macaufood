@@ -33,7 +33,6 @@ import com.cycon.macaufood.utilities.MFFetchListHelper;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvView;
-import com.cycon.macaufood.widget.BannerView;
 import com.haarman.listviewanimations.swinginadapters.prepared.SwingBottomInAnimationAdapter;
 
 public class Coupon extends SherlockFragment {

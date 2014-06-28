@@ -48,6 +48,7 @@ import com.cycon.macaufood.utilities.MFConfig;
 //					Config.getInstance().getRecommendCafeList().add(cafe);
 //				}
 			} else {
+				if (cafe == null || tempValue == null) return;
 //					MFLog.e(localName, tempValue.toString());
 				if (localName.equals("id")) {
 					cafe.setId(tempValue.toString());

@@ -16,7 +16,6 @@ import com.cycon.macaufood.R;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.MFConfig;
-import com.cycon.macaufood.widget.BannerView;
 
 public class Branch extends BaseActivity {
 	

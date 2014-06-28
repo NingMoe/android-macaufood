@@ -391,7 +391,7 @@ public class PhotoShare extends SherlockFragment {
 			Intent i = new Intent(mContext, PSDetails.class);
 			i.putExtra("ps_hot_position", position);
 			
-			if(Build.VERSION.SDK_INT < 11) {
+			if(Build.VERSION.SDK_INT < 16) {
 				startActivity(i);
 			} else {
 				Bundle scaledBundle = ActivityOptionsCompat.makeScaleUpAnimation(view, 0, 0, view.getWidth(), view.getHeight()).toBundle();
@@ -493,7 +493,7 @@ public class PhotoShare extends SherlockFragment {
 	}
 
 	public void populateGridView() {
-		mProgressBar.setVisibility(View.GONE);
+		if (mProgressBar != null) mProgressBar.setVisibility(View.GONE);
 		// if no internet and no data in File, show retry message
 		if (MFConfig.getInstance().getPsHotList().size() == 0) {
 			displayRetryLayout();

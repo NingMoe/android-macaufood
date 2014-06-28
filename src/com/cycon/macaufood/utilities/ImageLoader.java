@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -351,7 +352,12 @@ public class ImageLoader {
 			//make sure load all current display getView image first before load any other
             if (currentDisplayImages.isEmpty()) {
 				while (!imagesToLoad.isEmpty() && imagesLoading.size() < maxTasksNumber) {
-					String id = imagesToLoad.poll();
+					String id = null;
+					try {
+						id = imagesToLoad.poll();
+					} catch (NoSuchElementException e) {
+						e.printStackTrace();
+					}
 //					MFLog.e(TAG, " imagesToLoad poll id " + id);
 					
 					//check if poll id is in memoryCache or filecache;

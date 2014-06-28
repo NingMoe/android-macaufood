@@ -8,11 +8,13 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.util.Hashtable;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -290,7 +292,12 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 
     		if (pDialog != null && 
     	    		page == 1) {
-    			pDialog.dismiss();
+    			try {
+					pDialog.dismiss();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     		}
 
     		
@@ -334,7 +341,7 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
     }
     
     
-    public class ImageAdapter extends PagerAdapter implements
+	public class ImageAdapter extends PagerAdapter implements
 	ViewPager.OnPageChangeListener, ViewPager.PageTransformer {
         private Context mContext;
         private static final float MIN_SCALE = 0.75f;
@@ -400,8 +407,10 @@ public class Intro extends BaseActivity implements ViewSwitcher.ViewFactory{
 			navi.invalidate();
 		}
 
+		@SuppressLint("NewApi")
 		@Override
 		public void transformPage(View view, float position) {
+			if (Build.VERSION.SDK_INT < 11) return;
 			// TODO Auto-generated method stub
 	        int pageWidth = view.getWidth();
 
