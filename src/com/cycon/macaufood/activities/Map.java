@@ -54,7 +54,6 @@ import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvView;
-import com.cycon.macaufood.widget.AdvViewPager;
 
 /**
  * A list view that demonstrates the use of setEmptyView. This example alos uses
