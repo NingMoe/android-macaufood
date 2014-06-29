@@ -4,16 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.location.Location;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
@@ -27,15 +22,30 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.BMapManager;
+import com.baidu.mapapi.map.ItemizedOverlay;
+import com.baidu.mapapi.map.LocationData;
+import com.baidu.mapapi.map.MKMapStatus;
+import com.baidu.mapapi.map.MKMapStatusChangeListener;
+import com.baidu.mapapi.map.MapController;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MyLocationOverlay;
+import com.baidu.mapapi.map.OverlayItem;
+import com.baidu.mapapi.map.PopupClickListener;
+import com.baidu.mapapi.map.PopupOverlay;
+import com.baidu.platform.comapi.basestruct.GeoPoint;
 import com.cycon.macaufood.R;
-import com.cycon.macaufood.activities.PSCafeLocation.ErrorDialogFragment;
 import com.cycon.macaufood.adapters.CafeSearchListAdapter;
 import com.cycon.macaufood.bean.Cafe;
 import com.cycon.macaufood.utilities.AdvancedSearchHelper;
@@ -44,57 +54,34 @@ import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFConstants;
 import com.cycon.macaufood.utilities.MFUtil;
 import com.cycon.macaufood.widget.AdvView;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.LatLngBounds.Builder;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.cycon.macaufood.widget.AdvViewPager;
 
 /**
  * A list view that demonstrates the use of setEmptyView. This example alos uses
  * a custom layout file that adds some extra buttons to the screen.
  */
-public class Map extends SherlockFragmentActivity implements
-GooglePlayServicesClient.ConnectionCallbacks,
-GooglePlayServicesClient.OnConnectionFailedListener{
-	
-	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+public class Map extends SherlockFragmentActivity {
 
+	public static final String BAIDU_MAP_API_KEY = "CjWobmOYcj8eD4ilipMllU5P";
 	public static final int SHOW_MAP_REQUEST_CODE = 1;
 	private static final int SHOW_LIST_MENU_ID = 1;
-	private static final int SHOW_GOOGLE_MAP_MENU_ID = 2;
-	public static final double LAT_MIN = 22.104;
-	public static final double LAT_MAX = 22.24;
-	public static final double LONG_MIN = 113.51;
-	public static final double LONG_MAX = 113.60;
-	private static final double LAT_DEFAULT = 22.19971287;
-	private static final double LONG_DEFAULT = 113.54500506;
-	private static final double LAT_DEFAULT_ISLAND = 22.148;
-	private static final double LONG_DEFAULT_ISLAND = 113.559;
-	private static final double LAT_ISLAND_BOUNDARY = 22.1735;
-	private static LatLngBounds mMapBounds = new LatLngBounds(new LatLng(LAT_MIN, LONG_MIN), new LatLng(LAT_MAX, LONG_MAX));
+	public static final double LAT_DIFF  = 0.0030;
+	public static final double LONG_DIFF = 0.0117;
+	public static final double LAT_MIN = 22.104 + LAT_DIFF;
+	public static final double LAT_MAX = 22.24 + LAT_DIFF;
+	public static final double LONG_MIN = 113.51 + LONG_DIFF;
+	public static final double LONG_MAX = 113.60 + LONG_DIFF;
+	private static final double LAT_DEFAULT = 22.19971287 + LAT_DIFF;
+	private static final double LONG_DEFAULT = 113.54500506 + LONG_DIFF;
+	private static final double LAT_DEFAULT_ISLAND = 22.148 + LAT_DIFF;
+	private static final double LONG_DEFAULT_ISLAND = 113.559 + LONG_DIFF;
+	private static final double LAT_ISLAND_BOUNDARY = 22.1735 + LAT_DIFF;
+	private static final float MARKER_HEIGHT_DP = 36f; //72px in xhdpi folder
+	
 	private String selectedCafeId;
 	private Button searchNearby;
-	private AdvView smallBanner;
 	private View listLayout;
 	private View mapLayout;
-	
-	private LocationClient mLocationClient;
-	private Location mCurrentLocation;
 
 	private ListView list;
 	private CafeSearchListAdapter cafeAdapter;
@@ -110,18 +97,41 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private TextView displaySearchQuery;
 	private boolean needPopulateMarkers;
 	private com.actionbarsherlock.view.MenuItem mOptionsItem;
-	private com.actionbarsherlock.view.MenuItem mGoogleMapItem;
-	private GoogleMap mMap;
-	private HashMap<Marker, String> mMarkersHashMap = new HashMap<Marker, String>();
-	private MarkerOptions mSelectedMarkerOptions;
-	private Marker mSelectedMarker;
+//	private GoogleMap mMap;
+//	private HashMap<Marker, String> mMarkersHashMap = new HashMap<Marker, String>();
+//	private MarkerOptions mSelectedMarkerOptions;
+//	private Marker mSelectedMarker;
 	private Button navigateIsland;
-	private BitmapDescriptor greenBitmap;
-	private BitmapDescriptor blueBitmap;;
-	private BitmapDescriptor favoriteBitmap;
+//	private BitmapDescriptor greenBitmap;
+//	private BitmapDescriptor blueBitmap;;
+//	private BitmapDescriptor favoriteBitmap;
 	private ArrayList<Cafe> searchResultCafes;
 	private boolean isFirstPopulateFromSearch;
-
+	
+	private boolean mMapShown;
+	private BMapManager mBMapMan = null;
+	private MapView mMapView = null;
+	private MapController mMapController = null;
+	private ImageButton curLocation;
+	// 定位相关
+	LocationClient mLocClient;
+	LocationData locData = null;
+	public MyLocationListenner myListener = new MyLocationListenner();
+	//定位图层
+	MyLocationOverlay myLocationOverlay = null;
+	boolean isRequest = false;//是否手动触发请求定位
+	boolean isRequestFromStart = false;
+	
+	private MyOverlay mSelectedCafeOverlay = null;
+	private MyOverlay mOverlay = null;
+	private PopupOverlay   pop  = null;
+	private ArrayList<OverlayItem>  mItems = null; 
+	private CafeOverlayItem mCurItem;
+	private TextView  popupTitle = null;
+	private TextView  popupSnippet = null;
+	private View popupArrow = null;
+	private View popupView = null;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -133,24 +143,23 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			Process.killProcess(Process.myPid());
 			return;
 		}
-		setContentView(R.layout.map);
 		
-		mLocationClient = new LocationClient(this, this, this);
-		mLocationClient.connect();
+		mBMapMan=new BMapManager(getApplication());  
+		mBMapMan.init(BAIDU_MAP_API_KEY, null); 
 		
 		searchResultCafes = new ArrayList<Cafe>(MFConfig.getInstance().getSearchResultList());
 		MFConfig.getInstance().getSearchResultList().clear();
+		
+
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setContentView(R.layout.map);
 
-		smallBanner = (AdvView) findViewById(R.id.viewPager);
 		list = (ListView) findViewById(R.id.list);
 		listMessage = (TextView) findViewById(R.id.listMessage);
 		mapFilterPanel = findViewById(R.id.mapFilterPanel);
 		displaySearchQuery = (TextView) findViewById(R.id.displaySearchQuery);
 		navigateIsland = (Button) findViewById(R.id.navigateIsland);
-		
-		setUpMapIfNeeded();
 
 		headerView = new TextView(this);
 		headerView.setText(getString(R.string.totalResultsFound, searchResultCafes.size()));
@@ -177,27 +186,43 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				.setDropDownViewResource(android.R.layout.simple_list_item_1);
 		regionSpinner.setAdapter(regionAdapter);
 		int regionIndex = getIntent().getIntExtra("regionIndex", 0);
-		regionSpinner.setSelection(regionIndex, false);
+		regionSpinner.setSelection(regionIndex);
 		dishesSpinner = (Spinner) findViewById(R.id.dishesSpinner);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				R.layout.spinner_textview, MFConstants.dishesType);
 		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
 		dishesSpinner.setAdapter(adapter);
 		int dishesIndex = getIntent().getIntExtra("dishesIndex", 0);
-		dishesSpinner.setSelection(dishesIndex, false);
+		dishesSpinner.setSelection(dishesIndex);
 		categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
 		adapter = new ArrayAdapter<String>(this, R.layout.spinner_textview,
 				MFConstants.serviceType);
 		adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
 		categorySpinner.setAdapter(adapter);
 		int servicesIndex = getIntent().getIntExtra("servicesIndex", 0);
-		categorySpinner.setSelection(servicesIndex, false);
+		categorySpinner.setSelection(servicesIndex);
 
-		regionSpinner.setOnItemSelectedListener(itemSelectListener);
-		dishesSpinner.setOnItemSelectedListener(itemSelectListener);
-		categorySpinner.setOnItemSelectedListener(itemSelectListener);
-				
-		// to avoid calling onitemselected initially
+		// to avoid calling onitemselected first time
+//		regionSpinner.post(new Runnable() {
+//
+//			public void run() {
+				regionSpinner.setOnItemSelectedListener(itemSelectListener);
+//			}
+//		});
+//		dishesSpinner.post(new Runnable() {
+//
+//			public void run() {
+				dishesSpinner.setOnItemSelectedListener(itemSelectListener);
+//			}
+//		});
+//		categorySpinner.post(new Runnable() {
+//
+//			public void run() {
+				categorySpinner.setOnItemSelectedListener(itemSelectListener);
+//			}
+//		});
+		
+		
 		disableItemSelect = true;
 		new Handler().postDelayed(new Runnable() {
 
@@ -211,14 +236,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 //			return;
 //		}
 
-		// display list
-		if (searchResultCafes.size() > 0) {
-			needPopulateMarkers = true;
-			listLayout.setVisibility(View.VISIBLE);
-			mapLayout.setVisibility(View.GONE);
-			setTitle(R.string.searchResults);
-			isFirstPopulateFromSearch = true;
-		}
+
 
 		String queryText = getIntent().getStringExtra("querySearch");
 		if (queryText != null) {
@@ -239,93 +257,191 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			listMessage.setVisibility(View.VISIBLE);
 			list.setVisibility(View.INVISIBLE);
 		}
+		
+		// display list
+		if (searchResultCafes.size() > 0) {
+			needPopulateMarkers = true;
+			listLayout.setVisibility(View.VISIBLE);
+			mapLayout.setVisibility(View.GONE);
+			setTitle(R.string.searchResults);
+			isFirstPopulateFromSearch = true;
+			mMapShown = false;
+		} else {
+			mMapShown = true;
+		}
+
+		setUpMapIfNeeded();
 	}
 
 	private void setUpMapIfNeeded() {
-		// Do a null check to confirm that we have not already instantiated the
-		// map.
-		if (mMap == null) {
-			// Try to obtain the map from the SupportMapFragment.
-			mMap = ((SupportMapFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.map)).getMap();
-			// Check if we were successful in obtaining the map.
-			if (mMap != null) {
-				setUpMap();
-			}
+		if (mMapView == null) {
+			setUpMap();
 		}
 	}
+	
+	/**
+     * 定位SDK监听函数
+     */
+    public class MyLocationListenner implements BDLocationListener {
+    	
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            if (location == null)
+                return ;
+
+            locData.latitude = location.getLatitude();
+            locData.longitude = location.getLongitude();
+            //如果不显示定位精度圈，将accuracy赋值为0即可
+            locData.accuracy = location.getRadius();
+            // 此处可以设置 locData的方向信息, 如果定位 SDK 未返回方向信息，用户可以自己实现罗盘功能添加方向信息。
+            locData.direction = location.getDerect();
+            //更新定位数据
+            myLocationOverlay.setData(locData);
+            //更新图层数据执行刷新后生效
+            mMapView.refresh();
+            //是手动触发请求或首次定位时，移动到定位点
+            if (isRequest){
+                mMapController.animateTo(new GeoPoint((int)(locData.latitude* 1e6), (int)(locData.longitude *  1e6)));
+                isRequest = false;
+            }
+            if (isRequestFromStart && locData.latitude < LAT_MAX && locData.latitude > LAT_MIN && locData.longitude < LONG_MAX && locData.longitude > LONG_MIN){
+                mMapController.animateTo(new GeoPoint((int)(locData.latitude* 1e6), (int)(locData.longitude *  1e6)));
+                isRequestFromStart = false;
+            }
+        }
+        
+        public void onReceivePoi(BDLocation poiLocation) {
+            if (poiLocation == null){
+                return ;
+            }
+        }
+    }
+    
+    private static class CafeOverlayItem extends OverlayItem {
+    	
+    	private String cafeId;
+
+		public CafeOverlayItem(GeoPoint arg0, String arg1, String arg2, String cafeId) {
+			super(arg0, arg1, arg2);
+			this.cafeId = cafeId;
+		}
+		
+		private String getCafeId() {
+			return cafeId;
+		}
+    	
+    }
+    
+    private class MyOverlay extends ItemizedOverlay<CafeOverlayItem>{
+
+		public MyOverlay(Drawable defaultMarker, MapView mapView) {
+			super(defaultMarker, mapView);
+		}
+		
+
+		@Override
+		public boolean onTap(int index){
+			CafeOverlayItem item = (CafeOverlayItem)getItem(index);
+			mCurItem = item ;
+			popupTitle.setText(item.getTitle());
+			if (item.getSnippet() != null) {
+				popupSnippet.setVisibility(View.VISIBLE);
+				popupSnippet.setText(item.getSnippet());
+				popupArrow.setVisibility(View.VISIBLE);
+			} else {
+				popupSnippet.setVisibility(View.GONE);
+				popupArrow.setVisibility(View.GONE);
+			}
+
+			pop.showPopup(popupView, item.getPoint(), MFUtil.getPixelsFromDip(MARKER_HEIGHT_DP, getResources()));
+
+			return true;
+		}
+		
+		@Override
+		public boolean onTap(GeoPoint pt , MapView mMapView){
+			if (pop != null){
+                pop.hidePop();
+			}
+			return false;
+		}
+    	
+    }
 
 	private void setUpMap() {
-		greenBitmap = BitmapDescriptorFactory.fromResource(R.drawable.green_pin);
-		blueBitmap = BitmapDescriptorFactory.fromResource(R.drawable.blue_pin);
-		favoriteBitmap = BitmapDescriptorFactory.fromResource(R.drawable.favorite_heart_pin);
-		mMap.setMyLocationEnabled(true);
-		mMap.setInfoWindowAdapter(new InfoWindowAdapter() {
+		mMapView=(MapView)findViewById(R.id.map);  
+		mMapView.setBuiltInZoomControls(true);  
+		//设置启用内置的缩放控件  
+		mMapController=mMapView.getController();  
+		// 得到mMapView的控制权,可以用它控制和驱动平移和缩放  
+		GeoPoint point =new GeoPoint((int)(LAT_DEFAULT* 1E6),(int)(LONG_DEFAULT* 1E6));  
+		//用给定的经纬度构造一个GeoPoint，单位是微度 (度 * 1E6)  
+		mMapController.setCenter(point);//设置地图中心点  
+		mMapController.setZoom(16.5f);//设置地图zoom级别  
+		mMapController.enableClick(true);
+		
+		 //定位初始化
+        mLocClient = new LocationClient( this );
+        locData = new LocationData();
+        mLocClient.registerLocationListener( myListener );
+        LocationClientOption option = new LocationClientOption();
+        option.setOpenGps(true);//打开gps
+        option.setCoorType("bd09ll");     //设置坐标类型
+        option.setScanSpan(10000);
+        mLocClient.setLocOption(option);
+        //click from map instead from search / map is displayed
+        if (mMapShown) {
+        	if (!mLocClient.isStarted()) mLocClient.start();
+        	//move to my position if click from action button
+        	if (getIntent().getBooleanExtra("fromHome", false)) isRequestFromStart = true;
+		}
+        
+		myLocationOverlay = new MyLocationOverlay(mMapView);
+	    myLocationOverlay.setData(locData);
+		mMapView.getOverlays().add(myLocationOverlay);
+		myLocationOverlay.enableCompass();
+		mMapView.refresh();
+		
+		
+		curLocation = (ImageButton)findViewById(R.id.curLocation);
+		curLocation.setOnClickListener(new OnClickListener() {
 			
-			public View getInfoWindow(Marker marker) {
-				View view = Map.this.getLayoutInflater().inflate(R.layout.balloon_overlay, null);
-				TextView title = (TextView) view.findViewById(R.id.balloon_item_title);
-				TextView snippet = (TextView) view.findViewById(R.id.balloon_item_snippet);
-				title.setText(marker.getTitle());
-				if (marker.equals(mSelectedMarker)) {
-					snippet.setVisibility(View.GONE);
-					view.findViewById(R.id.arrow).setVisibility(View.GONE);
-				} else {
-					snippet.setText(marker.getSnippet());
+			@Override
+			public void onClick(View arg0) {
+				isRequest = true;
+				if (!mLocClient.isStarted()) mLocClient.start();
+		        mLocClient.requestLocation();
+			}
+		});
+		
+		popupView = getLayoutInflater().inflate(R.layout.balloon_overlay, null);
+		popupTitle = (TextView) popupView.findViewById(R.id.balloon_item_title);
+		popupSnippet = (TextView) popupView.findViewById(R.id.balloon_item_snippet);
+		popupArrow = popupView.findViewById(R.id.arrow);
+		pop = new PopupOverlay(mMapView, new PopupClickListener() {
+			
+			@Override
+			public void onClickedPopup(int index) {
+				if (mCurItem.getSnippet() == null) {
+					return;
 				}
-				return view;
-			}
-			
-			public View getInfoContents(Marker marker) {
-				// TODO Auto-generated method stub
-				return null;
+				Intent i = new Intent(Map.this, Details.class);
+				i.putExtra("id", mCurItem.getCafeId());
+				i.putExtra("fromMap", true);
+				startActivity(i);
 			}
 		});
-//		mMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-//			
-//			public boolean onMarkerClick(Marker marker) {
-//				marker.setIcon(lightBlueBitmap);
-//				if (mPreviousMarker != null) {
-//					mPreviousMarker.setIcon(greenBitmap);
-//				}
-//				mPreviousMarker = marker;
-//				return false;
-//			}
-//		});
-		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+		
+		mMapView.regMapStatusChangeListener(new MKMapStatusChangeListener() {
 			
-			public void onInfoWindowClick(Marker marker) {
-
-				if (!marker.equals(mSelectedMarker)) {
-					String cafeId = mMarkersHashMap.get(marker);
-					Intent i = new Intent(Map.this, Details.class);
-					i.putExtra("id", cafeId);
-					i.putExtra("fromHome", true);
-					startActivity(i);
-				}
-			}
-		});
-		//use location client to get last location
-//		mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getMyLocation().getLatitude(), mMap.getMyLocation().getLongitude()), 16));
-		mMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener() {
-			
-			public void onMyLocationChange(Location location) {
-				//maybe use location client in the future
-//				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 16));
-			}
-		});
-//		mMap.setOnMapClickListener(new OnMapClickListener() {
-//			
-//			public void onMapClick(LatLng point) {
-//				MFLog.e("ZZZ", point.latitude + " " + point.longitude);
-//			}
-//		});
-		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
-			
-			public void onCameraChange(CameraPosition position) {
-				if (mMapBounds.contains(position.target)) {
+			@Override
+			public void onMapStatusChange(MKMapStatus mapStatus) {
+				GeoPoint targetGeo = mapStatus.targetGeo;
+				double targetLat = targetGeo.getLatitudeE6() / 1000000.0;
+				double targetLng = targetGeo.getLongitudeE6() / 1000000.0;
+				if (targetLat < LAT_MAX && targetLat > LAT_MIN && targetLng < LONG_MAX && targetLng > LONG_MIN) {
 					searchNearby.setText(R.string.searchNearby);
-					if (position.zoom > 13) {
+					if (mapStatus.zoom > 15) {
 						navigateIsland.setVisibility(View.VISIBLE);
 					} else {
 						navigateIsland.setVisibility(View.GONE);
@@ -334,12 +450,13 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 					searchNearby.setText(R.string.backToMacau);
 					navigateIsland.setVisibility(View.GONE);
 				}
-				
-				if (position.target.latitude < LAT_ISLAND_BOUNDARY) {
-					navigateIsland.setBackgroundResource(R.drawable.map_arrow_up);
+				if (targetLat < LAT_ISLAND_BOUNDARY) {
+					navigateIsland
+							.setBackgroundResource(R.drawable.map_arrow_up);
 					navigateIsland.setText(R.string.macauPeninsula);
 				} else {
-					navigateIsland.setBackgroundResource(R.drawable.map_arrow_down);
+					navigateIsland
+							.setBackgroundResource(R.drawable.map_arrow_down);
 					navigateIsland.setText(R.string.macauIsland);
 				}
 			}
@@ -350,14 +467,17 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		String coordx = getIntent().getStringExtra("coordx");
 		String coordy = getIntent().getStringExtra("coordy");
 		if (coordx != null && coordy != null) {
-			LatLng selectedLatLng = new LatLng(Double.parseDouble(coordx), Double.parseDouble(coordy));
-			mSelectedMarkerOptions = new MarkerOptions()
-            .position(selectedLatLng)
-            .title(name)
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_pin));
-			
-			mSelectedMarker = mMap.addMarker(mSelectedMarkerOptions);
-			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 16));
+			if (mSelectedCafeOverlay != null) {
+				mSelectedCafeOverlay.removeAll();
+			}
+			mSelectedCafeOverlay = new MyOverlay(getResources().getDrawable(R.drawable.red_pin), mMapView);
+			GeoPoint p = getGeoPointFromString(coordx, coordy);
+			CafeOverlayItem item = new CafeOverlayItem(p, name ,null, selectedCafeId);
+			mSelectedCafeOverlay.addItem(item);
+			mMapController.setCenter(p);
+			mMapController.setZoom(17.5f);
+			mMapView.getOverlays().add(mSelectedCafeOverlay);
+			mMapView.refresh();
 		}
 
 		searchNearby = (Button) findViewById(R.id.searchNearby);
@@ -366,7 +486,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			public void onClick(View v) {
 				if (searchNearby.getText().toString()
 						.equals(getString(R.string.backToMacau))) {
-					mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LAT_DEFAULT, LONG_DEFAULT), 14));
+					mMapController.setCenter(new GeoPoint((int)(LAT_DEFAULT * 1e6), (int)(LONG_DEFAULT * 1e6)));
+					mMapController.setZoom(16.5f);
 					searchNearby.setText(R.string.searchNearby);
 				} else {
 					searchResultCafes.clear();
@@ -379,70 +500,59 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			searchNearby.setVisibility(View.GONE);
 			mapFilterPanel.setVisibility(View.GONE);
 			
-			Builder boundsBuilder = new LatLngBounds.Builder();
+			if (mOverlay != null) {
+				mOverlay.removeAll();
+			}
+			mOverlay = new MyOverlay(getResources().getDrawable(R.drawable.favorite_heart_pin), mMapView);
 			
 			for (String str : MFConfig.getInstance().getFavoriteLists()) {
 				Cafe cafe = MFConfig.getInstance().getCafeLists().get(Integer.parseInt(str) - 1);
-				boundsBuilder.include(getLatLngFromCafe(cafe));
-				Marker marker = mMap.addMarker(new MarkerOptions()
-	            .position(getLatLngFromCafe(cafe))
-	            .title(cafe.getName())
-	            .snippet(MFUtil.getDishesStringFromCafe(cafe))
-	            .icon(favoriteBitmap));
-				
-				mMarkersHashMap.put(marker, cafe.getId());
-				
-				if (MFConfig.getInstance().getFavoriteLists().size() == 1) {
-					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getLatLngFromCafe(cafe), 16));
-				}
+				GeoPoint p = getGeoPointFromString(cafe.getCoordx(), cafe.getCoordy());
+				CafeOverlayItem item = new CafeOverlayItem(p, cafe.getName() ,MFUtil.getDishesStringFromCafe(cafe), cafe.getId());
+				mOverlay.addItem(item);
+//				mMarkersHashMap.put(marker, cafe.getId());
 			}
-			if (MFConfig.getInstance().getFavoriteLists().size() > 1) {
-				mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(96f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
-			}
+			mMapView.getOverlays().add(mOverlay);
+			mMapView.refresh();
 		} else if (getIntent().getBooleanExtra("fromBranch", false)) {
 			searchNearby.setVisibility(View.GONE);
 			mapFilterPanel.setVisibility(View.GONE);
 			
-			Builder boundsBuilder = new LatLngBounds.Builder();
+			if (mOverlay != null) {
+				mOverlay.removeAll();
+			}
+			mOverlay = new MyOverlay(getResources().getDrawable(R.drawable.green_pin), mMapView);
+			
 			ArrayList<Cafe> branchList = (ArrayList<Cafe>) getIntent().getSerializableExtra("branchList");
 			for (Cafe cafe : branchList) {
-				boundsBuilder.include(getLatLngFromCafe(cafe));
-				Marker marker = mMap.addMarker(new MarkerOptions()
-	            .position(getLatLngFromCafe(cafe))
-	            .title(cafe.getName())
-	            .snippet(MFUtil.getDishesStringFromCafe(cafe))
-	            .icon(greenBitmap));
-				
-				mMarkersHashMap.put(marker, cafe.getId());
+				GeoPoint p = getGeoPointFromString(cafe.getCoordx(), cafe.getCoordy());
+				CafeOverlayItem item = new CafeOverlayItem(p, cafe.getName() ,MFUtil.getDishesStringFromCafe(cafe), cafe.getId());
+				mOverlay.addItem(item);
 			}
-			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFConfig.deviceWidth, MFConfig.deviceHeight - MFUtil.getPixelsFromDip(96f, getResources()), MFUtil.getPixelsFromDip(50f, getResources())));
-//			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFUtil.getPixelsFromDip(50f, getResources())));
+			
+			mMapView.getOverlays().add(mOverlay);
+			mMapView.refresh();
 		}
 		
-		if (needPopulateMarkers) {
-			needPopulateMarkers = false;
-			populateOverlayFromSearchList();
-		}
-		
+//		if (needPopulateMarkers) {
+//			needPopulateMarkers = false;
+//			populateOverlayFromSearchList();
+//		}
 		navigateIsland.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View arg0) {
 				if (navigateIsland.getText().toString().equals(getString(R.string.macauPeninsula))) {
-					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LAT_DEFAULT, LONG_DEFAULT), 14));
+					mMapController.setCenter(new GeoPoint((int)(LAT_DEFAULT * 1e6), (int)(LONG_DEFAULT * 1e6)));
+					mMapController.setZoom(16.5f);
 				} else {
-					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(LAT_DEFAULT_ISLAND, LONG_DEFAULT_ISLAND), 13.6f));
+					mMapController.setCenter(new GeoPoint((int)(LAT_DEFAULT_ISLAND * 1e6), (int)(LONG_DEFAULT_ISLAND * 1e6)));
+					mMapController.setZoom(16f);
 				}
 			}
 		});
-		
 	}
 
 	private void doAdvancedSearch() {
-
-		if (mGoogleMapItem != null) {
-			mOptionsItem.setVisible(true);
-			mGoogleMapItem.setVisible(false);
-		}
 
 		int regionIndex = regionSpinner.getSelectedItemPosition();
 		int dishesIndex = dishesSpinner.getSelectedItemPosition();
@@ -500,27 +610,36 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	private void searchNearby() {
 
 		
-		
-		mMap.clear();
-		mMarkersHashMap.clear();
-		if (mGoogleMapItem != null) {
-			mOptionsItem.setVisible(true);
-			mGoogleMapItem.setVisible(false);
+		if (pop != null){
+            pop.hidePop();
 		}
-		if (mSelectedMarkerOptions != null) {
-			mSelectedMarker = mMap.addMarker(mSelectedMarkerOptions);
+		if (mOverlay != null) {
+			mOverlay.removeAll();
 		}
+		mOverlay = new MyOverlay(getResources().getDrawable(R.drawable.blue_pin), mMapView);
 		
-		LatLng mapCenter = mMap.getCameraPosition().target;
-		LatLngBounds currentBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+//		mMarkersHashMap.clear();
+		
+		GeoPoint geoPoint = mMapView.getMapCenter();
+    	int centerLat = geoPoint.getLatitudeE6();
+    	int centerLong = geoPoint.getLongitudeE6();
+		int longSpan = mMapView.getLongitudeSpan();
+		int latSpan = mMapView.getLatitudeSpan();
+    	
+    	int nwLatitude = centerLat + latSpan / 2;
+    	int seLatitude = centerLat - latSpan / 2;
+    	int nwLongitutde = centerLong - longSpan / 2;
+    	int seLongitutde = centerLong + longSpan / 2;
+		
 
 		int displayNumber = 50;
 		PriorityQueue<Cafe> queue = new PriorityQueue<Cafe>(displayNumber + 1);
 		for (Cafe cafe : MFConfig.getInstance().getCafeLists()) {
 			if (cafe.getStatus().equals("0") || cafe.getId().equals(selectedCafeId)) continue;
-			LatLng cafeLatLng = getLatLngFromCafe(cafe);
-			if (currentBounds.contains(cafeLatLng)) {
-				double dist = Math.hypot(mapCenter.latitude - cafeLatLng.latitude, mapCenter.longitude - cafeLatLng.longitude);
+			GeoPoint p = getGeoPointFromString(cafe.getCoordx(), cafe.getCoordy());
+			if (p.getLatitudeE6() < nwLatitude && p.getLatitudeE6() > seLatitude 
+				&& p.getLongitudeE6() < seLongitutde && p.getLongitudeE6() > nwLongitutde) {
+				double dist = Math.hypot(centerLat - p.getLatitudeE6(), centerLong - p.getLongitudeE6());
 				cafe.setDistance(dist);
 				if (queue.size() < displayNumber) {
 					queue.add(cafe);
@@ -530,8 +649,7 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				}
 			}
 		}
-		Builder boundsBuilder = new LatLngBounds.Builder();
-		ArrayList<Cafe> priorityList = new ArrayList<Cafe>();
+		ArrayList<Cafe> priorityList = new ArrayList<Cafe>(); 
 		while (!queue.isEmpty()) {
 			Cafe cafe = queue.poll();
 			if (cafe.getPriority().equals("0")) {
@@ -540,16 +658,18 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				priorityList.add(cafe);
 			}
 			
-			LatLng cafeLatLng = getLatLngFromCafe(cafe);
-			boundsBuilder.include(cafeLatLng);
-			Marker marker = mMap.addMarker(new MarkerOptions()
-            .position(cafeLatLng)
-            .title(cafe.getName())
-            .snippet(MFUtil.getDishesStringFromCafe(cafe))
-            .icon(blueBitmap));
-			
-			mMarkersHashMap.put(marker, cafe.getId());
+			GeoPoint p = getGeoPointFromString(cafe.getCoordx(), cafe.getCoordy());
+			CafeOverlayItem item = new CafeOverlayItem(p, cafe.getName() ,MFUtil.getDishesStringFromCafe(cafe), cafe.getId());
+			mOverlay.addItem(item);
 		}
+		mMapView.getOverlays().add(mOverlay);
+		mMapView.refresh();
+		if (mMapView.getZoomLevel() < 18) {
+			MKMapStatus status = mMapView.getMapStatus();
+			status.zoom = 18f;
+			mMapController.setMapStatusWithAnimation(status);
+		}
+		
 		
 		Collections.sort(priorityList, new Comparator<Cafe>() {
 			public int compare(Cafe cafe1, Cafe cafe2) {
@@ -562,9 +682,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		Collections.reverse(searchResultCafes);
 		searchResultCafes.addAll(0, priorityList);
 		
-		
-		if (mMap.getCameraPosition().zoom < 17 && searchResultCafes.size() > 0)
-			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), MFUtil.getPixelsFromDip(50f, getResources())));
 
 		disableItemSelect = true;
 
@@ -597,100 +714,78 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				disableItemSelect = false;
 			}
 		}, 400);
+		
+		
 	}
 	
-	private LatLng getLatLngFromCafe(Cafe cafe) {
-		return new LatLng(Double.parseDouble(cafe.getCoordx()), Double.parseDouble(cafe.getCoordy()));
+	private int getLatFromString(String coord) {
+		return (int)((Double.parseDouble(coord) + LAT_DIFF) * 1E6);
+	}
+	
+	private int getLngFromString(String coord) {
+		return (int)((Double.parseDouble(coord) + LONG_DIFF) * 1E6);
+	}
+	
+	private GeoPoint getGeoPointFromString(String coordx, String coordy) {
+		GeoPoint p = new GeoPoint(getLatFromString(coordx), getLngFromString(coordy));
+		return p;
 	}
 
 	private void populateOverlayFromSearchList() {
 		
-		if (mMap == null) {
-			setUpMapIfNeeded(); //fix a crash report
-		}
+		setUpMapIfNeeded(); //fix a crash report
 		
-		mMap.clear();
-		mMarkersHashMap.clear();
-
-		//to readd the red bin after map is clear
-		if (mSelectedMarkerOptions != null) {
-			mSelectedMarker = mMap.addMarker(mSelectedMarkerOptions);
+		if (pop != null){
+            pop.hidePop();
 		}
+		if (mOverlay != null) {
+			mOverlay.removeAll();
+		}
+		mOverlay = new MyOverlay(getResources().getDrawable(R.drawable.green_pin), mMapView);
 		
-		Builder boundsBuilder = new LatLngBounds.Builder();
 
 		for (Cafe cafe : searchResultCafes) {
 			if (cafe.getId().equals(selectedCafeId)) continue;
 			
-			Marker marker = mMap.addMarker(new MarkerOptions()
-            .position(getLatLngFromCafe(cafe))
-            .title(cafe.getName())
-            .snippet(MFUtil.getDishesStringFromCafe(cafe))
-            .icon(greenBitmap));
-			
-			mMarkersHashMap.put(marker, cafe.getId());
-			
-//			//TODO temp
-//			if (cafe.getId().equals("1943") || cafe.getId().equals("163") || cafe.getId().equals("1977") || cafe.getId().equals("750")|| cafe.getId().equals("172") || cafe.getId().equals("35")) continue;
-			boundsBuilder.include(getLatLngFromCafe(cafe));
-			
+			GeoPoint p = getGeoPointFromString(cafe.getCoordx(), cafe.getCoordy());
+			CafeOverlayItem item = new CafeOverlayItem(p, cafe.getName() ,MFUtil.getDishesStringFromCafe(cafe), cafe.getId());
+			mOverlay.addItem(item);
 		}
+		
+		mMapView.getOverlays().add(mOverlay);
+		mMapView.refresh();
 		
 		if (regionSpinner.getSelectedItemPosition() == 0) return;
 		
-		if (searchResultCafes.size() == 0) {
-			LatLngBounds bounds = LatLngBoundHelper.regionBounds[regionSpinner.getSelectedItemPosition()];
-			if (bounds != null) {
-				if (isFirstPopulateFromSearch) {
-					isFirstPopulateFromSearch = false;
-					mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFConfig.deviceWidth , list.getHeight() + smallBanner.getHeight(), MFUtil.getPixelsFromDip(50f, getResources())));
-				} else {
-					mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(50f, getResources())));
-				}
-			}
-			return;
-		}
-		if (searchResultCafes.size() == 1) {
-			if (isFirstPopulateFromSearch) {
-				isFirstPopulateFromSearch = false;
-				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getLatLngFromCafe(searchResultCafes.get(0)), 17));
-			} else {
-				mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getLatLngFromCafe(searchResultCafes.get(0)), 17));
-			}
-			return;
-		}
-		
-		if (searchResultCafes.size() == 2) {
-			LatLng cafe1LatLng = getLatLngFromCafe(searchResultCafes.get(0));
-			LatLng cafe2LatLng = getLatLngFromCafe(searchResultCafes.get(1));
-			double dist = Math.hypot(cafe1LatLng.latitude - cafe2LatLng.latitude, cafe1LatLng.longitude - cafe2LatLng.longitude);
-			if (dist < 0.002) {
-				if (isFirstPopulateFromSearch) {
-					isFirstPopulateFromSearch = false;
-					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((cafe1LatLng.latitude + cafe2LatLng.latitude) / 2, (cafe1LatLng.longitude + cafe2LatLng.longitude) / 2), 17));
-				} else {
-					mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng((cafe1LatLng.latitude + cafe2LatLng.latitude) / 2, (cafe1LatLng.longitude + cafe2LatLng.longitude) / 2), 17));
-				}
-				return;
-			}
-		}
-		
-		LatLngBounds bounds = boundsBuilder.build();
+		GeoPoint p = LatLngBoundHelper.regionBounds[regionSpinner.getSelectedItemPosition()];
 		if (isFirstPopulateFromSearch) {
 			isFirstPopulateFromSearch = false;
-			mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFConfig.deviceWidth , list.getHeight() + smallBanner.getHeight(), MFUtil.getPixelsFromDip(50f, getResources())));
+			mMapController.setCenter(p);
+			if (LatLngBoundHelper.regionBounds.length - regionSpinner.getSelectedItemPosition() <= 2) {
+				mMapController.setZoom(16f);
+			} else if (LatLngBoundHelper.regionBounds.length - regionSpinner.getSelectedItemPosition() <= 3) {
+				mMapController.setZoom(17f);
+			} else {
+				mMapController.setZoom(18f);
+			}
 		} else {
-			mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, MFUtil.getPixelsFromDip(50f, getResources())));
+			MKMapStatus status = mMapView.getMapStatus();
+			status.targetGeo = p;
+			if (LatLngBoundHelper.regionBounds.length - regionSpinner.getSelectedItemPosition() <= 2) {
+				status.zoom = 16f;
+			} else if (LatLngBoundHelper.regionBounds.length - regionSpinner.getSelectedItemPosition() <= 3) {
+				status.zoom = 17f;
+			} else {
+				status.zoom = 18f;
+			}
+			mMapController.setMapStatusWithAnimation(status);
 		}
+		
+		
+
+		
 	}
 
-	@Override
-	protected void onDestroy() {
-//		MFConfig.getInstance().getSearchResultList().clear();
-		cafeAdapter.imageLoader.cleanup();
-
-		super.onDestroy();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
@@ -705,12 +800,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 			mOptionsItem.setIcon(R.drawable.map)
 					.setTitle(R.string.showMap);
 		} 
-		if (selectedCafeId != null) {
-			menu.add(0, SHOW_GOOGLE_MAP_MENU_ID, 1, R.string.googleMap)
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-			mGoogleMapItem = menu.getItem(1);
-			mOptionsItem.setVisible(false);
-		}
 		
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -721,6 +810,10 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 		switch (item.getItemId()) {
 		case SHOW_LIST_MENU_ID:
 			if (listLayout.isShown()) {
+				mMapShown = true;
+				if (!mLocClient.isStarted()) {
+					mLocClient.start();
+				}
 				listLayout.setVisibility(View.GONE);
 				mapLayout.setVisibility(View.VISIBLE);
 				item.setIcon(R.drawable.ic_action_list).setTitle(
@@ -731,6 +824,8 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 					populateOverlayFromSearchList();
 				}
 			} else {
+				mMapShown = false;
+				mLocClient.stop();
 				listLayout.setVisibility(View.VISIBLE);
 				mapLayout.setVisibility(View.GONE);
 				item.setIcon(R.drawable.map).setTitle(R.string.showMap);
@@ -742,24 +837,6 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 				headerView.setText(getString(R.string.totalResultsFound,
 						searchResultCafes.size()));
 			}
-			return true;
-		case SHOW_GOOGLE_MAP_MENU_ID:
-			String coordx = getIntent().getStringExtra("coordx");
-			String coordy = getIntent().getStringExtra("coordy");
-			
-			 double latitude = Double.parseDouble(coordx);
-			 double longitude = Double.parseDouble(coordy);
-
-			 String label = getIntent().getStringExtra("name");
-			 label = label.replaceAll("\\(", " ").replaceAll("\\)", " ");
-			 String uriBegin = "geo:" + latitude + "," + longitude;
-			 String query = latitude + "," + longitude + "(" + label + ")";
-			 String encodedQuery = Uri.encode(query);
-			 String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
-			 Uri uri = Uri.parse(uriString);
-			 Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
-			 startActivity(intent);
-			
 			return true;
 		case android.R.id.home:
 			finish();
@@ -800,122 +877,46 @@ GooglePlayServicesClient.OnConnectionFailedListener{
 	};
 	
 	
-	//--------------Location Listener
+	@Override  
+	protected void onDestroy(){  
+	        mMapView.destroy();  
+	        if(mBMapMan!=null){  
+//	                mBMapMan.destroy();  
+	                mBMapMan=null;  
+	        }  
+            mLocClient.stop();
+	        cafeAdapter.imageLoader.cleanup();
+	        super.onDestroy();  
+	}  
 	
-	@Override
-	public void onConnected(Bundle connectionHint) {
-		// TODO Auto-generated method stub
-		mCurrentLocation = mLocationClient.getLastLocation();
-//		mCurrentLocation.setLatitude(22.19971287);
-//		mCurrentLocation.setLongitude(113.54500506);
-		if (mMap != null && mCurrentLocation != null && getIntent().getBooleanExtra("fromMap", false)) {
-			LatLng selectedLatLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-			if (mMapBounds.contains(selectedLatLng)) {
-				mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 15));
+//	@Override
+//	protected void onStart() {
+//		if (mBMapMan == null) {
+//			mBMapMan=new BMapManager(getApplication());  
+//			mBMapMan.init(BAIDU_MAP_API_KEY, null); 	
+//		}	
+//		super.onStart();
+//	}
+	
+	@Override  
+	protected void onPause(){  
+	        mMapView.onPause();  
+	        if(mBMapMan!=null){  
+	               mBMapMan.stop();  
+	        }  
+	        mLocClient.stop();
+	        super.onPause();  
+	}  
+	@Override  
+	protected void onResume(){  
+	        mMapView.onResume();  
+	        if(mBMapMan!=null){  
+	                mBMapMan.start();  
+	        }  
+	        if (!mLocClient.isStarted() && mMapShown) {
+				mLocClient.start();
 			}
-		}
-	}
-
-	@Override
-	public void onDisconnected() {
-		// TODO Auto-generated method stub
-
-	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// Decide what to do based on the original request code
-		switch (requestCode) {
-		case CONNECTION_FAILURE_RESOLUTION_REQUEST:
-			/*
-			 * If the result code is Activity.RESULT_OK, try to connect again
-			 */
-			switch (resultCode) {
-			case Activity.RESULT_OK:
-				mLocationClient.connect();
-				break;
-			}
-		}
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		mLocationClient.connect();
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-		mLocationClient.disconnect();
-	}
-
-	// Define a DialogFragment that displays the error dialog
-	public static class ErrorDialogFragment extends SherlockDialogFragment {
-		// Global field to contain the error dialog
-		private Dialog mDialog;
-
-		// Default constructor. Sets the dialog field to null
-		public ErrorDialogFragment() {
-			super();
-			mDialog = null;
-		}
-
-		// Set the dialog to display
-		public void setDialog(Dialog dialog) {
-			mDialog = dialog;
-		}
-
-		// Return a Dialog to the DialogFragment.
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			return mDialog;
-		}
-	}
-
-	@Override
-	public void onConnectionFailed(ConnectionResult connectionResult) {
-		/*
-		 * Google Play services can resolve some errors it detects. If the error
-		 * has a resolution, try sending an Intent to start a Google Play
-		 * services activity that can resolve error.
-		 */
-		if (connectionResult.hasResolution()) {
-			try {
-				// Start an Activity that tries to resolve the error
-				connectionResult.startResolutionForResult(this,
-						CONNECTION_FAILURE_RESOLUTION_REQUEST);
-				/*
-				 * Thrown if Google Play services canceled the original
-				 * PendingIntent
-				 */
-			} catch (IntentSender.SendIntentException e) {
-				// Log the error
-				e.printStackTrace();
-			}
-		} else {
-
-			// Get the error code
-			int errorCode = connectionResult.getErrorCode();
-			// Get the error dialog from Google Play services
-			Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-					errorCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-			// If Google Play services can provide an error dialog
-			if (errorDialog != null) {
-				// Create a new DialogFragment for the error dialog
-				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-				// Set the dialog in the DialogFragment
-				errorFragment.setDialog(errorDialog);
-				// Show the error dialog in the DialogFragment
-				errorFragment.show(getSupportFragmentManager(),
-						"Location Updates");
-			}
-		}
-	}
-	
-	
-	
-	
+	       super.onResume();  
+	}  
 
 }
