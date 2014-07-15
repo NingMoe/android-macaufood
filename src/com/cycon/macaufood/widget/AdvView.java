@@ -29,9 +29,6 @@ import com.cycon.macaufood.utilities.ImageLoader;
 import com.cycon.macaufood.utilities.MFConfig;
 import com.cycon.macaufood.utilities.MFLog;
 import com.cycon.macaufood.utilities.MFUtil;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 
 public class AdvView extends RelativeLayout {
 	public interface Callback {
@@ -55,7 +52,7 @@ public class AdvView extends RelativeLayout {
 	private ViewPager mViewPager;
 	private GalleryNavigator mNavi;
 	private int mAdFixedHeight;
-	private AdView mAdMobView;
+//	private AdView mAdMobView;
 
 	private Callback mAdCallback = new Callback() {
 
@@ -164,8 +161,8 @@ public class AdvView extends RelativeLayout {
 		public boolean isViewFromObject(View view, Object object) {
 			if (object instanceof ImageView) {
 				return view == ((ImageView) object);
-			} else if (object instanceof AdView) {
-				return view == ((AdView) object);
+//			} else if (object instanceof AdView) {
+//				return view == ((AdView) object);
 			}
 			return false;
 		}
@@ -174,21 +171,21 @@ public class AdvView extends RelativeLayout {
 		public Object instantiateItem(ViewGroup container, final int position) {
 			Log.e(TAG, "view pager instantiate pos = " + position);
 			String advId = mAdInfoList.get(position).advId;
-			if (advId.equals("admob")) {
-				mAdMobView = new AdView(mContext);
-				mAdMobView.setAdUnitId(ADMOB_ID);
-				if (!mSmallAdv) {
-					mAdMobView.setAdSize(new AdSize(-1, (int)(MFUtil.getDipFromPixels(mAdFixedHeight, mContext.getResources()))));
-				} else {
-					mAdMobView.setAdSize(new AdSize(-1, 48));
-				}
-				AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
-				adRequestBuilder.setGender(AdRequest.GENDER_MALE);
-				adRequestBuilder.addTestDevice("A156D7505B65D1EF4E74C3F1D0C08402");
-				mAdMobView.loadAd(adRequestBuilder.build());
-				((ViewPager) container).addView(mAdMobView, 0);
-				return mAdMobView;
-			}
+//			if (advId.equals("admob")) {
+//				mAdMobView = new AdView(mContext);
+//				mAdMobView.setAdUnitId(ADMOB_ID);
+//				if (!mSmallAdv) {
+//					mAdMobView.setAdSize(new AdSize(-1, (int)(MFUtil.getDipFromPixels(mAdFixedHeight, mContext.getResources()))));
+//				} else {
+//					mAdMobView.setAdSize(new AdSize(-1, 48));
+//				}
+//				AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+//				adRequestBuilder.setGender(AdRequest.GENDER_MALE);
+//				adRequestBuilder.addTestDevice("A156D7505B65D1EF4E74C3F1D0C08402");
+//				mAdMobView.loadAd(adRequestBuilder.build());
+//				((ViewPager) container).addView(mAdMobView, 0);
+//				return mAdMobView;
+//			}
 			
 			ImageView i = new ImageView(mContext);
 			mImageLoader.displayImage(advId, i, position);
@@ -211,8 +208,8 @@ public class AdvView extends RelativeLayout {
 		public void destroyItem(ViewGroup container, int position, Object object) {
 			if (object instanceof ImageView) {
 				((ViewPager) container).removeView((ImageView) object);
-			} else if (object instanceof AdView) {
-				((ViewPager) container).removeView((AdView) object);
+//			} else if (object instanceof AdView) {
+//				((ViewPager) container).removeView((AdView) object);
 			}
 		}
 
@@ -273,17 +270,17 @@ public class AdvView extends RelativeLayout {
 		stopTimer();
 		AdController.getInstance(mContext.getApplicationContext())
 				.unregisterCallback(mAdCallback);
-		if (mAdMobView != null) mAdMobView.destroy();
+//		if (mAdMobView != null) mAdMobView.destroy();
 	}
 
 	@Override
 	protected void onVisibilityChanged(View changedView, int visibility) {
 		super.onVisibilityChanged(changedView, visibility);
 		if (visibility == View.VISIBLE) {
-			if (mAdMobView != null) mAdMobView.resume();
+//			if (mAdMobView != null) mAdMobView.resume();
 			startTimer();
 		} else {
-			if (mAdMobView != null) mAdMobView.pause();
+//			if (mAdMobView != null) mAdMobView.pause();
 			stopTimer();
 		}
 	}

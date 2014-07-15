@@ -92,7 +92,7 @@ public class AdController {
 			info.type = infoStr[0];
 			if (infoStr.length > 1){
 				info.advId = infoStr[1];
-				if (!MFConfig.isOnline(mContext) && info.advId.equals("admob"))continue;
+				if (info.advId.equals("admob"))continue;
 			}
 			if (infoStr.length > 2) info.advLink = infoStr[2];
 			//to make sure the adv is in random order
