@@ -134,7 +134,7 @@ public class AdvView extends RelativeLayout {
 		} else {
 			setVisibility(View.VISIBLE);
 			mImageAdapter = new ImageAdapter();
-			mViewPager.setOffscreenPageLimit(mAdInfoList.size());
+//			mViewPager.setOffscreenPageLimit(mAdInfoList.size());
 			mViewPager.setAdapter(mImageAdapter);
 			mViewPager.setOnPageChangeListener(mImageAdapter);
 
@@ -191,7 +191,7 @@ public class AdvView extends RelativeLayout {
 			}
 			
 			ImageView i = new ImageView(mContext);
-			mImageLoader.displayImage(advId, i, position);
+			if (mImageLoader != null) mImageLoader.displayImage(advId, i, position);
 			i.setScaleType(mSmallAdv ? ScaleType.FIT_XY : ScaleType.FIT_END);
 			i.setOnClickListener(new OnClickListener() {
 

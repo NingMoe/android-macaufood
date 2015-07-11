@@ -125,7 +125,8 @@ public class ImageLoader {
     public void setPSHotImagesToLoadFromParsedPS(List<String> photoIds) {
     	imagesToLoad.clear();
         for (String photoId : photoIds) {
-        	imagesToLoad.add(MFConfig.getInstance().getPsInfoMap().get(photoId).getFilename());
+        	ParsedPSHolder holder = MFConfig.getInstance().getPsInfoMap().get(photoId);
+        	if (holder != null) imagesToLoad.add(holder.getFilename());
         }
     }
     

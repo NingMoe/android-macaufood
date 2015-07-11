@@ -33,7 +33,7 @@ public class MFConfig {
 	
 	public static String DEVICE_ID;
 	
-	public static String cafe_version_update = "1399273601";
+	public static String cafe_version_update = "1436095419";
 	
 	public static String memberId;
 	public static String memberName;

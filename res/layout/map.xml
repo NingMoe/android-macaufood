@@ -66,12 +66,12 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
         
-        <fragment
+        <fragment 
 			  android:id="@+id/map"
 			  android:layout_width="fill_parent"
 			  android:layout_height="fill_parent"
 			  class="com.google.android.gms.maps.SupportMapFragment"
-			  map:cameraTargetLat="22.19971287"
+			  map:cameraTargetLat="22.19971287" 
 			  map:cameraTargetLng="113.54500506"
 			  map:cameraZoom="14"
 			  map:mapType="normal"
